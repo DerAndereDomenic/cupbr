@@ -9,8 +9,13 @@ set(OpenGL_GL_PREFERENCE GLVND)
 find_package(OpenGL REQUIRED)
 find_package(glfw3 3.3 REQUIRED)
 
-add_executable(${PROJECT_NAME} src/source.cu)
+file (GLOB_RECURSE source_files LIST_DIRECTORIES false "src/*.c*"
+                                                       "lib/include/*/*.c*"
+                                                       "lib/src/*/*.c*")
+
+message("${source_files}")
+
+add_executable(${PROJECT_NAME} ${source_files})
 
 target_link_libraries(${PROJECT_NAME} glfw -lpthread -lm ${GLEW_LIBRARIES} OpenGL::GL)
 include_directories(lib/include ${GLEW_INCLUDE_DIRS} ${GLFW_INCLUDE_DIRS})
-message("${GLFW_INCLUDE_DIRS}")
