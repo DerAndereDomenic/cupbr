@@ -1,12 +1,9 @@
 #include <iostream>
 
 #include <GL/GLRenderer.cuh>
-#include <GL/glew.h>
 #include <string>
 
 #include <Core/Memory.cuh>
-
-#include <cuda_gl_interop.h>
 
 GLRenderer
 GLRenderer::createHostObject(const uint32_t& width, const uint32_t& height)
@@ -162,6 +159,8 @@ GLRenderer::createGLTexture(const uint32_t& width, const uint32_t& height)
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    cudaSafeCall(cudaGraphicsGLRegisterImage(&_cuda_resource, _screen_texture, GL_TEXTURE_2D, cudaGraphicsRegisterFlagsWriteDiscard));
 }
 
 void

@@ -2,6 +2,9 @@
 #define __CUPBR_GL_GLRENDERER_H
 
 #include <DataStructure/RenderBuffer.cuh>
+#include <GL/glew.h>
+
+#include <cuda_gl_interop.h>
 
 class GLRenderer
 {
@@ -26,6 +29,8 @@ class GLRenderer
         uint32_t _vbo;
         uint32_t _shader;
         uint32_t _screen_texture;
+
+        cudaGraphicsResource* _cuda_resource;
 };
 
 #endif
