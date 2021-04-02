@@ -28,9 +28,11 @@ GLRenderer::createHostObject(const uint32_t& width, const uint32_t& height)
     \
     in vec2 frag_tex;\n\
     \
+    uniform sampler2D screen_texture;\n\
+    \
     void main()\n\
     {\n\
-        FragColor = vec4(frag_tex,0,1);\
+        FragColor = vec4(texture(screen_texture, frag_tex).rgb ,1);\
     }";
 
     ///////////////////////////////////////////////////////
@@ -152,5 +154,6 @@ GLRenderer::destroyHostObject(GLRenderer& object)
 void
 GLRenderer::renderTexture(const RenderBuffer& img)
 {
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, img.width(), img.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, img.data());
     glDrawArrays(GL_TRIANGLES, 0, 6);
 }
