@@ -6,7 +6,7 @@
 
 #include <Core/KernelHelper.cuh>
 
-__global__ void fillBuffer(RenderBuffer img)
+__global__ void fillBuffer(RenderBuffer img, uint8_t time)
 {
     uint32_t tid = ThreadHelper::globalThreadIndex();
 
@@ -15,7 +15,7 @@ __global__ void fillBuffer(RenderBuffer img)
         return;
     }
 
-    img[tid] = Vector4uint32_t(255,255,255,255);
+    img[tid] = Vector4uint32_t(time,0,time,255);
 }
 
 int main()
@@ -24,9 +24,6 @@ int main()
 
     RenderBuffer img = RenderBuffer::createDeviceObject(640, 480);
     KernelSizeHelper::KernelSize config = KernelSizeHelper::configure(img.size());
-
-    fillBuffer<<<config.blocks, config.threads>>>(img);
-    cudaSafeCall(cudaDeviceSynchronize());
 
     GLFWwindow* window;
 
@@ -50,8 +47,9 @@ int main()
 		std::cout <<"RENDERER::GLEWINIT::ERROR\n";
 	}
 
-
     GLRenderer renderer = GLRenderer::createHostObject(640, 480);
+
+    uint8_t time = 0;
 
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
@@ -59,6 +57,9 @@ int main()
         /* Render here */
         glClear(GL_COLOR_BUFFER_BIT);
 
+        ++time;
+        fillBuffer<<<config.blocks, config.threads>>>(img,time);
+        cudaSafeCall(cudaDeviceSynchronize());
         renderer.renderTexture(img);
 
         /* Swap front and back buffers */
