@@ -1,12 +1,12 @@
 #include <iostream>
-#include <DataStructure/Image.cuh>
+#include <DataStructure/RenderBuffer.cuh>
 #include <GL/GLRenderer.cuh>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
 int main()
 {
-    Image<float> img = Image<float>::createHostObject(640, 480);
+    RenderBuffer img = RenderBuffer::createHostObject(640, 480);
 
     GLFWwindow* window;
 
@@ -39,6 +39,8 @@ int main()
         /* Render here */
         glClear(GL_COLOR_BUFFER_BIT);
 
+        renderer.renderTexture(img);
+
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
 
@@ -48,7 +50,7 @@ int main()
 
     glfwTerminate();
 
-    Image<float>::destroyHostObject(img);
+    RenderBuffer::destroyHostObject(img);
 
     Memory::allocator()->printStatistics();
 
