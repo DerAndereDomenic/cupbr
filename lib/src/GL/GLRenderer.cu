@@ -91,13 +91,16 @@ GLRenderer::createHostObject()
 
     }
 
+    glDeleteShader(vertexShader);
+    glDeleteShader(fragmentShader);
+
     return result;
 }
 
 void
 GLRenderer::destroyHostObject(GLRenderer& object)
 {
-
+    glDeleteProgram(object._shader);
 }
 
 void
