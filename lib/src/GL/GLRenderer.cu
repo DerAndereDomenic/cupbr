@@ -107,9 +107,8 @@ GLRenderer::createHostObject()
         0.0f,0.5f
     };
 
-    uint32_t vbo;
-    glGenBuffers(1, &vbo);
-    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    glGenBuffers(1, &result._vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, result._vbo);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2*sizeof(float), (void*)0);
@@ -122,6 +121,7 @@ void
 GLRenderer::destroyHostObject(GLRenderer& object)
 {
     glDeleteProgram(object._shader);
+    glDeleteVertexArrays(1, &object._vbo);
 }
 
 void

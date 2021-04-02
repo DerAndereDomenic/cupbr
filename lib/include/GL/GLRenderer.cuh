@@ -17,6 +17,7 @@ class GLRenderer
         void
         renderTexture(const RenderBuffer& img);
     private:
+        uint32_t _vbo;
         uint32_t _shader;
         uint32_t _screen_texture;
 };
