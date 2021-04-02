@@ -110,7 +110,7 @@ Image<T>::operator()(Vector2uint32_t& pixel)
 template<typename T>
 __host__ __device__
 T*
-Image<T>::data()
+Image<T>::data() const
 {
     return _data;
 }

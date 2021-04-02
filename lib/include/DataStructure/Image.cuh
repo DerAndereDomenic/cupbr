@@ -100,7 +100,7 @@ public:
     */
     __host__ __device__
     T*
-    data();
+    data() const;
     
     /**
     *   @brief Get the width of the image
