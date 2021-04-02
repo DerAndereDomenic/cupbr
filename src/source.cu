@@ -8,6 +8,15 @@ int main()
 {
     RenderBuffer img = RenderBuffer::createHostObject(640, 480);
 
+    for(uint32_t i = 0; i < 640; ++i)
+    {
+        for(uint32_t j = 0; j < 480; ++j)
+        {
+            Vector2uint32_t pixel(i,j);
+            img(pixel) = Vector4uint8_t(255,0,255,255);
+        }
+    }
+
     GLFWwindow* window;
 
     /* Initialize the library */
