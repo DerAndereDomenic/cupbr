@@ -68,6 +68,29 @@ GLRenderer::createHostObject()
         free(infoLog);
     }
 
+    ///////////////////////////////////////////////////////
+    ///             Shader Linking                      ///
+    ///////////////////////////////////////////////////////
+    int32_t success;
+
+    result._shader = glCreateProgram();
+    glAttachShader(result._shader, vertexShader);
+    glAttachShader(result._shader, fragmentShader);
+    glLinkProgram(result._shader);
+
+    glGetProgramiv(result._shader, GL_LINK_STATUS, &success);
+
+    if(!success)
+    {
+        int32_t length;
+		glGetProgramiv(result._shader, GL_INFO_LOG_LENGTH, &length);
+		char* infoLog = (char*)malloc(sizeof(char) * length);
+		glGetProgramInfoLog(result._shader, length, &length, infoLog);
+		std::cout << infoLog << std::endl;
+		free(infoLog);
+
+    }
+
     return result;
 }
 
