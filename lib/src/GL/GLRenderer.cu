@@ -100,11 +100,15 @@ GLRenderer::createHostObject()
     ///////////////////////////////////////////////////////
     ///             Vertex Buffer                       ///
     ///////////////////////////////////////////////////////
-    float vertices[6] = 
+    float vertices[12] = 
     {
-        -0.5f,-0.5f,
-        0.5f,-0.5f,
-        0.0f,0.5f
+        -1,-1,
+        1,-1,
+        1,1,
+
+        -1,-1,
+        1,1,
+        -1,1
     };
 
     glGenBuffers(1, &result._vbo);
@@ -127,5 +131,5 @@ GLRenderer::destroyHostObject(GLRenderer& object)
 void
 GLRenderer::renderTexture(const RenderBuffer& img)
 {
-    glDrawArrays(GL_TRIANGLES, 0, 3);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
 }
