@@ -4,6 +4,8 @@
 #include <GL/glew.h>
 #include <string>
 
+#include <Core/Memory.cuh>
+
 #include <cuda_gl_interop.h>
 
 GLRenderer
@@ -74,20 +76,20 @@ GLRenderer::createShader()
     {
         int32_t length;
         glGetShaderiv(vertexShader, GL_INFO_LOG_LENGTH, &length);
-        char* infoLog = (char*)malloc(sizeof(char) * length);
+        char* infoLog = Memory::allocator()->createHostArray<char>(length);
         glGetShaderInfoLog(vertexShader, length, &length, infoLog);
         std::cout << infoLog << std::endl;
-        free(infoLog);
+        Memory::allocator()->destroyHostArray<char>(infoLog);
     }
 
     if(!fragmentSuccess)
     {
         int32_t length;
         glGetShaderiv(fragmentShader, GL_INFO_LOG_LENGTH, &length);
-        char* infoLog = (char*)malloc(sizeof(char) * length);
+        char* infoLog = Memory::allocator()->createHostArray<char>(length);
         glGetShaderInfoLog(fragmentShader, length, &length, infoLog);
         std::cout << infoLog << std::endl;
-        free(infoLog);
+        Memory::allocator()->destroyHostArray<char>(infoLog);
     }
 
     ///////////////////////////////////////////////////////
@@ -106,11 +108,10 @@ GLRenderer::createShader()
     {
         int32_t length;
 		glGetProgramiv(_shader, GL_INFO_LOG_LENGTH, &length);
-		char* infoLog = (char*)malloc(sizeof(char) * length);
+		char* infoLog = Memory::allocator()->createHostArray<char>(length);
 		glGetProgramInfoLog(_shader, length, &length, infoLog);
 		std::cout << infoLog << std::endl;
-		free(infoLog);
-
+		Memory::allocator()->destroyHostArray<char>(infoLog);
     }
 
     glDeleteShader(vertexShader);
