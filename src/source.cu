@@ -1,5 +1,6 @@
 #include <GLFW/glfw3.h>
 #include <DataStructure/Image.cuh>
+#include <GL/GLRenderer.cuh>
 
 int main()
 {
