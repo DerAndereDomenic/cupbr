@@ -12,19 +12,25 @@ GLRenderer::createHostObject()
     std::string vertexCode =
     "#version 330 core\n\
     layout (location=0) in vec2 aPosition;\n\
+    layout (location=1) in vec2 aTexture;\n\
+    \
+    out vec2 frag_tex;\n\
     \
     void main()\n\
     {\n\
         gl_Position = vec4(aPosition, 0, 1);\n\
+        frag_tex = aTexture;\n\
     }";
 
     std::string fragmentCode =
     "#version 330 core\n\
     out vec4 FragColor;\n\
     \
+    in vec2 frag_tex;\n\
+    \
     void main()\n\
     {\n\
-        FragColor = vec4(1,1,0,1);\
+        FragColor = vec4(frag_tex,0,1);\
     }";
 
     ///////////////////////////////////////////////////////
