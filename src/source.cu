@@ -1,7 +1,10 @@
 #include <GLFW/glfw3.h>
+#include <DataStructure/Image.cuh>
 
 int main()
 {
+    Image<float> img = Image<float>::createHostObject(640, 480);
+
     GLFWwindow* window;
 
     /* Initialize the library */
@@ -33,6 +36,10 @@ int main()
     }
 
     glfwTerminate();
+
+    Image<float>::destroyHostObject(img);
+
+    Memory::allocator()->printStatistics();
 
     return 0;
 }
