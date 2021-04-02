@@ -19,7 +19,6 @@ class GLRenderer
     private:
         uint32_t _shader;
         uint32_t _screen_texture;
-        float* _quad_buffer;
 };
 
 #endif
