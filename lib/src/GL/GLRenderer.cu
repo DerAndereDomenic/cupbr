@@ -4,11 +4,25 @@
 #include <GL/glew.h>
 #include <string>
 
+#include <cuda_gl_interop.h>
+
 GLRenderer
 GLRenderer::createHostObject(const uint32_t& width, const uint32_t& height)
 {
     GLRenderer result;
 
+    result.createShader();
+
+    result.createQuadVBO();
+
+    result.createGLTexture(width, height);
+
+    return result;
+}
+
+void 
+GLRenderer::createShader()
+{
     std::string vertexCode =
     "#version 330 core\n\
     layout (location=0) in vec2 aPosition;\n\
@@ -81,19 +95,19 @@ GLRenderer::createHostObject(const uint32_t& width, const uint32_t& height)
     ///////////////////////////////////////////////////////
     int32_t success;
 
-    result._shader = glCreateProgram();
-    glAttachShader(result._shader, vertexShader);
-    glAttachShader(result._shader, fragmentShader);
-    glLinkProgram(result._shader);
+    _shader = glCreateProgram();
+    glAttachShader(_shader, vertexShader);
+    glAttachShader(_shader, fragmentShader);
+    glLinkProgram(_shader);
 
-    glGetProgramiv(result._shader, GL_LINK_STATUS, &success);
+    glGetProgramiv(_shader, GL_LINK_STATUS, &success);
 
     if(!success)
     {
         int32_t length;
-		glGetProgramiv(result._shader, GL_INFO_LOG_LENGTH, &length);
+		glGetProgramiv(_shader, GL_INFO_LOG_LENGTH, &length);
 		char* infoLog = (char*)malloc(sizeof(char) * length);
-		glGetProgramInfoLog(result._shader, length, &length, infoLog);
+		glGetProgramInfoLog(_shader, length, &length, infoLog);
 		std::cout << infoLog << std::endl;
 		free(infoLog);
 
@@ -103,8 +117,12 @@ GLRenderer::createHostObject(const uint32_t& width, const uint32_t& height)
     glDeleteShader(fragmentShader);
 
     //Bind
-    glUseProgram(result._shader);
+    glUseProgram(_shader);
+}
 
+void 
+GLRenderer::createQuadVBO()
+{
     ///////////////////////////////////////////////////////
     ///             Vertex Buffer                       ///
     ///////////////////////////////////////////////////////
@@ -119,8 +137,8 @@ GLRenderer::createHostObject(const uint32_t& width, const uint32_t& height)
         -1,1, 0, 1
     };
 
-    glGenBuffers(1, &result._vbo);
-    glBindBuffer(GL_ARRAY_BUFFER, result._vbo);
+    glGenBuffers(1, &_vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, _vbo);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4*sizeof(float), (void*)0);
@@ -128,19 +146,21 @@ GLRenderer::createHostObject(const uint32_t& width, const uint32_t& height)
 
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4*sizeof(float), (void*)(sizeof(float)*2));
     glEnableVertexAttribArray(1);
+}
 
+void 
+GLRenderer::createGLTexture(const uint32_t& width, const uint32_t& height)
+{
     ///////////////////////////////////////////////////////
     ///             Screen Texture                      ///
     ///////////////////////////////////////////////////////
-    glGenTextures(1, &result._screen_texture);
-    glBindTexture(GL_TEXTURE_2D, result._screen_texture);
+    glGenTextures(1, &_screen_texture);
+    glBindTexture(GL_TEXTURE_2D, _screen_texture);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
     glGenerateMipmap(GL_TEXTURE_2D);
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
-    return result;
 }
 
 void

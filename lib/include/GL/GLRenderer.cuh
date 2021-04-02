@@ -17,6 +17,12 @@ class GLRenderer
         void
         renderTexture(const RenderBuffer& img);
     private:
+        void createShader();
+
+        void createQuadVBO();
+
+        void createGLTexture(const uint32_t& width, const uint32_t& height);
+
         uint32_t _vbo;
         uint32_t _shader;
         uint32_t _screen_texture;
