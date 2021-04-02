@@ -1,7 +1,7 @@
 #ifndef __CUPBR_CORE_MEMORY_H
 #define __CUPBR_CORE_MEMORY_H
 
-#include "cuda_runtime.h"
+#include <Core/CUDA.cuh>
 
 /**
 *   @brief A class responsible for memory allocation

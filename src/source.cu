@@ -6,6 +6,8 @@
 
 int main()
 {
+    cudaSafeCall(cudaSetDevice(0));
+
     RenderBuffer img = RenderBuffer::createHostObject(640, 480);
 
     for(uint32_t i = 0; i < 640; ++i)
