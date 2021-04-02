@@ -1,14 +1,12 @@
-#include <Core/KernelHelper.cuh>
-
 __device__
-uint32_t
+inline uint32_t
 ThreadHelper::globalThreadIndex()
 {
     return blockIdx.x*blockDim.x + threadIdx.x;
 }
 
 __host__ __device__
-Vector2uint32_t
+inline Vector2uint32_t
 ThreadHelper::index2pixel(const uint32_t& index, const uint32_t& width, const uint32_t& height)
 {
     uint32_t y = index/width;
@@ -17,7 +15,7 @@ ThreadHelper::index2pixel(const uint32_t& index, const uint32_t& width, const ui
 }
 
 __host__ __device__
-uint32_t
+inline uint32_t
 ThreadHelper::pixel2index(const Vector2uint32_t& pixel, const uint32_t& width)
 {
     return pixel.x + pixel.y*width;
@@ -25,7 +23,7 @@ ThreadHelper::pixel2index(const Vector2uint32_t& pixel, const uint32_t& width)
 
 
 __host__
-KernelSizeHelper::KernelSize
+inline KernelSizeHelper::KernelSize
 KernelSizeHelper::configure(const uint32_t& size)
 {
     KernelSizeHelper::KernelSize result;

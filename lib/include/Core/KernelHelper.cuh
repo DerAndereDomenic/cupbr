@@ -63,5 +63,6 @@ namespace KernelSizeHelper
     KernelSize configure(const uint32_t& size);
 }
 
+#include "../../src/Core/KernelHelperDetail.cuh"
 
 #endif
