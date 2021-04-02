@@ -161,6 +161,8 @@ GLRenderer::createGLTexture(const uint32_t& width, const uint32_t& height)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
     cudaSafeCall(cudaGraphicsGLRegisterImage(&_cuda_resource, _screen_texture, GL_TEXTURE_2D, cudaGraphicsRegisterFlagsWriteDiscard));
+    cudaSafeCall(cudaGraphicsMapResources(1, &_cuda_resource, 0));
+    cudaSafeCall(cudaGraphicsSubResourceGetMappedArray(&_texture_ptr, _cuda_resource, 0, 0));
 }
 
 void
@@ -169,11 +171,14 @@ GLRenderer::destroyHostObject(GLRenderer& object)
     glDeleteProgram(object._shader);
     glDeleteVertexArrays(1, &object._vbo);
     glDeleteTextures(1, &object._screen_texture);
+
+    cudaSafeCall(cudaGraphicsUnmapResources(1, &object._cuda_resource, 0));
 }
 
 void
 GLRenderer::renderTexture(const RenderBuffer& img)
 {
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, img.width(), img.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, img.data());
+    cudaSafeCall(cudaMemcpyToArray(_texture_ptr, 0, 0, img.data(), 4*img.size(), cudaMemcpyDeviceToDevice));
+
     glDrawArrays(GL_TRIANGLES, 0, 6);
 }

@@ -31,6 +31,7 @@ class GLRenderer
         uint32_t _screen_texture;
 
         cudaGraphicsResource* _cuda_resource;
+        cudaArray* _texture_ptr;
 };
 
 #endif
