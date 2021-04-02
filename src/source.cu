@@ -4,20 +4,29 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
+#include <Core/KernelHelper.cuh>
+
+__global__ void fillBuffer(RenderBuffer img)
+{
+    uint32_t tid = ThreadHelper::globalThreadIndex();
+
+    if(tid >= img.size())
+    {
+        return;
+    }
+
+    img[tid] = Vector4uint32_t(255,255,255,255);
+}
+
 int main()
 {
     cudaSafeCall(cudaSetDevice(0));
 
-    RenderBuffer img = RenderBuffer::createHostObject(640, 480);
+    RenderBuffer img = RenderBuffer::createDeviceObject(640, 480);
+    KernelSizeHelper::KernelSize config = KernelSizeHelper::configure(img.size());
 
-    for(uint32_t i = 0; i < 640; ++i)
-    {
-        for(uint32_t j = 0; j < 480; ++j)
-        {
-            Vector2uint32_t pixel(i,j);
-            img(pixel) = Vector4uint8_t(255,0,255,255);
-        }
-    }
+    fillBuffer<<<config.blocks, config.threads>>>(img);
+    cudaSafeCall(cudaDeviceSynchronize());
 
     GLFWwindow* window;
 
@@ -61,7 +70,7 @@ int main()
 
     glfwTerminate();
 
-    RenderBuffer::destroyHostObject(img);
+    RenderBuffer::destroyDeviceObject(img);
 
     Memory::allocator()->printStatistics();
 
