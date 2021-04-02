@@ -31,7 +31,7 @@ int main()
 	}
 
 
-    GLRenderer renderer = GLRenderer::createHostObject();
+    GLRenderer renderer = GLRenderer::createHostObject(640, 480);
 
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))

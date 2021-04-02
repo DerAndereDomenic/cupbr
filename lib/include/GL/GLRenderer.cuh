@@ -9,7 +9,7 @@ class GLRenderer
         GLRenderer() = default;
 
         static GLRenderer
-        createHostObject();
+        createHostObject(const uint32_t& width, const uint32_t& height);
 
         static void
         destroyHostObject(GLRenderer& object);

@@ -5,7 +5,7 @@
 #include <string>
 
 GLRenderer
-GLRenderer::createHostObject()
+GLRenderer::createHostObject(const uint32_t& width, const uint32_t& height)
 {
     GLRenderer result;
 
@@ -126,6 +126,11 @@ GLRenderer::createHostObject()
 
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4*sizeof(float), (void*)(sizeof(float)*2));
     glEnableVertexAttribArray(1);
+
+    ///////////////////////////////////////////////////////
+    ///             Screen Texture                      ///
+    ///////////////////////////////////////////////////////
+
 
     return result;
 }
