@@ -127,5 +127,5 @@ GLRenderer::destroyHostObject(GLRenderer& object)
 void
 GLRenderer::renderTexture(const RenderBuffer& img)
 {
-    
+    glDrawArrays(GL_TRIANGLES, 0, 3);
 }
