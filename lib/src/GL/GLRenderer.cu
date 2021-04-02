@@ -130,7 +130,13 @@ GLRenderer::createHostObject(const uint32_t& width, const uint32_t& height)
     ///////////////////////////////////////////////////////
     ///             Screen Texture                      ///
     ///////////////////////////////////////////////////////
+    glGenTextures(1, &result._screen_texture);
+    glBindTexture(GL_TEXTURE_2D, result._screen_texture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+    glGenerateMipmap(GL_TEXTURE_2D);
 
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
     return result;
 }
@@ -140,6 +146,7 @@ GLRenderer::destroyHostObject(GLRenderer& object)
 {
     glDeleteProgram(object._shader);
     glDeleteVertexArrays(1, &object._vbo);
+    glDeleteTextures(1, &object._screen_texture);
 }
 
 void
