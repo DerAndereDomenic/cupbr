@@ -100,23 +100,26 @@ GLRenderer::createHostObject()
     ///////////////////////////////////////////////////////
     ///             Vertex Buffer                       ///
     ///////////////////////////////////////////////////////
-    float vertices[12] = 
+    float vertices[24] = 
     {
-        -1,-1,
-        1,-1,
-        1,1,
+        -1,-1, 0, 0,
+        1,-1, 1, 0,
+        1,1, 1, 1,
 
-        -1,-1,
-        1,1,
-        -1,1
+        -1,-1, 0, 0,
+        1,1, 1, 1,
+        -1,1, 0, 1
     };
 
     glGenBuffers(1, &result._vbo);
     glBindBuffer(GL_ARRAY_BUFFER, result._vbo);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2*sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4*sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
+
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4*sizeof(float), (void*)(sizeof(float)*2));
+    glEnableVertexAttribArray(1);
 
     return result;
 }
