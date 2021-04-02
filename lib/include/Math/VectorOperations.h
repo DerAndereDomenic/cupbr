@@ -76,6 +76,42 @@ template<typename T>
 __host__ __device__
 void operator/=(Vector3<T>& lhs, const T& rhs);
 
+template<typename T>
+__host__ __device__
+Vector4<T> operator+(const Vector4<T>& lhs, const Vector4<T>& rhs);
+
+template<typename T>
+__host__ __device__
+Vector4<T> operator-(const Vector4<T>& lhs, const Vector4<T>& rhs);
+
+template<typename T>
+__host__ __device__
+Vector4<T> operator*(const Vector4<T>& lhs, const T& rhs);
+
+template<typename T>
+__host__ __device__
+Vector4<T> operator*(const T& lhs, const Vector4<T>& rhs);
+
+template<typename T>
+__host__ __device__
+Vector4<T> operator/(const Vector4<T>& lhs, const T& rhs);
+
+template<typename T>
+__host__ __device__
+void operator+=(Vector4<T>& lhs, const Vector4<T>& rhs);
+
+template<typename T>
+__host__ __device__
+void operator-=(Vector4<T>& lhs, const Vector4<T>& rhs);
+
+template<typename T>
+__host__ __device__
+void operator*=(Vector4<T>& lhs, const T& rhs);
+
+template<typename T>
+__host__ __device__
+void operator/=(Vector4<T>& lhs, const T& rhs);
+
 #include "../../src/Math/VectorOperationsDetail.h"
 
 #endif

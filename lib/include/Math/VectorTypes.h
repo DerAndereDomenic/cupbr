@@ -54,7 +54,7 @@ struct Vector3
 		*	@brief Creates a 3D vector.
 		*	@param x The x coordinate
 		*	@param y The y coordinate
-		*	@param z The z coorinate
+		*	@param z The z coordinate
 		*/
 		__host__ __device__
 		Vector3(const T& x, const T& y, const T& z);
@@ -72,6 +72,44 @@ struct Vector3
 		T x;	/**< The x coordinate*/
 		T y;	/**< The y coordinate*/
 		T z;	/**< The z coordinate*/
+};
+
+/**
+*	@brief A 4D vector
+*/
+template<typename T>
+struct Vector4
+{
+	public:
+		/**
+		*	@brief Default constructor.
+		*/
+		Vector4() = default;
+
+		/**
+		*	@brief Creates a 3D vector.
+		*	@param x The x coordinate
+		*	@param y The y coordinate
+		*	@param z The z coordinate
+		*	@param w The w coordinate
+		*/
+		__host__ __device__
+		Vector4(const T& x, const T& y, const T& z, const T& w);
+
+		/**
+		*	@brief Cast between vector types.
+		*/
+		template<typename S>
+		__host__ __device__
+		operator Vector4<S>() const
+		{
+			return Vector4<S>(static_cast<S>(x), static_cast<S>(y), static_cast<S>(z), static_cast<S>(w));
+		}
+
+		T x;	/**< The x coordinate*/
+		T y;	/**< The y coordinate*/
+		T z;	/**< The z coordinate*/
+		T w;	/**< The w coordinate*/
 };
 
 #include "../../src/Math/VectorTypesDetail.h"

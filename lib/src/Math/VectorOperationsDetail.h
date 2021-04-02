@@ -141,6 +141,79 @@ void operator/=(Vector3<T>& lhs, const T& rhs)
 	lhs.z /= rhs;
 }
 
-#include "../../src/Math/VectorOperationsDetail.h"
+template<typename T>
+__host__ __device__
+Vector4<T> operator+(const Vector4<T>& lhs, const Vector4<T>& rhs)
+{
+	return Vector4<T>(lhs.x + rhs.x, lhs.y + rhs.y, lhs.z + rhs.z, lhs.w + rhs.w);
+}
+
+template<typename T>
+__host__ __device__
+Vector4<T> operator-(const Vector4<T>& lhs, const Vector4<T>& rhs)
+{
+	return Vector3<T>(lhs.x - rhs.x, lhs.y - rhs.y, lhs.z - rhs.z, lhs.w - rhs.w);
+}
+
+template<typename T>
+__host__ __device__
+Vector4<T> operator*(const Vector4<T>& lhs, const T& rhs)
+{
+	return operator*(rhs, lhs);
+}
+
+template<typename T>
+__host__ __device__
+Vector4<T> operator*(const T& lhs, const Vector4<T>& rhs)
+{
+	return Vector4<T>(lhs * rhs.x, lhs * rhs.y, lhs * rhs.z, lhs * rhs.w);
+}
+
+template<typename T>
+__host__ __device__
+Vector4<T> operator/(const Vector4<T>& lhs, const T& rhs)
+{
+	return Vector4<T>(lhs.x / rhs, lhs.y / rhs, lhs.z / rhs, lhs.w / rhs);
+}
+
+template<typename T>
+__host__ __device__
+void operator+=(Vector4<T>& lhs, const Vector4<T>& rhs)
+{
+	lhs.x += rhs.x;
+	lhs.y += rhs.y;
+	lhs.z += rhs.z;
+	lhs.w += rhs.w;
+}
+
+template<typename T>
+__host__ __device__
+void operator-=(Vector4<T>& lhs, const Vector4<T>& rhs)
+{
+	lhs.x -= rhs.x;
+	lhs.y -= rhs.y;
+	lhs.z -= rhs.z;
+	lhs.w -= rhs.w;
+}
+
+template<typename T>
+__host__ __device__
+void operator*=(Vector4<T>& lhs, const T& rhs)
+{
+	lhs.x *= rhs;
+	lhs.y *= rhs;
+	lhs.z *= rhs;
+	lhs.w *= rhs;
+}
+
+template<typename T>
+__host__ __device__
+void operator/=(Vector4<T>& lhs, const T& rhs)
+{
+	lhs.x /= rhs;
+	lhs.y /= rhs;
+	lhs.z /= rhs;
+	lhs.w /= rhs;
+}
 
 #endif

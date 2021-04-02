@@ -46,4 +46,25 @@ Math::normalize(Vector3<T>& v)
 	v /= norm(v);
 }
 
+template<typename T>
+T 
+Math::norm(const Vector4<T>& v)
+{
+	return sqrtf(dot(v, v));
+}
+
+template<typename T>
+T 
+Math::dot(const Vector4<T>& v, const Vector4<T>& w)
+{
+	return v.x * w.x + v.y * w.y + v.z * w.z + v.w*w.w;
+}
+
+template<typename T>
+void 
+Math::normalize(Vector4<T>& v)
+{
+	v /= norm(v);
+}
+
 #endif
