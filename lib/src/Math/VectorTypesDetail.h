@@ -28,4 +28,14 @@ Vector4<T>::Vector4(const T& x, const T& y, const T& z, const T& w)
 
 }
 
+template<typename T>
+Vector4<T>::Vector4(const Vector3<T>& v, const T& w)
+	:x(v.x),
+	 y(v.y),
+	 z(v.z),
+	 w(w)
+{
+
+}
+
 #endif

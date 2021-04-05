@@ -18,8 +18,8 @@ struct Vector2
 
 		/**
 		*	@brief Creates a 3D vector.
-		*	@param x The x coordinate
-		*	@param y The y coordinate
+		*	@param x[in] The x coordinate
+		*	@param y[in] The y coordinate
 		*/
 		__host__ __device__
 		Vector2(const T& x, const T& y);
@@ -52,9 +52,9 @@ struct Vector3
 
 		/**
 		*	@brief Creates a 3D vector.
-		*	@param x The x coordinate
-		*	@param y The y coordinate
-		*	@param z The z coordinate
+		*	@param x[in] The x coordinate
+		*	@param y[in] The y coordinate
+		*	@param z[in] The z coordinate
 		*/
 		__host__ __device__
 		Vector3(const T& x, const T& y, const T& z);
@@ -87,14 +87,22 @@ struct Vector4
 		Vector4() = default;
 
 		/**
-		*	@brief Creates a 3D vector.
-		*	@param x The x coordinate
-		*	@param y The y coordinate
-		*	@param z The z coordinate
-		*	@param w The w coordinate
+		*	@brief Creates a 4D vector.
+		*	@param[in] x The x coordinate
+		*	@param[in] y The y coordinate
+		*	@param[in] z The z coordinate
+		*	@param[in] w The w coordinate
 		*/
 		__host__ __device__
 		Vector4(const T& x, const T& y, const T& z, const T& w);
+
+		/**
+		*	@brief Creates a 4D vector from a 3D one.
+		*	@param[in] v A 3D vector
+		*	@param[in] w The w component 
+		*/
+		__host__ __device__
+		Vector4(const Vector3<T>& v, const T& w);
 
 		/**
 		*	@brief Cast between vector types.
