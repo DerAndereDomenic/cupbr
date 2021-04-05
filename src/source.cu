@@ -1,12 +1,12 @@
 #include <iostream>
-#include <DataStructure/RenderBuffer.cuh>
 #include <GL/GLRenderer.cuh>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
 #include <Core/KernelHelper.cuh>
+#include <DataStructure/Camera.cuh>
 
-__global__ void fillBuffer(RenderBuffer img, uint8_t time)
+__global__ void fillBuffer(RenderBuffer img, const Camera camera)
 {
     uint32_t tid = ThreadHelper::globalThreadIndex();
 
@@ -15,7 +15,23 @@ __global__ void fillBuffer(RenderBuffer img, uint8_t time)
         return;
     }
 
-    img[tid] = Vector4uint32_t(time,0,time,255);
+    const float width = img.width();
+    const float height = img.height();
+    const Vector2uint32_t pixel = ThreadHelper::index2pixel(tid, width, height);
+
+    const float ratio_x = 2.0f*(static_cast<float>(pixel.x)/width - 0.5f);
+    const float ratio_y = 2.0f*(static_cast<float>(pixel.y)/height - 0.5f);
+
+    const Vector3float world_pos = camera.position() + camera.zAxis() + ratio_x*camera.xAxis() + ratio_y*camera.yAxis();
+
+    float dist = Math::norm(world_pos - (camera.position() + camera.zAxis()));
+
+    //"Tone mapping"
+
+    const float max_dist = Math::norm(camera.xAxis() + camera.yAxis());
+    uint8_t ratio = static_cast<uint8_t>(dist/max_dist*255.0f);
+
+    img[tid] = Vector4uint32_t(ratio, ratio, ratio,255);
 }
 
 int main()
@@ -48,8 +64,7 @@ int main()
 	}
 
     GLRenderer renderer = GLRenderer::createHostObject(640, 480);
-
-    uint8_t time = 0;
+    Camera camera;
 
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
@@ -57,8 +72,7 @@ int main()
         /* Render here */
         glClear(GL_COLOR_BUFFER_BIT);
 
-        ++time;
-        fillBuffer<<<config.blocks, config.threads>>>(img,time);
+        fillBuffer<<<config.blocks, config.threads>>>(img,camera);
         cudaSafeCall(cudaDeviceSynchronize());
         renderer.renderTexture(img);
 
