@@ -10,7 +10,7 @@ inline Vector2uint32_t
 ThreadHelper::index2pixel(const uint32_t& index, const uint32_t& width, const uint32_t& height)
 {
     uint32_t y = index/width;
-    uint32_t x = index - width*height;
+    uint32_t x = index - width*y;
     return Vector2uint32_t(x,y);
 }
 
