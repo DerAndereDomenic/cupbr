@@ -31,19 +31,42 @@ __global__ void fillBuffer(RenderBuffer img, const Camera camera)
     
     //Compute intersection
     Vector4float intersection = sphere.computeRayIntersection(ray);
+    Vector3float intersection_point = Vector3float(intersection);
+
+    //Lighting
+    const Vector3float lightPos(1,1,1);
+
+    Vector3float brdf = Vector3float(1,1,1)/static_cast<float>(M_PI); //Albedo/pi
+    Vector3float lightIntensity = Vector3float(1000,1000,1000); //White light
+    Vector3float lightDir = Math::normalize(lightPos - intersection_point);
+    float d = Math::norm(intersection_point-lightPos);
+    Vector3float lightRadiance = lightIntensity/(d*d);
+    float cosTerm = Math::dot(sphere.getNormal(intersection_point), lightDir);
+    Vector3float radiance = brdf*lightRadiance*cosTerm;
 
     //"Tone mapping"
 
-    int8_t ratio = intersection.w == INFINITY ? 0 : 255;
+    Vector3uint8_t color(0);
 
-    img[tid] = Vector4uint32_t(ratio, ratio, ratio,255);
+    if(intersection.w != INFINITY)
+    {
+        uint8_t red = radiance.x > 255 ? 255 : static_cast<uint8_t>(radiance.x);
+        uint8_t green = radiance.y > 255 ? 255 : static_cast<uint8_t>(radiance.y);
+        uint8_t blue = radiance.z > 255 ? 255 : static_cast<uint8_t>(radiance.z);
+
+        color = Vector3uint8_t(red, green, blue);
+    }
+
+    img[tid] = Vector4uint8_t(color,255);
 }
 
 int main()
 {
+    const uint32_t width = 1024, height = 1024;
+
     cudaSafeCall(cudaSetDevice(0));
 
-    RenderBuffer img = RenderBuffer::createDeviceObject(640, 480);
+    RenderBuffer img = RenderBuffer::createDeviceObject(width, height);
     KernelSizeHelper::KernelSize config = KernelSizeHelper::configure(img.size());
 
     GLFWwindow* window;
@@ -53,7 +76,7 @@ int main()
         return -1;
 
     /* Create a windowed mode window and its OpenGL context */
-    window = glfwCreateWindow(640, 480, "Hello World", NULL, NULL);
+    window = glfwCreateWindow(width, height, "Hello World", NULL, NULL);
     if (!window)
     {
         glfwTerminate();
@@ -68,7 +91,7 @@ int main()
 		std::cout <<"RENDERER::GLEWINIT::ERROR\n";
 	}
 
-    GLRenderer renderer = GLRenderer::createHostObject(640, 480);
+    GLRenderer renderer = GLRenderer::createHostObject(width, height);
     Camera camera;
 
     /* Loop until the user closes the window */
