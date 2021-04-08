@@ -22,6 +22,10 @@ Vector2<T> operator*(const T& lhs, const Vector2<T>& rhs);
 
 template<typename T>
 __host__ __device__
+Vector2<T> operator*(const Vector2<T>& lhs, const Vector2<T>& rhs);
+
+template<typename T>
+__host__ __device__
 Vector2<T> operator/(const Vector2<T>& lhs, const T& rhs);
 
 template<typename T>
@@ -58,6 +62,10 @@ Vector3<T> operator*(const T& lhs, const Vector3<T>& rhs);
 
 template<typename T>
 __host__ __device__
+Vector3<T> operator*(const Vector3<T>& lhs, const Vector3<T>& rhs);
+
+template<typename T>
+__host__ __device__
 Vector3<T> operator/(const Vector3<T>& lhs, const T& rhs);
 
 template<typename T>
@@ -91,6 +99,10 @@ Vector4<T> operator*(const Vector4<T>& lhs, const T& rhs);
 template<typename T>
 __host__ __device__
 Vector4<T> operator*(const T& lhs, const Vector4<T>& rhs);
+
+template<typename T>
+__host__ __device__
+Vector4<T> operator*(const Vector4<T>& lhs, const Vector4<T>& rhs);
 
 template<typename T>
 __host__ __device__
