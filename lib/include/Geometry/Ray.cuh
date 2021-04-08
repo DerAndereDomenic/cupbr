@@ -44,4 +44,6 @@ class Ray
         Vector3float _direction;    /**< The normalized ray direction */
 };
 
+#include "../../src/Geometry/RayDetail.cuh"
+
 #endif
