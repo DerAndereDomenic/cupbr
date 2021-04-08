@@ -52,4 +52,6 @@ class Sphere : public Geometry
         float _radius;              /**< The radius */
 };
 
+#include "../../src/Geometry/SphereDetail.cuh"
+
 #endif
