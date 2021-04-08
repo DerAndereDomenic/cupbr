@@ -34,25 +34,29 @@ __global__ void fillBuffer(RenderBuffer img, const Camera camera)
     Vector3float intersection_point = Vector3float(intersection);
 
     //Lighting
-    const Vector3float lightPos(1,1,1);
+    const Vector3float lightPos(1,2,-2);
 
     Vector3float brdf = Vector3float(1,1,1)/static_cast<float>(M_PI); //Albedo/pi
-    Vector3float lightIntensity = Vector3float(1000,1000,1000); //White light
+    Vector3float lightIntensity = Vector3float(10,10,10); //White light
     Vector3float lightDir = Math::normalize(lightPos - intersection_point);
     float d = Math::norm(intersection_point-lightPos);
     Vector3float lightRadiance = lightIntensity/(d*d);
-    float cosTerm = Math::dot(sphere.getNormal(intersection_point), lightDir);
+    float cosTerm = max(0.0f,Math::dot(sphere.getNormal(intersection_point), lightDir));
     Vector3float radiance = brdf*lightRadiance*cosTerm;
 
-    //"Tone mapping"
+    //Tone mapping
 
     Vector3uint8_t color(0);
 
     if(intersection.w != INFINITY)
     {
-        uint8_t red = radiance.x > 255 ? 255 : static_cast<uint8_t>(radiance.x);
-        uint8_t green = radiance.y > 255 ? 255 : static_cast<uint8_t>(radiance.y);
-        uint8_t blue = radiance.z > 255 ? 255 : static_cast<uint8_t>(radiance.z);
+        float mapped_red = powf(1.0 - expf(-radiance.x), 1.0f/2.2f);
+        float mapped_green = powf(1.0 - expf(-radiance.y), 1.0f/2.2f);
+        float mapped_blue = powf(1.0 - expf(-radiance.z), 1.0f/2.2);
+
+        uint8_t red = mapped_red > 1.0 ? 255 : static_cast<uint8_t>(mapped_red*255.0f);
+        uint8_t green = mapped_green > 1.0 ? 255 : static_cast<uint8_t>(mapped_green*255.0f);
+        uint8_t blue = mapped_blue > 1.0 ? 255 : static_cast<uint8_t>(mapped_blue*255.0f);
 
         color = Vector3uint8_t(red, green, blue);
     }
