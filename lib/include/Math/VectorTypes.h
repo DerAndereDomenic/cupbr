@@ -74,6 +74,14 @@ struct Vector3
 		Vector3(const T& v);
 
 		/**
+		*	@brief Creates a 3D vector from a 4D vector
+		*	@param[in] v The 4D vector
+		*	@note The w component is discarded 
+		*/ 
+		__host__ __device__
+		Vector3(const Vector4<T>& v);
+
+		/**
 		*	@brief Cast between vector types.
 		*/
 		template<typename S>
