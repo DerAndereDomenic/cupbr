@@ -31,6 +31,7 @@ namespace Math
 	*	@brief Normalizes the given vector
 	*	@tparam T The vector data type
 	*	@param v The vector to normalize
+	*	@return The normalized vector
 	*/
 	template<typename T>
 	__host__ __device__
@@ -61,6 +62,7 @@ namespace Math
 	*	@brief Normalizes the given vector
 	*	@tparam T The vector data type
 	*	@param v The vector to normalize
+	*	@return The normalized vector
 	*/
 	template<typename T>
 	__host__ __device__
@@ -91,6 +93,7 @@ namespace Math
 	*	@brief Normalizes the given vector
 	*	@tparam T The vector data type
 	*	@param v The vector to normalize
+	*	@return The normalized vector
 	*/
 	template<typename T>
 	__host__ __device__
