@@ -20,6 +20,7 @@ class Ray
         *   @param[in] direction The ray direction
         *   @note The direction will get normalized by the constructor
         */
+        __host__ __device__
         Ray(const Vector3float& origin, const Vector3float direction);
 
         /**
