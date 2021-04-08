@@ -34,7 +34,7 @@ namespace Math
 	*/
 	template<typename T>
 	__host__ __device__
-	void normalize(Vector2<T>& v);
+	Vector2<T> normalize(const Vector2<T>& v);
 
 	/**
 	*	@brief Get the norm of a vector
@@ -64,7 +64,7 @@ namespace Math
 	*/
 	template<typename T>
 	__host__ __device__
-	void normalize(Vector3<T>& v);
+	Vector3<T> normalize(const Vector3<T>& v);
 	
 	/**
 	*	@brief Get the norm of a vector
@@ -94,7 +94,7 @@ namespace Math
 	*/
 	template<typename T>
 	__host__ __device__
-	void normalize(Vector4<T>& v);
+	Vector4<T> normalize(const Vector4<T>& v);
 }
 
 #include "../../src/Math/VectorFunctionsDetail.h"

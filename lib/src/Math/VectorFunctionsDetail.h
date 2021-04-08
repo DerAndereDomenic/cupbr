@@ -19,10 +19,10 @@ Math::dot(const Vector2<T>& v, const Vector2<T>& w)
 }
 
 template<typename T>
-void 
-Math::normalize(Vector2<T>& v)
+Vector2<T> 
+Math::normalize(const Vector2<T>& v)
 {
-	v /= norm(v);
+	return v/norm(v);
 }
 
 template<typename T>
@@ -40,10 +40,10 @@ Math::dot(const Vector3<T>& v, const Vector3<T>& w)
 }
 
 template<typename T>
-void 
-Math::normalize(Vector3<T>& v)
+Vector3<T> 
+Math::normalize(const Vector3<T>& v)
 {
-	v /= norm(v);
+	return v/norm(v);
 }
 
 template<typename T>
@@ -61,10 +61,10 @@ Math::dot(const Vector4<T>& v, const Vector4<T>& w)
 }
 
 template<typename T>
-void 
-Math::normalize(Vector4<T>& v)
+Vector4<T> 
+Math::normalize(const Vector4<T>& v)
 {
-	v /= norm(v);
+	return v/norm(v);
 }
 
 #endif
