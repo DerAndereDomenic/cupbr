@@ -37,6 +37,6 @@ class Geometry
     private:
 };
 
-#include "../../src/GeometryDetail.cuh"
+#include "../../src/Geometry/GeometryDetail.cuh"
 
 #endif

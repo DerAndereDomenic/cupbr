@@ -28,8 +28,8 @@ class Ray
         *   @return The ray origin
         */
         __host__ __device__
-        Vector3float&
-        origin();
+        Vector3float
+        origin() const;
 
         /**
         *   @brief Get a reference to the ray direction
@@ -37,8 +37,8 @@ class Ray
         *   @note Normalized
         */
         __host__ __device__
-        Vector3float&
-        direction();
+        Vector3float
+        direction() const;
 
     private:
         Vector3float _origin;       /**< The ray origin */

@@ -4,21 +4,21 @@
 __host__ __device__
 Ray::Ray(const Vector3float& origin, const Vector3float direction)
     :_origin(origin),
-     _direction(direction)
+     _direction(Math::normalize(direction))
 {
-    Math::normalize(_direction);
+
 }
 
 __host__ __device__
-Vector3float&
-Ray::origin()
+Vector3float
+Ray::origin() const
 {
     return _origin;
 }
 
 __host__ __device__
-Vector3float&
-Ray::direction()
+Vector3float
+Ray::direction() const
 {
     return _direction;
 }
