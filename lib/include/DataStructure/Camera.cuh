@@ -60,6 +60,10 @@ class Camera
 
         float _pitch = 0.0f;                            /**< The pitch of the camera */
         float _yaw = 3.14159f/2.0f;                     /**< The yaw of the camera */
+
+        bool _firstMouse = true;                        /**< Boolean to initialize the first mouse movement */
+        float _lastX = 0.0f;                            /**< The last x position of the cursor needed for mouse movement */
+        float _lastY = 0.0f;                            /**< The last y position of the cursor needed for mouse movement */
 };
 
 #include "../../src/DataStructure/CameraDetail.cuh"

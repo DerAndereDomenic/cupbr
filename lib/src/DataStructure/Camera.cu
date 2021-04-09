@@ -3,6 +3,7 @@
 void
 Camera::processInput(GLFWwindow* window)
 {
+    //Keyboard
     if(glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
     {
         _position += 0.1f*_xAxis;
@@ -20,22 +21,34 @@ Camera::processInput(GLFWwindow* window)
         _position += 0.1f*_zAxis;
     }
 
-    if(glfwGetKey(window, GLFW_KEY_UP))
+
+    //Mouse
+    double xpos, ypos;
+    glfwGetCursorPos(window, &xpos, &ypos);
+
+    if(_firstMouse)
     {
-        _pitch += 0.01f;
+        _lastX = xpos;
+        _lastY = ypos;
+        _firstMouse = false;
     }
-    if(glfwGetKey(window, GLFW_KEY_DOWN))
-    {
-        _pitch -= 0.01f;
-    }
-    if(glfwGetKey(window, GLFW_KEY_RIGHT))
-    {
-        _yaw -= 0.01f;
-    }
-    if(glfwGetKey(window, GLFW_KEY_LEFT))
-    {
-        _yaw += 0.01f;
-    }
+
+    float sensitivity = 0.002f;
+    float xoffset = _lastX - xpos;
+    float yoffset = _lastY - ypos;
+    _lastX = xpos;
+    _lastY = ypos;
+
+    xoffset *= sensitivity;
+    yoffset *= sensitivity;
+
+    _yaw += xoffset;
+    _pitch += yoffset;
+
+    if(_pitch > 3.14159f/2.0f)
+        _pitch = 3.14159f/2.0f;
+    if(_pitch < -3.14159f/2.0f)
+        _pitch = -3.14159f/2.0f;
 
     Vector3float front(cos(_yaw)*cos(_pitch),
                        sin(_pitch),
