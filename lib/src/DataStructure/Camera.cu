@@ -57,4 +57,42 @@ Camera::processInput(GLFWwindow* window)
 
         _xAxis = Vector3float(x,y,z);
     }
+
+    if(glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
+    {
+        float alpha = -0.01f;
+        float c = cosf(alpha);
+        float s = sinf(alpha);
+
+        float y = c*_zAxis.y - s*_zAxis.z;
+        float x = _zAxis.x;
+        float z = s*_zAxis.y + c*_zAxis.z;
+
+        _zAxis = Vector3float(x,y,z);
+
+        y = c*_yAxis.y - s*_yAxis.z;
+        x = _yAxis.x;
+        z = s*_yAxis.y + c*_yAxis.z;
+
+        _yAxis = Vector3float(x,y,z);
+    }
+
+    if(glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
+    {
+        float alpha = 0.01f;
+        float c = cosf(alpha);
+        float s = sinf(alpha);
+
+        float y = c*_zAxis.y - s*_zAxis.z;
+        float x = _zAxis.x;
+        float z = s*_zAxis.y + c*_zAxis.z;
+
+        _zAxis = Vector3float(x,y,z);
+
+        y = c*_yAxis.y - s*_yAxis.z;
+        x = _yAxis.x;
+        z = s*_yAxis.y + c*_yAxis.z;
+
+        _yAxis = Vector3float(x,y,z);
+    }
 }
