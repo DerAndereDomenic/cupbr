@@ -47,6 +47,15 @@ Math::normalize(const Vector3<T>& v)
 }
 
 template<typename T>
+Vector3<T>
+Math::cross(const Vector3<T>& v, const Vector3<T>& w)
+{
+	return Vector3float(v.y * w.z - v.z * w.y,
+						v.z * w.x - v.x * w.z,
+						v.x * w.y - v.y * w.x);
+}
+
+template<typename T>
 T 
 Math::norm(const Vector4<T>& v)
 {

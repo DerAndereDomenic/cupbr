@@ -67,6 +67,17 @@ namespace Math
 	template<typename T>
 	__host__ __device__
 	Vector3<T> normalize(const Vector3<T>& v);
+
+	/**
+	*	@brief Computes the cross product between two vectors
+	*	@tparam T The vector data type
+	*	@param[in] v The first vector
+	*	@param[in] w The second vector
+	*	@return The cross product
+	*/
+	template<typename T>
+	__host__ __device__
+	Vector3<T> cross(const Vector3<T>& v, const Vector3<T>& w);
 	
 	/**
 	*	@brief Get the norm of a vector
