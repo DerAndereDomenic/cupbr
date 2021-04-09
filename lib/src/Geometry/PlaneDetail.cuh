@@ -1,8 +1,10 @@
 #ifndef __CUPBR_GEOMETRY_PLANEDETAIL_CUH
 #define __CUPBR_GEOMETRY_PLANEDETAIL_CUH
 
+#include <Math/Functions.cuh>
 
 __host__ __device__
+inline 
 Plane::Plane(const Vector3float& position, const Vector3float& normal)
     :_position(position),
      _normal(Math::normalize(normal))
@@ -11,7 +13,7 @@ Plane::Plane(const Vector3float& position, const Vector3float& normal)
 }
 
 __host__ __device__
-Vector4float
+inline Vector4float
 Plane::computeRayIntersection(const Ray& ray)
 {
     float PdotN = Math::dot(_position, _normal);
@@ -31,14 +33,14 @@ Plane::computeRayIntersection(const Ray& ray)
 }
 
 __host__ __device__
-Vector3float
+inline Vector3float
 Plane::getNormal(const Vector3float& x)
 {
     return _normal;
 }
 
 __host__ __device__
-Vector3float
+inline Vector3float
 Plane::position()
 {
     return _position;
