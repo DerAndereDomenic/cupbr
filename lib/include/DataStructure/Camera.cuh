@@ -57,6 +57,9 @@ class Camera
         Vector3float _xAxis = Vector3float(1,0,0);      /**< The image plane x Axis in world space */
         Vector3float _yAxis = Vector3float(0,1,0);      /**< The image plane y Axis in world space */
         Vector3float _zAxis = Vector3float(0,0,1);      /**< The displacement between position and image plane in world space */
+
+        float _pitch = 0.0f;                            /**< The pitch of the camera */
+        float _yaw = 3.14159f/2.0f;                     /**< The yaw of the camera */
 };
 
 #include "../../src/DataStructure/CameraDetail.cuh"
