@@ -12,4 +12,26 @@ enum MaterialType
     GLASS
 };
 
+class Material
+{
+    public:
+        Material() = default;
+
+        Vector3float albedo_d = Vector3float(1);
+        Vector3float albedo_s = Vector3float(0);
+
+        MaterialType type = LAMBERT;
+
+        __host__ __device__
+        Vector3float
+        brdf();
+    private:
+
+        Vector3float
+        brdf_lambert();
+
+        Vector3float
+        brdf_phong();
+}
+
 #endif
