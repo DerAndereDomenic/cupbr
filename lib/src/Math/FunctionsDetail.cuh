@@ -8,4 +8,11 @@ Math::safeFloatEqual(const float& lhs, const float& rhs, const float& eps)
     return fabsf(lhs-rhs) < eps;
 }
 
+template<typename T>
+T
+Math::clamp(const T& x, const T& mini, const T& maxi)
+{
+    return min(max(x, mini),maxi);
+}
+
 #endif
