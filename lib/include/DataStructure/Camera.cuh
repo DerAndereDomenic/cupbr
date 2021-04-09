@@ -4,6 +4,8 @@
 #include <Core/CUDA.cuh>
 #include <Math/Vector.h>
 
+#include <GLFW/glfw3.h>
+
 /**
 *   @brief A class to model a camera 
 */
@@ -46,6 +48,9 @@ class Camera
         __host__ __device__
         Vector3float
         zAxis() const;
+
+        void
+        processInput(const GLFWwindow* window);
 
     private:
         Vector3float _position = Vector3float(0,0,0);   /**< The camera position in world space */
