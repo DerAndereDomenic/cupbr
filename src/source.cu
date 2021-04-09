@@ -115,6 +115,12 @@ int main()
         glfwPollEvents();
 
         camera.processInput(window);
+
+        if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+        {
+            glfwDestroyWindow(window);
+            break;
+        }
     }
 
     glfwTerminate();
