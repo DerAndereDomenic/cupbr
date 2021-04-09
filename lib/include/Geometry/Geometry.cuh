@@ -3,6 +3,7 @@
 
 #include <Geometry/Geometry.cuh>
 #include <Geometry/Ray.cuh>
+#include <cmath>
 
 /**
 *   @brief Model scene geometry
