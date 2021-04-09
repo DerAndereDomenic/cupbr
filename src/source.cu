@@ -66,6 +66,8 @@ __global__ void fillBuffer(RenderBuffer img, const Camera camera)
 
 int main()
 {
+    bool edit = true;
+    bool pressed = false;
     const uint32_t width = 1024, height = 1024;
 
     cudaSafeCall(cudaSetDevice(0));
@@ -95,8 +97,6 @@ int main()
 		std::cout <<"RENDERER::GLEWINIT::ERROR\n";
 	}
 
-    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-
     GLRenderer renderer = GLRenderer::createHostObject(width, height);
     Camera camera;
 
@@ -116,7 +116,27 @@ int main()
         /* Poll for and process events */
         glfwPollEvents();
 
-        camera.processInput(window);
+        if(!edit)
+            camera.processInput(window);
+
+        if(glfwGetKey(window, GLFW_KEY_LEFT_ALT) == GLFW_PRESS && !pressed)
+        {
+            pressed = true;
+            edit = !edit;
+            if(edit)
+            {
+                glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+            }
+            else
+            {
+                glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+            }
+        }
+
+        if(glfwGetKey(window, GLFW_KEY_LEFT_ALT) == GLFW_RELEASE)
+        {
+            pressed = false;
+        }
 
         if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         {
