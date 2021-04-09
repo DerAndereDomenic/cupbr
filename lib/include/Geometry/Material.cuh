@@ -26,12 +26,15 @@ class Material
         Vector3float
         brdf();
     private:
-
+        __host__ __device__
         Vector3float
         brdf_lambert();
 
+        __host__ __device__
         Vector3float
         brdf_phong();
-}
+};
+
+#include "../../src/Geometry/MaterialDetail.cuh"
 
 #endif
