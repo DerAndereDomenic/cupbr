@@ -49,6 +49,16 @@ __global__ void fillBuffer(RenderBuffer img, const Camera camera)
     float cosTerm = max(0.0f,Math::dot(normal, lightDir));
     Vector3float radiance = brdf*lightRadiance*cosTerm;
 
+    //Shadow
+    if(intersection.w != INFINITY)
+    {
+        Ray shadow_ray(intersection_point-EPSILON*ray.direction(), lightDir);
+        Vector4float shadow_sphere = sphere.computeRayIntersection(shadow_ray);
+        Vector4float shadow_plane = plane.computeRayIntersection(shadow_ray);
+
+        if(shadow_sphere.w != INFINITY || shadow_plane.w != INFINITY)radiance = Vector3float(0);
+    }
+
     //Tone mapping
 
     Vector3uint8_t color(0);
