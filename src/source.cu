@@ -95,6 +95,8 @@ int main()
 		std::cout <<"RENDERER::GLEWINIT::ERROR\n";
 	}
 
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
     GLRenderer renderer = GLRenderer::createHostObject(width, height);
     Camera camera;
 
