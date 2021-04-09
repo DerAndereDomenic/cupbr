@@ -32,6 +32,8 @@ __global__ void fillBuffer(RenderBuffer img, const Camera camera)
     Sphere sphere(Vector3float(0,0,2), 1);
     Plane plane(Vector3float(0,-1,0), Vector3float(0,1,0));
     sphere.material.albedo_d = Vector3float(1,0,0);
+    sphere.material.albedo_s = Vector3float(1,0,0);
+    sphere.material.type = PHONG;
     Ray ray(camera.position(), world_pos - camera.position());
     
     //Compute intersection
