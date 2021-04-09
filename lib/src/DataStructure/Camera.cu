@@ -20,7 +20,7 @@ Camera::processInput(GLFWwindow* window)
         _position += 0.1f*_zAxis;
     }
 
-    if(glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_1) == GLFW_PRESS)
+    if(glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
     {
         float alpha = 0.01f;
         float c = cosf(alpha);
@@ -39,7 +39,7 @@ Camera::processInput(GLFWwindow* window)
         _xAxis = Vector3float(x,y,z);
     }
 
-    if(glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_2) == GLFW_PRESS)
+    if(glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
     {
         float alpha = -0.01f;
         float c = cosf(alpha);
