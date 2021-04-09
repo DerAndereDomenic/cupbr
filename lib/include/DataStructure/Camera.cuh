@@ -50,7 +50,7 @@ class Camera
         zAxis() const;
 
         void
-        processInput(const GLFWwindow* window);
+        processInput(GLFWwindow* window);
 
     private:
         Vector3float _position = Vector3float(0,0,0);   /**< The camera position in world space */

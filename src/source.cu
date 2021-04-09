@@ -113,6 +113,8 @@ int main()
 
         /* Poll for and process events */
         glfwPollEvents();
+
+        camera.processInput(window);
     }
 
     glfwTerminate();
