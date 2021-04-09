@@ -3,6 +3,7 @@
 
 #include <Geometry/Geometry.cuh>
 #include <Geometry/Ray.cuh>
+#include <Geometry/Material.cuh>
 #include <cmath>
 
 /**
@@ -35,6 +36,8 @@ class Geometry
         __host__ __device__
         Vector3float
         getNormal(const Vector3float& x);
+
+        Material material;  /**< The material of the object */
     private:
 };
 
