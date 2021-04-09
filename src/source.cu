@@ -32,7 +32,7 @@ __global__ void fillBuffer(RenderBuffer img, const Camera camera)
     Sphere sphere(Vector3float(0,0,2), 1);
     Plane plane(Vector3float(0,-1,0), Vector3float(0,1,0));
     sphere.material.albedo_d = Vector3float(1,0,0);
-    sphere.material.albedo_s = Vector3float(1,0,0);
+    sphere.material.albedo_s = Vector3float(1);
     sphere.material.type = PHONG;
     Ray ray(camera.position(), world_pos - camera.position());
     
@@ -49,7 +49,7 @@ __global__ void fillBuffer(RenderBuffer img, const Camera camera)
 
     //Lighting
 
-    Vector3float brdf = material.brdf(intersection_point, inc_dir, lightDir);
+    Vector3float brdf = material.brdf(intersection_point, inc_dir, lightDir, normal);
     Vector3float lightIntensity = Vector3float(10,10,10); //White light
     float d = Math::norm(intersection_point-lightPos);
     Vector3float lightRadiance = lightIntensity/(d*d);
