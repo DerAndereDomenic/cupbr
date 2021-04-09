@@ -69,9 +69,9 @@ __global__ void fillBuffer(RenderBuffer img, const Camera camera)
         float mapped_green = powf(1.0 - expf(-radiance.y), 1.0f/2.2f);
         float mapped_blue = powf(1.0 - expf(-radiance.z), 1.0f/2.2);
 
-        uint8_t red = mapped_red > 1.0 ? 255 : static_cast<uint8_t>(mapped_red*255.0f);
-        uint8_t green = mapped_green > 1.0 ? 255 : static_cast<uint8_t>(mapped_green*255.0f);
-        uint8_t blue = mapped_blue > 1.0 ? 255 : static_cast<uint8_t>(mapped_blue*255.0f);
+        uint8_t red = static_cast<uint8_t>(Math::clamp(mapped_red, 0.0f, 1.0f)*255.0f);
+        uint8_t green = static_cast<uint8_t>(Math::clamp(mapped_green, 0.0f, 1.0f)*255.0f);
+        uint8_t blue = static_cast<uint8_t>(Math::clamp(mapped_blue, 0.0f, 1.0f)*255.0f);
 
         color = Vector3uint8_t(red, green, blue);
     }
