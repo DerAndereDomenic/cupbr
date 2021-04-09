@@ -27,7 +27,7 @@ class Material
 
         Vector3float albedo_d = Vector3float(1);    /**< The diffuse albedo */
         Vector3float albedo_s = Vector3float(0);    /**< The specular albedo */
-        float shininess = 128.0f*0.4f;              /**< The object shininess */
+        float shininess = 128.0f*0.04f;              /**< The object shininess */
 
         MaterialType type = LAMBERT;                /**< The material type */
 
@@ -41,7 +41,7 @@ class Material
         */ 
         __host__ __device__
         Vector3float
-        brdf(const Vector3float& position, const Vector3float& inc_dir, const Vector3float& out_dir);
+        brdf(const Vector3float& position, const Vector3float& inc_dir, const Vector3float& out_dir, const Vector3float& normal);
     private:
         /**
         *   @brief Compute the lambert brdf
@@ -53,7 +53,7 @@ class Material
         */ 
         __host__ __device__
         Vector3float
-        brdf_lambert(const Vector3float& position, const Vector3float& inc_dir, const Vector3float& out_dir);
+        brdf_lambert();
 
         /**
         *   @brief Compute the phong brdf
@@ -65,7 +65,7 @@ class Material
         */ 
         __host__ __device__
         Vector3float
-        brdf_phong(const Vector3float& position, const Vector3float& inc_dir, const Vector3float& out_dir);
+        brdf_phong(const Vector3float& position, const Vector3float& inc_dir, const Vector3float& out_dir, const Vector3float& normal);
 };
 
 #include "../../src/Geometry/MaterialDetail.cuh"
