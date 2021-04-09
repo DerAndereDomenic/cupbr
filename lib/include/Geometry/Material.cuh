@@ -1,6 +1,8 @@
 #ifndef __CUPBR_GEOMETRY_MATERIAL_CUH
 #define __CUPBR_GEOMETRY_MATERIAL_CUH
 
+#include <Math/Vector.h>
+
 /**
 *   @brief The types of materials supported
 */
