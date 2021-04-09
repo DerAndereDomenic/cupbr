@@ -1,0 +1,11 @@
+#ifndef __CUPBR_MATH_FUNCTIONSDETAIL_CUH
+#define __CUPBR_MATH_FUNCTIONSDETAIL_CUH
+
+__host__ __device__
+inline bool
+Math::safeFloatEqual(const float& lhs, const float& rhs, const float& eps)
+{
+    return fabsf(lhs-rhs) < eps;
+}
+
+#endif
