@@ -29,6 +29,7 @@ __global__ void fillBuffer(RenderBuffer img, const Camera camera)
 
     Sphere sphere(Vector3float(0,0,2), 1);
     Plane plane(Vector3float(0,-1,0), Vector3float(0,1,0));
+    sphere.material.albedo_d = Vector3float(1,0,0);
     Ray ray(camera.position(), world_pos - camera.position());
     
     //Compute intersection
@@ -37,11 +38,12 @@ __global__ void fillBuffer(RenderBuffer img, const Camera camera)
     Vector4float intersection = intersection_plane.w < intersection_sphere.w ? intersection_plane : intersection_sphere;
     Vector3float intersection_point = Vector3float(intersection);
     Vector3float normal = intersection_plane.w < intersection_sphere.w ? plane.getNormal(intersection_point) : plane.getNormal(intersection_point);
+    Material material = intersection_plane.w < intersection_sphere.w ? plane.material : sphere.material;
 
     //Lighting
     const Vector3float lightPos(1,2,-2);
 
-    Vector3float brdf = Vector3float(1,1,1)/static_cast<float>(M_PI); //Albedo/pi
+    Vector3float brdf = material.albedo_d/static_cast<float>(M_PI); //Albedo/pi
     Vector3float lightIntensity = Vector3float(10,10,10); //White light
     Vector3float lightDir = Math::normalize(lightPos - intersection_point);
     float d = Math::norm(intersection_point-lightPos);
