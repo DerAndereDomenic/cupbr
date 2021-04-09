@@ -18,6 +18,7 @@ class Plane : public Geometry
         *   @brief Create a plane
         *   @param[in] position A position on the plane
         *   @param[in] normal The plane normal
+        *   @note The normal will get normalized
         */
         __host__ __device__
         Plane(const Vector3float& position, const Vector3float& normal);
@@ -43,5 +44,7 @@ class Plane : public Geometry
         Vector3float _position;     /**< The plane position */
         Vector3float _normal;       /**< The plane normal */
 };
+
+#include "../../src/Geometry/PlaneDetail.cuh"
 
 #endif
