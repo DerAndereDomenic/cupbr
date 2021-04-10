@@ -2,7 +2,7 @@
 #define __CUPBR_CORE_TRACINGDETAIL_CUH
 
 __device__
-Ray
+inline Ray
 Tracing::launchRay(const uint32_t& tid, const uint32_t& width, const uint32_t& height, const Camera& camera)
 {
     const Vector2uint32_t pixel = ThreadHelper::index2pixel(tid, width, height);
