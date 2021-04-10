@@ -27,7 +27,7 @@ class Material
 
         Vector3float albedo_d = Vector3float(1);    /**< The diffuse albedo */
         Vector3float albedo_s = Vector3float(0);    /**< The specular albedo */
-        float shininess = 128.0f*0.04f;              /**< The object shininess */
+        float shininess = 128.0f*0.4f;              /**< The object shininess */
 
         MaterialType type = LAMBERT;                /**< The material type */
 
