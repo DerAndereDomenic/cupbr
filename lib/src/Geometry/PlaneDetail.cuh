@@ -9,7 +9,7 @@ Plane::Plane(const Vector3float& position, const Vector3float& normal)
     :_position(position),
      _normal(Math::normalize(normal))
 {
-
+    type = GeometryType::PLANE;
 }
 
 __host__ __device__

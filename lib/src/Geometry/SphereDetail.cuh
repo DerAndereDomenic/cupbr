@@ -7,7 +7,7 @@ Sphere::Sphere(const Vector3float& position, const float& radius)
     :_position(position),
      _radius(radius)
 {
-
+    type = GeometryType::SPHERE;
 }
 
 __host__ __device__
