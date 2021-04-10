@@ -7,6 +7,15 @@
 #include <cmath>
 
 /**
+*   @brief A class to model different geometry types 
+*/
+enum GeometryType
+{
+    SPHERE,
+    PLANE
+};
+
+/**
 *   @brief Model scene geometry
 */
 class Geometry
@@ -38,6 +47,7 @@ class Geometry
         getNormal(const Vector3float& x);
 
         Material material;  /**< The material of the object */
+        GeometryType type;  /**< The geometry type */
     private:
 };
 
