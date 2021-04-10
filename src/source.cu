@@ -1,9 +1,12 @@
 #include <iostream>
+
 #include <GL/GLRenderer.cuh>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
 #include <Core/KernelHelper.cuh>
+#include <Core/Tracing.cuh>
+
 #include <DataStructure/Camera.cuh>
 
 #include <Geometry/Sphere.cuh>
@@ -18,14 +21,7 @@ __global__ void fillBuffer(RenderBuffer img, const Camera camera)
         return;
     }
 
-    const float width = img.width();
-    const float height = img.height();
-    const Vector2uint32_t pixel = ThreadHelper::index2pixel(tid, width, height);
-
-    const float ratio_x = 2.0f*(static_cast<float>(pixel.x)/width - 0.5f);
-    const float ratio_y = 2.0f*(static_cast<float>(pixel.y)/height - 0.5f);
-
-    const Vector3float world_pos = camera.position() + camera.zAxis() + ratio_x*camera.xAxis() + ratio_y*camera.yAxis();
+    Ray ray = Tracing::launchRay(tid, img.width(), img.height(), camera);
 
     //Scene
     const Vector3float lightPos(1,2,-2);
@@ -34,7 +30,6 @@ __global__ void fillBuffer(RenderBuffer img, const Camera camera)
     sphere.material.albedo_d = Vector3float(1,0,0);
     sphere.material.albedo_s = Vector3float(1);
     sphere.material.type = PHONG;
-    Ray ray(camera.position(), world_pos - camera.position());
     
     //Compute intersection
     Vector4float intersection_sphere = sphere.computeRayIntersection(ray);
