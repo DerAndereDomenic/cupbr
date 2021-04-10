@@ -45,7 +45,7 @@ SceneLoader::cornellBoxSphere(uint32_t* scene_size)
 
     Geometry* host_array[] = {floor, ceil, left, right, back, diff, mirror, glass};
 
-    Memory::allocator()->copyHost2DeviceArray<Geometry*>(*scene_size, static_cast<Geometry**>(host_array), static_cast<Geometry**>(scene));
+    Memory::allocator()->copyHost2DeviceArray<Geometry*>(*scene_size, host_array, scene);
 
     return scene;
 }

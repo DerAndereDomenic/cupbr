@@ -14,7 +14,7 @@
 
 #include <Scene/SceneLoader.cuh>
 
-__global__ void fillBuffer(RenderBuffer img, const Camera camera)
+__global__ void fillBuffer(RenderBuffer img, const Scene scene, const uint32_t scene_size, const Camera camera)
 {
     uint32_t tid = ThreadHelper::globalThreadIndex();
 
@@ -26,23 +26,48 @@ __global__ void fillBuffer(RenderBuffer img, const Camera camera)
     Ray ray = Tracing::launchRay(tid, img.width(), img.height(), camera);
 
     //Scene
-    const Vector3float lightPos(1,2,-2);
-    Sphere sphere(Vector3float(0,0,2), 1);
-    Plane plane(Vector3float(0,-1,0), Vector3float(0,1,0));
-    sphere.material.albedo_d = Vector3float(1,0,0);
-    sphere.material.albedo_s = Vector3float(1);
-    sphere.material.type = PHONG;
-    
-    //Compute intersection
-    Vector4float intersection_sphere = sphere.computeRayIntersection(ray);
-    Vector4float intersection_plane = plane.computeRayIntersection(ray);
-    Vector4float intersection = intersection_plane.w < intersection_sphere.w ? intersection_plane : intersection_sphere;
+    const Vector3float lightPos(0.0f,0.9f,2.0f);
+
+    Vector4float intersection(INFINITY);
+    Vector3float normal;
+    Material material;
+    for(uint32_t i = 0; i < scene_size; ++i)
+    {
+        Geometry* scene_element = scene[i];
+        switch(scene_element->type)
+        {
+            case GeometryType::PLANE:
+            {
+                Plane *plane = static_cast<Plane*>(scene[i]);
+                Vector4float intersection_plane = plane->computeRayIntersection(ray);
+                if(intersection_plane.w < intersection.w)
+                {
+                    material = plane->material;
+                    intersection = intersection_plane;
+                    normal = plane->getNormal(Vector3float(intersection));
+                }
+            }
+            break;
+            case GeometryType::SPHERE:
+            {
+                Sphere *sphere = static_cast<Sphere*>(scene_element);
+                Vector4float intersection_sphere = sphere->computeRayIntersection(ray);
+                if(intersection_sphere.w < intersection.w)
+                {
+                    material = sphere->material;
+                    intersection = intersection_sphere;
+                    normal = sphere->getNormal(Vector3float(intersection));
+                }
+            }
+            break;
+        }
+    }
+
     Vector3float intersection_point = Vector3float(intersection);
-    Vector3float normal = intersection_plane.w < intersection_sphere.w ? plane.getNormal(intersection_point) : plane.getNormal(intersection_point);
-    Material material = intersection_plane.w < intersection_sphere.w ? plane.material : sphere.material;
 
     Vector3float inc_dir = Math::normalize(camera.position() - intersection_point);
     Vector3float lightDir = Math::normalize(lightPos - intersection_point);
+
 
     //Lighting
 
@@ -54,14 +79,14 @@ __global__ void fillBuffer(RenderBuffer img, const Camera camera)
     Vector3float radiance = brdf*lightRadiance*cosTerm;
 
     //Shadow
-    if(intersection.w != INFINITY)
+    /*if(intersection.w != INFINITY)
     {
         Ray shadow_ray(intersection_point-EPSILON*ray.direction(), lightDir);
         Vector4float shadow_sphere = sphere.computeRayIntersection(shadow_ray);
         Vector4float shadow_plane = plane.computeRayIntersection(shadow_ray);
 
         if(shadow_sphere.w != INFINITY || shadow_plane.w != INFINITY)radiance = Vector3float(0);
-    }
+    }*/
 
     //Tone mapping
 
@@ -128,7 +153,7 @@ int main()
         /* Render here */
         glClear(GL_COLOR_BUFFER_BIT);
 
-        fillBuffer<<<config.blocks, config.threads>>>(img,camera);
+        fillBuffer<<<config.blocks, config.threads>>>(img,scene,scene_size,camera);
         cudaSafeCall(cudaDeviceSynchronize());
         renderer.renderTexture(img);
 
