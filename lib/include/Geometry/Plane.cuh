@@ -12,7 +12,7 @@ class Plane : public Geometry
         /**
         *   @brief Default constructor 
         */ 
-        Plane() = default;
+        Plane();
 
         /**
         *   @brief Create a plane

@@ -12,7 +12,7 @@ class Sphere : public Geometry
         /**
         *   @brief Default constructor
         */
-        Sphere() = default;
+        Sphere();
 
         /**
         *   @brief Creates a sphere
