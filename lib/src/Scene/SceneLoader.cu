@@ -1,5 +1,7 @@
 #include <Scene/SceneLoader.cuh>
 #include <Core/Memory.cuh>
+#include <Geometry/Plane.cuh>
+#include <Geometry/Sphere.cuh>
 
 Scene
 SceneLoader::cornellBoxSphere(uint32_t* scene_size)
@@ -43,7 +45,7 @@ SceneLoader::cornellBoxSphere(uint32_t* scene_size)
 
     Geometry* host_array[] = {floor, ceil, left, right, back, diff, mirror, glass};
 
-    Memory::allocator()->copyHost2DeviceObject<Geometry*>(*scene_size, host_array, scene);
+    Memory::allocator()->copyHost2DeviceArray<Geometry*>(*scene_size, static_cast<Geometry**>(host_array), static_cast<Geometry**>(scene));
 
     return scene;
 }
@@ -56,7 +58,7 @@ SceneLoader::destroyCornellBoxSphere(Scene scene)
 
     for(uint32_t i = 0; i < 5; ++i)
     {
-        Memory::allocator()->destroyDeviceObject<Plane>(statisc_cast<Plane*>(host_scene[i]));
+        Memory::allocator()->destroyDeviceObject<Plane>(static_cast<Plane*>(host_scene[i]));
     }
 
     for(uint32_t i = 5; i < 8; ++i)

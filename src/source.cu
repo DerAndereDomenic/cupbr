@@ -12,6 +12,8 @@
 #include <Geometry/Sphere.cuh>
 #include <Geometry/Plane.cuh>
 
+#include <Scene/SceneLoader.cuh>
+
 __global__ void fillBuffer(RenderBuffer img, const Camera camera)
 {
     uint32_t tid = ThreadHelper::globalThreadIndex();
@@ -117,6 +119,9 @@ int main()
     GLRenderer renderer = GLRenderer::createHostObject(width, height);
     Camera camera;
 
+    uint32_t scene_size;
+    Scene scene = SceneLoader::cornellBoxSphere(&scene_size);
+
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
     {
@@ -165,6 +170,7 @@ int main()
     glfwTerminate();
 
     RenderBuffer::destroyDeviceObject(img);
+    SceneLoader::destroyCornellBoxSphere(scene);
 
     Memory::allocator()->printStatistics();
 
