@@ -79,14 +79,40 @@ __global__ void fillBuffer(RenderBuffer img, const Scene scene, const uint32_t s
     Vector3float radiance = brdf*lightRadiance*cosTerm;
 
     //Shadow
-    /*if(intersection.w != INFINITY)
+    if(intersection.w != INFINITY)
     {
         Ray shadow_ray(intersection_point-EPSILON*ray.direction(), lightDir);
-        Vector4float shadow_sphere = sphere.computeRayIntersection(shadow_ray);
-        Vector4float shadow_plane = plane.computeRayIntersection(shadow_ray);
-
-        if(shadow_sphere.w != INFINITY || shadow_plane.w != INFINITY)radiance = Vector3float(0);
-    }*/
+        
+        for(uint32_t i = 0; i < scene_size; ++i)
+        {
+            Geometry* scene_element = scene[i];
+            switch(scene_element->type)
+            {
+                case GeometryType::PLANE:
+                {
+                    Plane *plane = static_cast<Plane*>(scene[i]);
+                    Vector4float intersection_plane = plane->computeRayIntersection(shadow_ray);
+                    if(intersection_plane.w != INFINITY && intersection_plane.w < d)
+                    {
+                        radiance = Vector3float(0);
+                        break;
+                    }
+                }
+                break;
+                case GeometryType::SPHERE:
+                {
+                    Sphere *sphere = static_cast<Sphere*>(scene_element);
+                    Vector4float intersection_sphere = sphere->computeRayIntersection(shadow_ray);
+                    if(intersection_sphere.w != INFINITY && intersection_sphere.w < d)
+                    {
+                        radiance = Vector3float(0);
+                        break;
+                    }
+                }
+                break;
+            }
+        }
+    }
 
     //Tone mapping
 
