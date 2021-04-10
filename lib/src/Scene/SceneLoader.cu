@@ -51,5 +51,18 @@ SceneLoader::cornellBoxSphere(uint32_t* scene_size)
 void
 SceneLoader::destroyCornellBoxSphere(Scene scene)
 {
+    Geometry* host_scene[8];
+    Memory::allocator()->copyDevice2HostArray(8, scene, host_scene);
 
+    for(uint32_t i = 0; i < 5; ++i)
+    {
+        Memory::allocator()->destroyDeviceObject<Plane>(statisc_cast<Plane*>(host_scene[i]));
+    }
+
+    for(uint32_t i = 5; i < 8; ++i)
+    {
+        Memory::allocator()->destroyDeviceObject<Sphere>(static_cast<Sphere*>(host_scene[i]));
+    }
+
+    Memory::allocator()->destroyDeviceArray<Geometry*>(scene);
 }
