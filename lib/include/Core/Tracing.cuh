@@ -23,4 +23,6 @@ namespace Tracing
     launchRay(const uint32_t& tid, const uint32_t& width, const uint32_t& height, const Camera& camera);
 }
 
+#include "../../src/Core/TracingDetail.cuh"
+
 #endif
