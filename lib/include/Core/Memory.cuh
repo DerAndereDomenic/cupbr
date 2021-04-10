@@ -30,7 +30,7 @@ public:
     *   @return A pointer to the array
     */
     template<typename T>
-    T* createHostArray(const unsigned int size);
+    T* createHostArray(const uint32_t& size);
     
     /**
     *   @brief Create an object allocated on the GPU (Device)
@@ -47,7 +47,7 @@ public:
     *   @return A pointer to the array
     */
     template<typename T>
-    T* createDeviceArray(const unsigned int size);
+    T* createDeviceArray(const uint32_t& size);
     
     /**
     *   @brief Destroy an object allocated on the CPU (Host)
@@ -98,7 +98,7 @@ public:
     *   @param[in] host_array2 The target array
     */
     template<typename T>
-    void copyHost2HostArray(const unsigned int size, T* host_array1, T* host_array2);
+    void copyHost2HostArray(const uint32_t& size, T* host_array1, T* host_array2);
     
     /**
     *   @brief Copies a host object to a device object
@@ -117,7 +117,7 @@ public:
     *   @param[in] device_array The target array
     */
     template<typename T>
-    void copyHost2DeviceArray(const unsigned int size, T* host_array, T* device_array);
+    void copyHost2DeviceArray(const uint32_t& size, T* host_array, T* device_array);
     
     /**
     *   @brief Copies a device object to a host object
@@ -136,7 +136,7 @@ public:
     *   @param[in] host_array The target array
     */
     template<typename T>
-    void copyDevice2HostArray(const unsigned int size, T* device_array, T* host_array);
+    void copyDevice2HostArray(const uint32_t& size, T* device_array, T* host_array);
     
     /**
     *   @brief Copies a device object to a device object
@@ -155,7 +155,7 @@ public:
     *   @param[in] device_array2 The target array
     */
     template<typename T>
-    void copyDevice2DeviceArray(const unsigned int size, T* device_array1, T* device_array2);
+    void copyDevice2DeviceArray(const uint32_t& size, T* device_array1, T* device_array2);
     
     /**
     *   @brief Prints the statistic of the allocator
@@ -165,10 +165,10 @@ private:
     Memory() = default;                     /**< Private default constructor */
     static Memory *instance;                /**< The singleton instance */
     
-    unsigned int allocated_host = 0;        /**< The number of allocated host objects */
-    unsigned int allocated_device = 0;      /**< The number of allocated device objects */
-    unsigned int deallocated_host = 0;      /**< The number of destroyed host objects */
-    unsigned int deallocated_device = 0;    /**< The number of destroyed device objects */
+    uint32_t allocated_host = 0;        /**< The number of allocated host objects */
+    uint32_t allocated_device = 0;      /**< The number of allocated device objects */
+    uint32_t deallocated_host = 0;      /**< The number of destroyed host objects */
+    uint32_t deallocated_device = 0;    /**< The number of destroyed device objects */
 };
 
 #include "../../src/Core/MemoryDetail.cuh"

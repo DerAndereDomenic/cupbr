@@ -11,7 +11,7 @@ Memory::createHostObject()
     
 template<typename T>
 T* 
-Memory::createHostArray(const unsigned int size)
+Memory::createHostArray(const uint32_t& size)
 {
     ++Memory::allocated_host;
     return new T[size];
@@ -29,7 +29,7 @@ Memory::createDeviceObject()
     
 template<typename T>
 T* 
-Memory::createDeviceArray(const unsigned int size)
+Memory::createDeviceArray(const uint32_t& size)
 {
     T* device_object;
     cudaSafeCall(cudaMalloc((void**)&device_object, size*sizeof(T)));
@@ -78,7 +78,7 @@ Memory::copyHost2HostObject(T* host_object1, T* host_object2)
     
 template<typename T>
 void 
-Memory::copyHost2HostArray(const unsigned int size, T* host_array1, T* host_array2)
+Memory::copyHost2HostArray(const uint32_t& size, T* host_array1, T* host_array2)
 {
     cudaSafeCall(cudaMemcpy(host_array2, host_array1, size*sizeof(T), cudaMemcpyHostToHost));
 }
@@ -92,7 +92,7 @@ Memory::copyHost2DeviceObject(T* host_object, T* device_object)
     
 template<typename T>
 void 
-Memory::copyHost2DeviceArray(const unsigned int size, T* host_array, T* device_array)
+Memory::copyHost2DeviceArray(const uint32_t& size, T* host_array, T* device_array)
 {
     cudaSafeCall(cudaMemcpy(device_array, host_array, size*sizeof(T), cudaMemcpyHostToDevice));
 }
@@ -106,7 +106,7 @@ Memory::copyDevice2HostObject(T* device_object, T* host_object)
     
 template<typename T>
 void 
-Memory::copyDevice2HostArray(const unsigned int size, T* device_array, T* host_array)
+Memory::copyDevice2HostArray(const uint32_t& size, T* device_array, T* host_array)
 {
     cudaSafeCall(cudaMemcpy(host_array, device_array, size*sizeof(T), cudaMemcpyDeviceToHost));
 }
@@ -120,7 +120,7 @@ Memory::copyDevice2DeviceObject(T* device_object1, T* device_object2)
     
 template<typename T>
 void 
-Memory::copyDevice2DeviceArray(const unsigned int size, T* device_array1, T* device_array2)
+Memory::copyDevice2DeviceArray(const uint32_t& size, T* device_array1, T* device_array2)
 {
     cudaSafeCall(cudaMemcpy(device_array2, device_array1, size*sizeof(T), cudaMemcpyDeviceToDevice));
 }
