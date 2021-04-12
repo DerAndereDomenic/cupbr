@@ -1,4 +1,5 @@
 #include <Renderer/PBRenderer.cuh>
+#include <Renderer/RayTracer.cuh>
 
 class PBRenderer::Impl
 {
@@ -76,7 +77,9 @@ PBRenderer::render()
     {
         case RAYTRACER:
         {
-            std::cerr << "[PBRenderer]  RAYTRACER not supported." << std::endl;
+            PBRendering::raytracing(impl->scene,
+                                    impl->scene_size,
+                                    &impl->hdr_image);
         }
         break;
         case WHITTED:
