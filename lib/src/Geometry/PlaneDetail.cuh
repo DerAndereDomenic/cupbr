@@ -1,6 +1,7 @@
 #ifndef __CUPBR_GEOMETRY_PLANEDETAIL_CUH
 #define __CUPBR_GEOMETRY_PLANEDETAIL_CUH
 
+#include <Core/CUDA.cuh>
 #include <Math/Functions.cuh>
 
 __host__ __device__

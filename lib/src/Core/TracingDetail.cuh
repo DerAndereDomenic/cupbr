@@ -1,6 +1,8 @@
 #ifndef __CUPBR_CORE_TRACINGDETAIL_CUH
 #define __CUPBR_CORE_TRACINGDETAIL_CUH
 
+#include <Core/CUDA.cuh>
+
 __device__
 inline Ray
 Tracing::launchRay(const uint32_t& tid, const uint32_t& width, const uint32_t& height, const Camera& camera)

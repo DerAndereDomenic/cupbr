@@ -3,6 +3,8 @@
 
 #define EPSILON 1e-5f
 
+#include <Core/CUDA.cuh>
+
 namespace Math
 {
     /**

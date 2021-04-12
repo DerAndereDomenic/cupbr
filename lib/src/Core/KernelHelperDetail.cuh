@@ -1,3 +1,6 @@
+#ifndef __CUPBR_CORE_KERNELHELPERDETAIL_CUH
+#define __CUPBR_CORE_KERNELHELPERDETAIL_CUH
+
 __device__
 inline uint32_t
 ThreadHelper::globalThreadIndex()
@@ -40,3 +43,5 @@ KernelSizeHelper::configure(const uint32_t& size)
     
     return result;
 }
+
+#endif

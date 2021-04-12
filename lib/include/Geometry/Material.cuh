@@ -1,6 +1,7 @@
 #ifndef __CUPBR_GEOMETRY_MATERIAL_CUH
 #define __CUPBR_GEOMETRY_MATERIAL_CUH
 
+#include <Core/CUDA.cuh>
 #include <Math/Vector.h>
 
 /**

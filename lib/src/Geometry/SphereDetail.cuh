@@ -1,6 +1,8 @@
 #ifndef __CUPBR_GEOMETRY_SPHEREDETAIL_CUH
 #define __CUPBR_GEOMETRY_SPHEREDETAIL_CUH
 
+#include <Core/CUDA.cuh>
+
 __host__ __device__
 inline
 Sphere::Sphere(const Vector3float& position, const float& radius)
@@ -43,8 +45,8 @@ Sphere::computeRayIntersection(const Ray& ray)
         float t0 = q;
         float t1 = c/q;
 
-        t0 = min(t0,t1);
-        t1 = max(t0,t1);
+        t0 = fminf(t0,t1);
+        t1 = fmaxf(t0,t1);
 
         if(t1 >= 0)
         {
