@@ -5,6 +5,12 @@
 
 #include <Core/Memory.cuh>
 
+class GLRenderer::Impl
+{
+    public:
+        Impl() = default;
+};
+
 GLRenderer::GLRenderer(const uint32_t& width, const uint32_t& height)
 {
     createShader();

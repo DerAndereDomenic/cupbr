@@ -35,6 +35,8 @@ class GLRenderer
         void
         renderTexture(const RenderBuffer& img);
     private:
+        class Impl;
+        std::unique_ptr<Impl> impl;     /**< Implementation pointer */
         /**
         *   @brief Create the screen quad shader 
         */
