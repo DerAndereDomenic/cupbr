@@ -18,6 +18,7 @@ class ToneMapper::Impl()
 
         bool isRegistered;
         RenderBuffer render_buffer;
+        Image<Vector3float>* hdr_image;
 };
 
 ToneMapper::Impl::Impl()
@@ -27,6 +28,10 @@ ToneMapper::Impl::Impl()
 
 ToneMapper::Impl::~Impl()
 {
+    if(isRegistered)
+    {
+        RenderBuffer::destroyDeviceObject(render_buffer);
+    }
     isRegistered = false;
 }
 
@@ -49,7 +54,8 @@ ToneMapper::registerImage(const Image<Vector3float>* hdr_image)
         RenderBuffer::destroyDeviceObject(impl->render_buffer);
     }
 
-    impl->render_buffer = RenderBuffer::createDeviceObject(hdr_image.width(), hdr_image.height());
+    impl->render_buffer = RenderBuffer::createDeviceObject(hdr_image->width(), hdr_image->height());
+    impl->hdr_image = hdr_image;
 }
 
 void
