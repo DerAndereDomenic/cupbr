@@ -11,7 +11,7 @@ namespace detail
                                       const uint32_t scene_size, 
                                       const Camera camera)
     {
-        uint32_t tid = ThreadHelper::globalThreadIndex();
+        const uint32_t tid = ThreadHelper::globalThreadIndex();
 
         if(tid >= img.size())
         {
