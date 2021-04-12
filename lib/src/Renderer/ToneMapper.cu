@@ -63,7 +63,23 @@ ToneMapper::toneMap()
 {
     if(impl->isRegistered)
     {
+        switch(impl->type)
+        {
+            case REINHARD:
+            {
 
+            }
+            break;
+            case GAMMA:
+            {
+
+            }
+            break;
+        }
+    }
+    else
+    {
+        std::cerr << "[ToneMapper]  No HDR image has been registered. Call registerImage() first!" << std::endl;
     }
 }
 
