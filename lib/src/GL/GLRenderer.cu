@@ -5,18 +5,20 @@
 
 #include <Core/Memory.cuh>
 
-GLRenderer
-GLRenderer::createHostObject(const uint32_t& width, const uint32_t& height)
+GLRenderer::GLRenderer(const uint32_t& width, const uint32_t& height)
 {
-    GLRenderer result;
+    createShader();
+    createQuadVBO();
+    createGLTexture(width, height);
+}
 
-    result.createShader();
+GLRenderer::~GLRenderer()
+{
+    glDeleteProgram(_shader);
+    glDeleteVertexArrays(1, &_vbo);
+    glDeleteTextures(1, &_screen_texture);
 
-    result.createQuadVBO();
-
-    result.createGLTexture(width, height);
-
-    return result;
+    //cudaSafeCall(cudaGraphicsUnmapResources(1, &_cuda_resource, 0));
 }
 
 void 
@@ -163,16 +165,6 @@ GLRenderer::createGLTexture(const uint32_t& width, const uint32_t& height)
     cudaSafeCall(cudaGraphicsGLRegisterImage(&_cuda_resource, _screen_texture, GL_TEXTURE_2D, cudaGraphicsRegisterFlagsWriteDiscard));
     cudaSafeCall(cudaGraphicsMapResources(1, &_cuda_resource, 0));
     cudaSafeCall(cudaGraphicsSubResourceGetMappedArray(&_texture_ptr, _cuda_resource, 0, 0));
-}
-
-void
-GLRenderer::destroyHostObject(GLRenderer& object)
-{
-    glDeleteProgram(object._shader);
-    glDeleteVertexArrays(1, &object._vbo);
-    glDeleteTextures(1, &object._screen_texture);
-
-    cudaSafeCall(cudaGraphicsUnmapResources(1, &object._cuda_resource, 0));
 }
 
 void

@@ -167,7 +167,7 @@ int main()
 		std::cout <<"RENDERER::GLEWINIT::ERROR\n";
 	}
 
-    GLRenderer renderer = GLRenderer::createHostObject(width, height);
+    GLRenderer renderer(width, height);
     Camera camera;
 
     uint32_t scene_size;

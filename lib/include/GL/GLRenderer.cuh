@@ -4,6 +4,8 @@
 #include <DataStructure/RenderBuffer.cuh>
 #include <GL/glew.h>
 
+#include <memory>
+
 #include <cuda_gl_interop.h>
 
 class GLRenderer
@@ -18,17 +20,13 @@ class GLRenderer
         *   @brief Create the rendering context
         *   @param[in] width The width of the framebuffer
         *   @param[in] height The height of the framebuffer
-        *   @return The Renderer object 
         */
-        static GLRenderer
-        createHostObject(const uint32_t& width, const uint32_t& height);
+        GLRenderer(const uint32_t& width, const uint32_t& height);
 
         /**
         *   @brief Destroy the rendering context
-        *   @param[in] object The object to be destroyed 
         */
-        static void
-        destroyHostObject(GLRenderer& object);
+        ~GLRenderer();
 
         /**
         *   @brief Render a device image on a quad
@@ -37,7 +35,6 @@ class GLRenderer
         void
         renderTexture(const RenderBuffer& img);
     private:
-
         /**
         *   @brief Create the screen quad shader 
         */
