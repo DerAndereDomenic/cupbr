@@ -14,7 +14,9 @@
 
 #include <Scene/SceneLoader.cuh>
 
-__global__ void fillBuffer(RenderBuffer img, const Scene scene, const uint32_t scene_size, const Camera camera)
+#include <Renderer/ToneMapper.cuh>
+
+__global__ void fillBuffer(Image<Vector3float> img, const Scene scene, const uint32_t scene_size, const Camera camera)
 {
     uint32_t tid = ThreadHelper::globalThreadIndex();
 
@@ -114,24 +116,7 @@ __global__ void fillBuffer(RenderBuffer img, const Scene scene, const uint32_t s
         }
     }
 
-    //Tone mapping
-
-    Vector3uint8_t color(0);
-
-    if(intersection.w != INFINITY)
-    {
-        float mapped_red = powf(1.0 - expf(-radiance.x), 1.0f/2.2f);
-        float mapped_green = powf(1.0 - expf(-radiance.y), 1.0f/2.2f);
-        float mapped_blue = powf(1.0 - expf(-radiance.z), 1.0f/2.2);
-
-        uint8_t red = static_cast<uint8_t>(Math::clamp(mapped_red, 0.0f, 1.0f)*255.0f);
-        uint8_t green = static_cast<uint8_t>(Math::clamp(mapped_green, 0.0f, 1.0f)*255.0f);
-        uint8_t blue = static_cast<uint8_t>(Math::clamp(mapped_blue, 0.0f, 1.0f)*255.0f);
-
-        color = Vector3uint8_t(red, green, blue);
-    }
-
-    img[tid] = Vector4uint8_t(color,255);
+    img[tid] = radiance;
 }
 
 int main()
@@ -142,8 +127,10 @@ int main()
 
     cudaSafeCall(cudaSetDevice(0));
 
-    RenderBuffer img = RenderBuffer::createDeviceObject(width, height);
+    Image<Vector3float> img = Image<Vector3float>::createDeviceObject(width, height);
     KernelSizeHelper::KernelSize config = KernelSizeHelper::configure(img.size());
+    ToneMapper reinhard_mapper;
+    reinhard_mapper.registerImage(&img);
 
     GLFWwindow* window;
 
@@ -181,7 +168,9 @@ int main()
 
         fillBuffer<<<config.blocks, config.threads>>>(img,scene,scene_size,camera);
         cudaSafeCall(cudaDeviceSynchronize());
-        renderer.renderTexture(img);
+
+        reinhard_mapper.toneMap();
+        renderer.renderTexture(reinhard_mapper.getRenderBuffer());
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
@@ -220,7 +209,7 @@ int main()
 
     glfwTerminate();
 
-    RenderBuffer::destroyDeviceObject(img);
+    Image<Vector3float>::destroyDeviceObject(img);
     SceneLoader::destroyCornellBoxSphere(scene);
 
     Memory::allocator()->printStatistics();
