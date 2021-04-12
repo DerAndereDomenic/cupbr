@@ -15,11 +15,13 @@ class ToneMapper::Impl()
         ~Impl();
 
         ToneMappingType type;
+
+        bool isRegistered;
 };
 
 ToneMapper::Impl::Impl()
 {
-
+    
 }
 
 ToneMapper::Impl::~Impl()
@@ -29,7 +31,8 @@ ToneMapper::Impl::~Impl()
 
 ToneMapper::ToneMapper(const ToneMappingType& type = REINHARD)
 {
-
+    impl = std::make_unique<Impl>();
+    impl->type = type;
 }
 
 
