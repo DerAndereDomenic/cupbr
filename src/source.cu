@@ -212,6 +212,9 @@ int main()
     Image<Vector3float>::destroyDeviceObject(img);
     SceneLoader::destroyCornellBoxSphere(scene);
 
+    //TODO
+    reinhard_mapper.~ToneMapper();
+
     Memory::allocator()->printStatistics();
 
     return 0;
