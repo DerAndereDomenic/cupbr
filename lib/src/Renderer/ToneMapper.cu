@@ -128,5 +128,12 @@ ToneMapper::getRenderBuffer()
     return impl->render_buffer;
 }
 
+void
+ToneMapper::Impl::toneMappingReinhard()
+{
+    KernelSizeHelper::KernelSize config = KernelSizeHelper::configure(hdr_img->size());
+    detail::reinhard_kernel<<<config.blocks, config.threads>>>(hdr_image, render_buffer);
+    cudaSafeCall(cudaDeviceSynchronize());
+}
 
 #endif
