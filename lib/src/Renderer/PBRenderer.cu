@@ -73,8 +73,8 @@ PBRenderer::render()
     }
 }
 
-Image<Vector3float>
+Image<Vector3float>*
 PBRenderer::getOutputImage()
 {
-    return impl->hdr_image;
+    return &impl->hdr_image;
 }

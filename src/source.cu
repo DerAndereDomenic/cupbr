@@ -15,6 +15,7 @@
 #include <Scene/SceneLoader.cuh>
 
 #include <Renderer/ToneMapper.cuh>
+#include <Renderer/PBRenderer.cuh>
 
 __global__ void fillBuffer(Image<Vector3float> img, const Scene scene, const uint32_t scene_size, const Camera camera)
 {
@@ -67,12 +68,18 @@ int main()
 
     cudaSafeCall(cudaSetDevice(0));
 
-    Image<Vector3float> img = Image<Vector3float>::createDeviceObject(width, height);
-    KernelSizeHelper::KernelSize config = KernelSizeHelper::configure(img.size());
+    uint32_t scene_size;
+    Scene scene = SceneLoader::cornellBoxSphere(&scene_size);
+
+    PBRenderer pbrenderer;
+    pbrenderer.setOutputSize(width, height);
+    pbrenderer.registerScene(scene, scene_size);
+
+    KernelSizeHelper::KernelSize config = KernelSizeHelper::configure(pbrenderer.getOutputImage()->size());
     ToneMapper reinhard_mapper(REINHARD);
     ToneMapper gamma_mapper(GAMMA);
-    reinhard_mapper.registerImage(&img);
-    gamma_mapper.registerImage(&img);
+    reinhard_mapper.registerImage(pbrenderer.getOutputImage());
+    gamma_mapper.registerImage(pbrenderer.getOutputImage());
 
     ToneMapper* mapper = &reinhard_mapper;
 
@@ -101,16 +108,13 @@ int main()
     GLRenderer renderer(width, height);
     Camera camera;
 
-    uint32_t scene_size;
-    Scene scene = SceneLoader::cornellBoxSphere(&scene_size);
-
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
     {
         /* Render here */
         glClear(GL_COLOR_BUFFER_BIT);
 
-        fillBuffer<<<config.blocks, config.threads>>>(img,scene,scene_size,camera);
+        fillBuffer<<<config.blocks, config.threads>>>(*pbrenderer.getOutputImage(),scene,scene_size,camera);
         cudaSafeCall(cudaDeviceSynchronize());
 
         mapper->toneMap();
@@ -162,12 +166,12 @@ int main()
 
     glfwTerminate();
 
-    Image<Vector3float>::destroyDeviceObject(img);
     SceneLoader::destroyCornellBoxSphere(scene);
 
     //TODO
     reinhard_mapper.~ToneMapper();
     gamma_mapper.~ToneMapper();
+    pbrenderer.~PBRenderer();
 
     Memory::allocator()->printStatistics();
 
