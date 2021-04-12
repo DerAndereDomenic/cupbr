@@ -56,7 +56,10 @@ namespace detail
 void
 PBRendering::raytracing(const Scene scene,
                         const uint32_t& scene_size,
+                        const Camera& camera,
                         Image<Vector3float>* output_img)
 {
-
+    KernelSizeHelper::KernelSize config = KernelSizeHelper::configure(output_img->size());
+    detail::raytracing_kernel<<<config.blocks, config.threads>>>(*output_img,scene,scene_size,camera);
+    cudaSafeCall(cudaDeviceSynchronize());
 }
