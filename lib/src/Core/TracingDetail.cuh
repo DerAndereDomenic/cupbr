@@ -21,8 +21,8 @@ Tracing::launchRay(const uint32_t& tid, const uint32_t& width, const uint32_t& h
 }
 
 __device__
-LocalGeometry
-traceRay(const Scene scene, const uint32_t& scene_size, const Ray& ray)
+inline LocalGeometry
+Tracing::traceRay(const Scene scene, const uint32_t& scene_size, const Ray& ray)
 {
     Vector4float intersection(INFINITY);
 
@@ -70,10 +70,37 @@ traceRay(const Scene scene, const uint32_t& scene_size, const Ray& ray)
 }
 
 __device__
-bool
-traceVisibility(const Scene scene, const uint32_t& scene_size, const float& lightDist, const Ray& ray)
+inline bool
+Tracing::traceVisibility(const Scene scene, const uint32_t& scene_size, const float& lightDist, const Ray& ray)
 {
-
+    for(uint32_t i = 0; i < scene_size; ++i)
+    {
+        Geometry* scene_element = scene[i];
+        switch(scene_element->type)
+        {
+            case GeometryType::PLANE:
+            {
+                Plane *plane = static_cast<Plane*>(scene[i]);
+                Vector4float intersection_plane = plane->computeRayIntersection(ray);
+                if(intersection_plane.w != INFINITY && intersection_plane.w < lightDist)
+                {
+                    return false;
+                }
+            }
+            break;
+            case GeometryType::SPHERE:
+            {
+                Sphere *sphere = static_cast<Sphere*>(scene_element);
+                Vector4float intersection_sphere = sphere->computeRayIntersection(ray);
+                if(intersection_sphere.w != INFINITY && intersection_sphere.w < lightDist)
+                {
+                    return false;
+                }
+            }
+            break;
+        }
+    }
+    return true;
 }
 
 #endif
