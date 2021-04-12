@@ -49,6 +49,12 @@ class ToneMapper::Impl
         void
         toneMappingReinhard();
 
+        /**
+        *   @brief The Gamme tone mapping algorihm
+        */
+        void
+        toneMappingGamma();
+
         //Data
         ToneMappingType type;               /**< The tone mapping algorithm */
         bool isRegistered;                  /**< If a HDR image has been registered */
@@ -108,7 +114,7 @@ ToneMapper::toneMap()
             break;
             case GAMMA:
             {
-                std::cerr << "[ToneMapper]  GAMMA is not supported at the moment" << std::endl;
+                impl->toneMappingGamma();
             }
             break;
         }
@@ -131,5 +137,13 @@ ToneMapper::Impl::toneMappingReinhard()
 {
     KernelSizeHelper::KernelSize config = KernelSizeHelper::configure(hdr_image->size());
     detail::reinhard_kernel<<<config.blocks, config.threads>>>(*hdr_image, render_buffer);
+    cudaSafeCall(cudaDeviceSynchronize());
+}
+
+void
+ToneMapper::Impl::toneMappingGamma()
+{
+    KernelSizeHelper::KernelSize config = KernelSizeHelper::configure(hdr_image->size());
+    detail::gamma_kernel<<<config.blocks, config.threads>>>(*hdr_image, render_buffer);
     cudaSafeCall(cudaDeviceSynchronize());
 }
