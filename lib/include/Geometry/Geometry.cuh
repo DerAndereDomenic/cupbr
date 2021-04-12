@@ -51,6 +51,18 @@ class Geometry
     private:
 };
 
+/**
+*   @brief A struct to model the local surface geometry 
+*/
+struct LocalGeometry
+{
+    GeometryType type;      /**< The geometry type */
+    float depth;            /**< The depth */
+    Vector3float P;         /**< The intersection point in world space */
+    Vector3float N;         /**< The surface normal */
+    Material material;      /**< The object material */
+};
+
 #include "../../src/Geometry/GeometryDetail.cuh"
 
 #endif
