@@ -62,9 +62,8 @@ int main()
 
     GLRenderer renderer(width, height);
     Camera camera;
-
-    uint32_t frame_counter = 0;
     float time = 0.0f;
+    uint32_t frame_counter = 0;
 
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
@@ -78,8 +77,14 @@ int main()
         mapper->toneMap();
         renderer.renderTexture(mapper->getRenderBuffer());
         std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-        time += std::chrono::duration_cast<std::chrono::microseconds>(end-begin).count();
+        time = std::chrono::duration_cast<std::chrono::microseconds>(end-begin).count();
         ++frame_counter;
+
+        if(frame_counter%30 == 0)
+        {
+            printf("\rRender time: %fms : %ffps", time/1000.0f, 1000000.0f/time);
+            fflush(stdout);
+        }
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
@@ -124,6 +129,7 @@ int main()
             break;
         }
     }
+    printf("\n");
 
     glfwTerminate();
 
@@ -133,8 +139,6 @@ int main()
     reinhard_mapper.~ToneMapper();
     gamma_mapper.~ToneMapper();
     pbrenderer.~PBRenderer();
-
-    std::cout << "Render time: " << time/(1000.0f*frame_counter) << "ms : " << 1000000.0f*frame_counter/time << "fps" << std::endl;
 
     Memory::allocator()->printStatistics();
 
