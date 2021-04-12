@@ -37,29 +37,6 @@ class GLRenderer
     private:
         class Impl;
         std::unique_ptr<Impl> impl;     /**< Implementation pointer */
-        /**
-        *   @brief Create the screen quad shader 
-        */
-        void createShader();
-
-        /**
-        *   @brief Create the screen quad vbo 
-        */
-        void createQuadVBO();
-
-        /**
-        *   @brief Create the screen texture
-        *   @param[in] width The framebuffer width
-        *   @param[in] height The framebuffer height 
-        */
-        void createGLTexture(const uint32_t& width, const uint32_t& height);
-
-        uint32_t _vbo;                          /**< The screen quad vbo */
-        uint32_t _shader;                       /**< The screen quad shader */
-        uint32_t _screen_texture;               /**< The screen quad texture */
-
-        cudaGraphicsResource* _cuda_resource;   /**< CUDA resource */
-        cudaArray* _texture_ptr;                /**< Texture pointer */
 };
 
 #endif

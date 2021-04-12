@@ -8,27 +8,58 @@
 class GLRenderer::Impl
 {
     public:
-        Impl() = default;
+        Impl(const uint32_t& width, const uint32_t& height);
+
+        ~Impl();
+
+        /**
+        *   @brief Create the screen quad shader 
+        */
+        void createShader();
+
+        /**
+        *   @brief Create the screen quad vbo 
+        */
+        void createQuadVBO();
+
+        /**
+        *   @brief Create the screen texture
+        *   @param[in] width The framebuffer width
+        *   @param[in] height The framebuffer height 
+        */
+        void createGLTexture(const uint32_t& width, const uint32_t& height);
+
+        uint32_t _vbo;                          /**< The screen quad vbo */
+        uint32_t _shader;                       /**< The screen quad shader */
+        uint32_t _screen_texture;               /**< The screen quad texture */
+
+        cudaGraphicsResource* _cuda_resource;   /**< CUDA resource */
+        cudaArray* _texture_ptr;                /**< Texture pointer */
 };
 
-GLRenderer::GLRenderer(const uint32_t& width, const uint32_t& height)
+GLRenderer::Impl::Impl(const uint32_t& width, const uint32_t& height)
 {
     createShader();
     createQuadVBO();
     createGLTexture(width, height);
 }
 
-GLRenderer::~GLRenderer()
+GLRenderer::Impl::~Impl()
 {
     glDeleteProgram(_shader);
     glDeleteVertexArrays(1, &_vbo);
     glDeleteTextures(1, &_screen_texture);
-
-    //cudaSafeCall(cudaGraphicsUnmapResources(1, &_cuda_resource, 0));
 }
 
+GLRenderer::GLRenderer(const uint32_t& width, const uint32_t& height)
+{
+    impl = std::make_unique<Impl>(width, height);
+}
+
+GLRenderer::~GLRenderer() = default;
+
 void 
-GLRenderer::createShader()
+GLRenderer::Impl::createShader()
 {
     std::string vertexCode =
     "#version 330 core\n\
@@ -127,7 +158,7 @@ GLRenderer::createShader()
 }
 
 void 
-GLRenderer::createQuadVBO()
+GLRenderer::Impl::createQuadVBO()
 {
     ///////////////////////////////////////////////////////
     ///             Vertex Buffer                       ///
@@ -155,7 +186,7 @@ GLRenderer::createQuadVBO()
 }
 
 void 
-GLRenderer::createGLTexture(const uint32_t& width, const uint32_t& height)
+GLRenderer::Impl::createGLTexture(const uint32_t& width, const uint32_t& height)
 {
     ///////////////////////////////////////////////////////
     ///             Screen Texture                      ///
@@ -176,7 +207,7 @@ GLRenderer::createGLTexture(const uint32_t& width, const uint32_t& height)
 void
 GLRenderer::renderTexture(const RenderBuffer& img)
 {
-    cudaSafeCall(cudaMemcpyToArray(_texture_ptr, 0, 0, img.data(), 4*img.size(), cudaMemcpyDeviceToDevice));
+    cudaSafeCall(cudaMemcpyToArray(impl->_texture_ptr, 0, 0, img.data(), 4*img.size(), cudaMemcpyDeviceToDevice));
 
     glDrawArrays(GL_TRIANGLES, 0, 6);
 }
