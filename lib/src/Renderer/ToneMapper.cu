@@ -46,8 +46,10 @@ ToneMapper::registerImage(const Image<Vector3float>* hdr_image)
     //Delete old render buffer if an image has been registered
     if(impl->isRegistered)
     {
-
+        RenderBuffer::destroyDeviceObject(impl->render_buffer);
     }
+
+    impl->render_buffer = RenderBuffer::createDeviceObject(hdr_image.width(), hdr_image.height());
 }
 
 void
