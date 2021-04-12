@@ -30,60 +30,25 @@ __global__ void fillBuffer(Image<Vector3float> img, const Scene scene, const uin
     //Scene
     const Vector3float lightPos(0.0f,0.9f,2.0f);
 
-    Vector4float intersection(INFINITY);
-    Vector3float normal;
-    Material material;
-    for(uint32_t i = 0; i < scene_size; ++i)
-    {
-        Geometry* scene_element = scene[i];
-        switch(scene_element->type)
-        {
-            case GeometryType::PLANE:
-            {
-                Plane *plane = static_cast<Plane*>(scene[i]);
-                Vector4float intersection_plane = plane->computeRayIntersection(ray);
-                if(intersection_plane.w < intersection.w)
-                {
-                    material = plane->material;
-                    intersection = intersection_plane;
-                    normal = plane->getNormal(Vector3float(intersection));
-                }
-            }
-            break;
-            case GeometryType::SPHERE:
-            {
-                Sphere *sphere = static_cast<Sphere*>(scene_element);
-                Vector4float intersection_sphere = sphere->computeRayIntersection(ray);
-                if(intersection_sphere.w < intersection.w)
-                {
-                    material = sphere->material;
-                    intersection = intersection_sphere;
-                    normal = sphere->getNormal(Vector3float(intersection));
-                }
-            }
-            break;
-        }
-    }
+    LocalGeometry geom = Tracing::traceRay(scene, scene_size, ray);
 
-    Vector3float intersection_point = Vector3float(intersection);
-
-    Vector3float inc_dir = Math::normalize(camera.position() - intersection_point);
-    Vector3float lightDir = Math::normalize(lightPos - intersection_point);
+    Vector3float inc_dir = Math::normalize(camera.position() - geom.P);
+    Vector3float lightDir = Math::normalize(lightPos - geom.P);
 
 
     //Lighting
 
-    Vector3float brdf = material.brdf(intersection_point, inc_dir, lightDir, normal);
+    Vector3float brdf = geom.material.brdf(geom.P, inc_dir, lightDir, geom.N);
     Vector3float lightIntensity = Vector3float(10,10,10); //White light
-    float d = Math::norm(intersection_point-lightPos);
+    float d = Math::norm(geom.P-lightPos);
     Vector3float lightRadiance = lightIntensity/(d*d);
-    float cosTerm = max(0.0f,Math::dot(normal, lightDir));
+    float cosTerm = max(0.0f,Math::dot(geom.N, lightDir));
     Vector3float radiance = brdf*lightRadiance*cosTerm;
 
     //Shadow
-    if(intersection.w != INFINITY)
+    if(geom.depth != INFINITY)
     {
-        Ray shadow_ray(intersection_point-EPSILON*ray.direction(), lightDir);
+        Ray shadow_ray(geom.P-EPSILON*ray.direction(), lightDir);
         
         for(uint32_t i = 0; i < scene_size; ++i)
         {
