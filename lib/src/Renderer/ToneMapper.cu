@@ -17,16 +17,17 @@ class ToneMapper::Impl()
         ToneMappingType type;
 
         bool isRegistered;
+        RenderBuffer render_buffer;
 };
 
 ToneMapper::Impl::Impl()
 {
-    
+    isRegistered = false;
 }
 
 ToneMapper::Impl::~Impl()
 {
-
+    isRegistered = false;
 }
 
 ToneMapper::ToneMapper(const ToneMappingType& type = REINHARD)
@@ -42,20 +43,27 @@ ToneMapper::~ToneMapper() = default;
 void
 ToneMapper::registerImage(const Image<Vector3float>* hdr_image)
 {
+    //Delete old render buffer if an image has been registered
+    if(impl->isRegistered)
+    {
 
+    }
 }
 
 void
 ToneMapper::toneMap()
 {
+    if(impl->isRegistered)
+    {
 
+    }
 }
 
 
 RenderBuffer
 ToneMapper::getRenderBuffer()
 {
-
+    return impl->render_buffer;
 }
 
 
