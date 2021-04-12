@@ -14,11 +14,17 @@ class ToneMapper::Impl()
 
         ~Impl();
 
-        ToneMappingType type;
+        /**
+        *   @brief The Reinhard tone mapping algorithm
+        */
+        void
+        toneMappingReinhard();
 
-        bool isRegistered;
-        RenderBuffer render_buffer;
-        Image<Vector3float>* hdr_image;
+        //Data
+        ToneMappingType type;               /**< The tone mapping algorithm */
+        bool isRegistered;                  /**< If a HDR image has been registered */
+        RenderBuffer render_buffer;         /**< The output render buffer */
+        Image<Vector3float>* hdr_image;     /**< The registered HDR image */
 };
 
 ToneMapper::Impl::Impl()
@@ -67,12 +73,12 @@ ToneMapper::toneMap()
         {
             case REINHARD:
             {
-
+                impl->toneMappingReinhard();
             }
             break;
             case GAMMA:
             {
-
+                std::cerr << "[ToneMapper]  GAMMA is not supported at the moment" << std::endl;
             }
             break;
         }
