@@ -34,6 +34,34 @@ namespace detail
 
         output[tid] = Vector4uint8_t(color,255);
     }
+
+    __device__
+    float
+    apply_srgb_gamma(const float& c)
+    {
+        return c <= 0.0031308f ? 12.92f * c : 1.055f * powf(c, 1.0f/2.4f) - 0.055f;
+    }
+
+    __global__
+    void
+    gamma_kernel(Image<Vector3float> hdr_image, RenderBuffer output)
+    {
+        const uint32_t tid = ThreadHelper::globalThreadIndex();
+
+        if(tid >= hdr_image.size())
+        {
+            return;
+        }
+
+        Vector3float radiance = hdr_image[tid];
+
+        output[tid] = Vector4uint8_t(
+            static_cast<uint8_t>( Math::clamp( apply_srgb_gamma(radiance.x), 0.0f, 1.0f)*255.0f),
+            static_cast<uint8_t>( Math::clamp( apply_srgb_gamma(radiance.y), 0.0f, 1.0f)*255.0f),
+            static_cast<uint8_t>( Math::clamp( apply_srgb_gamma(radiance.z), 0.0f, 1.0f)*255.0f),
+            255u
+        );
+    }
 }
 
 class ToneMapper::Impl
