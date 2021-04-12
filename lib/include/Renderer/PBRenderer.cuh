@@ -34,6 +34,14 @@ class PBRenderer
         ~PBRenderer();
 
         /**
+        *   @brief Set the image output size
+        *   @param[in] width The output width
+        *   @param[in] height The output height 
+        */
+        void
+        setOutputSize(const uint32_t& width, const uint32_t& height);
+
+        /**
         *   @brief Register the scene to render
         *   @param[in] scene The scene to render
         *   @param[in] scene_size The scene size 
