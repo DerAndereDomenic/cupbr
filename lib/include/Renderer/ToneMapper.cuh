@@ -36,7 +36,7 @@ class ToneMapper
         *   @param[in] hdr_image The image to be tonemapped 
         */
         void
-        registerImage(const Image<Vector3float>* hdr_image);
+        registerImage(Image<Vector3float>* hdr_image);
 
         /**
         *   @brief Apply the selected tone mapping algorithm to the registered hdr image

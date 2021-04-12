@@ -1,8 +1,5 @@
 #include <Renderer/ToneMapper.cuh>
 
-#ifndef __CUPBR_RENDERER_TONEMAPPER_CUH
-#define __CUPBR_RENDERER_TONEMAPPER_CUH
-
 #include <DataStructure/Image.cuh>
 #include <DataStructure/RenderBuffer.cuh>
 #include <memory>
@@ -13,7 +10,7 @@
 namespace detail
 {
     __global__ void
-    reinhard_kernel(const Image<Vector3float> hdr_image, RenderBuffer output)
+    reinhard_kernel(Image<Vector3float> hdr_image, RenderBuffer output)
     {
         const uint32_t tid = ThreadHelper::globalThreadIndex();
 
@@ -39,7 +36,7 @@ namespace detail
     }
 }
 
-class ToneMapper::Impl()
+class ToneMapper::Impl
 {
     public:
         Impl();
@@ -73,7 +70,7 @@ ToneMapper::Impl::~Impl()
     isRegistered = false;
 }
 
-ToneMapper::ToneMapper(const ToneMappingType& type = REINHARD)
+ToneMapper::ToneMapper(const ToneMappingType& type)
 {
     impl = std::make_unique<Impl>();
     impl->type = type;
@@ -84,7 +81,7 @@ ToneMapper::~ToneMapper() = default;
 
 
 void
-ToneMapper::registerImage(const Image<Vector3float>* hdr_image)
+ToneMapper::registerImage(Image<Vector3float>* hdr_image)
 {
     //Delete old render buffer if an image has been registered
     if(impl->isRegistered)
@@ -94,6 +91,7 @@ ToneMapper::registerImage(const Image<Vector3float>* hdr_image)
 
     impl->render_buffer = RenderBuffer::createDeviceObject(hdr_image->width(), hdr_image->height());
     impl->hdr_image = hdr_image;
+    impl->isRegistered = true;
 }
 
 void
@@ -131,9 +129,7 @@ ToneMapper::getRenderBuffer()
 void
 ToneMapper::Impl::toneMappingReinhard()
 {
-    KernelSizeHelper::KernelSize config = KernelSizeHelper::configure(hdr_img->size());
-    detail::reinhard_kernel<<<config.blocks, config.threads>>>(hdr_image, render_buffer);
+    KernelSizeHelper::KernelSize config = KernelSizeHelper::configure(hdr_image->size());
+    detail::reinhard_kernel<<<config.blocks, config.threads>>>(*hdr_image, render_buffer);
     cudaSafeCall(cudaDeviceSynchronize());
 }
-
-#endif
