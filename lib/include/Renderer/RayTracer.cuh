@@ -3,6 +3,7 @@
 
 #include <Scene/Scene.cuh>
 #include <DataStructure/Image.cuh>
+#include <DataStructure/Camera.cuh>
 
 namespace PBRendering
 {
@@ -15,6 +16,7 @@ namespace PBRendering
     void
     raytracing(const Scene scene,
                const uint32_t& scene_size,
+               const Camera& camera,
                Image<Vector3float>* output_img);
 }
 
