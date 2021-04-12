@@ -129,8 +129,12 @@ int main()
 
     Image<Vector3float> img = Image<Vector3float>::createDeviceObject(width, height);
     KernelSizeHelper::KernelSize config = KernelSizeHelper::configure(img.size());
-    ToneMapper reinhard_mapper;
+    ToneMapper reinhard_mapper(REINHARD);
+    ToneMapper gamma_mapper(GAMMA);
     reinhard_mapper.registerImage(&img);
+    gamma_mapper.registerImage(&img);
+
+    ToneMapper* mapper = &reinhard_mapper;
 
     GLFWwindow* window;
 
@@ -169,8 +173,8 @@ int main()
         fillBuffer<<<config.blocks, config.threads>>>(img,scene,scene_size,camera);
         cudaSafeCall(cudaDeviceSynchronize());
 
-        reinhard_mapper.toneMap();
-        renderer.renderTexture(reinhard_mapper.getRenderBuffer());
+        mapper->toneMap();
+        renderer.renderTexture(mapper->getRenderBuffer());
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
@@ -180,6 +184,15 @@ int main()
 
         if(!edit)
             camera.processInput(window);
+
+        if(glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS)
+        {
+            mapper = &reinhard_mapper;
+        }
+        if(glfwGetKey(window, GLFW_KEY_G) == GLFW_PRESS)
+        {
+            mapper = &gamma_mapper;
+        }
 
         if(glfwGetKey(window, GLFW_KEY_LEFT_ALT) == GLFW_PRESS && !pressed)
         {
@@ -214,6 +227,7 @@ int main()
 
     //TODO
     reinhard_mapper.~ToneMapper();
+    gamma_mapper.~ToneMapper();
 
     Memory::allocator()->printStatistics();
 
