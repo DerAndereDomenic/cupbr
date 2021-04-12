@@ -59,7 +59,7 @@ PBRenderer::registerScene(const Scene scene, const uint32_t& scene_size)
 }
 
 void
-PBRenderer::render()
+PBRenderer::render(const Camera& camera)
 {
     if(!impl->outputSizeSet)
     {
@@ -79,6 +79,7 @@ PBRenderer::render()
         {
             PBRendering::raytracing(impl->scene,
                                     impl->scene_size,
+                                    camera,
                                     &impl->hdr_image);
         }
         break;
