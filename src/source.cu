@@ -50,34 +50,9 @@ __global__ void fillBuffer(Image<Vector3float> img, const Scene scene, const uin
     {
         Ray shadow_ray(geom.P-EPSILON*ray.direction(), lightDir);
         
-        for(uint32_t i = 0; i < scene_size; ++i)
+        if(!Tracing::traceVisibility(scene, scene_size, d, shadow_ray))
         {
-            Geometry* scene_element = scene[i];
-            switch(scene_element->type)
-            {
-                case GeometryType::PLANE:
-                {
-                    Plane *plane = static_cast<Plane*>(scene[i]);
-                    Vector4float intersection_plane = plane->computeRayIntersection(shadow_ray);
-                    if(intersection_plane.w != INFINITY && intersection_plane.w < d)
-                    {
-                        radiance = Vector3float(0);
-                        break;
-                    }
-                }
-                break;
-                case GeometryType::SPHERE:
-                {
-                    Sphere *sphere = static_cast<Sphere*>(scene_element);
-                    Vector4float intersection_sphere = sphere->computeRayIntersection(shadow_ray);
-                    if(intersection_sphere.w != INFINITY && intersection_sphere.w < d)
-                    {
-                        radiance = Vector3float(0);
-                        break;
-                    }
-                }
-                break;
-            }
+            radiance = 0;
         }
     }
 
