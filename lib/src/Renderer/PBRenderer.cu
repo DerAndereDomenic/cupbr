@@ -71,6 +71,30 @@ PBRenderer::render()
         std::cerr << "[PBRenderer]  No scene registered. Use registerScene()" << std::endl;
         return;
     }
+
+    switch(impl->method)
+    {
+        case RAYTRACER:
+        {
+            std::cerr << "[PBRenderer]  RAYTRACER not supported." << std::endl;
+        }
+        break;
+        case WHITTED:
+        {
+            std::cerr << "[PBRenderer]  WHITTED not supported." << std::endl;
+        }
+        break;
+        case PATHTRACER:
+        {
+            std::cerr << "[PBRenderer]  PATHTRACER not supported." << std::endl;
+        }
+        break;
+        case METROPOLIS:
+        {
+            std::cerr << "[PBRenderer]  METROPOLIS not supported." << std::endl;
+        }
+        break;
+    }
 }
 
 Image<Vector3float>*
