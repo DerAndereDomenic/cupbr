@@ -1,5 +1,6 @@
 #include <Renderer/PBRenderer.cuh>
 #include <Renderer/RayTracer.cuh>
+#include <Renderer/Whitted.cuh>
 
 class PBRenderer::Impl
 {
@@ -85,7 +86,11 @@ PBRenderer::render(const Camera& camera)
         break;
         case WHITTED:
         {
-            std::cerr << "[PBRenderer]  WHITTED not supported." << std::endl;
+            PBRendering::whitted(impl->scene,
+                                 impl->scene_size,
+                                 camera,
+                                 2,
+                                 &impl->hdr_image);
         }
         break;
         case PATHTRACER:
