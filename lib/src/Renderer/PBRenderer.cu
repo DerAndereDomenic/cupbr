@@ -26,7 +26,7 @@ PBRenderer::Impl::Impl()
 
 PBRenderer::Impl::~Impl()
 {
-    
+    Image<Vector3float>::destroyDeviceObject(hdr_image);
 }
 
 PBRenderer::PBRenderer(const RenderingMethod& method)
@@ -42,15 +42,18 @@ PBRenderer::setOutputSize(const uint32_t& width, const uint32_t& height)
 {
     if(impl->outputSizeSet)
     {
-
+        Image<Vector3float>::destroyDeviceObject(impl->hdr_image);
     }
 
+    impl->hdr_image = Image<Vector3float>::createDeviceObject(width, height);
     impl->outputSizeSet = true;
 }
 
 void
 PBRenderer::registerScene(const Scene scene, const uint32_t& scene_size)
 {
+    impl->scene = scene;
+    impl->scene_size = scene_size;
     impl->sceneRegistered = true;
 }
 
