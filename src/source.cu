@@ -1,4 +1,5 @@
 #include <iostream>
+#include <chrono>
 
 #include <GL/GLRenderer.cuh>
 #include <GL/glew.h>
@@ -108,17 +109,24 @@ int main()
     GLRenderer renderer(width, height);
     Camera camera;
 
+    uint32_t frame_counter = 0;
+    float time = 0.0f;
+
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
     {
         /* Render here */
         glClear(GL_COLOR_BUFFER_BIT);
 
+        std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
         fillBuffer<<<config.blocks, config.threads>>>(*pbrenderer.getOutputImage(),scene,scene_size,camera);
         cudaSafeCall(cudaDeviceSynchronize());
 
         mapper->toneMap();
         renderer.renderTexture(mapper->getRenderBuffer());
+        std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+        time += std::chrono::duration_cast<std::chrono::microseconds>(end-begin).count();
+        ++frame_counter;
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
@@ -172,6 +180,8 @@ int main()
     reinhard_mapper.~ToneMapper();
     gamma_mapper.~ToneMapper();
     pbrenderer.~PBRenderer();
+
+    std::cout << "Render time: " << time/(1000.0f*frame_counter) << "ms : " << 1000000.0f*frame_counter/time << "fps" << std::endl;
 
     Memory::allocator()->printStatistics();
 
