@@ -3,7 +3,9 @@
 
 #include <Core/CUDA.cuh>
 #include <Geometry/Ray.cuh>
+#include <Geometry/Geometry.cuh>
 #include <DataStructure/Camera.cuh>
+#include <Scene/Scene.cuh>
 
 /**
 *   @brief A namespace that capsulate important ray tracing methods
@@ -21,6 +23,29 @@ namespace Tracing
     __device__
     Ray
     launchRay(const uint32_t& tid, const uint32_t& width, const uint32_t& height, const Camera& camera);
+
+    /**
+    *   @brief Trace a ray through the scene and gather geometry information
+    *   @param[in] scene The scene size
+    *   @param[in] scene_size The scene size
+    *   @param[in] ray The ray
+    *   @return The local geometry information of the intersection point
+    */
+    __device__
+    LocalGeometry
+    traceRay(const Scene scene, const uint32_t& scene_size, const Ray& ray);
+
+    /**
+    *   @brief Trace a shadow ray to a light source
+    *   @param[in] scene The scene
+    *   @param[in] scene_size The scene size
+    *   @param[in] lightDist The distance to the light source
+    *   @param[in] ray The ray
+    *   @return True if the light source is visible, false if it is occluded
+    */
+    __device__
+    bool
+    traceVisibility(const Scene scene, const uint32_t& scene_size, const float& lightDist, const Ray& ray);
 }
 
 #include "../../src/Core/TracingDetail.cuh"
