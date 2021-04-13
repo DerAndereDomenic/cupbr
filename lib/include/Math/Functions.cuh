@@ -40,6 +40,18 @@ namespace Math
     float
     delta(const float& inp);
 
+    /**
+    *   @brief Reflect the incoming direction on the normal
+    *   @param[in] inc_dir The incoming direction
+    *   @param[in] normal The surface normal
+    *   @return The reflected direction
+    *   @pre dot(inc_dir,normal) > 0
+    *   @post dot(out_dir,normal) > 0
+    */
+    __host__ __device__
+    Vector3float
+    reflect(const Vector3float& inc_dir, const Vector3float& normal);
+
 }
 
 #include "../../src/Math/FunctionsDetail.cuh"
