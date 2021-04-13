@@ -39,7 +39,7 @@ namespace detail
             Vector3float lightDir = Math::normalize(lightPos - geom.P);
             bool continueTracing = true;
 
-            if(Math::dot(inc_dir,geom.N) < 0.0f)break;
+            //if(Math::dot(inc_dir,geom.N) < 0.0f)break;
 
             //Lighting
             switch(geom.material.type)
@@ -83,6 +83,26 @@ namespace detail
 
                     radiance = radiance*geom.material.brdf(geom.P, inc_dir, reflected, geom.N);
                     continueTracing = true;
+                }
+                break;
+                case MaterialType::GLASS:
+                {
+                    bool outside = Math::dot(inc_dir,geom.N) > 0;
+                    float eta = !outside ? geom.material.eta : 1.0f/geom.material.eta;
+                    Vector3float normal = outside ? geom.N : -1.0f*geom.N;
+
+                    Vector3float refracted = Math::refract(eta, inc_dir, normal);
+                    if(!Math::safeFloatEqual(Math::norm(refracted),0.0f))
+                    {
+                        ray = Ray(geom.P+EPSILON*refracted, refracted);
+                        continueTracing = true;
+                    }
+                    else
+                    {
+                        continueTracing = false;
+                    }
+                    //radiance = radiance*geom.material.brdf(geom.P,inc_dir,refracted,geom.N);
+                    
                 }
                 break;
             }
