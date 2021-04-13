@@ -43,7 +43,7 @@ Math::refract(const float& eta, const Vector3float& inc_dir, const Vector3float&
     }
     else
     {
-        return eta * inc_dir - (eta * NdotI + sqrtf(k))*normal;
+        return -eta * inc_dir - (-eta * NdotI + sqrtf(k))*normal;
     }
 }
 
