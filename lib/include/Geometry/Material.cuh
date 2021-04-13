@@ -80,6 +80,17 @@ class Material
         __host__ __device__
         Vector3float
         brdf_mirror(const Vector3float& position, const Vector3float& inc_dir, const Vector3float& out_dir, const Vector3float& normal);
+
+        /**
+        *   @brief Compute glass btdf 
+        *   @param[in] position The position
+        *   @param[in] inc_dir The incoming direction
+        *   @param[in] out_dir The outgoing directio
+        *   @return The btdf
+        */
+       __host__ __device__
+       Vector3float
+       btdf_glass(const Vector3float& position, const Vector3float& inc_dir, const Vector3float& out_dir, const Vector3float& normal);
 };
 
 #include "../../src/Geometry/MaterialDetail.cuh"
