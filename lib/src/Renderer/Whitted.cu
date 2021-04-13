@@ -36,38 +36,50 @@ namespace detail
 
             Vector3float inc_dir = Math::normalize(ray.origin() - geom.P);
             Vector3float lightDir = Math::normalize(lightPos - geom.P);
+            bool continueTracing = true;
 
             if(Math::dot(inc_dir,geom.N) < 0.0f)break;
 
             //Lighting
-
-            Vector3float brdf = geom.material.brdf(geom.P, inc_dir, lightDir, geom.N);
-            Vector3float lightIntensity = Vector3float(10,10,10); //White light
-            float d = Math::norm(geom.P-lightPos);
-            Vector3float lightRadiance = lightIntensity/(d*d);
-            float cosTerm = max(0.0f,Math::dot(geom.N, lightDir));
-
-            //Shadow
-            lightFactor = 1.0f;
-            if(geom.depth != INFINITY)
+            switch(geom.material.type)
             {
-                Ray shadow_ray(geom.P-EPSILON*ray.direction(), lightDir);
-                    
-                if(!Tracing::traceVisibility(scene, scene_size, d, shadow_ray))
+                case MaterialType::LAMBERT:
+                case MaterialType::PHONG:
                 {
-                    lightFactor = 0.0f;
+                    Vector3float brdf = geom.material.brdf(geom.P, inc_dir, lightDir, geom.N);
+                    Vector3float lightIntensity = Vector3float(10,10,10); //White light
+                    float d = Math::norm(geom.P-lightPos);
+                    Vector3float lightRadiance = lightIntensity/(d*d);
+                    float cosTerm = max(0.0f,Math::dot(geom.N, lightDir));
+
+                    //Shadow
+                    lightFactor = 1.0f;
+                    if(geom.depth != INFINITY)
+                    {
+                        Ray shadow_ray(geom.P-EPSILON*ray.direction(), lightDir);
+                            
+                        if(!Tracing::traceVisibility(scene, scene_size, d, shadow_ray))
+                        {
+                            lightFactor = 0.0f;
+                        }
+                    }
+
+                    radiance = radiance*lightFactor*brdf*lightRadiance*cosTerm;
+                    total_radiance += radiance;
+
+                    continueTracing = false;
                 }
+                break;
+                case MaterialType::MIRROR:
+                {
+                    Vector3float reflected = Math::reflect(inc_dir, geom.N);
+                    ray = Ray(geom.P+EPSILON*reflected, reflected);
+
+                    radiance = geom.material.brdf(geom.P, inc_dir, reflected, geom.N);
+                }
+
+                if(!continueTracing)break;
             }
-            
-            radiance = radiance*lightFactor*brdf*lightRadiance*cosTerm;
-            total_radiance += radiance;
-            
-            Vector3float reflected = Math::reflect(inc_dir, geom.N);
-            ray = Ray(geom.P+EPSILON*reflected, reflected);
-
-            radiance = geom.material.brdf(geom.P, inc_dir, reflected, geom.N);
-
-            if(geom.material.type != MIRROR) break;
         }
         
     
