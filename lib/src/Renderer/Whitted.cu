@@ -62,7 +62,7 @@ namespace detail
             radiance = radiance*lightFactor*brdf*lightRadiance*cosTerm;
             total_radiance += radiance;
             
-            Vector3float reflected = -1.0f*Math::normalize(inc_dir-2.0f*Math::dot(geom.N,inc_dir)*geom.N);
+            Vector3float reflected = Math::reflect(inc_dir, geom.N);
             ray = Ray(geom.P+EPSILON*reflected, reflected);
 
             radiance = geom.material.brdf(geom.P, inc_dir, reflected, geom.N);
