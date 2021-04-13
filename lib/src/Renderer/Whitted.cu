@@ -37,6 +37,8 @@ namespace detail
             Vector3float inc_dir = Math::normalize(ray.origin() - geom.P);
             Vector3float lightDir = Math::normalize(lightPos - geom.P);
 
+            if(Math::dot(inc_dir,geom.N) < 0.0f)break;
+
             //Lighting
 
             Vector3float brdf = geom.material.brdf(geom.P, inc_dir, lightDir, geom.N);
@@ -59,7 +61,7 @@ namespace detail
             
             radiance = radiance*lightFactor*brdf*lightRadiance*cosTerm;
             total_radiance += radiance;
-
+            
             Vector3float reflected = -1.0f*Math::normalize(inc_dir-2.0f*Math::dot(geom.N,inc_dir)*geom.N);
             ray = Ray(geom.P+EPSILON*reflected, reflected);
 
