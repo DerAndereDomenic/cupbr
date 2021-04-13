@@ -31,4 +31,20 @@ Math::reflect(const Vector3float& inc_dir, const Vector3float& normal)
     return normalize(2.0f*dot(inc_dir,normal)*normal-inc_dir);
 }
 
+__host__ __device__
+inline Vector3float
+Math::refract(const float& eta, const Vector3float& inc_dir, const Vector3float& normal)
+{
+    float NdotI = dot(inc_dir, normal);
+    float k = 1.0f - eta * eta * (1.0f - NdotI*NdotI);
+    if(k < 0)
+    {
+        return 0;
+    }
+    else
+    {
+        return eta * inc_dir - (eta * NdotI + sqrtf(k))*normal;
+    }
+}
+
 #endif

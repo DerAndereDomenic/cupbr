@@ -52,6 +52,17 @@ namespace Math
     Vector3float
     reflect(const Vector3float& inc_dir, const Vector3float& normal);
 
+    /**
+    *   @brief Refract the incoming direction on the normal
+    *   @param[in] eta Index of refraction
+    *   @param[in] inc_dir The incoming direction
+    *   @param[in] normal The surface normal
+    *   @return The refracted direction
+    */
+    __host__ __device__
+    Vector3float
+    refract(const float& eta, const Vector3float& inc_dir, const Vector3float& normal);
+
 }
 
 #include "../../src/Math/FunctionsDetail.cuh"
