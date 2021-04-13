@@ -27,7 +27,6 @@ namespace detail
 
         Vector3float radiance = 0;
         float lightFactor;
-        float reflection = 1.0f;
 
         for(uint32_t i = 0; i < maxTraceDepth; ++i)
         {
@@ -57,13 +56,12 @@ namespace detail
                 }
             }
 
-            radiance += reflection*lightFactor*brdf*lightRadiance*cosTerm;
-            reflection = 0.001f;
+            radiance += lightFactor*brdf*lightRadiance*cosTerm;
 
             Vector3float reflected = -1.0f*Math::normalize(inc_dir-2.0f*Math::dot(geom.N,inc_dir)*geom.N);
             ray = Ray(geom.P+EPSILON*reflected, reflected);
 
-            if(geom.material.type != PHONG) break;
+            if(geom.material.type != MIRROR) break;
         }
         
     
