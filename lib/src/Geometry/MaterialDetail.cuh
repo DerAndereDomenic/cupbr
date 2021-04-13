@@ -54,7 +54,8 @@ __host__ __device__
 inline Vector3float
 Material::brdf_mirror(const Vector3float& position, const Vector3float& inc_dir, const Vector3float& out_dir, const Vector3float& normal)
 {
-    return albedo_s*Math::delta(Math::dot(out_dir,normal)-Math::dot(inc_dir,normal))/Math::dot(out_dir,normal);
+    Vector3float reflected = -1.0f*Math::normalize(inc_dir - 2.0f*Math::dot(inc_dir, normal)*normal);
+    return albedo_s*Math::delta(1.0f-Math::dot(out_dir,reflected))/Math::dot(out_dir,normal);
 }
 
 
