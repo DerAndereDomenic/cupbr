@@ -25,7 +25,8 @@ namespace detail
         //Scene
         const Vector3float lightPos(0.0f, 0.9f, 2.0f);
 
-        Vector3float radiance = 0;
+        Vector3float total_radiance = 0;
+        Vector3float radiance = 1.0f;
         float lightFactor;
 
         for(uint32_t i = 0; i < maxTraceDepth; ++i)
@@ -55,17 +56,20 @@ namespace detail
                     lightFactor = 0.0f;
                 }
             }
-
-            radiance += lightFactor*brdf*lightRadiance*cosTerm;
+            
+            radiance = radiance*lightFactor*brdf*lightRadiance*cosTerm;
+            total_radiance += radiance;
 
             Vector3float reflected = -1.0f*Math::normalize(inc_dir-2.0f*Math::dot(geom.N,inc_dir)*geom.N);
             ray = Ray(geom.P+EPSILON*reflected, reflected);
+
+            radiance = geom.material.brdf(geom.P, inc_dir, reflected, geom.N);
 
             if(geom.material.type != MIRROR) break;
         }
         
     
-        img[tid] = radiance;
+        img[tid] = total_radiance;
     }
 }
 
