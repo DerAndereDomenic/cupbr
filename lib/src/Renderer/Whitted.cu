@@ -27,6 +27,7 @@ namespace detail
 
         Vector3float total_radiance = 0;
         Vector3float radiance = 1.0f;
+        float reflection = 0.01f;
         float lightFactor;
 
         for(uint32_t i = 0; i < maxTraceDepth; ++i)
@@ -69,17 +70,23 @@ namespace detail
 
                     continueTracing = false;
                 }
-                break;
+                if(geom.material.type == MaterialType::LAMBERT)
+                {
+                    break;
+                }
+                radiance = reflection;
+                reflection /= 10.0f;
                 case MaterialType::MIRROR:
                 {
                     Vector3float reflected = Math::reflect(inc_dir, geom.N);
                     ray = Ray(geom.P+EPSILON*reflected, reflected);
 
-                    radiance = geom.material.brdf(geom.P, inc_dir, reflected, geom.N);
+                    radiance = radiance*geom.material.brdf(geom.P, inc_dir, reflected, geom.N);
+                    continueTracing = true;
                 }
-
-                if(!continueTracing)break;
+                break;
             }
+            if(!continueTracing)break;
         }
         
     

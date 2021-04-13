@@ -89,7 +89,7 @@ PBRenderer::render(const Camera& camera)
             PBRendering::whitted(impl->scene,
                                  impl->scene_size,
                                  camera,
-                                 2,
+                                 10,
                                  &impl->hdr_image);
         }
         break;
