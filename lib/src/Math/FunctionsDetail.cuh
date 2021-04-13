@@ -17,4 +17,11 @@ Math::clamp(const T& x, const T& mini, const T& maxi)
     return min(max(x, mini),maxi);
 }
 
+__host__ __device__
+inline float
+Math::delta(const float& inp)
+{
+    return safeFloatEqual(inp, 0.0f) ? 1.0f : 0.0f;
+}
+
 #endif

@@ -31,6 +31,15 @@ namespace Math
     T
     clamp(const T& x, const T& mini, const T& maxi);
 
+    /**
+    *   @brief Delta distribution
+    *   @param[in] inp
+    *   @return One if inp equals zero, zero else 
+    */
+    __host__ __device__
+    float
+    delta(const float& inp);
+
 }
 
 #include "../../src/Math/FunctionsDetail.cuh"
