@@ -2,6 +2,7 @@
 #define __CUPBR_GEOMETRY_MATERIALDETAIL_CUH
 
 #include <cmath>
+#include <Math/Functions.cuh>
 
 __host__ __device__
 inline Vector3float
@@ -21,7 +22,7 @@ Material::brdf(const Vector3float& position, const Vector3float& inc_dir, const 
         break;
         case MIRROR:
         {
-            printf("Not supported!\n");
+            return brdf_mirror(position, inc_dir, out_dir, normal);
         }
         break;
         case GLASS:
@@ -48,5 +49,13 @@ Material::brdf_phong(const Vector3float& position, const Vector3float& inc_dir, 
     Vector3float halfDir = Math::normalize(inc_dir + out_dir);
     return albedo_s*powf(fmaxf(0.0f,Math::dot(halfDir,normal)), shininess);
 }
+
+__host__ __device__
+inline Vector3float
+Material::brdf_mirror(const Vector3float& position, const Vector3float& inc_dir, const Vector3float& out_dir, const Vector3float& normal)
+{
+    return albedo_s*Math::delta(Math::dot(out_dir,normal)-Math::dot(inc_dir,normal))/Math::dot(out_dir,normal);
+}
+
 
 #endif

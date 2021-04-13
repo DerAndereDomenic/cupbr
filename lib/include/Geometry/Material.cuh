@@ -67,6 +67,18 @@ class Material
         __host__ __device__
         Vector3float
         brdf_phong(const Vector3float& position, const Vector3float& inc_dir, const Vector3float& out_dir, const Vector3float& normal);
+
+        /**
+        *   @brief Compute the mirror brdf
+        *   @param[in] position The position
+        *   @param[in] inc_dir The incoming direction
+        *   @param[in] out_dir The outgoing directio
+        *   @return The brdf
+        *   @pre dot(inc_dir,out_dir) >= 0
+        */ 
+        __host__ __device__
+        Vector3float
+        brdf_mirror(const Vector3float& position, const Vector3float& inc_dir, const Vector3float& out_dir, const Vector3float& normal);
 };
 
 #include "../../src/Geometry/MaterialDetail.cuh"
