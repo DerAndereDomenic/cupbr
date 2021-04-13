@@ -37,6 +37,8 @@ SceneLoader::cornellBoxSphere(uint32_t* scene_size)
     h_diff.material.type = MaterialType::PHONG;
     h_mirror.material.type = MaterialType::MIRROR;
     h_mirror.material.albedo_s = 1;
+    h_glass.material.type = MaterialType::GLASS;
+    h_glass.material.albedo_s = 1;
 
     Memory::allocator()->copyHost2DeviceObject<Plane>(&h_floor, floor);
     Memory::allocator()->copyHost2DeviceObject<Plane>(&h_ceil, ceil);
