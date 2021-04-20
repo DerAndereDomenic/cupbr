@@ -22,7 +22,7 @@ namespace detail
         const Vector3float lightPos(0.0f, 0.9f, 2.0f);
 
         Vector3float radiance;
-        float reflection = 0.01f;
+        //float reflection = 0.01f;
         float lightFactor;
         
         LocalGeometry geom = Tracing::traceRay(scene, scene_size, ray);
@@ -54,19 +54,24 @@ namespace detail
                 }
                 radiance = lightFactor*brdf*lightRadiance*cosTerm;
             }
+            break;
             /*if(geom.material.type == MaterialType::LAMBERT)
             {
                 break;
             }
             radiance = reflection;
-            reflection /= 10.0f;
+            reflection /= 10.0f;*/
             case MaterialType::MIRROR:
             {
                 Vector3float reflected = Math::reflect(inc_dir, geom.N);
-                //ray = Ray(geom.P+EPSILON*reflected, reflected);
+                Ray new_ray = Ray(geom.P+EPSILON*reflected, reflected);
 
-                radiance = radiance*geom.material.brdf(geom.P, inc_dir, reflected, geom.N);
-            }*/
+                radiance = estimateRadiance(new_ray,
+                                            scene,
+                                            scene_size,
+                                            traceDepth+1,
+                                            maxTraceDepth)*geom.material.brdf(geom.P, inc_dir, reflected, geom.N)*max(0.0f,Math::dot(geom.N, reflected));
+            }
             break;
             case MaterialType::GLASS:
             {
