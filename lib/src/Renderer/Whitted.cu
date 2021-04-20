@@ -6,6 +6,88 @@
 
 namespace detail
 {
+    __device__ Vector3float
+    estimateRadiance(const Ray& ray, 
+                     const Scene scene, 
+                     const uint32_t& scene_size, 
+                     const uint32_t& traceDepth, 
+                     const uint32_t maxTraceDepth)
+    {
+        if(traceDepth >= maxTraceDepth)
+        {
+            return Vector3float(0);
+        }
+
+        //Scene
+        const Vector3float lightPos(0.0f, 0.9f, 2.0f);
+
+        Vector3float radiance;
+        float reflection = 0.01f;
+        float lightFactor;
+        
+        LocalGeometry geom = Tracing::traceRay(scene, scene_size, ray);
+
+        Vector3float inc_dir = Math::normalize(ray.origin() - geom.P);
+        Vector3float lightDir = Math::normalize(lightPos - geom.P);
+
+        switch(geom.material.type)
+        {
+            case MaterialType::LAMBERT:
+            case MaterialType::PHONG:
+            {
+                Vector3float brdf = geom.material.brdf(geom.P, inc_dir, lightDir, geom.N);
+                Vector3float lightIntensity = Vector3float(10,10,10); //White light
+                float d = Math::norm(geom.P-lightPos);
+                Vector3float lightRadiance = lightIntensity/(d*d);
+                float cosTerm = max(0.0f,Math::dot(geom.N, lightDir));
+
+                //Shadow
+                lightFactor = 1.0f;
+                if(geom.depth != INFINITY)
+                {
+                    Ray shadow_ray(geom.P-EPSILON*ray.direction(), lightDir);
+
+                    if(!Tracing::traceVisibility(scene, scene_size, d, shadow_ray))
+                    {
+                        lightFactor = 0.0f;
+                    }
+                }
+                radiance = lightFactor*brdf*lightRadiance*cosTerm;
+            }
+            /*if(geom.material.type == MaterialType::LAMBERT)
+            {
+                break;
+            }
+            radiance = reflection;
+            reflection /= 10.0f;
+            case MaterialType::MIRROR:
+            {
+                Vector3float reflected = Math::reflect(inc_dir, geom.N);
+                //ray = Ray(geom.P+EPSILON*reflected, reflected);
+
+                radiance = radiance*geom.material.brdf(geom.P, inc_dir, reflected, geom.N);
+            }*/
+            break;
+            case MaterialType::GLASS:
+            {
+                bool outside = Math::dot(inc_dir,geom.N) > 0;
+                float eta = !outside ? geom.material.eta : 1.0f/geom.material.eta;
+                Vector3float normal = outside ? geom.N : -1.0f*geom.N;
+
+                Vector3float refracted = Math::refract(eta, inc_dir, normal);
+                if(!Math::safeFloatEqual(Math::norm(refracted),0.0f))
+                {
+                    //ray = Ray(geom.P+EPSILON*refracted, refracted);
+                }
+                //radiance = radiance*geom.material.brdf(geom.P,inc_dir,refracted,geom.N);
+                    
+            }
+                break;
+        }
+
+        return radiance;
+    }
+
     __global__ void
     whitted_kernel(const Scene scene,
                    const uint32_t scene_size,
@@ -22,95 +104,11 @@ namespace detail
 
         Ray ray = Tracing::launchRay(tid, img.width(), img.height(), camera);
 
-        //Scene
-        const Vector3float lightPos(0.0f, 0.9f, 2.0f);
-
-        Vector3float total_radiance = 0;
-        Vector3float radiance = 1.0f;
-        float reflection = 0.01f;
-        float lightFactor;
-
-        for(uint32_t i = 0; i < maxTraceDepth; ++i)
-        {
-            //Direct illumination
-            LocalGeometry geom = Tracing::traceRay(scene, scene_size, ray);
-
-            Vector3float inc_dir = Math::normalize(ray.origin() - geom.P);
-            Vector3float lightDir = Math::normalize(lightPos - geom.P);
-            bool continueTracing = true;
-
-            //if(Math::dot(inc_dir,geom.N) < 0.0f)break;
-
-            //Lighting
-            switch(geom.material.type)
-            {
-                case MaterialType::LAMBERT:
-                case MaterialType::PHONG:
-                {
-                    Vector3float brdf = geom.material.brdf(geom.P, inc_dir, lightDir, geom.N);
-                    Vector3float lightIntensity = Vector3float(10,10,10); //White light
-                    float d = Math::norm(geom.P-lightPos);
-                    Vector3float lightRadiance = lightIntensity/(d*d);
-                    float cosTerm = max(0.0f,Math::dot(geom.N, lightDir));
-
-                    //Shadow
-                    lightFactor = 1.0f;
-                    if(geom.depth != INFINITY)
-                    {
-                        Ray shadow_ray(geom.P-EPSILON*ray.direction(), lightDir);
-                            
-                        if(!Tracing::traceVisibility(scene, scene_size, d, shadow_ray))
-                        {
-                            lightFactor = 0.0f;
-                        }
-                    }
-
-                    radiance = radiance*lightFactor*brdf*lightRadiance*cosTerm;
-                    total_radiance += radiance;
-
-                    continueTracing = false;
-                }
-                if(geom.material.type == MaterialType::LAMBERT)
-                {
-                    break;
-                }
-                radiance = reflection;
-                reflection /= 10.0f;
-                case MaterialType::MIRROR:
-                {
-                    Vector3float reflected = Math::reflect(inc_dir, geom.N);
-                    ray = Ray(geom.P+EPSILON*reflected, reflected);
-
-                    radiance = radiance*geom.material.brdf(geom.P, inc_dir, reflected, geom.N);
-                    continueTracing = true;
-                }
-                break;
-                case MaterialType::GLASS:
-                {
-                    bool outside = Math::dot(inc_dir,geom.N) > 0;
-                    float eta = !outside ? geom.material.eta : 1.0f/geom.material.eta;
-                    Vector3float normal = outside ? geom.N : -1.0f*geom.N;
-
-                    Vector3float refracted = Math::refract(eta, inc_dir, normal);
-                    if(!Math::safeFloatEqual(Math::norm(refracted),0.0f))
-                    {
-                        ray = Ray(geom.P+EPSILON*refracted, refracted);
-                        continueTracing = true;
-                    }
-                    else
-                    {
-                        continueTracing = false;
-                    }
-                    //radiance = radiance*geom.material.brdf(geom.P,inc_dir,refracted,geom.N);
-                    
-                }
-                break;
-            }
-            if(!continueTracing)break;
-        }
-        
-    
-        img[tid] = total_radiance;
+        img[tid] = estimateRadiance(ray,
+                                    scene,
+                                    scene_size,
+                                    0,
+                                    maxTraceDepth);
     }
 }
 
