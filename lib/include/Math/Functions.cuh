@@ -93,6 +93,16 @@ namespace Math
     float 
     rnd(uint32_t& prev);
 
+    /**
+    *   @brief Convert a direction into a local coordinate frame
+    *   @param[in] N The surface normal
+    *   @param[in] direction The direction to convert
+    *   @return The direction in local coordinates 
+    */
+    __host__ __device__
+    Vector3float
+    toLocalFrame(const Vector3float& N, const Vector3float& direction);
+
 }
 
 #include "../../src/Math/FunctionsDetail.cuh"

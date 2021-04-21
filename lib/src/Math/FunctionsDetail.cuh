@@ -84,4 +84,23 @@ Math::rnd(uint32_t& prev)
     return ((float) (prev & 0x00FFFFFF) / (float) 0x01000000);
 }
 
+__host__ __device__
+inline Vector3float
+Math::toLocalFrame(const Vector3float& N, const Vector3float& direction)
+{
+    const float x = N.x;
+    const float y = N.y;
+    const float z = N.z;
+    const float sz = (z>=0) ? 1 : -1;
+    const float a = 1.0f / (sz + z);
+    const float ya = y * a;
+    const float b = x * ya;
+    const float c = x * sz;
+
+    Vector3float localX(c * x * a -1.0f, sz * b, c);
+    Vector3float localY(b, y* ya - sz, y);
+
+    return direction.x * localX + direction.y * localY + direction.z * N;
+}
+
 #endif
