@@ -57,6 +57,7 @@ namespace detail
             //Indirect illumination
             switch(geom.material.type)
             {
+                case PHONG:
                 case LAMBERT:
                 {
                     const float xi_1 = Math::rnd(seed);
@@ -72,16 +73,17 @@ namespace detail
                     Vector3float direction = Math::normalize(Math::toLocalFrame(normal, Vector3float(x,y,z)));
                     ray = Ray(geom.P + 0.01f*direction, direction);
 
-                    rayweight = geom.material.albedo_d*rayweight;
+                    float p = fmaxf(EPSILON, Math::dot(direction, normal))/3.14159f;
+                    rayweight = rayweight * fmaxf(EPSILON, Math::dot(direction, normal))*geom.material.brdf(geom.P, inc_dir, direction, normal)/p;
 
                     continueTracing = true;
                 }
                 break;
-                case PHONG:
+                /*case PHONG:
                 {
 
                 }
-                break;
+                break;*/
                 case MIRROR:
                 {
 
