@@ -21,7 +21,7 @@ namespace detail
         //Scene
         const Vector3float lightPos(0.0f, 0.9f, 2.0f);
 
-        Vector3float radiance;
+        Vector3float radiance = 0;
         //float reflection = 0.01f;
         float lightFactor;
         
@@ -76,18 +76,33 @@ namespace detail
             case MaterialType::GLASS:
             {
                 bool outside = Math::dot(inc_dir,geom.N) > 0;
-                float eta = !outside ? geom.material.eta : 1.0f/geom.material.eta;
+                float eta = outside ? 1.0f/geom.material.eta : geom.material.eta;
                 Vector3float normal = outside ? geom.N : -1.0f*geom.N;
+                float F0 = outside ? (1.0f - geom.material.eta) / (1.0f + geom.material.eta) : (-1.0f + geom.material.eta) / (1.0f + geom.material.eta);
+                F0 *= F0;
+
+                float F = Math::fresnel_schlick(F0, Math::dot(inc_dir, normal));
 
                 Vector3float refracted = Math::refract(eta, inc_dir, normal);
-                if(!Math::safeFloatEqual(Math::norm(refracted),0.0f))
+                Vector3float reflected = Math::reflect(inc_dir, normal);
+
+                if(!Math::safeFloatEqual(Math::norm(refracted), 0.0f))
                 {
-                    //ray = Ray(geom.P+EPSILON*refracted, refracted);
+                    radiance += (1.0f - F) * estimateRadiance(Ray(geom.P + 0.01f*refracted, refracted),
+                                                                  scene,
+                                                                  scene_size,
+                                                                  traceDepth+1,
+                                                                  maxTraceDepth);//*geom.material.brdf(geom.P, inc_dir, refracted, geom.N)*max(0.0f, Math::dot(geom.N,refracted));
                 }
-                //radiance = radiance*geom.material.brdf(geom.P,inc_dir,refracted,geom.N);
+                
+                radiance += (F) * estimateRadiance(Ray(geom.P + 0.01f*reflected, reflected),
+                                                          scene,
+                                                          scene_size,
+                                                          traceDepth+1,
+                                                          maxTraceDepth);//*geom.material.brdf(geom.P, inc_dir, reflected, geom.N)*max(0.0f, Math::dot(geom.N,reflected));
                     
             }
-                break;
+            break;
         }
 
         return radiance;
