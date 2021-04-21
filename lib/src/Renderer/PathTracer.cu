@@ -46,7 +46,7 @@ namespace detail
             Vector3float inc_dir = Math::normalize(ray.origin() - geom.P);
             Vector3float lightDir = Math::normalize(lightPos - geom.P);
             float d = Math::norm(lightPos - geom.P);
-            Vector3float lightRadiance = Vector3float(10.0f) / (d*d);
+            Vector3float lightRadiance = Vector3float(1.0f) / (d*d);
 
             Ray shadow_ray = Ray(geom.P + 0.01f*lightDir, lightDir);
 
@@ -99,6 +99,12 @@ namespace detail
 
             ++trace_depth;
         }while(trace_depth < maxTraceDepth && continueTracing);
+
+        if(frameIndex > 0)
+        {
+            const float a = 1.0f/(static_cast<float>(frameIndex) + 1.0f);
+            radiance = (1.0f-a)*img[tid] + a*radiance;
+        }
 
         img[tid] = radiance;
     }
