@@ -63,6 +63,16 @@ namespace Math
     Vector3float
     refract(const float& eta, const Vector3float& inc_dir, const Vector3float& normal);
 
+    /**
+    *   @brief Fresnel schlick
+    *   @param[in] F0 The F0 term
+    *   @param[in] VdotH cos of the angle between incoming direction and normal
+    *   @return The fresnel schlick term 
+    */
+    __host__ __device__
+    float
+    fresnel_schlick(const float& F0, const float& VdotH);
+
 }
 
 #include "../../src/Math/FunctionsDetail.cuh"

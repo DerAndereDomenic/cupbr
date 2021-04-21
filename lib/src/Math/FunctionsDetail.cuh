@@ -47,4 +47,11 @@ Math::refract(const float& eta, const Vector3float& inc_dir, const Vector3float&
     }
 }
 
+__host__ __device__
+inline float
+Math::fresnel_schlick(const float& F0, const float& VdotH)
+{
+    return F0 + (1.0f - F0) * powf(1.0f - VdotH, 5.0f);
+}
+
 #endif
