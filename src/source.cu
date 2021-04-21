@@ -26,7 +26,7 @@ int main()
     uint32_t scene_size;
     Scene scene = SceneLoader::cornellBoxSphere(&scene_size);
 
-    PBRenderer pbrenderer(WHITTED);
+    PBRenderer pbrenderer(PATHTRACER);
     pbrenderer.setOutputSize(width, height);
     pbrenderer.registerScene(scene, scene_size);
 

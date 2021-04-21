@@ -1,6 +1,7 @@
 #include <Renderer/PBRenderer.cuh>
 #include <Renderer/RayTracer.cuh>
 #include <Renderer/Whitted.cuh>
+#include <Renderer/PathTracer.cuh>
 
 class PBRenderer::Impl
 {
@@ -95,7 +96,11 @@ PBRenderer::render(const Camera& camera)
         break;
         case PATHTRACER:
         {
-            std::cerr << "[PBRenderer]  PATHTRACER not supported." << std::endl;
+            PBRendering::pathtracing(impl->scene,
+                                     impl->scene_size,
+                                     camera,
+                                     5,
+                                     &impl->hdr_image);
         }
         break;
         case METROPOLIS:
