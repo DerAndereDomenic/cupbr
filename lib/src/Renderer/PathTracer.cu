@@ -10,6 +10,7 @@ namespace detail
     pathtracer_kernel(const Scene scene,
                       const uint32_t scene_size,
                       const Camera camera,
+                      const uint32_t frameIndex,
                       const uint32_t maxTraceDepth,
                       Image<Vector3float> img)
     {
@@ -20,7 +21,7 @@ namespace detail
             return;
         }
 
-        uint32_t seed = Math::tea<4>(tid, 0);
+        uint32_t seed = Math::tea<4>(tid, frameIndex);
 
         Ray ray = Tracing::launchRay(tid, img.width(), img.height(), camera);
         
@@ -107,13 +108,15 @@ void
 PBRendering::pathtracing(const Scene scene,
                          const uint32_t& scene_size,
                          const Camera& camera,
+                         const uint32_t& frameIndex,
                          const uint32_t& maxTraceDepth,
                          Image<Vector3float>* output_img)
 {
     const KernelSizeHelper::KernelSize config = KernelSizeHelper::configure(output_img->size());
     detail::pathtracer_kernel<<<config.blocks, config.threads>>>(scene, 
                                                                  scene_size, 
-                                                                 camera, 
+                                                                 camera,
+                                                                 frameIndex,
                                                                  maxTraceDepth, 
                                                                  *output_img);
     cudaSafeCall(cudaDeviceSynchronize());

@@ -15,6 +15,7 @@ class PBRenderer::Impl
         Image<Vector3float> hdr_image;
         Scene scene;
         uint32_t scene_size;
+        uint32_t frameIndex;
 
         bool outputSizeSet;
         bool sceneRegistered;
@@ -25,6 +26,7 @@ PBRenderer::Impl::Impl()
     outputSizeSet = false;
     sceneRegistered = false;
     scene_size = 0;
+    frameIndex = 0;
 }
 
 PBRenderer::Impl::~Impl()
@@ -99,8 +101,10 @@ PBRenderer::render(const Camera& camera)
             PBRendering::pathtracing(impl->scene,
                                      impl->scene_size,
                                      camera,
+                                     impl->frameIndex,
                                      5,
                                      &impl->hdr_image);
+            ++impl->frameIndex;
         }
         break;
         case METROPOLIS:
