@@ -30,7 +30,6 @@ namespace detail
 
         uint32_t trace_depth = 0;
         Vector3float radiance = 0;
-        Vector3float brdf = 0;
         Vector3float rayweight = 1;
         bool continueTracing;
 

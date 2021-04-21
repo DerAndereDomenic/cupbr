@@ -98,6 +98,10 @@ PBRenderer::render(const Camera& camera)
         break;
         case PATHTRACER:
         {
+            if(camera.moved())
+            {
+                impl->frameIndex = 0;
+            }
             PBRendering::pathtracing(impl->scene,
                                      impl->scene_size,
                                      camera,
