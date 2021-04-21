@@ -73,10 +73,10 @@ namespace detail
                     const float z = sqrtf(fmaxf(0.0f, 1.0f - x*x-y*y));
 
                     direction = Math::normalize(Math::toLocalFrame(normal, Vector3float(x,y,z)));
-                    ray = Ray(geom.P + 0.01f*direction, direction);
 
                     p = fmaxf(EPSILON, Math::dot(direction, normal))/3.14159f;
 
+                    rayweight = rayweight * fmaxf(EPSILON, Math::dot(direction, normal))*geom.material.brdf(geom.P, inc_dir, direction, normal)/p;
                     continueTracing = true;
                 }
                 break;
@@ -88,20 +88,42 @@ namespace detail
                 case MIRROR:
                 {
                     direction = Math::reflect(inc_dir, normal);
-                    ray = Ray(geom.P+0.01f*direction, direction);
 
                     p = 1.0f;
 
+                    rayweight = rayweight * fmaxf(EPSILON, Math::dot(direction, normal))*geom.material.brdf(geom.P, inc_dir, direction, normal)/p;
                     continueTracing = true;
                 }
                 break;
                 case GLASS:
                 {
+                    const float NdotV = Math::dot(inc_dir, geom.N);
+                    bool outside = NdotV > 0.0f;
+                    float eta = outside ? 1.0f/geom.material.eta : geom.material.eta;
+                    Vector3float normal = outside ? geom.N : -1.0f*geom.N;
+                    float F0 = outside ? (1.0f - geom.material.eta) / (1.0f + geom.material.eta) : (-1.0f + geom.material.eta) / (1.0f + geom.material.eta);
+                    F0 *= F0;
 
+                    float p_reflect = Math::fresnel_schlick(F0, Math::dot(inc_dir, normal));
+                    float xi = Math::rnd(seed);
+
+                    Vector3float refraction_dir = Math::refract(eta, inc_dir, normal);
+                    if(xi <= p_reflect || Math::safeFloatEqual(Math::norm(refraction_dir), 0.0f))
+                    {
+                        direction = Math::reflect(inc_dir, normal);
+                    }
+                    else
+                    {
+                        rayweight = Math::dot(normal, refraction_dir)/Math::dot(normal, inc_dir) * rayweight;
+                        direction = refraction_dir;
+                    }
+                    
+                    continueTracing = true;
                 }
                 break;
             }
-            rayweight = rayweight * fmaxf(EPSILON, Math::dot(direction, normal))*geom.material.brdf(geom.P, inc_dir, direction, normal)/p;
+            ray = Ray(geom.P+0.01f*direction, direction);
+
             ++trace_depth;
         }while(trace_depth < maxTraceDepth && continueTracing);
 
