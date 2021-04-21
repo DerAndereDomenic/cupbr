@@ -73,6 +73,26 @@ namespace Math
     float
     fresnel_schlick(const float& F0, const float& VdotH);
 
+    /**
+    *   @brief Create a seed for the rng
+    *   @param[in] val0 Thread id
+    *   @param[in] val1 Subframe index
+    *   @return The seed 
+    */ 
+    template<uint32_t N>
+    __host__ __device__
+    uint32_t
+    tea(uint32_t val0, uint32_t val1);
+
+    /**
+    *   @brief Create a random float between 0 and 1
+    *   @param[in] seed The seed
+    *   @return The random number 
+    */
+    __host__ __device__
+    float 
+    rnd(uint32_t& prev);
+
 }
 
 #include "../../src/Math/FunctionsDetail.cuh"
