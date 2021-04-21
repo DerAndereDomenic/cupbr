@@ -31,7 +31,9 @@ namespace detail
         uint32_t trace_depth = 0;
         Vector3float radiance = 0;
         Vector3float rayweight = 1;
+        Vector3float direction = 0;
         bool continueTracing;
+        float p;
 
         do
         {
@@ -70,11 +72,10 @@ namespace detail
                     const float y = r*sin(phi);
                     const float z = sqrtf(fmaxf(0.0f, 1.0f - x*x-y*y));
 
-                    Vector3float direction = Math::normalize(Math::toLocalFrame(normal, Vector3float(x,y,z)));
+                    direction = Math::normalize(Math::toLocalFrame(normal, Vector3float(x,y,z)));
                     ray = Ray(geom.P + 0.01f*direction, direction);
 
-                    float p = fmaxf(EPSILON, Math::dot(direction, normal))/3.14159f;
-                    rayweight = rayweight * fmaxf(EPSILON, Math::dot(direction, normal))*geom.material.brdf(geom.P, inc_dir, direction, normal)/p;
+                    p = fmaxf(EPSILON, Math::dot(direction, normal))/3.14159f;
 
                     continueTracing = true;
                 }
@@ -86,7 +87,12 @@ namespace detail
                 break;*/
                 case MIRROR:
                 {
+                    direction = Math::reflect(inc_dir, normal);
+                    ray = Ray(geom.P+0.01f*direction, direction);
 
+                    p = 1.0f;
+
+                    continueTracing = true;
                 }
                 break;
                 case GLASS:
@@ -95,7 +101,7 @@ namespace detail
                 }
                 break;
             }
-
+            rayweight = rayweight * fmaxf(EPSILON, Math::dot(direction, normal))*geom.material.brdf(geom.P, inc_dir, direction, normal)/p;
             ++trace_depth;
         }while(trace_depth < maxTraceDepth && continueTracing);
 
