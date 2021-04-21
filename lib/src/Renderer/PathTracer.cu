@@ -54,6 +54,46 @@ namespace detail
                 radiance += fmaxf(0.0f, Math::dot(normal,lightDir))*geom.material.brdf(geom.P,inc_dir,lightDir,normal)*lightRadiance*rayweight;
             }
 
+            //Indirect illumination
+            switch(geom.material.type)
+            {
+                case LAMBERT:
+                {
+                    const float xi_1 = Math::rnd(seed);
+                    const float xi_2 = Math::rnd(seed);
+
+                    const float r = sqrtf(xi_1);
+                    const float phi = 2.0f*3.14159f*xi_2;
+
+                    const float x = r*cos(phi);
+                    const float y = r*sin(phi);
+                    const float z = sqrtf(fmaxf(0.0f, 1.0f - x*x-y*y));
+
+                    Vector3float direction = Math::normalize(Math::toLocalFrame(normal, Vector3float(x,y,z)));
+                    ray = Ray(geom.P + 0.01f*direction, direction);
+
+                    rayweight = geom.material.albedo_d*rayweight;
+
+                    continueTracing = true;
+                }
+                break;
+                case PHONG:
+                {
+
+                }
+                break;
+                case MIRROR:
+                {
+
+                }
+                break;
+                case GLASS:
+                {
+
+                }
+                break;
+            }
+
             ++trace_depth;
         }while(trace_depth < maxTraceDepth && continueTracing);
 
