@@ -49,8 +49,20 @@ class Camera
         Vector3float
         zAxis() const;
 
+        /**
+        *   @brief Process keyboard and mouse input
+        *   @param[in] window The windo 
+        */
         void
         processInput(GLFWwindow* window);
+
+        /**
+        *   @brief Check if the camera was moved last frame
+        *   @return If the camera was moved last frame 
+        */
+        __host__ __device__
+        bool
+        moved() const;
 
     private:
         Vector3float _position = Vector3float(0,0,0);   /**< The camera position in world space */
@@ -64,6 +76,8 @@ class Camera
         bool _firstMouse = true;                        /**< Boolean to initialize the first mouse movement */
         float _lastX = 0.0f;                            /**< The last x position of the cursor needed for mouse movement */
         float _lastY = 0.0f;                            /**< The last y position of the cursor needed for mouse movement */
+
+        bool _moved = false;                             /**< If the camera was moved last frame */
 };
 
 #include "../../src/DataStructure/CameraDetail.cuh"

@@ -1,24 +1,30 @@
 #include <DataStructure/Camera.cuh>
+#include <Math/Functions.cuh>
 
 void
 Camera::processInput(GLFWwindow* window)
 {
+    _moved = false;
     //Keyboard
     if(glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
     {
         _position += 0.1f*_xAxis;
+        _moved = true;
     }
     if(glfwGetKey(window,GLFW_KEY_A) == GLFW_PRESS)
     {
         _position -= 0.1f*_xAxis;
+        _moved = true;
     }
     if(glfwGetKey(window,GLFW_KEY_S) == GLFW_PRESS)
     {
         _position -= 0.1f*_zAxis;
+        _moved = true;
     }
     if(glfwGetKey(window,GLFW_KEY_W) == GLFW_PRESS)
     {
         _position += 0.1f*_zAxis;
+        _moved = true;
     }
 
 
@@ -36,6 +42,12 @@ Camera::processInput(GLFWwindow* window)
     float sensitivity = 0.002f;
     float xoffset = _lastX - xpos;
     float yoffset = _lastY - ypos;
+
+    if(!(Math::safeFloatEqual(xoffset,0.0f) && Math::safeFloatEqual(yoffset,0.0f)))
+    {
+        _moved = true;
+    }
+
     _lastX = xpos;
     _lastY = ypos;
 

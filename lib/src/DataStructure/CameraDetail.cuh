@@ -29,4 +29,11 @@ Camera::zAxis() const
     return _zAxis;
 }
 
+__host__ __device__
+inline bool
+Camera::moved() const
+{
+    return _moved;
+}
+
 #endif
