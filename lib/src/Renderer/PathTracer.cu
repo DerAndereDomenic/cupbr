@@ -31,9 +31,14 @@ namespace detail
         bool continueTracing;
         float p;
 
+        Light light;
+
         do
         {
             continueTracing = false;
+
+            uint32_t light_sample = static_cast<uint32_t>(Math::rnd(seed) * scene.light_count);
+            light = *(scene.lights[light_sample]); 
 
             //Direct illumination
             LocalGeometry geom = Tracing::traceRay(scene, ray);
@@ -41,15 +46,15 @@ namespace detail
             Vector3float normal = geom.N;
 
             Vector3float inc_dir = Math::normalize(ray.origin() - geom.P);
-            Vector3float lightDir = Math::normalize(scene.lights[0]->position - geom.P);
-            float d = Math::norm(scene.lights[0]->position - geom.P);
-            Vector3float lightRadiance = scene.lights[0]->intensity / (d*d);
+            Vector3float lightDir = Math::normalize(light.position - geom.P);
+            float d = Math::norm(light.position - geom.P);
+            Vector3float lightRadiance = light.intensity / (d*d);
 
             Ray shadow_ray = Ray(geom.P + 0.01f*lightDir, lightDir);
 
             if(Tracing::traceVisibility(scene, d, shadow_ray))
             {
-                radiance += fmaxf(0.0f, Math::dot(normal,lightDir))*geom.material.brdf(geom.P,inc_dir,lightDir,normal)*lightRadiance*rayweight;
+                radiance += scene.light_count*fmaxf(0.0f, Math::dot(normal,lightDir))*geom.material.brdf(geom.P,inc_dir,lightDir,normal)*lightRadiance*rayweight;
             }
 
             //Indirect illumination
