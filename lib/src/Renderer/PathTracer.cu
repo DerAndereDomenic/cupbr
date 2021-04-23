@@ -44,6 +44,7 @@ namespace detail
             if(geom.depth == INFINITY)break;
             Vector3float normal = geom.N;
 
+            inc_dir = Math::normalize(ray.origin() - geom.P);
 
             uint32_t light_sample = static_cast<uint32_t>(Math::rnd(seed) * scene.light_count);
             light = *(scene.lights[light_sample]); 
@@ -52,7 +53,6 @@ namespace detail
             {
                 case LightType::POINT:
                 {
-                    inc_dir = Math::normalize(ray.origin() - geom.P);
                     lightDir = Math::normalize(light.position - geom.P);
                     d = Math::norm(light.position - geom.P);
                     lightRadiance = light.intensity / (d*d);
@@ -60,7 +60,22 @@ namespace detail
                 break;
                 case LightType::AREA:
                 {
+                    float xi1 = Math::rnd(seed) * 2.0f - 1.0f;
+                    float xi2 = Math::rnd(seed) * 2.0f - 1.0f;
 
+                    Vector3float sample = light.position + xi1 * light.halfExtend_x + xi2 * light.halfExtend_z;
+                    Vector3float n = Math::normalize(Math::cross(light.halfExtend_x, light.halfExtend_z));
+                    float area = 4.0f*Math::norm(light.halfExtend_x) * Math::norm(light.halfExtend_z);
+
+                    lightDir = Math::normalize(sample - geom.P);
+                    d = Math::norm(sample - geom.P);
+
+                    float NdotL = Math::dot(lightDir, n);
+                    if(NdotL < 0) NdotL *= -1.0f;
+
+                    float solidAngle =  area * NdotL / (d*d);
+
+                    lightRadiance = light.radiance * solidAngle;
                 }
                 break;
             }
