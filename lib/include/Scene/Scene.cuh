@@ -11,7 +11,7 @@ struct Scene
 {
     Geometry** geometry;    /**< The scene geometry */
     uint32_t scene_size;    /**< The number of objects in the scene */
-    Light* lights;           /**< The light sources in the scene */
+    Light** lights;           /**< The light sources in the scene */
     uint32_t light_count;   /**< The light source count */
 
     /**

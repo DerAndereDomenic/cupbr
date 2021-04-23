@@ -8,7 +8,9 @@ SceneLoader::cornellBoxSphere()
 {
     Scene scene;
     scene.scene_size = 8;
+    scene.light_count = 1;
     scene.geometry = Memory::allocator()->createDeviceArray<Geometry*>(scene.scene_size);
+    scene.lights = Memory::allocator()->createDeviceArray<Light*>(scene.light_count);
 
     Plane h_floor(Vector3float(0,-1,0), Vector3float(0,1,0));
     Plane h_ceil(Vector3float(0,1,0), Vector3float(0,-1,0));
@@ -20,6 +22,10 @@ SceneLoader::cornellBoxSphere()
     Sphere h_mirror(Vector3float(0.65f,-0.75f,2.65f), 0.25f);
     Sphere h_glass(Vector3float(0.0f,-0.75f,1.25f), 0.25f);
 
+    Light h_light;
+    h_light.position = Vector3float(0.0f, 0.9f, 2.0f);
+    h_light.intensity = 1;
+
     Plane* floor = Memory::allocator()->createDeviceObject<Plane>();
     Plane* ceil = Memory::allocator()->createDeviceObject<Plane>();
     Plane* left = Memory::allocator()->createDeviceObject<Plane>();
@@ -29,6 +35,8 @@ SceneLoader::cornellBoxSphere()
     Sphere* diff = Memory::allocator()->createDeviceObject<Sphere>();
     Sphere* mirror = Memory::allocator()->createDeviceObject<Sphere>();
     Sphere* glass = Memory::allocator()->createDeviceObject<Sphere>();
+
+    Light* light = Memory::allocator()->createDeviceObject<Light>();
 
     h_left.material.albedo_d = Vector3float(0,1,0);
     h_right.material.albedo_d = Vector3float(1,0,0);
@@ -50,9 +58,13 @@ SceneLoader::cornellBoxSphere()
     Memory::allocator()->copyHost2DeviceObject<Sphere>(&h_mirror, mirror);
     Memory::allocator()->copyHost2DeviceObject<Sphere>(&h_glass, glass);
 
+    Memory::allocator()->copyHost2DeviceObject<Light>(&h_light, light);
+
     Geometry* host_array[] = {floor, ceil, left, right, back, diff, mirror, glass};
+    Light* host_lights[] = {light};
 
     Memory::allocator()->copyHost2DeviceArray<Geometry*>(scene.scene_size, host_array, scene.geometry);
+    Memory::allocator()->copyHost2DeviceArray<Light*>(scene.light_count, host_lights, scene.lights);
 
     return scene;
 }
