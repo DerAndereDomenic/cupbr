@@ -19,21 +19,17 @@ namespace detail
 
         Ray ray = Tracing::launchRay(tid, img.width(), img.height(), camera);
 
-        //Scene
-        const Vector3float lightPos(0.0f,0.9f,2.0f);
-
         LocalGeometry geom = Tracing::traceRay(scene, ray);
 
         Vector3float inc_dir = Math::normalize(camera.position() - geom.P);
-        Vector3float lightDir = Math::normalize(lightPos - geom.P);
+        Vector3float lightDir = Math::normalize(scene.lights[0]->position - geom.P);
 
 
         //Lighting
 
         Vector3float brdf = geom.material.brdf(geom.P, inc_dir, lightDir, geom.N);
-        Vector3float lightIntensity = Vector3float(10,10,10); //White light
-        float d = Math::norm(geom.P-lightPos);
-        Vector3float lightRadiance = lightIntensity/(d*d);
+        float d = Math::norm(geom.P-scene.lights[0]->position);
+        Vector3float lightRadiance = scene.lights[0]->intensity/(d*d);
         float cosTerm = max(0.0f,Math::dot(geom.N, lightDir));
         Vector3float radiance = brdf*lightRadiance*cosTerm;
 

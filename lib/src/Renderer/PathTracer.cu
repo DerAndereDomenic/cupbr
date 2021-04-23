@@ -23,9 +23,6 @@ namespace detail
         uint32_t seed = Math::tea<4>(tid, frameIndex);
 
         Ray ray = Tracing::launchRay(tid, img.width(), img.height(), camera);
-        
-        //Scene
-        Vector3float lightPos(0.0f,0.9f,2.0f);
 
         uint32_t trace_depth = 0;
         Vector3float radiance = 0;
@@ -44,9 +41,9 @@ namespace detail
             Vector3float normal = geom.N;
 
             Vector3float inc_dir = Math::normalize(ray.origin() - geom.P);
-            Vector3float lightDir = Math::normalize(lightPos - geom.P);
-            float d = Math::norm(lightPos - geom.P);
-            Vector3float lightRadiance = Vector3float(1.0f) / (d*d);
+            Vector3float lightDir = Math::normalize(scene.lights[0]->position - geom.P);
+            float d = Math::norm(scene.lights[0]->position - geom.P);
+            Vector3float lightRadiance = scene.lights[0]->intensity / (d*d);
 
             Ray shadow_ray = Ray(geom.P + 0.01f*lightDir, lightDir);
 
