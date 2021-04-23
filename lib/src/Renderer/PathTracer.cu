@@ -28,8 +28,10 @@ namespace detail
         Vector3float radiance = 0;
         Vector3float rayweight = 1;
         Vector3float direction = 0;
+        Vector3float inc_dir, lightDir, lightRadiance;
         bool continueTracing;
         float p;
+        float d;
 
         Light light;
 
@@ -37,18 +39,32 @@ namespace detail
         {
             continueTracing = false;
 
-            uint32_t light_sample = static_cast<uint32_t>(Math::rnd(seed) * scene.light_count);
-            light = *(scene.lights[light_sample]); 
-
             //Direct illumination
             LocalGeometry geom = Tracing::traceRay(scene, ray);
             if(geom.depth == INFINITY)break;
             Vector3float normal = geom.N;
 
-            Vector3float inc_dir = Math::normalize(ray.origin() - geom.P);
-            Vector3float lightDir = Math::normalize(light.position - geom.P);
-            float d = Math::norm(light.position - geom.P);
-            Vector3float lightRadiance = light.intensity / (d*d);
+
+            uint32_t light_sample = static_cast<uint32_t>(Math::rnd(seed) * scene.light_count);
+            light = *(scene.lights[light_sample]); 
+
+            switch(light.type)
+            {
+                case LightType::POINT:
+                {
+                    inc_dir = Math::normalize(ray.origin() - geom.P);
+                    lightDir = Math::normalize(light.position - geom.P);
+                    d = Math::norm(light.position - geom.P);
+                    lightRadiance = light.intensity / (d*d);
+                }
+                break;
+                case LightType::AREA:
+                {
+
+                }
+                break;
+            }
+            
 
             Ray shadow_ray = Ray(geom.P + 0.01f*lightDir, lightDir);
 
