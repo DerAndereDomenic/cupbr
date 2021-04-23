@@ -73,7 +73,9 @@ void
 SceneLoader::destroyCornellBoxSphere(Scene scene)
 {
     Geometry* host_scene[8];
+    Light* host_lights[1];
     Memory::allocator()->copyDevice2HostArray(8, scene.geometry, host_scene);
+    Memory::allocator()->copyDevice2HostArray(1, scene.lights, host_lights);
 
     for(uint32_t i = 0; i < 5; ++i)
     {
@@ -85,5 +87,11 @@ SceneLoader::destroyCornellBoxSphere(Scene scene)
         Memory::allocator()->destroyDeviceObject<Sphere>(static_cast<Sphere*>(host_scene[i]));
     }
 
+    for(uint32_t i = 0; i < 1; ++i)
+    {
+        Memory::allocator()->destroyDeviceObject<Light>(host_lights[i]);
+    }
+
     Memory::allocator()->destroyDeviceArray<Geometry*>(scene.geometry);
+    Memory::allocator()->destroyDeviceArray<Light*>(scene.lights);
 }
