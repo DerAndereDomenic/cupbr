@@ -50,6 +50,13 @@ class PBRenderer
         registerScene(const Scene scene);
 
         /**
+        *   @brief Set the rendering method
+        *   @param[in] method The new method 
+        */
+        void
+        setMethod(const RenderingMethod& method);
+
+        /**
         *   @brief Render the scene
         *   @param[in] camera The camera
         */

@@ -60,6 +60,12 @@ PBRenderer::registerScene(const Scene scene)
 }
 
 void
+PBRenderer::setMethod(const RenderingMethod& method)
+{
+    impl->method = method;
+}
+
+void
 PBRenderer::render(const Camera& camera)
 {
     if(!impl->outputSizeSet)
