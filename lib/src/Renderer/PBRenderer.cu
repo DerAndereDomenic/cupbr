@@ -14,7 +14,6 @@ class PBRenderer::Impl
         RenderingMethod method;
         Image<Vector3float> hdr_image;
         Scene scene;
-        uint32_t scene_size;
         uint32_t frameIndex;
 
         bool outputSizeSet;
@@ -25,7 +24,6 @@ PBRenderer::Impl::Impl()
 {
     outputSizeSet = false;
     sceneRegistered = false;
-    scene_size = 0;
     frameIndex = 0;
 }
 
@@ -55,10 +53,9 @@ PBRenderer::setOutputSize(const uint32_t& width, const uint32_t& height)
 }
 
 void
-PBRenderer::registerScene(const Scene scene, const uint32_t& scene_size)
+PBRenderer::registerScene(const Scene scene)
 {
     impl->scene = scene;
-    impl->scene_size = scene_size;
     impl->sceneRegistered = true;
 }
 
@@ -82,7 +79,6 @@ PBRenderer::render(const Camera& camera)
         case RAYTRACER:
         {
             PBRendering::raytracing(impl->scene,
-                                    impl->scene_size,
                                     camera,
                                     &impl->hdr_image);
         }
@@ -90,7 +86,6 @@ PBRenderer::render(const Camera& camera)
         case WHITTED:
         {
             PBRendering::whitted(impl->scene,
-                                 impl->scene_size,
                                  camera,
                                  5,
                                  &impl->hdr_image);
@@ -103,7 +98,6 @@ PBRenderer::render(const Camera& camera)
                 impl->frameIndex = 0;
             }
             PBRendering::pathtracing(impl->scene,
-                                     impl->scene_size,
                                      camera,
                                      impl->frameIndex,
                                      5,

@@ -8,7 +8,6 @@ namespace detail
 {
     __global__ void
     pathtracer_kernel(const Scene scene,
-                      const uint32_t scene_size,
                       const Camera camera,
                       const uint32_t frameIndex,
                       const uint32_t maxTraceDepth,
@@ -40,7 +39,7 @@ namespace detail
             continueTracing = false;
 
             //Direct illumination
-            LocalGeometry geom = Tracing::traceRay(scene, scene_size, ray);
+            LocalGeometry geom = Tracing::traceRay(scene, ray);
             if(geom.depth == INFINITY)break;
             Vector3float normal = geom.N;
 
@@ -51,7 +50,7 @@ namespace detail
 
             Ray shadow_ray = Ray(geom.P + 0.01f*lightDir, lightDir);
 
-            if(Tracing::traceVisibility(scene, scene_size, d, shadow_ray))
+            if(Tracing::traceVisibility(scene, d, shadow_ray))
             {
                 radiance += fmaxf(0.0f, Math::dot(normal,lightDir))*geom.material.brdf(geom.P,inc_dir,lightDir,normal)*lightRadiance*rayweight;
             }
@@ -139,7 +138,6 @@ namespace detail
 
 void
 PBRendering::pathtracing(const Scene scene,
-                         const uint32_t& scene_size,
                          const Camera& camera,
                          const uint32_t& frameIndex,
                          const uint32_t& maxTraceDepth,
@@ -147,7 +145,6 @@ PBRendering::pathtracing(const Scene scene,
 {
     const KernelSizeHelper::KernelSize config = KernelSizeHelper::configure(output_img->size());
     detail::pathtracer_kernel<<<config.blocks, config.threads>>>(scene, 
-                                                                 scene_size, 
                                                                  camera,
                                                                  frameIndex,
                                                                  maxTraceDepth, 

@@ -23,12 +23,11 @@ int main()
 
     cudaSafeCall(cudaSetDevice(0));
 
-    uint32_t scene_size;
-    Scene scene = SceneLoader::cornellBoxSphere(&scene_size);
+    Scene scene = SceneLoader::cornellBoxSphere();
 
     PBRenderer pbrenderer(PATHTRACER);
     pbrenderer.setOutputSize(width, height);
-    pbrenderer.registerScene(scene, scene_size);
+    pbrenderer.registerScene(scene);
 
     KernelSizeHelper::KernelSize config = KernelSizeHelper::configure(pbrenderer.getOutputImage()->size());
     ToneMapper reinhard_mapper(REINHARD);

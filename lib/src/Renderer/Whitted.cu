@@ -9,7 +9,6 @@ namespace detail
     __device__ Vector3float
     estimateRadiance(const Ray& ray, 
                      const Scene scene, 
-                     const uint32_t& scene_size, 
                      const uint32_t& traceDepth, 
                      const uint32_t maxTraceDepth)
     {
@@ -25,7 +24,7 @@ namespace detail
         //float reflection = 0.01f;
         float lightFactor;
         
-        LocalGeometry geom = Tracing::traceRay(scene, scene_size, ray);
+        LocalGeometry geom = Tracing::traceRay(scene, ray);
 
         Vector3float inc_dir = Math::normalize(ray.origin() - geom.P);
         Vector3float lightDir = Math::normalize(lightPos - geom.P);
@@ -47,7 +46,7 @@ namespace detail
                 {
                     Ray shadow_ray(geom.P-EPSILON*ray.direction(), lightDir);
 
-                    if(!Tracing::traceVisibility(scene, scene_size, d, shadow_ray))
+                    if(!Tracing::traceVisibility(scene, d, shadow_ray))
                     {
                         lightFactor = 0.0f;
                     }
@@ -68,7 +67,6 @@ namespace detail
 
                 radiance = estimateRadiance(new_ray,
                                             scene,
-                                            scene_size,
                                             traceDepth+1,
                                             maxTraceDepth)*geom.material.brdf(geom.P, inc_dir, reflected, geom.N)*max(0.0f,Math::dot(geom.N, reflected));
             }
@@ -90,14 +88,12 @@ namespace detail
                 {
                     radiance += (1.0f - F) * estimateRadiance(Ray(geom.P + 0.01f*refracted, refracted),
                                                                   scene,
-                                                                  scene_size,
                                                                   traceDepth+1,
                                                                   maxTraceDepth);//*geom.material.brdf(geom.P, inc_dir, refracted, geom.N)*max(0.0f, Math::dot(geom.N,refracted));
                 }
                 
                 radiance += (F) * estimateRadiance(Ray(geom.P + 0.01f*reflected, reflected),
                                                           scene,
-                                                          scene_size,
                                                           traceDepth+1,
                                                           maxTraceDepth);//*geom.material.brdf(geom.P, inc_dir, reflected, geom.N)*max(0.0f, Math::dot(geom.N,reflected));
                     
@@ -110,7 +106,6 @@ namespace detail
 
     __global__ void
     whitted_kernel(const Scene scene,
-                   const uint32_t scene_size,
                    const Camera camera,
                    const uint32_t maxTraceDepth,
                    Image<Vector3float> img)
@@ -126,7 +121,6 @@ namespace detail
 
         img[tid] = estimateRadiance(ray,
                                     scene,
-                                    scene_size,
                                     0,
                                     maxTraceDepth);
     }
@@ -134,14 +128,12 @@ namespace detail
 
 void
 PBRendering::whitted(const Scene scene,
-                     const uint32_t& scene_size,
                      const Camera& camera,
                      const uint32_t& maxTraceDepth,
                      Image<Vector3float>* output_img)
 {
     KernelSizeHelper::KernelSize config = KernelSizeHelper::configure(output_img->size());
     detail::whitted_kernel<<<config.blocks, config.threads>>>(scene,
-                                                              scene_size,
                                                               camera,
                                                               maxTraceDepth,
                                                               *output_img);

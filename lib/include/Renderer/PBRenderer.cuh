@@ -45,10 +45,9 @@ class PBRenderer
         /**
         *   @brief Register the scene to render
         *   @param[in] scene The scene to render
-        *   @param[in] scene_size The scene size 
         */
         void
-        registerScene(const Scene scene, const uint32_t& scene_size);
+        registerScene(const Scene scene);
 
         /**
         *   @brief Render the scene

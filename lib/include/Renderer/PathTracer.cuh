@@ -10,7 +10,6 @@ namespace PBRendering
     /**
     *   @brief An implementation of a path tracer
     *   @param[in] scene The scene to render
-    *   @param[in] scene_size The scene size
     *   @param[in] frameIndex The frame index
     *   @param[in] camera The camera
     *   @param[in] maxTraceDepth The maximum number of recursive rays
@@ -18,7 +17,6 @@ namespace PBRendering
     */
     void
     pathtracing(const Scene scene,
-                const uint32_t& scene_size,
                 const Camera& camera,
                 const uint32_t& frameIndex,
                 const uint32_t& maxTraceDepth,

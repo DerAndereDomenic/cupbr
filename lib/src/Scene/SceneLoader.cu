@@ -6,9 +6,9 @@
 Scene
 SceneLoader::cornellBoxSphere()
 {
-     Scene scene;
-     scene.scene_size = 8;
-    scene.geometry = Memory::allocator()->createDeviceArray<Geometry*>(*scene_size);
+    Scene scene;
+    scene.scene_size = 8;
+    scene.geometry = Memory::allocator()->createDeviceArray<Geometry*>(scene.scene_size);
 
     Plane h_floor(Vector3float(0,-1,0), Vector3float(0,1,0));
     Plane h_ceil(Vector3float(0,1,0), Vector3float(0,-1,0));
@@ -52,7 +52,7 @@ SceneLoader::cornellBoxSphere()
 
     Geometry* host_array[] = {floor, ceil, left, right, back, diff, mirror, glass};
 
-    Memory::allocator()->copyHost2DeviceArray<Geometry*>(*scene_size, host_array, scene.geometry);
+    Memory::allocator()->copyHost2DeviceArray<Geometry*>(scene.scene_size, host_array, scene.geometry);
 
     return scene;
 }
