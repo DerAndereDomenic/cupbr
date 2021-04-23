@@ -13,11 +13,11 @@ namespace SceneLoader
     cornellBoxSphere();
 
     /**
-    *   @brief Destroys the cornell box sphere scene
-    *   @param[in] scene The scene to be destroyed
+    *   @brief Creates a cornell box with three spheres and an area light
+    *   @return A scene pointer 
     */
-    void
-    destroyCornellBoxSphere(Scene scene);
+    Scene
+    cornellBoxSphereAreaLight();
 
     /**
     *   @brief Creates a cornell box with three spheres and multiple light sources
@@ -25,6 +25,13 @@ namespace SceneLoader
     */
     Scene
     cornellBoxSphereMultiLight();
+
+    /**
+    *   @brief Destroys the cornell box sphere scene
+    *   @param[in] scene The scene to be destroyed
+    */
+    void
+    destroyCornellBoxSphere(Scene scene);
 }
 
 #endif
