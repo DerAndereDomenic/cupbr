@@ -74,7 +74,7 @@ SceneLoader::cornellBoxSphereAreaLight()
 {
     Scene scene;
     scene.scene_size = 8;
-    scene.light_count = 1;
+    scene.light_count = 2;
     scene.geometry = Memory::allocator()->createDeviceArray<Geometry*>(scene.scene_size);
     scene.lights = Memory::allocator()->createDeviceArray<Light*>(scene.light_count);
 
@@ -88,13 +88,20 @@ SceneLoader::cornellBoxSphereAreaLight()
     Sphere h_mirror(Vector3float(0.65f,-0.75f,2.65f), 0.25f);
     Sphere h_glass(Vector3float(0.0f,-0.75f,1.25f), 0.25f);
 
-    Light h_light;
-    h_light.type = AREA;
-    h_light.position = Vector3float(0.0f, 0.9f, 2.0f);
-    h_light.intensity = 1;
-    h_light.radiance = 10;
-    h_light.halfExtend1 = Vector3float(0.1f, 0.0f, 0.0f);
-    h_light.halfExtend2 = Vector3float(0.0f, 0.0f, 0.5f);
+    Light h_light1, h_light2;
+    h_light1.type = AREA;
+    h_light1.position = Vector3float(0.0f, 0.9f, 2.0f);
+    h_light1.intensity = 1;
+    h_light1.radiance = 10;
+    h_light1.halfExtend1 = Vector3float(0.1f, 0.0f, 0.0f);
+    h_light1.halfExtend2 = Vector3float(0.0f, 0.0f, 0.5f);
+
+    h_light2.type = AREA;
+    h_light2.position = Vector3float(0.0f, 0.0f, 2.5f);
+    h_light2.intensity = 1;
+    h_light2.radiance = Vector3float(0,0,5);
+    h_light2.halfExtend1 = Vector3float(0.3f, 0.0f, 0.0f);
+    h_light2.halfExtend2 = Vector3float(0.0f, 0.3f, 0.0f);
 
     Plane* floor = Memory::allocator()->createDeviceObject<Plane>();
     Plane* ceil = Memory::allocator()->createDeviceObject<Plane>();
@@ -106,7 +113,8 @@ SceneLoader::cornellBoxSphereAreaLight()
     Sphere* mirror = Memory::allocator()->createDeviceObject<Sphere>();
     Sphere* glass = Memory::allocator()->createDeviceObject<Sphere>();
 
-    Light* light = Memory::allocator()->createDeviceObject<Light>();
+    Light* light1 = Memory::allocator()->createDeviceObject<Light>();
+    Light* light2 = Memory::allocator()->createDeviceObject<Light>();
 
     h_left.material.albedo_d = Vector3float(0,1,0);
     h_right.material.albedo_d = Vector3float(1,0,0);
@@ -128,10 +136,11 @@ SceneLoader::cornellBoxSphereAreaLight()
     Memory::allocator()->copyHost2DeviceObject<Sphere>(&h_mirror, mirror);
     Memory::allocator()->copyHost2DeviceObject<Sphere>(&h_glass, glass);
 
-    Memory::allocator()->copyHost2DeviceObject<Light>(&h_light, light);
+    Memory::allocator()->copyHost2DeviceObject<Light>(&h_light1, light1);
+    Memory::allocator()->copyHost2DeviceObject<Light>(&h_light2, light2);
 
     Geometry* host_array[] = {floor, ceil, left, right, back, diff, mirror, glass};
-    Light* host_lights[] = {light};
+    Light* host_lights[] = {light1, light2};
 
     Memory::allocator()->copyHost2DeviceArray<Geometry*>(scene.scene_size, host_array, scene.geometry);
     Memory::allocator()->copyHost2DeviceArray<Light*>(scene.light_count, host_lights, scene.lights);
