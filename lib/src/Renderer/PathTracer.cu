@@ -22,7 +22,7 @@ namespace detail
 
         uint32_t seed = Math::tea<4>(tid, frameIndex);
 
-        Ray ray = Tracing::launchRay(tid, img.width(), img.height(), camera);
+        Ray ray = Tracing::launchRay(tid, img.width(), img.height(), camera, true, &seed);
 
         uint32_t trace_depth = 0;
         Vector3float radiance = 0;
