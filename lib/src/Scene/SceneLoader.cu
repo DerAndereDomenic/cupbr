@@ -93,8 +93,8 @@ SceneLoader::cornellBoxSphereAreaLight()
     h_light.position = Vector3float(0.0f, 0.9f, 2.0f);
     h_light.intensity = 1;
     h_light.radiance = 10;
-    h_light.halfExtend_x = Vector3float(0.1f, 0.0f, 0.0f);
-    h_light.halfExtend_z = Vector3float(0.0f, 0.0f, 0.5f);
+    h_light.halfExtend1 = Vector3float(0.1f, 0.0f, 0.0f);
+    h_light.halfExtend2 = Vector3float(0.0f, 0.0f, 0.5f);
 
     Plane* floor = Memory::allocator()->createDeviceObject<Plane>();
     Plane* ceil = Memory::allocator()->createDeviceObject<Plane>();

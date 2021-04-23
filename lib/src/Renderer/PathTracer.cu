@@ -63,9 +63,9 @@ namespace detail
                     float xi1 = Math::rnd(seed) * 2.0f - 1.0f;
                     float xi2 = Math::rnd(seed) * 2.0f - 1.0f;
 
-                    Vector3float sample = light.position + xi1 * light.halfExtend_x + xi2 * light.halfExtend_z;
-                    Vector3float n = Math::normalize(Math::cross(light.halfExtend_x, light.halfExtend_z));
-                    float area = 4.0f*Math::norm(light.halfExtend_x) * Math::norm(light.halfExtend_z);
+                    Vector3float sample = light.position + xi1 * light.halfExtend1 + xi2 * light.halfExtend2;
+                    Vector3float n = Math::normalize(Math::cross(light.halfExtend1, light.halfExtend2));
+                    float area = 4.0f*Math::norm(light.halfExtend1) * Math::norm(light.halfExtend2);
 
                     lightDir = Math::normalize(sample - geom.P);
                     d = Math::norm(sample - geom.P);
