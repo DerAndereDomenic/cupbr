@@ -23,7 +23,7 @@ int main()
 
     cudaSafeCall(cudaSetDevice(0));
 
-    Scene scene = SceneLoader::cornellBoxSphere();
+    Scene scene = SceneLoader::cornellBoxSphereMultiLight();
 
     PBRenderer pbrenderer(PATHTRACER);
     pbrenderer.setOutputSize(width, height);

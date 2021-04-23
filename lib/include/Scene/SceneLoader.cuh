@@ -18,6 +18,13 @@ namespace SceneLoader
     */
     void
     destroyCornellBoxSphere(Scene scene);
+
+    /**
+    *   @brief Creates a cornell box with three spheres and multiple light sources
+    *   @return A scene pointer 
+    */
+    Scene
+    cornellBoxSphereMultiLight();
 }
 
 #endif
