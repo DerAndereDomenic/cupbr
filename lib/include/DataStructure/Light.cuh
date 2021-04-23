@@ -27,6 +27,8 @@ struct Light
     Vector3float position;      /**< The light position */
     Vector3float intensity;     /**< The light intensity (point) */
     Vector3float radiance;      /**< The light radiance (area) */
+    Vector3float halfExtend_x;  /**< The half extend in x direction in world space (area) */
+    Vector3float halfExtend_y;  /**< The half extend in y direction in world space (area) */
 };
 
 #endif
