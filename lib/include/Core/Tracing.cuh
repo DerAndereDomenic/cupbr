@@ -18,11 +18,13 @@ namespace Tracing
     *   @param[in] width The width of the output image
     *   @param[in] height The height of the output image
     *   @param[in] camera The camera
+    *   @param[in] jitter If jittering should be used
+    *   @param[in] seed If jitter = true, this is the seed used for the rng
     *   @return A ray from the eye position through the corresponding pixel
     */
     __device__
     Ray
-    launchRay(const uint32_t& tid, const uint32_t& width, const uint32_t& height, const Camera& camera);
+    launchRay(const uint32_t& tid, const uint32_t& width, const uint32_t& height, const Camera& camera, const bool& jitter = false,uint32_t& seed = 0);
 
     /**
     *   @brief Trace a ray through the scene and gather geometry information

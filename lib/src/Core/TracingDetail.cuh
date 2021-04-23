@@ -5,15 +5,19 @@
 #include <Core/KernelHelper.cuh>
 #include <Geometry/Plane.cuh>
 #include <Geometry/Sphere.cuh>
+#include <Math/Functions.cuh>
 
 __device__
 inline Ray
-Tracing::launchRay(const uint32_t& tid, const uint32_t& width, const uint32_t& height, const Camera& camera)
+Tracing::launchRay(const uint32_t& tid, const uint32_t& width, const uint32_t& height, const Camera& camera, const bool& jitter,uint32_t& seed)
 {
     const Vector2uint32_t pixel = ThreadHelper::index2pixel(tid, width, height);
 
-    const float ratio_x = 2.0f*(static_cast<float>(pixel.x)/width - 0.5f);
-    const float ratio_y = 2.0f*(static_cast<float>(pixel.y)/height - 0.5f);
+    float jitter_x = jitter ? Math::rnd(seed) : 0.0f;
+    float jitter_y = jitter ? Math::rnd(seed) : 0.0f;
+
+    const float ratio_x = 2.0f*((static_cast<float>(pixel.x) + jitter_x)/width - 0.5f);
+    const float ratio_y = 2.0f*((static_cast<float>(pixel.y) + jitter_y)/height - 0.5f);
 
     const Vector3float world_pos = camera.position() + camera.zAxis() + ratio_x*camera.xAxis() + ratio_y*camera.yAxis();
 
