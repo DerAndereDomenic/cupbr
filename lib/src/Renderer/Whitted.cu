@@ -10,7 +10,7 @@ namespace detail
     estimateRadiance(const Ray& ray, 
                      const Scene scene, 
                      const uint32_t& traceDepth, 
-                     const uint32_t maxTraceDepth)
+                     const uint32_t& maxTraceDepth)
     {
         if(traceDepth >= maxTraceDepth)
         {
@@ -18,37 +18,35 @@ namespace detail
         }
 
         Vector3float radiance = 0;
-        //float reflection = 0.01f;
-        float lightFactor;
         
         LocalGeometry geom = Tracing::traceRay(scene, ray);
 
         Vector3float inc_dir = Math::normalize(ray.origin() - geom.P);
-        Vector3float lightDir = Math::normalize(scene.lights[0]->position - geom.P);
 
         switch(geom.material.type)
         {
             case MaterialType::LAMBERT:
             case MaterialType::PHONG:
             {
-                Vector3float brdf = geom.material.brdf(geom.P, inc_dir, lightDir, geom.N);
-                Vector3float lightIntensity = Vector3float(10,10,10); //White light
-                float d = Math::norm(geom.P-scene.lights[0]->position);
-                Vector3float lightRadiance = scene.lights[0]->intensity/(d*d);
-                float cosTerm = max(0.0f,Math::dot(geom.N, lightDir));
-
-                //Shadow
-                lightFactor = 1.0f;
-                if(geom.depth != INFINITY)
+                for(uint32_t i = 0; i < scene.light_count; ++i)
                 {
-                    Ray shadow_ray(geom.P-EPSILON*ray.direction(), lightDir);
-
-                    if(!Tracing::traceVisibility(scene, d, shadow_ray))
+                    Vector3float lightDir = Math::normalize(scene.lights[i]->position - geom.P);
+                    Vector3float brdf = geom.material.brdf(geom.P, inc_dir, lightDir, geom.N);
+                    float d = Math::norm(geom.P-scene.lights[i]->position);
+                    Vector3float lightRadiance = scene.lights[i]->intensity/(d*d);
+                    float cosTerm = max(0.0f,Math::dot(geom.N, lightDir));
+    
+                    //Shadow 
+                    if(geom.depth != INFINITY)
                     {
-                        lightFactor = 0.0f;
-                    }
+                        Ray shadow_ray(geom.P-EPSILON*ray.direction(), lightDir);
+    
+                        if(Tracing::traceVisibility(scene, d, shadow_ray))
+                        {
+                            radiance += brdf*lightRadiance*cosTerm;
+                        }
+                    }  
                 }
-                radiance = lightFactor*brdf*lightRadiance*cosTerm;
             }
             break;
             /*if(geom.material.type == MaterialType::LAMBERT)
@@ -115,7 +113,6 @@ namespace detail
         }
 
         Ray ray = Tracing::launchRay(tid, img.width(), img.height(), camera);
-
         img[tid] = estimateRadiance(ray,
                                     scene,
                                     0,

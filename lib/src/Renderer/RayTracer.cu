@@ -35,7 +35,7 @@ namespace detail
             float cosTerm = max(0.0f,Math::dot(geom.N, lightDir));
             
 
-                //Shadow
+            //Shadow
             if(geom.depth != INFINITY)
             {
                 Ray shadow_ray(geom.P-EPSILON*ray.direction(), lightDir);
