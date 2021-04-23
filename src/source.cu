@@ -103,6 +103,21 @@ int main()
             mapper = &gamma_mapper;
         }
 
+        if(glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS && !pressed)
+        {
+            pbrenderer.setMethod(RAYTRACER);
+        }
+
+        if(glfwGetKey(window, GLFW_KEY_2) == GLFW_PRESS && !pressed)
+        {
+            pbrenderer.setMethod(WHITTED);
+        }
+
+        if(glfwGetKey(window, GLFW_KEY_3) == GLFW_PRESS && !pressed)
+        {
+            pbrenderer.setMethod(PATHTRACER);
+        }
+
         if(glfwGetKey(window, GLFW_KEY_LEFT_ALT) == GLFW_PRESS && !pressed)
         {
             pressed = true;
