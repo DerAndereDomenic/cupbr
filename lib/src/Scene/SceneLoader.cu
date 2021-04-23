@@ -4,11 +4,10 @@
 #include <Geometry/Sphere.cuh>
 
 Scene
-SceneLoader::cornellBoxSphere(uint32_t* scene_size)
+SceneLoader::cornellBoxSphere()
 {
-    *scene_size = 8;
-
-    Scene scene;
+     Scene scene;
+     scene.scene_size = 8;
     scene.geometry = Memory::allocator()->createDeviceArray<Geometry*>(*scene_size);
 
     Plane h_floor(Vector3float(0,-1,0), Vector3float(0,1,0));

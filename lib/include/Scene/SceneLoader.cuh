@@ -7,11 +7,10 @@ namespace SceneLoader
 {
     /**
     *   @brief Creates a cornell box with three spheres
-    *   @param[out] scene_size The number of objects in the scene
     *   @return A scene pointer 
     */
     Scene
-    cornellBoxSphere(uint32_t* scene_size);
+    cornellBoxSphere();
 
     /**
     *   @brief Destroys the cornell box sphere scene
