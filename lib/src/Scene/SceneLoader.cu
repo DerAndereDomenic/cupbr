@@ -8,7 +8,8 @@ SceneLoader::cornellBoxSphere(uint32_t* scene_size)
 {
     *scene_size = 8;
 
-    Scene scene = Memory::allocator()->createDeviceArray<Geometry*>(*scene_size);
+    Scene scene;
+    scene.geometry = Memory::allocator()->createDeviceArray<Geometry*>(*scene_size);
 
     Plane h_floor(Vector3float(0,-1,0), Vector3float(0,1,0));
     Plane h_ceil(Vector3float(0,1,0), Vector3float(0,-1,0));
@@ -52,7 +53,7 @@ SceneLoader::cornellBoxSphere(uint32_t* scene_size)
 
     Geometry* host_array[] = {floor, ceil, left, right, back, diff, mirror, glass};
 
-    Memory::allocator()->copyHost2DeviceArray<Geometry*>(*scene_size, host_array, scene);
+    Memory::allocator()->copyHost2DeviceArray<Geometry*>(*scene_size, host_array, scene.geometry);
 
     return scene;
 }
@@ -61,7 +62,7 @@ void
 SceneLoader::destroyCornellBoxSphere(Scene scene)
 {
     Geometry* host_scene[8];
-    Memory::allocator()->copyDevice2HostArray(8, scene, host_scene);
+    Memory::allocator()->copyDevice2HostArray(8, scene.geometry, host_scene);
 
     for(uint32_t i = 0; i < 5; ++i)
     {
@@ -73,5 +74,5 @@ SceneLoader::destroyCornellBoxSphere(Scene scene)
         Memory::allocator()->destroyDeviceObject<Sphere>(static_cast<Sphere*>(host_scene[i]));
     }
 
-    Memory::allocator()->destroyDeviceArray<Geometry*>(scene);
+    Memory::allocator()->destroyDeviceArray<Geometry*>(scene.geometry);
 }
