@@ -3,6 +3,22 @@
 #include <Renderer/Whitted.cuh>
 #include <Renderer/PathTracer.cuh>
 
+namespace detail
+{
+    __global__ void
+    clearBuffer(Image<Vector3float> img)
+    {
+        const uint32_t tid = ThreadHelper::globalThreadIndex();
+
+        if(tid >= img.size())
+        {
+            return;
+        }
+
+        img[tid] = 0;
+    }
+}
+
 class PBRenderer::Impl
 {
     public:
@@ -63,6 +79,12 @@ void
 PBRenderer::setMethod(const RenderingMethod& method)
 {
     impl->method = method;
+
+    impl->frameIndex = 0;
+
+    const KernelSizeHelper::KernelSize config = KernelSizeHelper::configure(impl->hdr_image.size());
+    detail::clearBuffer<<<config.blocks, config.threads>>>(impl->hdr_image);
+    cudaSafeCall(cudaDeviceSynchronize());
 }
 
 void
