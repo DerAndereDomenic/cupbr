@@ -22,25 +22,28 @@ namespace detail
         LocalGeometry geom = Tracing::traceRay(scene, ray);
 
         Vector3float inc_dir = Math::normalize(camera.position() - geom.P);
-        Vector3float lightDir = Math::normalize(scene.lights[0]->position - geom.P);
-
 
         //Lighting
 
-        Vector3float brdf = geom.material.brdf(geom.P, inc_dir, lightDir, geom.N);
-        float d = Math::norm(geom.P-scene.lights[0]->position);
-        Vector3float lightRadiance = scene.lights[0]->intensity/(d*d);
-        float cosTerm = max(0.0f,Math::dot(geom.N, lightDir));
-        Vector3float radiance = brdf*lightRadiance*cosTerm;
-
-        //Shadow
-        if(geom.depth != INFINITY)
+        Vector3float radiance = 0;
+        for(uint32_t i = 0; i < scene.light_count; ++i)
         {
-            Ray shadow_ray(geom.P-EPSILON*ray.direction(), lightDir);
+            Vector3float lightDir = Math::normalize(scene.lights[i]->position - geom.P);
+            Vector3float brdf = geom.material.brdf(geom.P, inc_dir, lightDir, geom.N);
+            float d = Math::norm(geom.P-scene.lights[i]->position);
+            Vector3float lightRadiance = scene.lights[i]->intensity/(d*d);
+            float cosTerm = max(0.0f,Math::dot(geom.N, lightDir));
             
-            if(!Tracing::traceVisibility(scene, d, shadow_ray))
+
+                //Shadow
+            if(geom.depth != INFINITY)
             {
-                radiance = 0;
+                Ray shadow_ray(geom.P-EPSILON*ray.direction(), lightDir);
+                
+                if(Tracing::traceVisibility(scene, d, shadow_ray))
+                {
+                    radiance += brdf*lightRadiance*cosTerm;
+                }
             }
         }
 
