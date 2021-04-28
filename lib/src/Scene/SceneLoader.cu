@@ -2,11 +2,78 @@
 #include <Core/Memory.cuh>
 #include <Geometry/Plane.cuh>
 #include <Geometry/Sphere.cuh>
+#include <tinyxml2.h>
+#include <vector>
+#include <sstream>
+
+namespace detail
+{
+    Vector3float
+    string2vector(const char* str)
+    {
+        std::stringstream ss(str);
+        std::string item;
+        std::vector<float> result;
+
+        while(std::getline(ss, item, ','))
+        {
+            result.push_back(std::stof(item));
+        }
+
+        return Vector3float(result[0], result[1], result[2]);
+    }
+}
 
 Scene
 SceneLoader::loadFromFile(const std::string& path)
 {
-    
+    tinyxml2::XMLDocument doc;
+    tinyxml2::XMLError error = doc.LoadFile(path.c_str());
+
+    if(error != tinyxml2::XML_SUCCESS)
+    {
+        std::cerr << "Failed to load XML file: " << path << ". Error code: " << error << "\n";
+        return Scene();
+    }
+
+    //Retrieve information about scene size
+    const char* scene_size_string = doc.FirstChildElement("header")->FirstChildElement("scene_size")->GetText();
+    const char* light_count_string = doc.FirstChildElement("header")->FirstChildElement("light_count")->GetText();
+
+    uint32_t scene_size = std::stoi(scene_size_string);
+    uint32_t light_count = std::stoi(light_count_string);
+
+    //Load geometry
+    tinyxml2::XMLElement* geometry_head = doc.FirstChildElement("geometry");
+
+    for(uint32_t i = 0; i < scene_size; ++i)
+    {
+        tinyxml2::XMLElement* current_geometry = geometry_head->FirstChildElement(("geometry" + std::to_string(i+1)).c_str());
+        const char* type = current_geometry->FirstChildElement("type")->GetText();
+        if(strcmp(type, "PLANE") == 0)
+        {
+            const char* position_string = current_geometry->FirstChildElement("position")->GetText();
+            const char* normal_string = current_geometry->FirstChildElement("normal")->GetText();
+            Vector3float position = detail::string2vector(position_string);
+            Vector3float normal = detail::string2vector(normal_string);
+        }
+        else if(strcmp(type, "SPHERE") == 0)
+        {
+            const char* position_string = current_geometry->FirstChildElement("position")->GetText();
+            const char* radius_string = current_geometry->FirstChildElement("radius")->GetText();
+            Vector3float position = detail::string2vector(position_string);
+            float radius = std::stof(radius_string);
+            printf("%f\n", radius);
+        }
+        else
+        {
+            std::cerr << "Error while loading scene: " << type << " is not a valid geometry type!" << std::endl;
+            return Scene();
+        }
+
+    }
+
+    return Scene();
 }
 
 Scene
