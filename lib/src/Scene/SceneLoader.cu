@@ -84,13 +84,15 @@ namespace detail
 Scene
 SceneLoader::loadFromFile(const std::string& path)
 {
+    Scene scene;
+
     tinyxml2::XMLDocument doc;
     tinyxml2::XMLError error = doc.LoadFile(path.c_str());
 
     if(error != tinyxml2::XML_SUCCESS)
     {
         std::cerr << "Failed to load XML file: " << path << ". Error code: " << error << "\n";
-        return Scene();
+        return scene;
     }
 
     //Retrieve information about scene size
@@ -99,6 +101,11 @@ SceneLoader::loadFromFile(const std::string& path)
 
     uint32_t scene_size = std::stoi(scene_size_string);
     uint32_t light_count = std::stoi(light_count_string);
+
+    scene.scene_size = scene_size;
+    scene.light_count = light_count;
+
+    Geometry** host_array = Memory::allocator()->createHostArray<Geometry*>(scene_size);
 
     //Load geometry
     tinyxml2::XMLElement* geometry_head = doc.FirstChildElement("geometry");
@@ -114,6 +121,13 @@ SceneLoader::loadFromFile(const std::string& path)
             Vector3float position = detail::string2vector(position_string);
             Vector3float normal = detail::string2vector(normal_string);
             Material mat = detail::loadMaterial(current_geometry->FirstChildElement("material"));
+
+            Plane geom(position, normal);
+            geom.material = mat;
+
+            Plane* dev_geom = Memory::allocator()->createDeviceObject<Plane>();
+            Memory::allocator()->copyHost2DeviceObject<Plane>(&geom, dev_geom);
+            host_array[i] = dev_geom;
         }
         else if(strcmp(type, "SPHERE") == 0)
         {
@@ -122,16 +136,24 @@ SceneLoader::loadFromFile(const std::string& path)
             Vector3float position = detail::string2vector(position_string);
             float radius = std::stof(radius_string);
             Material mat = detail::loadMaterial(current_geometry->FirstChildElement("material"));
+
+            Sphere geom(position, radius);
+            geom.material = mat;
+            Sphere* dev_geom = Memory::allocator()->createDeviceObject<Sphere>();
+            Memory::allocator()->copyHost2DeviceObject<Sphere>(&geom, dev_geom);
+            host_array[i] = dev_geom;
         }
         else
         {
             std::cerr << "Error while loading scene: " << type << " is not a valid geometry type!" << std::endl;
-            return Scene();
+            return scene;
         }
 
     }
 
-    return Scene();
+    Memory::allocator()->destroyHostArray<Geometry*>(host_array);
+
+    return scene;
 }
 
 Scene
