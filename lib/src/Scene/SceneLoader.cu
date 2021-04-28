@@ -22,6 +22,63 @@ namespace detail
 
         return Vector3float(result[0], result[1], result[2]);
     }
+
+    Material
+    loadMaterial(tinyxml2::XMLElement* material_ptr)
+    {
+        Material material;
+
+        const char* type = material_ptr->FirstChildElement("type")->GetText();
+        
+        if(strcmp(type, "LAMBERT") == 0)
+        {
+            material.type = LAMBERT;
+        }
+        else if(strcmp(type, "PHONG") == 0)
+        {
+            material.type = PHONG;
+        }
+        else if(strcmp(type, "MIRROR") == 0)
+        {
+            material.type = MIRROR;
+        }
+        else if(strcmp(type, "GLASS") == 0)
+        {
+            material.type = GLASS;
+        }
+        else
+        {
+            std::cerr << "Error while loading material: " << type << " is not a valid material type\n"; 
+        }
+
+        //Load material properties
+        tinyxml2::XMLElement* albedo_d_string = material_ptr->FirstChildElement("albedo_d");
+        tinyxml2::XMLElement* albedo_s_string = material_ptr->FirstChildElement("albedo_s");
+        tinyxml2::XMLElement* shininess_string = material_ptr->FirstChildElement("shininess");
+        tinyxml2::XMLElement* eta_string = material_ptr->FirstChildElement("eta");
+
+        if(albedo_d_string != NULL)
+        {
+            material.albedo_d = string2vector(albedo_d_string->GetText());
+        }
+
+        if(albedo_s_string != NULL)
+        {
+            material.albedo_s = string2vector(albedo_s_string->GetText());
+        }
+
+        if(shininess_string != NULL)
+        {
+            material.shininess = std::stof(shininess_string->GetText());
+        }
+
+        if(eta_string != NULL)
+        {
+            material.eta = std::stof(eta_string->GetText());
+        }
+
+        return material;
+    }
 }
 
 Scene
@@ -56,6 +113,7 @@ SceneLoader::loadFromFile(const std::string& path)
             const char* normal_string = current_geometry->FirstChildElement("normal")->GetText();
             Vector3float position = detail::string2vector(position_string);
             Vector3float normal = detail::string2vector(normal_string);
+            Material mat = detail::loadMaterial(current_geometry->FirstChildElement("material"));
         }
         else if(strcmp(type, "SPHERE") == 0)
         {
@@ -63,7 +121,7 @@ SceneLoader::loadFromFile(const std::string& path)
             const char* radius_string = current_geometry->FirstChildElement("radius")->GetText();
             Vector3float position = detail::string2vector(position_string);
             float radius = std::stof(radius_string);
-            printf("%f\n", radius);
+            Material mat = detail::loadMaterial(current_geometry->FirstChildElement("material"));
         }
         else
         {
