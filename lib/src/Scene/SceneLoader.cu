@@ -207,6 +207,11 @@ SceneLoader::loadFromFile(const std::string& path)
         {
             light.halfExtend2 = detail::string2vector(extend2_string->GetText());
         }
+
+        Light *dev_light = Memory::allocator()->createDeviceObject<Light>();
+        Memory::allocator()->copyHost2DeviceObject<Light>(&light, dev_light);
+
+        host_lights[i] = dev_light;
     }
 
     Memory::allocator()->copyHost2DeviceArray<Geometry*>(scene.scene_size, host_array, scene.geometry);
