@@ -41,7 +41,7 @@ Tracing::traceRay(const Scene scene, const Ray& ray)
             {
                 Plane *plane = static_cast<Plane*>(scene[i]);
                 Vector4float intersection_plane = plane->computeRayIntersection(ray);
-                if(intersection_plane.w < intersection.w)
+                if(intersection_plane.w <= intersection.w)
                 {
                     intersection = intersection_plane;
                     geom.type = GeometryType::PLANE;
@@ -56,7 +56,7 @@ Tracing::traceRay(const Scene scene, const Ray& ray)
             {
                 Sphere *sphere = static_cast<Sphere*>(scene_element);
                 Vector4float intersection_sphere = sphere->computeRayIntersection(ray);
-                if(intersection_sphere.w < intersection.w)
+                if(intersection_sphere.w <= intersection.w)
                 {
                     intersection = intersection_sphere;
                     geom.type = GeometryType::SPHERE;
