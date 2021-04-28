@@ -31,6 +31,7 @@ class PBRenderer::Impl
         Image<Vector3float> hdr_image;
         Scene scene;
         uint32_t frameIndex;
+        uint32_t maxTraceDepth;
 
         bool outputSizeSet;
         bool sceneRegistered;
@@ -41,6 +42,7 @@ PBRenderer::Impl::Impl()
     outputSizeSet = false;
     sceneRegistered = false;
     frameIndex = 0;
+    maxTraceDepth = 5;
 }
 
 PBRenderer::Impl::~Impl()
@@ -115,7 +117,7 @@ PBRenderer::render(const Camera& camera)
         {
             PBRendering::whitted(impl->scene,
                                  camera,
-                                 4,
+                                 impl->maxTraceDepth-1,
                                  &impl->hdr_image);
         }
         break;
@@ -128,7 +130,7 @@ PBRenderer::render(const Camera& camera)
             PBRendering::pathtracing(impl->scene,
                                      camera,
                                      impl->frameIndex,
-                                     5,
+                                     impl->maxTraceDepth,
                                      &impl->hdr_image);
             ++impl->frameIndex;
         }
