@@ -215,7 +215,7 @@ SceneLoader::loadFromFile(const std::string& path)
     }
 
     Memory::allocator()->copyHost2DeviceArray<Geometry*>(scene.scene_size, host_array, scene.geometry);
-    //Memory::allocator()->copyHost2DeviceArray<Light*>(scene.light_count, host_lights, scene.lights);
+    Memory::allocator()->copyHost2DeviceArray<Light*>(scene.light_count, host_lights, scene.lights);
 
     Memory::allocator()->destroyHostArray<Geometry*>(host_array);
     Memory::allocator()->destroyHostArray<Light*>(host_lights);
