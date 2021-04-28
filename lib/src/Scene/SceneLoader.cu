@@ -84,7 +84,7 @@ namespace detail
 Scene
 SceneLoader::loadFromFile(const std::string& path)
 {
-    Scene scene;
+    Scene scene = Scene();
 
     tinyxml2::XMLDocument doc;
     tinyxml2::XMLError error = doc.LoadFile(path.c_str());
@@ -369,7 +369,7 @@ SceneLoader::cornellBoxSphereAreaLight()
 }
 
 void
-SceneLoader::destroyCornellBoxSphere(Scene scene)
+SceneLoader::destroyScene(Scene scene)
 {
     Geometry** host_scene = Memory::allocator()->createHostArray<Geometry*>(scene.scene_size);
     Light** host_lights = Memory::allocator()->createHostArray<Light*>(scene.light_count);

@@ -35,11 +35,11 @@ namespace SceneLoader
     cornellBoxSphereMultiLight();
 
     /**
-    *   @brief Destroys the cornell box sphere scene
+    *   @brief Destroys a scene
     *   @param[in] scene The scene to be destroyed
     */
     void
-    destroyCornellBoxSphere(Scene scene);
+    destroyScene(Scene scene);
 }
 
 #endif
