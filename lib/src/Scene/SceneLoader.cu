@@ -106,6 +106,8 @@ SceneLoader::loadFromFile(const std::string& path)
     scene.light_count = light_count;
 
     Geometry** host_array = Memory::allocator()->createHostArray<Geometry*>(scene_size);
+    scene.geometry = Memory::allocator()->createDeviceArray<Geometry*>(scene.scene_size);
+    scene.lights = Memory::allocator()->createDeviceArray<Light*>(scene.light_count);
 
     //Load geometry
     tinyxml2::XMLElement* geometry_head = doc.FirstChildElement("geometry");
@@ -150,6 +152,9 @@ SceneLoader::loadFromFile(const std::string& path)
         }
 
     }
+
+    Memory::allocator()->copyHost2DeviceArray<Geometry*>(scene.scene_size, host_array, scene.geometry);
+    //Memory::allocator()->copyHost2DeviceArray<Light*>(scene.light_count, host_lights, scene.lights);
 
     Memory::allocator()->destroyHostArray<Geometry*>(host_array);
 
