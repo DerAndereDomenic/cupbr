@@ -17,13 +17,15 @@
 
 int main()
 {
+    Scene scene = SceneLoader::loadFromFile("res/Scenes/SampleScene.xml");
+
     bool edit = true;
     bool pressed = false;
     const uint32_t width = 1024, height = 1024;
 
     cudaSafeCall(cudaSetDevice(0));
 
-    Scene scene = SceneLoader::cornellBoxSphereAreaLight();
+    //Scene scene = SceneLoader::cornellBoxSphereAreaLight();
 
     PBRenderer pbrenderer(PATHTRACER);
     pbrenderer.setOutputSize(width, height);
@@ -147,7 +149,7 @@ int main()
 
     glfwTerminate();
 
-    SceneLoader::destroyCornellBoxSphere(scene);
+    //SceneLoader::destroyCornellBoxSphere(scene);
 
     //TODO
     reinhard_mapper.~ToneMapper();
