@@ -106,6 +106,8 @@ SceneLoader::loadFromFile(const std::string& path)
     scene.light_count = light_count;
 
     Geometry** host_array = Memory::allocator()->createHostArray<Geometry*>(scene_size);
+    Light** host_lights = Memory::allocator()->createHostArray<Light*>(light_count);
+
     scene.geometry = Memory::allocator()->createDeviceArray<Geometry*>(scene.scene_size);
     scene.lights = Memory::allocator()->createDeviceArray<Light*>(scene.light_count);
 
@@ -153,10 +155,65 @@ SceneLoader::loadFromFile(const std::string& path)
 
     }
 
+    tinyxml2::XMLElement* light_head = doc.FirstChildElement("lights");
+    for(uint32_t i = 0; i < light_count; ++i)
+    {
+        tinyxml2::XMLElement* current_light = light_head->FirstChildElement(("light" + std::to_string(i+1)).c_str());
+        const char* type = current_light->FirstChildElement("type")->GetText();
+
+        Light light;
+
+        if(strcmp(type, "POINT") == 0)
+        {
+            light.type = POINT;
+        }
+        else if(strcmp(type, "AREA") == 0)
+        {
+            light.type = AREA;
+        }
+        else
+        {
+            std::cerr << "Error while loading scene: " << type << " is not a valid light type!" << std::endl;
+            return scene;
+        }
+
+        tinyxml2::XMLElement* position_string = current_light->FirstChildElement("position");
+        tinyxml2::XMLElement* intensity_string = current_light->FirstChildElement("intensity");
+        tinyxml2::XMLElement* radiance_string = current_light->FirstChildElement("radiance");
+        tinyxml2::XMLElement* extend1_string = current_light->FirstChildElement("extend1");
+        tinyxml2::XMLElement* extend2_string = current_light->FirstChildElement("extend2");
+
+        if(position_string != NULL)
+        {
+            light.position = detail::string2vector(position_string->GetText());
+        }
+
+        if(intensity_string != NULL)
+        {
+            light.intensity = detail::string2vector(intensity_string->GetText());
+        }
+
+        if(radiance_string != NULL)
+        { 
+            light.radiance = detail::string2vector(radiance_string->GetText());
+        }
+
+        if(extend1_string != NULL)
+        {
+            light.halfExtend1 = detail::string2vector(extend1_string->GetText());
+        }
+
+        if(extend2_string != NULL)
+        {
+            light.halfExtend2 = detail::string2vector(extend2_string->GetText());
+        }
+    }
+
     Memory::allocator()->copyHost2DeviceArray<Geometry*>(scene.scene_size, host_array, scene.geometry);
     //Memory::allocator()->copyHost2DeviceArray<Light*>(scene.light_count, host_lights, scene.lights);
 
     Memory::allocator()->destroyHostArray<Geometry*>(host_array);
+    Memory::allocator()->destroyHostArray<Light*>(host_lights);
 
     return scene;
 }
