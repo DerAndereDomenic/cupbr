@@ -4,6 +4,12 @@
 #include <Geometry/Sphere.cuh>
 
 Scene
+SceneLoader::loadFromFile(const std::string& path)
+{
+    
+}
+
+Scene
 SceneLoader::cornellBoxSphere()
 {
     Scene scene;

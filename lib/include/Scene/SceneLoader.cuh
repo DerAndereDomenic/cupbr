@@ -6,6 +6,14 @@
 namespace SceneLoader
 {
     /**
+    *   @brief Loads a scene from file
+    *   @param[in] path The path to the scene file
+    *   @return The scene 
+    */
+    Scene
+    loadFromFile(const std::string& path);
+
+    /**
     *   @brief Creates a cornell box with three spheres
     *   @return A scene pointer 
     */
