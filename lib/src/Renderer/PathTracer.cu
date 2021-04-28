@@ -29,7 +29,6 @@ namespace detail
         Vector3float rayweight = 1;
         Vector3float direction = 0;
         Vector3float inc_dir, lightDir, lightRadiance;
-        bool continueTracing;
         float p;
         float d;
 
@@ -37,8 +36,6 @@ namespace detail
 
         do
         {
-            continueTracing = false;
-
             //Direct illumination
             LocalGeometry geom = Tracing::traceRay(scene, ray);
             if(geom.depth == INFINITY)break;
@@ -109,7 +106,6 @@ namespace detail
                     p = fmaxf(EPSILON, Math::dot(direction, normal))/3.14159f;
 
                     rayweight = rayweight * fmaxf(EPSILON, Math::dot(direction, normal))*geom.material.brdf(geom.P, inc_dir, direction, normal)/p;
-                    continueTracing = true;
                 }
                 break;
                 /*case PHONG:
@@ -124,7 +120,6 @@ namespace detail
                     p = 1.0f;
 
                     rayweight = rayweight * fmaxf(EPSILON, Math::dot(direction, normal))*geom.material.brdf(geom.P, inc_dir, direction, normal)/p;
-                    continueTracing = true;
                 }
                 break;
                 case GLASS:
@@ -149,15 +144,13 @@ namespace detail
                         rayweight = Math::dot(normal, refraction_dir)/Math::dot(normal, inc_dir) * rayweight;
                         direction = refraction_dir;
                     }
-                    
-                    continueTracing = true;
                 }
                 break;
             }
             ray = Ray(geom.P+0.01f*direction, direction);
 
             ++trace_depth;
-        }while(trace_depth < maxTraceDepth && continueTracing);
+        }while(trace_depth < maxTraceDepth);
 
         if(frameIndex > 0)
         {
