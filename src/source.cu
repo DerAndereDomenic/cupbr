@@ -15,17 +15,24 @@
 #include <Renderer/ToneMapper.cuh>
 #include <Renderer/PBRenderer.cuh>
 
-int main()
+int main(int argc, char* argv[])
 {
-    Scene scene = SceneLoader::loadFromFile("res/Scenes/SampleScene.xml");
-
     bool edit = true;
     bool pressed = false;
     const uint32_t width = 1024, height = 1024;
 
     cudaSafeCall(cudaSetDevice(0));
 
-    //Scene scene = SceneLoader::cornellBoxSphereAreaLight();
+    Scene scene;
+    
+    if(argc == 1)
+    {
+        scene = SceneLoader::loadFromFile("res/Scenes/CornellBoxSphereAreaLight.xml");
+    }
+    else if(argc == 2)
+    {
+        scene = SceneLoader::loadFromFile(argv[1]);
+    }
 
     PBRenderer pbrenderer(PATHTRACER);
     pbrenderer.setOutputSize(width, height);
