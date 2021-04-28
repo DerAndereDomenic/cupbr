@@ -371,19 +371,28 @@ SceneLoader::cornellBoxSphereAreaLight()
 void
 SceneLoader::destroyCornellBoxSphere(Scene scene)
 {
-    Geometry* host_scene[8];
-    Light* host_lights[3];
-    Memory::allocator()->copyDevice2HostArray(8, scene.geometry, host_scene);
+    Geometry** host_scene = Memory::allocator()->createHostArray<Geometry*>(scene.scene_size);
+    Light** host_lights = Memory::allocator()->createHostArray<Light*>(scene.light_count);
+    Memory::allocator()->copyDevice2HostArray(scene.scene_size, scene.geometry, host_scene);
     Memory::allocator()->copyDevice2HostArray(scene.light_count, scene.lights, host_lights);
 
-    for(uint32_t i = 0; i < 5; ++i)
+    for(uint32_t i = 0; i < scene.scene_size; ++i)
     {
-        Memory::allocator()->destroyDeviceObject<Plane>(static_cast<Plane*>(host_scene[i]));
-    }
-
-    for(uint32_t i = 5; i < 8; ++i)
-    {
-        Memory::allocator()->destroyDeviceObject<Sphere>(static_cast<Sphere*>(host_scene[i]));
+        Geometry geom;
+        Memory::allocator()->copyDevice2HostObject(host_scene[i], &geom);
+        switch(geom.type)
+        {
+            case PLANE:
+            {
+                Memory::allocator()->destroyDeviceObject<Plane>(static_cast<Plane*>(host_scene[i]));
+            }
+            break;
+            case SPHERE:
+            {
+                Memory::allocator()->destroyDeviceObject<Sphere>(static_cast<Sphere*>(host_scene[i]));
+            }
+            break;
+        }
     }
 
     for(uint32_t i = 0; i < scene.light_count; ++i)
@@ -393,6 +402,8 @@ SceneLoader::destroyCornellBoxSphere(Scene scene)
 
     Memory::allocator()->destroyDeviceArray<Geometry*>(scene.geometry);
     Memory::allocator()->destroyDeviceArray<Light*>(scene.lights);
+    Memory::allocator()->destroyHostArray<Geometry*>(host_scene);
+    Memory::allocator()->destroyHostArray<Light*>(host_lights);
 }
 
 Scene

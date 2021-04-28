@@ -149,7 +149,7 @@ int main()
 
     glfwTerminate();
 
-    //SceneLoader::destroyCornellBoxSphere(scene);
+    SceneLoader::destroyCornellBoxSphere(scene);
 
     //TODO
     reinhard_mapper.~ToneMapper();
