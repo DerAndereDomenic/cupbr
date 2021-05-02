@@ -50,7 +50,8 @@ class Material
         *   @param[in] seed The seed for the rng
         *   @param[in] inc_dir The incoming direction
         *   @param[in] normal The surface normal
-        *   @return A 4D Vector. The first three components mark the new direction and the w component the sampling direction 
+        *   @return A 4D Vector. The first three components mark the new direction and the w component the sampling probability 
+        *   @note For glass the w component is 0 for reflection and 1 for refraction
         */
         __host__ __device__
         Vector4float
@@ -107,7 +108,7 @@ class Material
         *   @brief Importance sample lambert material
         *   @param[in] seed The seed for the rng
         *   @param[in] normal The surface normal
-        *   @return A 4D Vector. The first three components mark the new direction and the w component the sampling direction 
+        *   @return A 4D Vector. The first three components mark the new direction and the w component the sampling probability 
         */
        __host__ __device__
        Vector4float
@@ -117,7 +118,7 @@ class Material
         *   @brief Importance sample mirror material
         *   @param[in] inc_dir The incoming direction
         *   @param[in] normal The surface normal
-        *   @return A 4D Vector. The first three components mark the new direction and the w component the sampling direction 
+        *   @return A 4D Vector. The first three components mark the new direction and the w component the sampling probability 
         */
        __host__ __device__
        Vector4float
@@ -128,7 +129,8 @@ class Material
         *   @param[in] seed The seed for the rng
         *   @param[in] inc_dir The incoming direction
         *   @param[in] normal The surface normal
-        *   @return A 4D Vector. The first three components mark the new direction and the w component the sampling direction 
+        *   @return A 4D Vector. The first three components mark the new direction and the w component the sampling probability 
+        *   @note The w component is 0 for reflection and 1 for refraction
         */
        __host__ __device__
        Vector4float
