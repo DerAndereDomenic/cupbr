@@ -54,10 +54,12 @@ Material::sampleDirection(uint32_t& seed, const Vector3float& inc_dir, const Vec
         break;
         case GLASS:
         {
-            return sample_glass();
+            return sample_glass(seed, inc_dir, normal);
         }
         break;
     }
+
+    return Vector4float(INFINITY);
 }
 
 __host__ __device__
@@ -92,9 +94,30 @@ Material::sample_mirror(const Vector3float& inc_dir, const Vector3float& normal)
 
 __host__ __device__
 inline Vector4float
-Material::sample_glass()
+Material::sample_glass(uint32_t& seed, const Vector3float& inc_dir, const Vector3float& n)
 {
+    const float NdotV = Math::dot(inc_dir, n);
+    bool outside = NdotV > 0.0f;
+    float eta = outside ? 1.0f/eta : eta;
+    Vector3float normal = outside ? n : -1.0f*n;
+    float F0 = outside ? (1.0f - eta) / (1.0f + eta) : (-1.0f + eta) / (1.0f + eta);
+    F0 *= F0;
 
+    float p_reflect = Math::fresnel_schlick(F0, Math::dot(inc_dir, normal));
+    float xi = Math::rnd(seed);
+
+    Vector3float refraction_dir = Math::refract(eta, inc_dir, normal);
+    Vector3float direction;
+    if(xi <= p_reflect || Math::safeFloatEqual(Math::norm(refraction_dir), 0.0f))
+    {
+        direction = Math::reflect(inc_dir, normal);
+    }
+    else
+    {
+        direction = refraction_dir;
+    }
+
+    return Vector4float(direction, 1);
 }
 
 __host__ __device__

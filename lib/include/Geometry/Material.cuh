@@ -106,7 +106,7 @@ class Material
 
        __host__ __device__
        Vector4float
-       sample_glass();
+       sample_glass(uint32_t& seed, const Vector3float& inc_dir, const Vector3float& n);
 };
 
 #include "../../src/Geometry/MaterialDetail.cuh"
