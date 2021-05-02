@@ -50,6 +50,13 @@ class ToneMapper
         */
         RenderBuffer
         getRenderBuffer();
+
+        /**
+        *   @brief Store the current render buffer to file
+        *   @param[in] path The output path
+        */
+        void
+        saveToFile(const std::string& path);
     private:
         class Impl;
         std::unique_ptr<Impl> impl;     /**< The implementation pointer */

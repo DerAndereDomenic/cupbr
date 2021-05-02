@@ -7,6 +7,9 @@
 #include <Core/KernelHelper.cuh>
 #include <Math/Functions.cuh>
 
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#include <stb_image_write.h>
+
 namespace detail
 {
     __global__ void
@@ -174,4 +177,21 @@ ToneMapper::Impl::toneMappingGamma()
     KernelSizeHelper::KernelSize config = KernelSizeHelper::configure(hdr_image->size());
     detail::gamma_kernel<<<config.blocks, config.threads>>>(*hdr_image, render_buffer);
     cudaSafeCall(cudaDeviceSynchronize());
+}
+
+void
+ToneMapper::saveToFile(const std::string& path)
+{
+    RenderBuffer host_buffer = RenderBuffer::createHostObject(impl->hdr_image->width(), impl->hdr_image->height());
+
+    impl->render_buffer.copyDevice2HostObject(host_buffer);
+
+    Vector4uint8_t* image_data = host_buffer.data();
+
+    uint8_t* byte_data = (uint8_t*)image_data;
+
+    stbi_flip_vertically_on_write(true);
+    stbi_write_bmp(path.c_str(), host_buffer.width(), host_buffer.height(), 4, byte_data);
+
+    RenderBuffer::destroyHostObject(host_buffer);
 }
