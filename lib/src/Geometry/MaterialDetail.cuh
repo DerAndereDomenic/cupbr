@@ -37,7 +37,7 @@ Material::brdf(const Vector3float& position, const Vector3float& inc_dir, const 
 
 __host__ __device__
 inline Vector4float
-Material::sampleDirection(uint32_t& seed, const Vector3float& normal)
+Material::sampleDirection(uint32_t& seed, const Vector3float& inc_dir, const Vector3float& normal)
 {
     switch(type)
     {
@@ -49,7 +49,7 @@ Material::sampleDirection(uint32_t& seed, const Vector3float& normal)
         break;
         case MIRROR:
         {
-            return sample_mirror();
+            return sample_mirror(inc_dir, normal);
         }
         break;
         case GLASS:
@@ -83,9 +83,11 @@ Material::sample_lambert(uint32_t& seed, const Vector3float& normal)
 
 __host__ __device__
 inline Vector4float
-Material::sample_mirror()
+Material::sample_mirror(const Vector3float& inc_dir, const Vector3float& normal)
 {
+    Vector3float direction = Math::reflect(inc_dir, normal);
 
+    return Vector4float(direction, 1.0f);
 }
 
 __host__ __device__
