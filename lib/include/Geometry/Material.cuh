@@ -95,6 +95,18 @@ class Material
        __host__ __device__
        Vector3float
        btdf_glass(const Vector3float& position, const Vector3float& inc_dir, const Vector3float& out_dir, const Vector3float& normal);
+
+       __host__ __device__
+       Vector4float
+       sample_lambert();
+
+       __host__ __device__
+       Vector4float
+       sample_mirror();
+
+       __host__ __device__
+       Vector4float
+       sample_glass();
 };
 
 #include "../../src/Geometry/MaterialDetail.cuh"

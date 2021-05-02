@@ -44,20 +44,41 @@ Material::sampleDirection()
         case LAMBERT:
         case PHONG:
         {
-
+            return sample_lambert();
         }
         break;
         case MIRROR:
         {
-
+            return sample_mirror();
         }
         break;
         case GLASS:
         {
-
+            return sample_glass();
         }
         break;
     }
+}
+
+__host__ __device__
+inline Vector4float
+Material::sample_lambert()
+{
+
+}
+
+__host__ __device__
+inline Vector4float
+Material::sample_mirror()
+{
+
+}
+
+__host__ __device__
+inline Vector4float
+Material::sample_glass()
+{
+
 }
 
 __host__ __device__
