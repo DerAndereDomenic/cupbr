@@ -36,6 +36,31 @@ Material::brdf(const Vector3float& position, const Vector3float& inc_dir, const 
 }
 
 __host__ __device__
+inline Vector4float
+Material::sampleDirection()
+{
+    switch(type)
+    {
+        case LAMBERT:
+        case PHONG:
+        {
+
+        }
+        break;
+        case MIRROR:
+        {
+
+        }
+        break;
+        case GLASS:
+        {
+
+        }
+        break;
+    }
+}
+
+__host__ __device__
 inline Vector3float
 Material::brdf_lambert()
 {
