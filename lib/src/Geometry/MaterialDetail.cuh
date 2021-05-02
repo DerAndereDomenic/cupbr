@@ -98,7 +98,7 @@ Material::sample_glass(uint32_t& seed, const Vector3float& inc_dir, const Vector
 {
     const float NdotV = Math::dot(inc_dir, n);
     bool outside = NdotV > 0.0f;
-    float eta = outside ? 1.0f/eta : eta;
+    float _eta = outside ? 1.0f/eta : eta;
     Vector3float normal = outside ? n : -1.0f*n;
     float F0 = outside ? (1.0f - eta) / (1.0f + eta) : (-1.0f + eta) / (1.0f + eta);
     F0 *= F0;
@@ -106,7 +106,7 @@ Material::sample_glass(uint32_t& seed, const Vector3float& inc_dir, const Vector
     float p_reflect = Math::fresnel_schlick(F0, Math::dot(inc_dir, normal));
     float xi = Math::rnd(seed);
 
-    Vector3float refraction_dir = Math::refract(eta, inc_dir, normal);
+    Vector3float refraction_dir = Math::refract(_eta, inc_dir, normal);
     Vector3float direction;
     if(xi <= p_reflect || Math::safeFloatEqual(Math::norm(refraction_dir), 0.0f))
     {

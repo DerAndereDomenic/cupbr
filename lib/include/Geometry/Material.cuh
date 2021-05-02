@@ -45,6 +45,13 @@ class Material
         Vector3float
         brdf(const Vector3float& position, const Vector3float& inc_dir, const Vector3float& out_dir, const Vector3float& normal);
 
+        /**
+        *   @brief Importance sample the material
+        *   @param[in] seed The seed for the rng
+        *   @param[in] inc_dir The incoming direction
+        *   @param[in] normal The surface normal
+        *   @return A 4D Vector. The first three components mark the new direction and the w component the sampling direction 
+        */
         __host__ __device__
         Vector4float
         sampleDirection(uint32_t& seed, const Vector3float& inc_dir, const Vector3float& normal);
@@ -96,17 +103,36 @@ class Material
        Vector3float
        btdf_glass(const Vector3float& position, const Vector3float& inc_dir, const Vector3float& out_dir, const Vector3float& normal);
 
+        /**
+        *   @brief Importance sample lambert material
+        *   @param[in] seed The seed for the rng
+        *   @param[in] normal The surface normal
+        *   @return A 4D Vector. The first three components mark the new direction and the w component the sampling direction 
+        */
        __host__ __device__
        Vector4float
        sample_lambert(uint32_t& seed, const Vector3float& normal);
 
+        /**
+        *   @brief Importance sample mirror material
+        *   @param[in] inc_dir The incoming direction
+        *   @param[in] normal The surface normal
+        *   @return A 4D Vector. The first three components mark the new direction and the w component the sampling direction 
+        */
        __host__ __device__
        Vector4float
        sample_mirror(const Vector3float& inc_dir, const Vector3float& normal);
 
+        /**
+        *   @brief Importance sample glass material
+        *   @param[in] seed The seed for the rng
+        *   @param[in] inc_dir The incoming direction
+        *   @param[in] normal The surface normal
+        *   @return A 4D Vector. The first three components mark the new direction and the w component the sampling direction 
+        */
        __host__ __device__
        Vector4float
-       sample_glass(uint32_t& seed, const Vector3float& inc_dir, const Vector3float& n);
+       sample_glass(uint32_t& seed, const Vector3float& inc_dir, const Vector3float& normal);
 };
 
 #include "../../src/Geometry/MaterialDetail.cuh"
