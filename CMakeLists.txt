@@ -19,4 +19,4 @@ message("${source_files}")
 add_executable(${PROJECT_NAME} ${source_files})
 
 target_link_libraries(${PROJECT_NAME} glfw -lpthread -lm ${GLEW_LIBRARIES} OpenGL::GL tinyxml2)
-include_directories(lib/include ${GLEW_INCLUDE_DIRS} ${GLFW_INCLUDE_DIRS})
+include_directories(lib/include ${GLEW_INCLUDE_DIRS} ${GLFW_INCLUDE_DIRS} vendor)
