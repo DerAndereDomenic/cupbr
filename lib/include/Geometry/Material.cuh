@@ -47,7 +47,7 @@ class Material
 
         __host__ __device__
         Vector4float
-        sampleDirection();
+        sampleDirection(uint32_t& seed, const Vector3float& normal);
     private:
         /**
         *   @brief Compute the lambert brdf
@@ -98,7 +98,7 @@ class Material
 
        __host__ __device__
        Vector4float
-       sample_lambert();
+       sample_lambert(uint32_t& seed, const Vector3float& normal);
 
        __host__ __device__
        Vector4float
