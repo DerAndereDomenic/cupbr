@@ -158,6 +158,8 @@ int main(int argc, char* argv[])
 
     SceneLoader::destroyScene(scene);
 
+    mapper->saveToFile("bin/output.bmp");
+
     //TODO
     reinhard_mapper.~ToneMapper();
     gamma_mapper.~ToneMapper();
