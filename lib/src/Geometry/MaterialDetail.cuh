@@ -108,6 +108,7 @@ Material::sample_glass(uint32_t& seed, const Vector3float& inc_dir, const Vector
 
     Vector3float refraction_dir = Math::refract(_eta, inc_dir, normal);
     Vector3float direction;
+    float p = 0;
     if(xi <= p_reflect || Math::safeFloatEqual(Math::norm(refraction_dir), 0.0f))
     {
         direction = Math::reflect(inc_dir, normal);
@@ -115,9 +116,10 @@ Material::sample_glass(uint32_t& seed, const Vector3float& inc_dir, const Vector
     else
     {
         direction = refraction_dir;
+        p = 1;
     }
 
-    return Vector4float(direction, 1);
+    return Vector4float(direction, p);
 }
 
 __host__ __device__
