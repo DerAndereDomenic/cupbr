@@ -62,6 +62,7 @@ int main(int argc, char* argv[])
 
     /* Make the window's context current */
     glfwMakeContextCurrent(window);
+    glfwSwapInterval(0);
 
     if (glewInit() != GLEW_OK)
 	{
@@ -159,6 +160,8 @@ int main(int argc, char* argv[])
     SceneLoader::destroyScene(scene);
 
     mapper->saveToFile("bin/output.bmp");
+
+    printf("Rendered Frames: %i\n", frame_counter);
 
     //TODO
     reinhard_mapper.~ToneMapper();
