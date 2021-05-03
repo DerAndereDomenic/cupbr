@@ -117,7 +117,7 @@ Tracing::direction2UV(const Vector3float& direction, const uint32_t& width, cons
     uint32_t x = static_cast<uint32_t>(width * phi);
     uint32_t y = static_cast<uint32_t>(height * theta);
 
-    Vector2uint32_t pixel(x,y);
+    return Vector2uint32_t(x,y);
 }
 
 #endif

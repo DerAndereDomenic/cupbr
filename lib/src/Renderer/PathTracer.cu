@@ -7,7 +7,7 @@
 namespace detail
 {
     __global__ void
-    pathtracer_kernel_nee(const Scene scene,
+    pathtracer_kernel_nee(Scene scene,
                           const Camera camera,
                           const uint32_t frameIndex,
                           const uint32_t maxTraceDepth,
@@ -36,7 +36,15 @@ namespace detail
         {
             //Direct illumination
             LocalGeometry geom = Tracing::traceRay(scene, ray);
-            if(geom.depth == INFINITY)break;
+            if(geom.depth == INFINITY)
+            {
+                if(scene.useEnvironmentMap)
+                {
+                    Vector2uint32_t pixel = Tracing::direction2UV(ray.direction(), scene.environment.width(), scene.environment.height());
+                    radiance += scene.environment(pixel);
+                }
+                break;
+            }
             Vector3float normal = geom.N;
 
             inc_dir = Math::normalize(ray.origin() - geom.P);
