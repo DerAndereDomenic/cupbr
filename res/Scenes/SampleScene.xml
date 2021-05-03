@@ -43,3 +43,7 @@
         <intensity>10,10,10</intensity>
     </light1>
 </lights>
+
+<environment>
+    <path>res/hdrtest.hdr</path>
+</environment>
