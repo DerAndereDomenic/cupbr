@@ -6,6 +6,9 @@
 #include <vector>
 #include <sstream>
 
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb_image.h>
+
 namespace detail
 {
     Vector3float
@@ -212,6 +215,28 @@ SceneLoader::loadFromFile(const std::string& path)
         Memory::allocator()->copyHost2DeviceObject<Light>(&light, dev_light);
 
         host_lights[i] = dev_light;
+    }
+
+    tinyxml2::XMLElement* environment_head = doc.FirstChildElement("environment");
+    if(environment_head != NULL)
+    {
+        const char* path = environment_head->FirstChildElement("path")->GetText();
+        
+        int32_t x,y,n;
+        float *data = stbi_loadf(path, &x, &y, &n, 3);
+        Vector3float *img_data = (Vector3float*)data;
+        Image<Vector3float> buffer = Image<Vector3float>::createHostObject(x,y);
+        Image<Vector3float> dbuffer = Image<Vector3float>::createDeviceObject(x,y);
+        for(int i = 0; i < x*y; ++i)
+        {
+            buffer[i] = img_data[i];
+        }
+        buffer.copyHost2DeviceObject(dbuffer);
+
+        scene.useEnvironmentMap = true;
+        scene.environment = dbuffer;
+
+        Image<Vector3float>::destroyHostObject(buffer);
     }
 
     Memory::allocator()->copyHost2DeviceArray<Geometry*>(scene.scene_size, host_array, scene.geometry);
