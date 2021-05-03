@@ -1,0 +1,50 @@
+<header>
+    <scene_size>4</scene_size>
+    <light_count>0</light_count>
+</header>
+
+<geometry>
+    <geometry1>
+        <type>SPHERE</type>
+        <position>0,0,0</position>
+        <radius>0.9</radius>
+        <material>
+            <type>LAMBERT</type>
+            <albedo_d>1,0,0</albedo_d>
+        </material>
+    </geometry1>
+    <geometry2>
+        <type>SPHERE</type>
+        <position>2,0,0</position>
+        <radius>0.9</radius>
+        <material>
+            <type>PHONG</type>
+            <albedo_d>1,1,1</albedo_d>
+            <albedo_s>1,1,1</albedo_s>
+            <shininess>51</shininess>
+        </material>
+    </geometry2>
+    <geometry3>
+        <type>SPHERE</type>
+        <position>-2,0,0</position>
+        <radius>0.9</radius>
+        <material>
+            <type>MIRROR</type>
+            <albedo_s>1,1,1</albedo_s>
+        </material>
+    </geometry3>
+    <geometry4>
+        <type>SPHERE</type>
+        <position>4,0,0</position>
+        <radius>0.9</radius>
+        <material>
+            <type>GLASS</type>
+            <albedo_s>1,1,1</albedo_s>
+            <eta>1.5</eta>
+        </material>
+    </geometry4>
+</geometry>
+
+<environment>
+    <path>res/hdrtest.hdr</path>
+</environment>
