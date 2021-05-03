@@ -31,6 +31,7 @@ namespace detail
         float d;
 
         Light light;
+        MaterialType last_type = LAMBERT;
 
         do
         {
@@ -38,73 +39,76 @@ namespace detail
             LocalGeometry geom = Tracing::traceRay(scene, ray);
             if(geom.depth == INFINITY)
             {
-                if(scene.useEnvironmentMap && trace_depth == 0)
+                if(scene.useEnvironmentMap && (trace_depth == 0 || last_type == GLASS || last_type == MIRROR))
                 {
                     Vector2uint32_t pixel = Tracing::direction2UV(ray.direction(), scene.environment.width(), scene.environment.height());
-                    radiance = scene.environment(pixel);
+                    radiance = scene.environment(pixel)*rayweight;
                 }
                 break;
             }
+
             Vector3float normal = geom.N;
 
             inc_dir = Math::normalize(ray.origin() - geom.P);
 
             uint32_t useEnvironmentMap = scene.useEnvironmentMap ? 1 : 0;
-
-            uint32_t light_sample = static_cast<uint32_t>(Math::rnd(seed) * (scene.light_count + useEnvironmentMap));
-
-            if(light_sample != scene.light_count)
+            if(geom.material.type == LAMBERT || geom.material.type == PHONG)
             {
-                light = *(scene.lights[light_sample]); 
+                uint32_t light_sample = static_cast<uint32_t>(Math::rnd(seed) * (scene.light_count + useEnvironmentMap));
 
-                switch(light.type)
+                if(light_sample != scene.light_count)
                 {
-                    case LightType::POINT:
+                    light = *(scene.lights[light_sample]); 
+
+                    switch(light.type)
                     {
-                        lightDir = Math::normalize(light.position - geom.P);
-                        d = Math::norm(light.position - geom.P);
-                        lightRadiance = light.intensity / (d*d);
+                        case LightType::POINT:
+                        {
+                            lightDir = Math::normalize(light.position - geom.P);
+                            d = Math::norm(light.position - geom.P);
+                            lightRadiance = light.intensity / (d*d);
+                        }
+                        break;
+                        case LightType::AREA:
+                        {
+                            float xi1 = Math::rnd(seed) * 2.0f - 1.0f;
+                            float xi2 = Math::rnd(seed) * 2.0f - 1.0f;
+
+                            Vector3float sample = light.position + xi1 * light.halfExtend1 + xi2 * light.halfExtend2;
+                            Vector3float n = Math::normalize(Math::cross(light.halfExtend1, light.halfExtend2));
+                            float area = 4.0f*Math::norm(light.halfExtend1) * Math::norm(light.halfExtend2);
+
+                            lightDir = Math::normalize(sample - geom.P);
+                            d = Math::norm(sample - geom.P);
+
+                            float NdotL = Math::dot(lightDir, n);
+                            if(NdotL < 0) NdotL *= -1.0f;
+
+                            float solidAngle =  area * NdotL / (d*d);
+
+                            lightRadiance = light.radiance * solidAngle;
+                        }
+                        break;
                     }
-                    break;
-                    case LightType::AREA:
-                    {
-                        float xi1 = Math::rnd(seed) * 2.0f - 1.0f;
-                        float xi2 = Math::rnd(seed) * 2.0f - 1.0f;
-
-                        Vector3float sample = light.position + xi1 * light.halfExtend1 + xi2 * light.halfExtend2;
-                        Vector3float n = Math::normalize(Math::cross(light.halfExtend1, light.halfExtend2));
-                        float area = 4.0f*Math::norm(light.halfExtend1) * Math::norm(light.halfExtend2);
-
-                        lightDir = Math::normalize(sample - geom.P);
-                        d = Math::norm(sample - geom.P);
-
-                        float NdotL = Math::dot(lightDir, n);
-                        if(NdotL < 0) NdotL *= -1.0f;
-
-                        float solidAngle =  area * NdotL / (d*d);
-
-                        lightRadiance = light.radiance * solidAngle;
-                    }
-                    break;
                 }
-            }
-            else // Use environment map
-            {
-                Vector4float sample = geom.material.sampleDirection(seed, inc_dir, geom.N);
-                lightDir = Vector3float(sample);
-                d = 1e10; //TODO: Better way to do this
-                Vector2uint32_t pixel = Tracing::direction2UV(lightDir, scene.environment.width(), scene.environment.height());
-                float p = 1.0f;
-                if(geom.material.type != GLASS)
-                    p = sample.w;
-                lightRadiance = scene.environment(pixel)/p;
-            }
-            
-            Ray shadow_ray = Ray(geom.P + 0.01f*lightDir, lightDir);
+                else // Use environment map
+                {
+                    Vector4float sample = geom.material.sampleDirection(seed, inc_dir, geom.N);
+                    lightDir = Vector3float(sample);
+                    d = 1e10; //TODO: Better way to do this
+                    Vector2uint32_t pixel = Tracing::direction2UV(lightDir, scene.environment.width(), scene.environment.height());
+                    float p = 1.0f;
+                    if(geom.material.type != GLASS)
+                        p = sample.w;
+                    lightRadiance = scene.environment(pixel)/p;
+                }
+                
+                Ray shadow_ray = Ray(geom.P + 0.01f*lightDir, lightDir);
 
-            if(Tracing::traceVisibility(scene, d, shadow_ray))
-            {
-                radiance += (scene.light_count+useEnvironmentMap)*fmaxf(0.0f, Math::dot(normal,lightDir))*geom.material.brdf(geom.P,inc_dir,lightDir,normal)*lightRadiance*rayweight;
+                if(Tracing::traceVisibility(scene, d, shadow_ray))
+                {
+                    radiance += (scene.light_count+useEnvironmentMap)*fmaxf(0.0f, Math::dot(normal,lightDir))*geom.material.brdf(geom.P,inc_dir,lightDir,normal)*lightRadiance*rayweight;
+                }
             }
 
             //Indirect illumination
@@ -115,6 +119,8 @@ namespace detail
                 rayweight = rayweight * fmaxf(EPSILON, Math::dot(direction, normal))*geom.material.brdf(geom.P, inc_dir, direction, normal)/direction_p.w;
                  
             ray = Ray(geom.P+0.01f*direction, direction);
+
+            last_type = geom.material.type;
 
             ++trace_depth;
         }while(trace_depth < maxTraceDepth);
