@@ -3,16 +3,19 @@
 
 #include <Geometry/Geometry.cuh>
 #include <DataStructure/Light.cuh>
+#include <DataStructure/Image.cuh>
 
 /**
 *   @brief Struct to model a scene
 */
 struct Scene
 {
-    Geometry** geometry;    /**< The scene geometry */
-    uint32_t scene_size;    /**< The number of objects in the scene */
-    Light** lights;           /**< The light sources in the scene */
-    uint32_t light_count;   /**< The light source count */
+    Geometry** geometry;                /**< The scene geometry */
+    uint32_t scene_size;                /**< The number of objects in the scene */
+    Light** lights;                     /**< The light sources in the scene */
+    uint32_t light_count;               /**< The light source count */
+    bool useEnvironmentMap = false;    /**< Wether an environment map is loaded */
+    Image<Vector3float> environment;    /**< The Environment map */
 
     /**
     *   @brief Get a scene element
