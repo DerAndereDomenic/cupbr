@@ -38,10 +38,10 @@ namespace detail
             LocalGeometry geom = Tracing::traceRay(scene, ray);
             if(geom.depth == INFINITY)
             {
-                if(scene.useEnvironmentMap)
+                if(scene.useEnvironmentMap && trace_depth == 0)
                 {
                     Vector2uint32_t pixel = Tracing::direction2UV(ray.direction(), scene.environment.width(), scene.environment.height());
-                    radiance += scene.environment(pixel);
+                    radiance = scene.environment(pixel);
                 }
                 break;
             }
@@ -90,10 +90,14 @@ namespace detail
             }
             else // Use environment map
             {
-                lightDir = geom.material.sampleDirection(seed, inc_dir, geom.N);
+                Vector4float sample = geom.material.sampleDirection(seed, inc_dir, geom.N);
+                lightDir = Vector3float(sample);
                 d = 1e10; //TODO: Better way to do this
                 Vector2uint32_t pixel = Tracing::direction2UV(lightDir, scene.environment.width(), scene.environment.height());
-                lightRadiance = scene.environment(pixel);
+                float p = 1.0f;
+                if(geom.material.type != GLASS)
+                    p = sample.w;
+                lightRadiance = scene.environment(pixel)/p;
             }
             
             Ray shadow_ray = Ray(geom.P + 0.01f*lightDir, lightDir);
