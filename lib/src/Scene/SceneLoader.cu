@@ -280,6 +280,11 @@ SceneLoader::destroyScene(Scene scene)
         Memory::allocator()->destroyDeviceObject<Light>(host_lights[i]);
     }
 
+    if(scene.useEnvironmentMap)
+    {
+        Image<Vector3float>::destroyDeviceObject(scene.environment);
+    }
+
     Memory::allocator()->destroyDeviceArray<Geometry*>(scene.geometry);
     Memory::allocator()->destroyDeviceArray<Light*>(scene.lights);
     Memory::allocator()->destroyHostArray<Geometry*>(host_scene);
