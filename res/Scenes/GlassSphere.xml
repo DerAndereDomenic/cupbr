@@ -1,0 +1,25 @@
+<header>
+    <scene_size>1</scene_size>
+    <light_count>1</light_count>
+</header>
+
+<geometry>
+    <geometry1>
+        <type>SPHERE</type>
+        <position>0,0,0</position>
+        <radius>1</radius>
+        <material>
+            <type>GLASS</type>
+            <albedo_s>1,1,1</albedo_s>
+            <eta>1.5</eta>
+        </material>
+    </geometry1>
+</geometry>
+
+<lights>
+    <light1>
+        <type>POINT</type>
+        <position>-1,3,1.5</position>
+        <intensity>10,10,10</intensity>
+    </light1>
+</lights>
