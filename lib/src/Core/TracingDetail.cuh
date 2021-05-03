@@ -107,4 +107,17 @@ Tracing::traceVisibility(const Scene scene, const float& lightDist, const Ray& r
     return true;
 }
 
+__device__
+inline Vector2uint32_t
+Tracing::direction2UV(const Vector3float& direction, const uint32_t& width, const uint32_t& height)
+{
+    float theta = acos(direction.y)/M_PI;
+    float phi = (atan2(direction.z, direction.x)+M_PI)/(2.0f*M_PI);
+
+    uint32_t x = static_cast<uint32_t>(width * phi);
+    uint32_t y = static_cast<uint32_t>(height * theta);
+
+    Vector2uint32_t pixel(x,y);
+}
+
 #endif

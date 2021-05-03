@@ -46,6 +46,17 @@ namespace Tracing
     __device__
     bool
     traceVisibility(const Scene scene, const float& lightDist, const Ray& ray);
+
+    /**
+    *   @brief Convert a direction to UV coordinates of an environment map
+    *   @param[in] direction The direction
+    *   @param[in] width The image width
+    *   @param[in] height The image height
+    *   @return The pixel of the corresponding direction 
+    */
+    __device__
+    Vector2uint32_t
+    direction2UV(const Vector3float& direction, const uint32_t& width, const uint32_t& height);
 }
 
 #include "../../src/Core/TracingDetail.cuh"
