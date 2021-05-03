@@ -149,8 +149,9 @@ __host__ __device__
 inline Vector3float
 Material::btdf_glass(const Vector3float& position, const Vector3float& inc_dir, const Vector3float& out_dir, const Vector3float& normal)
 {
+    //TODO
     Vector3float refracted = Math::refract(eta, inc_dir, normal);
-    return albedo_s*Math::delta(1.0f-Math::dot(refracted,out_dir))/Math::dot(inc_dir,normal);
+    return 1;//albedo_s*Math::delta(1.0f-Math::dot(refracted,out_dir))/Math::dot(inc_dir,normal);
 }
 
 
