@@ -230,7 +230,7 @@ PBRendering::pathtracing(const Scene scene,
                          Image<Vector3float>* output_img)
 {
     const KernelSizeHelper::KernelSize config = KernelSizeHelper::configure(output_img->size());
-    detail::pathtracer_kernel<<<config.blocks, config.threads>>>(scene, 
+    detail::pathtracer_kernel_nee<<<config.blocks, config.threads>>>(scene, 
                                                                  camera,
                                                                  frameIndex,
                                                                  maxTraceDepth, 
