@@ -31,7 +31,6 @@ namespace detail
         float d;
 
         Light light;
-        MaterialType last_type = LAMBERT;
 
         do
         {
@@ -39,10 +38,10 @@ namespace detail
             LocalGeometry geom = Tracing::traceRay(scene, ray);
             if(geom.depth == INFINITY)
             {
-                if(scene.useEnvironmentMap && (trace_depth == 0 || last_type == GLASS || last_type == MIRROR))
+                if(scene.useEnvironmentMap)
                 {
                     Vector2uint32_t pixel = Tracing::direction2UV(ray.direction(), scene.environment.width(), scene.environment.height());
-                    radiance = scene.environment(pixel)*rayweight;
+                    radiance = rayweight * scene.environment(pixel);
                 }
                 break;
             }
@@ -95,10 +94,10 @@ namespace detail
                 {
                     Vector4float sample = geom.material.sampleDirection(seed, inc_dir, geom.N);
                     lightDir = Vector3float(sample);
-                    d = 1e10; //TODO: Better way to do this
+                    d = INFINITY; //TODO: Better way to do this
                     Vector2uint32_t pixel = Tracing::direction2UV(lightDir, scene.environment.width(), scene.environment.height());
                     float p = 1.0f;
-                    if(geom.material.type != GLASS)
+                    if(geom.material.type != GLASS) //TODO
                         p = sample.w;
                     lightRadiance = scene.environment(pixel)/p;
                 }
@@ -119,8 +118,6 @@ namespace detail
                 rayweight = rayweight * fmaxf(EPSILON, Math::dot(direction, normal))*geom.material.brdf(geom.P, inc_dir, direction, normal)/direction_p.w;
                  
             ray = Ray(geom.P+0.01f*direction, direction);
-
-            last_type = geom.material.type;
 
             ++trace_depth;
         }while(trace_depth < maxTraceDepth);
