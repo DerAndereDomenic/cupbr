@@ -1,5 +1,5 @@
 <header>
-    <scene_size>3</scene_size>
+    <scene_size>4</scene_size>
     <light_count>1</light_count>
 </header>
 
@@ -34,6 +34,16 @@
             <eta>1.5</eta>
         </material>
     </geometry3>
+    <geometry4>
+        <type>SPHERE</type>
+        <position>2,3,1</position>
+        <radius>0.3</radius>
+        <material>
+            <type>GLASS</type>
+            <albedo_s>1,1,1</albedo_s>
+            <eta>0.66666666666</eta>
+        </material>
+    </geometry4>
 </geometry>
 
 <lights>
