@@ -41,7 +41,7 @@ namespace detail
                 if(scene.useEnvironmentMap)
                 {
                     Vector2uint32_t pixel = Tracing::direction2UV(ray.direction(), scene.environment.width(), scene.environment.height());
-                    radiance = rayweight * scene.environment(pixel);
+                    radiance += rayweight * scene.environment(pixel);
                 }
                 break;
             }
