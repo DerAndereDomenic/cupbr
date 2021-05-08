@@ -12,7 +12,8 @@
 enum GeometryType
 {
     SPHERE,
-    PLANE
+    PLANE,
+    QUAD,
 };
 
 /**
