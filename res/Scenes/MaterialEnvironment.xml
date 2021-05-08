@@ -1,5 +1,5 @@
 <header>
-    <scene_size>4</scene_size>
+    <scene_size>5</scene_size>
     <light_count>0</light_count>
 </header>
 
@@ -43,6 +43,17 @@
             <eta>1.5</eta>
         </material>
     </geometry4>
+    <geometry5>
+        <type>QUAD</type>
+        <position>0,-0.9,0</position>
+        <normal>0,1,0</normal>
+        <extend1>2,0,0</extend1>
+        <extend2>0,0,2</extend2>
+        <material>
+            <type>LAMBERT</type>
+            <albedo_d>0.2,0.8,1</albedo_d>
+        </material>
+    </geometry5>
 </geometry>
 
 <environment>
