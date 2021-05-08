@@ -108,18 +108,16 @@ Material::sample_glass(uint32_t& seed, const Vector3float& inc_dir, const Vector
 
     Vector3float refraction_dir = Math::refract(_eta, inc_dir, normal);
     Vector3float direction;
-    float p = 0;
     if(xi <= p_reflect || Math::safeFloatEqual(Math::norm(refraction_dir), 0.0f))
     {
         direction = Math::reflect(inc_dir, normal);
     }
     else
     {
-        direction = refraction_dir;
-        p = 1;
+        direction = Math::normalize(refraction_dir);
     }
 
-    return Vector4float(direction, p);
+    return Vector4float(direction, 1);
 }
 
 __host__ __device__
@@ -142,7 +140,7 @@ inline Vector3float
 Material::brdf_mirror(const Vector3float& position, const Vector3float& inc_dir, const Vector3float& out_dir, const Vector3float& normal)
 {
     Vector3float reflected = Math::reflect(inc_dir,normal);
-    return albedo_s*Math::delta(1.0f-Math::dot(out_dir,reflected))/Math::dot(out_dir,normal);
+    return albedo_s*Math::delta(1.0f-Math::dot(out_dir,reflected))/Math::dot(inc_dir,normal);
 }
 
 __host__ __device__
@@ -150,8 +148,34 @@ inline Vector3float
 Material::btdf_glass(const Vector3float& position, const Vector3float& inc_dir, const Vector3float& out_dir, const Vector3float& normal)
 {
     //TODO
-    Vector3float refracted = Math::refract(eta, inc_dir, normal);
-    return 1;//albedo_s*Math::delta(1.0f-Math::dot(refracted,out_dir))/Math::dot(inc_dir,normal);
+    //Vector3float refracted = Math::refract(eta, inc_dir, normal);
+    //return 1;//albedo_s*Math::delta(1.0f-Math::dot(refracted,out_dir))/Math::dot(inc_dir,normal);
+    if(Math::dot(inc_dir, out_dir) > 0) //Reflected
+    {
+        if(Math::dot(inc_dir,normal) > 0)
+        {
+            return brdf_mirror(position, inc_dir, out_dir, normal);
+        }
+        else
+        {
+            return brdf_mirror(position, inc_dir, out_dir, -1.0f*normal);
+        }
+        
+    }
+    else{
+        Vector3float refracted;
+        Vector3float n = normal;
+        if(Math::dot(inc_dir,normal) > 0)
+        {
+            refracted = Math::refract(1.0f/eta, inc_dir, normal);
+        }
+        else
+        {
+            refracted = Math::refract(eta, inc_dir, -1.0f*normal);
+            n = -1.0f*normal;
+        }
+        return albedo_s * Math::delta(1.0f-Math::dot(refracted,out_dir))/Math::dot(inc_dir,n);
+    }
 }
 
 
