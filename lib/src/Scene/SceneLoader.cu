@@ -294,6 +294,11 @@ SceneLoader::destroyScene(Scene scene)
                 Memory::allocator()->destroyDeviceObject<Sphere>(static_cast<Sphere*>(host_scene[i]));
             }
             break;
+            case QUAD:
+            {
+                Memory::allocator()->destroyDeviceObject<Quad>(static_cast<Quad*>(host_scene[i]));
+            }
+            break;
         }
     }
 
