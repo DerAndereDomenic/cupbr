@@ -45,9 +45,9 @@
     </geometry4>
     <geometry5>
         <type>QUAD</type>
-        <position>0,-0.9,0</position>
+        <position>1.0,-0.9,0</position>
         <normal>0,1,0</normal>
-        <extend1>2,0,0</extend1>
+        <extend1>4,0,0</extend1>
         <extend2>0,0,2</extend2>
         <material>
             <type>LAMBERT</type>
