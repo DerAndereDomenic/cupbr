@@ -32,7 +32,17 @@ Quad::computeRayIntersection(const Ray& ray)
 
     if(t < 0)return Vector4float(INFINITY);
 
-    return Vector4float(ray.origin() + t*ray.direction(), t);
+    Vector3float intersection = ray.origin() + t*ray.direction();
+
+    float x = Math::dot(intersection - _position, _extend1);
+    float y = Math::dot(intersection - _position, _extend2);
+
+    float side1 = Math::dot(_extend1, _extend1);
+    float side2 = Math::dot(_extend2, _extend2);
+
+    if(x < -side1 || x > side1 || y < -side2 || y > side2)return Vector4float(INFINITY);
+
+    return Vector4float(intersection, t);
 }
 
 __host__ __device__
