@@ -2,6 +2,7 @@
 #include <Core/Memory.cuh>
 #include <Geometry/Plane.cuh>
 #include <Geometry/Sphere.cuh>
+#include <Geometry/Quad.cuh>
 #include <tinyxml2.h>
 #include <vector>
 #include <sstream>
@@ -148,6 +149,27 @@ SceneLoader::loadFromFile(const std::string& path)
             geom.material = mat;
             Sphere* dev_geom = Memory::allocator()->createDeviceObject<Sphere>();
             Memory::allocator()->copyHost2DeviceObject<Sphere>(&geom, dev_geom);
+            host_array[i] = dev_geom;
+        }
+        else if(strcmp(type, "QUAD") == 0)
+        {
+            const char* position_string = current_geometry->FirstChildElement("position")->GetText();
+            const char* normal_string = current_geometry->FirstChildElement("normal")->GetText();
+            const char* extend1_string = current_geometry->FirstChildElement("extend1")->GetText();
+            const char* extend2_string = current_geometry->FirstChildElement("extend2")->GetText();
+
+            Vector3float position = detail::string2vector(position_string);
+            Vector3float normal = detail::string2vector(normal_string);
+            Vector3float extend1 = detail::string2vector(extend1_string);
+            Vector3float extend2 = detail::string2vector(extend2_string);
+
+            Material mat = detail::loadMaterial(current_geometry->FirstChildElement("material"));
+
+            Quad geom(position, normal, extend1, extend2);
+            geom.material = mat;
+
+            Quad* dev_geom = Memory::allocator()->createDeviceObject<Quad>();
+            Memory::allocator()->copyHost2DeviceObject<Quad>(&geom, dev_geom);
             host_array[i] = dev_geom;
         }
         else
