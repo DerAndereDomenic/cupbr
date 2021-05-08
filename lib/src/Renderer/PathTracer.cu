@@ -96,10 +96,7 @@ namespace detail
                     lightDir = Vector3float(sample);
                     d = INFINITY; //TODO: Better way to do this
                     Vector2uint32_t pixel = Tracing::direction2UV(lightDir, scene.environment.width(), scene.environment.height());
-                    float p = 1.0f;
-                    if(geom.material.type != GLASS) //TODO
-                        p = sample.w;
-                    lightRadiance = scene.environment(pixel)/p;
+                    lightRadiance = scene.environment(pixel)/sample.w;
                 }
                 
                 Ray shadow_ray = Ray(geom.P + 0.01f*lightDir, lightDir);
@@ -113,12 +110,9 @@ namespace detail
             //Indirect illumination
             Vector4float direction_p = geom.material.sampleDirection(seed, inc_dir, geom.N);
             Vector3float direction = Vector3float(direction_p);
-            //TODO: Remove special treatment for glass
-            if(geom.material.type != GLASS)
-                rayweight = rayweight * fmaxf(EPSILON, Math::dot(direction, normal))*geom.material.brdf(geom.P, inc_dir, direction, normal)/direction_p.w;
+            rayweight = rayweight * fabs(Math::dot(direction, normal))*geom.material.brdf(geom.P, inc_dir, direction, normal)/direction_p.w;
                  
             ray = Ray(geom.P+0.01f*direction, direction);
-
             ++trace_depth;
         }while(trace_depth < maxTraceDepth);
 
