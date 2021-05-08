@@ -23,7 +23,7 @@ class Quad : public Geometry
         *   @note The normal will get normalized
         */
         __host__ __device__
-        Quad(const Vector3float& position, const Vector3float& normal, const Vector3float& extend1, const Vector3float extend2);
+        Quad(const Vector3float& position, const Vector3float& normal, const Vector3float& extend1, const Vector3float& extend2);
 
         //Override
         __host__ __device__
