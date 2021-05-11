@@ -6,6 +6,7 @@
 #include <Geometry/Plane.cuh>
 #include <Geometry/Sphere.cuh>
 #include <Geometry/Quad.cuh>
+#include <Geometry/Triangle.cuh>
 #include <Math/Functions.cuh>
 
 __device__
@@ -83,6 +84,21 @@ Tracing::traceRay(const Scene scene, const Ray& ray)
                 }
             }
             break;
+            case GeometryType::TRIANGLE:
+            {
+                Triangle *triangle = static_cast<Triangle*>(scene[i]);
+                Vector4float intersection_triangle = triangle->computeRayIntersection(ray);
+                if(intersection_triangle.w <= intersection.w)
+                {
+                    intersection = intersection_triangle;
+                    geom.type = GeometryType::TRIANGLE;
+                    geom.P = Vector3float(intersection);
+                    geom.N = triangle->getNormal(geom.P);
+                    geom.depth = intersection.w;
+                    geom.material = triangle->material;
+                }
+            }
+            break;
         }
     }
 
@@ -123,6 +139,16 @@ Tracing::traceVisibility(const Scene scene, const float& lightDist, const Ray& r
                 Quad *quad = static_cast<Quad*>(scene[i]);
                 Vector4float intersection_quad = quad->computeRayIntersection(ray);
                 if(intersection_quad.w != INFINITY && intersection_quad.w < lightDist)
+                {
+                    return false;
+                }
+            }
+            break;
+            case GeometryType::TRIANGLE:
+            {
+                Triangle *triangle = static_cast<Triangle*>(scene[i]);
+                Vector4float intersection_triangle = triangle->computeRayIntersection(ray);
+                if(intersection_triangle.w != INFINITY && intersection_triangle.w < lightDist)
                 {
                     return false;
                 }
