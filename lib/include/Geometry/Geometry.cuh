@@ -14,6 +14,7 @@ enum GeometryType
     SPHERE,
     PLANE,
     QUAD,
+    TRIANGLE
 };
 
 /**
