@@ -3,6 +3,7 @@
 #include <Geometry/Plane.cuh>
 #include <Geometry/Sphere.cuh>
 #include <Geometry/Quad.cuh>
+#include <Geometry/Triangle.cuh>
 #include <tinyxml2.h>
 #include <vector>
 #include <sstream>
@@ -170,6 +171,25 @@ SceneLoader::loadFromFile(const std::string& path)
 
             Quad* dev_geom = Memory::allocator()->createDeviceObject<Quad>();
             Memory::allocator()->copyHost2DeviceObject<Quad>(&geom, dev_geom);
+            host_array[i] = dev_geom;
+        }
+        else if(strcmp(type, "TRIANGLE") == 0)
+        {
+            const char* vertex1_string = current_geometry->FirstChildElement("vertex1")->GetText();
+            const char* vertex2_string = current_geometry->FirstChildElement("vertex2")->GetText();
+            const char* vertex3_string = current_geometry->FirstChildElement("vertex3")->GetText();
+
+            Vector3float vertex1 = detail::string2vector(vertex1_string);
+            Vector3float vertex2 = detail::string2vector(vertex2_string);
+            Vector3float vertex3 = detail::string2vector(vertex3_string);
+
+            Material mat = detail::loadMaterial(current_geometry->FirstChildElement("material"));
+
+            Triangle geom(vertex1, vertex2, vertex3);
+            geom.material = mat;
+
+            Triangle* dev_geom = Memory::allocator()->createDeviceObject<Triangle>();
+            Memory::allocator()->copyHost2DeviceObject<Triangle>(&geom, dev_geom);
             host_array[i] = dev_geom;
         }
         else
