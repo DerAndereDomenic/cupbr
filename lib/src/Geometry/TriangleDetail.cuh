@@ -33,11 +33,13 @@ Triangle::computeRayIntersection(const Ray& ray)
     float u = Math::dot(tvec, pvec) * invDet;
     if(u < 0.0f || u > 1.0f) return Vector4float(INFINITY);
 
-    Vector3float qvec = Math::dot(tvec, v0v1);
+    Vector3float qvec = Math::cross(tvec, v0v1);
     float v = Math::dot(ray.direction(), qvec) * invDet;
     if(v < 0.0f || u + v > 1.0f) return Vector4float(INFINITY);
 
     float t = Math::dot(v0v2, qvec) * invDet;
+
+    if(t < 0.0f) return Vector4float(INFINITY);
 
     return Vector4float(ray.origin() + t*ray.direction(), t);
 }

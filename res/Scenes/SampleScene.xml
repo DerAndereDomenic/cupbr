@@ -46,9 +46,9 @@
     </geometry4>
     <geometry5>
         <type>TRIANGLE</type>
-        <vertex1>0,3,0</vertex1>
-        <vertex2>1,3,2</vertex2>
-        <vertex3>2,3,2</vertex3>
+        <vertex1>-1,1,3</vertex1>
+        <vertex2>1,1,3</vertex2>
+        <vertex3>0,3,3</vertex3>
         <material>
             <type>PHONG</type>
             <albedo_d>0.2,0.8,0.1</albedo_d>
