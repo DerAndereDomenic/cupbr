@@ -1,5 +1,5 @@
 <header>
-    <scene_size>5</scene_size>
+    <scene_size>6</scene_size>
     <light_count>1</light_count>
 </header>
 
@@ -55,6 +55,14 @@
             <albedo_s>0.2,0.8,0.1</albedo_s>
         </material>
     </geometry5>
+    <geometry6>
+        <type>MESH</type>
+        <path>res/Meshes/suzanne_blender.obj</path>
+        <material>
+            <type>LAMBERT</type>
+            <albedo_d>0.9,0.8,0.1</albedo_d>
+        </material>
+    </geometry6>
 </geometry>
 
 <lights>
