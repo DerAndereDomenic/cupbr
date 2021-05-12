@@ -16,7 +16,7 @@ namespace PBRendering
     *   @param[out] output_img The rendered HDR image
     */
     void
-    pathtracing(const Scene scene,
+    pathtracing(Scene& scene,
                 const Camera& camera,
                 const uint32_t& frameIndex,
                 const uint32_t& maxTraceDepth,

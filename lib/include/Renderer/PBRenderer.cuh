@@ -47,7 +47,7 @@ class PBRenderer
         *   @param[in] scene The scene to render
         */
         void
-        registerScene(const Scene scene);
+        registerScene(Scene& scene);
 
         /**
         *   @brief Set the rendering method

@@ -123,7 +123,7 @@ namespace detail
     }
 
     __global__ void
-    pathtracer_kernel(const Scene scene,
+    pathtracer_kernel(Scene scene,
                       const Camera camera,
                       const uint32_t frameIndex,
                       const uint32_t maxTraceDepth,
@@ -241,7 +241,7 @@ namespace detail
 }
 
 void
-PBRendering::pathtracing(const Scene scene,
+PBRendering::pathtracing(Scene& scene,
                          const Camera& camera,
                          const uint32_t& frameIndex,
                          const uint32_t& maxTraceDepth,

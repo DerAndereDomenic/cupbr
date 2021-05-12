@@ -29,7 +29,7 @@ Tracing::launchRay(const uint32_t& tid, const uint32_t& width, const uint32_t& h
 
 __device__
 inline LocalGeometry
-Tracing::traceRay(const Scene scene, const Ray& ray)
+Tracing::traceRay(Scene& scene, const Ray& ray)
 {
     Vector4float intersection(INFINITY);
 
@@ -123,7 +123,7 @@ Tracing::traceRay(const Scene scene, const Ray& ray)
 
 __device__
 inline bool
-Tracing::traceVisibility(const Scene scene, const float& lightDist, const Ray& ray)
+Tracing::traceVisibility(Scene& scene, const float& lightDist, const Ray& ray)
 {
     for(uint32_t i = 0; i < scene.scene_size; ++i)
     {

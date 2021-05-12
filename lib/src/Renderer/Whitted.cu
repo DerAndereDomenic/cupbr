@@ -8,7 +8,7 @@ namespace detail
 {
     __device__ Vector3float
     estimateRadiance(const Ray& ray, 
-                     const Scene scene, 
+                     Scene scene, 
                      const uint32_t& traceDepth, 
                      const uint32_t& maxTraceDepth)
     {
@@ -121,7 +121,7 @@ namespace detail
 }
 
 void
-PBRendering::whitted(const Scene scene,
+PBRendering::whitted(Scene& scene,
                      const Camera& camera,
                      const uint32_t& maxTraceDepth,
                      Image<Vector3float>* output_img)

@@ -7,7 +7,7 @@
 namespace detail
 {
     __global__ void raytracing_kernel(Image<Vector3float> img, 
-                                      const Scene scene, 
+                                      Scene scene, 
                                       const Camera camera)
     {
         const uint32_t tid = ThreadHelper::globalThreadIndex();
@@ -52,7 +52,7 @@ namespace detail
 }
 
 void
-PBRendering::raytracing(const Scene scene,
+PBRendering::raytracing(Scene& scene,
                         const Camera& camera,
                         Image<Vector3float>* output_img)
 {

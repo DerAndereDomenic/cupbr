@@ -34,7 +34,7 @@ namespace Tracing
     */
     __device__
     LocalGeometry
-    traceRay(const Scene scene, const Ray& ray);
+    traceRay(Scene& scene, const Ray& ray);
 
     /**
     *   @brief Trace a shadow ray to a light source
@@ -45,7 +45,7 @@ namespace Tracing
     */
     __device__
     bool
-    traceVisibility(const Scene scene, const float& lightDist, const Ray& ray);
+    traceVisibility(Scene& scene, const float& lightDist, const Ray& ray);
 
     /**
     *   @brief Convert a direction to UV coordinates of an environment map

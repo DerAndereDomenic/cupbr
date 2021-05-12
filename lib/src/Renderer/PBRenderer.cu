@@ -71,7 +71,7 @@ PBRenderer::setOutputSize(const uint32_t& width, const uint32_t& height)
 }
 
 void
-PBRenderer::registerScene(const Scene scene)
+PBRenderer::registerScene(Scene& scene)
 {
     impl->scene = scene;
     impl->sceneRegistered = true;

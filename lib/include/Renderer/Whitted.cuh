@@ -15,7 +15,7 @@ namespace PBRendering
     *   @param[out] output_img The rendered HDR image
     */
     void
-    whitted(const Scene scene,
+    whitted(Scene& scene,
             const Camera& camera,
             const uint32_t& maxTraceDepth,
             Image<Vector3float>* output_img);

@@ -13,7 +13,7 @@ namespace PBRendering
     *   @param[out] output_img The resulting HDR rendering 
     */
     void
-    raytracing(const Scene scene,
+    raytracing(Scene& scene,
                const Camera& camera,
                Image<Vector3float>* output_img);
 }
