@@ -9,7 +9,7 @@
 #include <Geometry/Triangle.cuh>
 
 Mesh* 
-ObjLoader::loadObj(const char* path)
+ObjLoader::loadObj(const char* path, const Vector3float& position)
 {
     std::ifstream file;
     file.open(path);
@@ -32,7 +32,7 @@ ObjLoader::loadObj(const char* path)
                 result.push_back(std::stof(item));
             }
 
-            vertices.push_back(Vector3float(result[0], result[1], result[2]));
+            vertices.push_back(Vector3float(result[0], result[1], result[2]) + position);
         }
         else if(line[0] == 'f' && line[1] == ' ')
         {
