@@ -197,7 +197,11 @@ SceneLoader::loadFromFile(const std::string& path)
         else if(strcmp(type, "MESH") == 0)
         {
             const char* path_string = current_geometry->FirstChildElement("path")->GetText();
-            Mesh* geom = ObjLoader::loadObj(path_string);
+            const char* position_string = current_geometry->FirstChildElement("position")->GetText();
+
+            Vector3float position = detail::string2vector(position_string);
+
+            Mesh* geom = ObjLoader::loadObj(path_string, position);
 
             Material mat = detail::loadMaterial(current_geometry->FirstChildElement("material"));
 
