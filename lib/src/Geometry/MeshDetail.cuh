@@ -25,6 +25,7 @@ Mesh::computeRayIntersection(const Ray& ray)
         if(intersection_triangle.w <= intersection.w)
         {
             intersection = intersection_triangle;
+            _normal = _triangles[i]->getNormal(0);
         }
     }
 
