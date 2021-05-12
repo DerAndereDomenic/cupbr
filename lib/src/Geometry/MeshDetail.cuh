@@ -6,7 +6,7 @@
 
 __host__ __device__
 inline 
-Mesh::Mesh(Triangle* triangle_buffer, const uint32_t& num_triangles)
+Mesh::Mesh(Triangle** triangle_buffer, const uint32_t& num_triangles)
     :_triangles(triangle_buffer),
      _num_triangles(num_triangles)
 {
@@ -17,7 +17,18 @@ __host__ __device__
 inline Vector4float
 Mesh::computeRayIntersection(const Ray& ray)
 {
-    return Vector4float(INFINITY);
+    Vector4float intersection(INFINITY);
+
+    for(uint32_t i = 0; i < _num_triangles; ++i)
+    {
+        Vector4float intersection_triangle = _triangles[i]->computeRayIntersection(ray);
+        if(intersection_triangle.w <= intersection.w)
+        {
+            intersection = intersection_triangle;
+        }
+    }
+
+    return intersection;
 }
 
 __host__ __device__

@@ -21,7 +21,7 @@ class Mesh : public Geometry
         *   @param[in] num_triangles The number of triangles
         */
         __host__ __device__
-        Mesh(Triangle* triangle_buffer, const uint32_t& num_triangles);
+        Mesh(Triangle** triangle_buffer, const uint32_t& num_triangles);
 
         //Override
         __host__ __device__
@@ -33,7 +33,7 @@ class Mesh : public Geometry
         Vector3float
         getNormal(const Vector3float& x);
     private:
-        Triangle* _triangles;       /**< The plane position */
+        Triangle** _triangles;       /**< The plane position */
         Vector3float _normal;       /**< The plane normal */
         uint32_t _num_triangles;    /**< The number of triangles */
 };
