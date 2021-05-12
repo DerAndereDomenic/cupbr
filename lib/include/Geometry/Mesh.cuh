@@ -32,6 +32,18 @@ class Mesh : public Geometry
         __host__ __device__
         Vector3float
         getNormal(const Vector3float& x);
+
+        /**
+        *   @brief Get the number of triangles
+        *   @return The number of triangles 
+        */
+        __host__ __device__
+        uint32_t
+        num_triangles();
+
+        __host__ __device__
+        Triangle**
+        triangles();
     private:
         Triangle** _triangles;       /**< The plane position */
         Vector3float _normal;       /**< The plane normal */
