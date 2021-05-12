@@ -57,7 +57,8 @@
     </geometry5>
     <geometry6>
         <type>MESH</type>
-        <path>res/Meshes/suzanne_blender.obj</path>
+        <position>5,5,5</position>
+        <path>res/Meshes/box.obj</path>
         <material>
             <type>LAMBERT</type>
             <albedo_d>0.9,0.8,0.1</albedo_d>
