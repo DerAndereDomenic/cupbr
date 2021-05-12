@@ -1,11 +1,11 @@
 #ifndef __CUPBR_SCENE_OBJLOADER_CUH
 #define __CUPBR_SCENE_OBJLOADER_CUH
 
-#include <Scene/Scene.cuh>
+#include <Geometry/Mesh.cuh>
 
 namespace ObjLoader
 {
-    Scene
+    Mesh*
     loadObj(const char* path);
 }
 

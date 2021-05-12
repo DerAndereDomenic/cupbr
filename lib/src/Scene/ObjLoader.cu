@@ -8,7 +8,7 @@
 #include <Core/Memory.cuh>
 #include <Geometry/Triangle.cuh>
 
-Scene 
+Mesh* 
 ObjLoader::loadObj(const char* path)
 {
     std::ifstream file;
@@ -52,13 +52,14 @@ ObjLoader::loadObj(const char* path)
         }
     }
 
+    file.close();
+
     Triangle** host_triangles = Memory::allocator()->createHostArray<Triangle*>(indices.size());
     Triangle** dev_triangles = Memory::allocator()->createDeviceArray<Triangle*>(indices.size());
 
     for(uint32_t i = 0; i < indices.size(); ++i)
     {
         Vector3uint32_t index = indices[i];
-        std::cout << index.x << " " << index.y << " " << index.z << std::endl;
         Triangle host_triangle(vertices[index.x], vertices[index.y], vertices[index.z]);
         Triangle *triangle = Memory::allocator()->createDeviceObject<Triangle>();
         Memory::allocator()->copyHost2DeviceObject<Triangle>(&host_triangle, triangle);
@@ -69,7 +70,9 @@ ObjLoader::loadObj(const char* path)
 
     Memory::allocator()->destroyHostArray<Triangle*>(host_triangles);
 
-    file.close();
+    Mesh host_mesh(dev_triangles, indices.size());
+    Mesh* mesh = Memory::allocator()->createHostObject<Mesh>();
+    Memory::allocator()->copyHost2HostObject<Mesh>(&host_mesh, mesh);
 
-    return Scene();
+    return mesh;
 }
