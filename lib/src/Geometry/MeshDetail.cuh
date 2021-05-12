@@ -8,6 +8,7 @@ __host__ __device__
 inline 
 Mesh::Mesh(Triangle** triangle_buffer, const uint32_t& num_triangles)
     :_triangles(triangle_buffer),
+     _normal(0),
      _num_triangles(num_triangles)
 {
     type = GeometryType::MESH;
@@ -18,17 +19,17 @@ inline Vector4float
 Mesh::computeRayIntersection(const Ray& ray)
 {
     Vector4float intersection(INFINITY);
-
+    Vector3float normal;
     for(uint32_t i = 0; i < _num_triangles; ++i)
     {
         Vector4float intersection_triangle = _triangles[i]->computeRayIntersection(ray);
-        if(intersection_triangle.w <= intersection.w)
+        if(intersection_triangle.w < intersection.w)
         {
             intersection = intersection_triangle;
-            _normal = _triangles[i]->getNormal(0);
+            normal = _triangles[i]->getNormal(Vector3float(intersection));
         }
     }
-
+    _normal = normal;
     return intersection;
 }
 
