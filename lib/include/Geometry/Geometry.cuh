@@ -59,11 +59,11 @@ class Geometry
 */
 struct LocalGeometry
 {
-    GeometryType type;      /**< The geometry type */
-    float depth;            /**< The depth */
-    Vector3float P;         /**< The intersection point in world space */
-    Vector3float N;         /**< The surface normal */
-    Material material;      /**< The object material */
+    GeometryType type;                  /**< The geometry type */
+    float depth = INFINITY;             /**< The depth */
+    Vector3float P;                     /**< The intersection point in world space */
+    Vector3float N;                     /**< The surface normal */
+    Material material;                  /**< The object material */
 };
 
 #include "../../src/Geometry/GeometryDetail.cuh"
