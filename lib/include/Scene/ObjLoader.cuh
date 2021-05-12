@@ -5,6 +5,11 @@
 
 namespace ObjLoader
 {
+    /**
+    *   @brief Load a mesh from an obj file
+    *   @param[in] path The path
+    *   @return A (host) pointer to a mesh 
+    */
     Mesh*
     loadObj(const char* path);
 }
