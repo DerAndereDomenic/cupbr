@@ -4,6 +4,8 @@
 #include <Geometry/Sphere.cuh>
 #include <Geometry/Quad.cuh>
 #include <Geometry/Triangle.cuh>
+#include <Geometry/Mesh.cuh>
+#include <Scene/ObjLoader.cuh>
 #include <tinyxml2.h>
 #include <vector>
 #include <sstream>
@@ -191,6 +193,21 @@ SceneLoader::loadFromFile(const std::string& path)
             Triangle* dev_geom = Memory::allocator()->createDeviceObject<Triangle>();
             Memory::allocator()->copyHost2DeviceObject<Triangle>(&geom, dev_geom);
             host_array[i] = dev_geom;
+        }
+        else if(strcmp(type, "MESH") == 0)
+        {
+            const char* path_string = current_geometry->FirstChildElement("path")->GetText();
+            Mesh* geom = ObjLoader::loadObj(path_string);
+
+            Material mat = detail::loadMaterial(current_geometry->FirstChildElement("material"));
+
+            geom->material = mat;
+
+            Mesh *dev_mesh = Memory::allocator()->createDeviceObject<Mesh>();
+            Memory::allocator()->copyHost2DeviceObject<Mesh>(geom, dev_mesh);
+            Memory::allocator()->destroyHostObject<Mesh>(geom);
+
+            host_array[i] = dev_mesh;
         }
         else
         {
