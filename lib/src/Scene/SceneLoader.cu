@@ -341,6 +341,24 @@ SceneLoader::destroyScene(Scene scene)
                 Memory::allocator()->destroyDeviceObject<Triangle>(static_cast<Triangle*>(host_scene[i]));
             }
             break;
+            case MESH:
+            {
+                Mesh mesh;
+                Memory::allocator()->copyDevice2HostObject<Mesh>(static_cast<Mesh*>(host_scene[i]), &mesh);
+                Memory::allocator()->destroyDeviceObject<Mesh>(static_cast<Mesh*>(host_scene[i]));
+
+                Triangle** host_triangles = Memory::allocator()->createHostArray<Triangle*>(mesh.num_triangles());
+                Memory::allocator()->copyDevice2HostArray<Triangle*>(mesh.num_triangles(), mesh.triangles(), host_triangles);
+                Memory::allocator()->destroyDeviceArray<Triangle*>(mesh.triangles());
+
+                for(uint32_t i = 0; i < mesh.num_triangles(); ++i)
+                {
+                    Memory::allocator()->destroyDeviceObject<Triangle>(host_triangles[i]);
+                }
+
+                Memory::allocator()->destroyHostArray<Triangle*>(host_triangles);
+            }
+            break;
         }
     }
 
