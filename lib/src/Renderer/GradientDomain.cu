@@ -6,20 +6,14 @@
 
 namespace detail
 {
-    __global__ void
-    gradientdomain_kernel(Scene scene,
-                          const Camera camera,
-                          const uint32_t frameIndex,
-                          const uint32_t maxTraceDepth,
-                          Image<Vector3float> img)
+    __device__ void
+    traceImage( const uint32_t& tid,
+                Scene& scene,
+                const Camera& camera,
+                const uint32_t& frameIndex,
+                const uint32_t& maxTraceDepth,
+                Image<Vector3float> img)
     {
-        const uint32_t tid = ThreadHelper::globalThreadIndex();
-
-        if(tid >= img.size())
-        {
-            return;
-        }
-
         uint32_t seed = Math::tea<4>(tid, frameIndex);
 
         Ray ray = Tracing::launchRay(tid, img.width(), img.height(), camera, true, &seed);
@@ -120,6 +114,28 @@ namespace detail
         }
 
         img[tid] = radiance;
+    }
+
+    __global__ void
+    gradientdomain_kernel(Scene scene,
+                          const Camera camera,
+                          const uint32_t frameIndex,
+                          const uint32_t maxTraceDepth,
+                          Image<Vector3float> img)
+    {
+        const uint32_t tid = ThreadHelper::globalThreadIndex();
+
+        if(tid >= img.size())
+        {
+            return;
+        }
+
+        traceImage(tid,
+                   scene,
+                   camera,
+                   frameIndex,
+                   maxTraceDepth,
+                   img);
     }
 }
 
