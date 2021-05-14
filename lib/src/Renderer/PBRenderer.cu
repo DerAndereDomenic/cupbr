@@ -2,6 +2,7 @@
 #include <Renderer/RayTracer.cuh>
 #include <Renderer/Whitted.cuh>
 #include <Renderer/PathTracer.cuh>
+#include <Renderer/GradientDomain.cuh>
 
 namespace detail
 {
@@ -142,7 +143,16 @@ PBRenderer::render(const Camera& camera)
         break;
         case GRADIENTDOMAIN:
         {
-            std::cerr << "[Gradient Domain] Gradient domain not supported" << std::endl;
+            if(camera.moved())
+            {
+                impl->frameIndex = 0;
+            }
+            PBRendering::gradientdomain(impl->scene,
+                                        camera,
+                                        impl->frameIndex,
+                                        impl->maxTraceDepth,
+                                        &impl->hdr_image);
+            ++impl->frameIndex;
         }
         break;
     }
