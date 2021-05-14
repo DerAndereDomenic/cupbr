@@ -116,7 +116,8 @@ namespace detail
                           const uint32_t frameIndex,
                           const uint32_t maxTraceDepth,
                           Image<Vector3float> img,
-                          Image<Vector3float> shift_img)
+                          Image<Vector3float> gradient_x,
+                          Image<Vector3float> gradient_y)
     {
         const uint32_t tid = ThreadHelper::globalThreadIndex();
 
@@ -148,7 +149,7 @@ namespace detail
                                             camera,
                                             frameIndex,
                                             maxTraceDepth,
-                                            shift_img);
+                                            gradient_x);
 
             Vector3float gradient = 0.5f*(base - shift);
 
@@ -169,7 +170,8 @@ PBRendering::gradientdomain(Scene& scene,
                             const uint32_t& frameIndex,
                             const uint32_t& maxTraceDepth,
                             Image<Vector3float>* output_img,
-                            Image<Vector3float>* shift_img)
+                            Image<Vector3float>* gradient_x,
+                            Image<Vector3float>* gradient_y)
 {
     const KernelSizeHelper::KernelSize config = KernelSizeHelper::configure(output_img->size());
     detail::gradientdomain_kernel<<<config.blocks, config.threads>>>(scene, 
@@ -177,6 +179,7 @@ PBRendering::gradientdomain(Scene& scene,
                                                                  frameIndex,
                                                                  maxTraceDepth, 
                                                                  *output_img,
-                                                                 *shift_img);
+                                                                 *gradient_x,
+                                                                 *gradient_y);
     cudaSafeCall(cudaDeviceSynchronize());
 }

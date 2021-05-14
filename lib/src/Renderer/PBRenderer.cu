@@ -30,7 +30,8 @@ class PBRenderer::Impl
         //Data
         RenderingMethod method;
         Image<Vector3float> hdr_image;
-        Image<Vector3float> shift_image;
+        Image<Vector3float> gradient_x;
+        Image<Vector3float> gradient_y;
         Scene scene;
         uint32_t frameIndex;
         uint32_t maxTraceDepth;
@@ -50,7 +51,8 @@ PBRenderer::Impl::Impl()
 PBRenderer::Impl::~Impl()
 {
     Image<Vector3float>::destroyDeviceObject(hdr_image);
-    Image<Vector3float>::destroyDeviceObject(shift_image);
+    Image<Vector3float>::destroyDeviceObject(gradient_x);
+    Image<Vector3float>::destroyDeviceObject(gradient_y);
 }
 
 PBRenderer::PBRenderer(const RenderingMethod& method)
@@ -67,11 +69,13 @@ PBRenderer::setOutputSize(const uint32_t& width, const uint32_t& height)
     if(impl->outputSizeSet)
     {
         Image<Vector3float>::destroyDeviceObject(impl->hdr_image);
-        Image<Vector3float>::destroyDeviceObject(impl->shift_image);
+        Image<Vector3float>::destroyDeviceObject(impl->gradient_x);
+        Image<Vector3float>::destroyDeviceObject(impl->gradient_y);
     }
 
     impl->hdr_image = Image<Vector3float>::createDeviceObject(width, height);
-    impl->shift_image = Image<Vector3float>::createDeviceObject(width, height);
+    impl->gradient_x = Image<Vector3float>::createDeviceObject(width, height);
+    impl->gradient_y = Image<Vector3float>::createDeviceObject(width, height);
     impl->outputSizeSet = true;
 }
 
@@ -91,7 +95,8 @@ PBRenderer::setMethod(const RenderingMethod& method)
 
     const KernelSizeHelper::KernelSize config = KernelSizeHelper::configure(impl->hdr_image.size());
     detail::clearBuffer<<<config.blocks, config.threads>>>(impl->hdr_image);
-    detail::clearBuffer<<<config.blocks, config.threads>>>(impl->shift_image);
+    detail::clearBuffer<<<config.blocks, config.threads>>>(impl->gradient_x);
+    detail::clearBuffer<<<config.blocks, config.threads>>>(impl->gradient_y);
     cudaSafeCall(cudaDeviceSynchronize());
 }
 
@@ -157,7 +162,8 @@ PBRenderer::render(const Camera& camera)
                                         impl->frameIndex,
                                         impl->maxTraceDepth,
                                         &impl->hdr_image,
-                                        &impl->shift_image);
+                                        &impl->gradient_x,
+                                        &impl->gradient_y);
             ++impl->frameIndex;
         }
         break;
