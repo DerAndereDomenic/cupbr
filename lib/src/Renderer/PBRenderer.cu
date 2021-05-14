@@ -30,6 +30,7 @@ class PBRenderer::Impl
         //Data
         RenderingMethod method;
         Image<Vector3float> hdr_image;
+        Image<Vector3float> shift_image;
         Scene scene;
         uint32_t frameIndex;
         uint32_t maxTraceDepth;
@@ -49,6 +50,7 @@ PBRenderer::Impl::Impl()
 PBRenderer::Impl::~Impl()
 {
     Image<Vector3float>::destroyDeviceObject(hdr_image);
+    Image<Vector3float>::destroyDeviceObject(shift_image);
 }
 
 PBRenderer::PBRenderer(const RenderingMethod& method)
@@ -65,9 +67,11 @@ PBRenderer::setOutputSize(const uint32_t& width, const uint32_t& height)
     if(impl->outputSizeSet)
     {
         Image<Vector3float>::destroyDeviceObject(impl->hdr_image);
+        Image<Vector3float>::destroyDeviceObject(impl->shift_image);
     }
 
     impl->hdr_image = Image<Vector3float>::createDeviceObject(width, height);
+    impl->shift_image = Image<Vector3float>::createDeviceObject(width, height);
     impl->outputSizeSet = true;
 }
 
@@ -87,6 +91,7 @@ PBRenderer::setMethod(const RenderingMethod& method)
 
     const KernelSizeHelper::KernelSize config = KernelSizeHelper::configure(impl->hdr_image.size());
     detail::clearBuffer<<<config.blocks, config.threads>>>(impl->hdr_image);
+    detail::clearBuffer<<<config.blocks, config.threads>>>(impl->shift_image);
     cudaSafeCall(cudaDeviceSynchronize());
 }
 
