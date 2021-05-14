@@ -178,6 +178,38 @@ namespace detail
             gradient_y[tid] = gradY;
         }
     }
+
+    __global__ void
+    reconstruction_kernel(Image<Vector3float> base,
+                          Image<Vector3float> gradient_x,
+                          Image<Vector3float> gradient_y,
+                          Image<Vector3float> temp)
+    {
+        const uint32_t tid = ThreadHelper::globalThreadIndex();
+
+        if(tid >= base.size())
+        {
+            return;
+        }
+
+        Vector2uint32_t pixel = ThreadHelper::index2pixel(tid, base.width(), base.height());
+        
+        if(pixel.x > 0 && pixel.x < base.width() - 1 && pixel.y > 0 && pixel.y < base.height() - 1)
+        {
+            Vector2uint32_t left(pixel.x-1, pixel.y);
+            Vector2uint32_t right(pixel.x+1, pixel.y);
+            Vector2uint32_t up(pixel.x, pixel.y-1);
+            Vector2uint32_t down(pixel.x, pixel.y+1);
+
+            Vector3float v = base(pixel);
+            v += (base(left) + gradient_x(left));
+            v += (base(up) + gradient_y(up));
+            v += (base(right) - gradient_x(pixel));
+            v += (base(down) - gradient_y(pixel));
+
+            temp[tid] = v/5.0f;
+        }
+    }
 }
 
 void
@@ -202,5 +234,4 @@ PBRendering::gradientdomain(Scene& scene,
     cudaSafeCall(cudaDeviceSynchronize());
 
     //Reconstruct
-    base->copyDevice2DeviceObject(*output_img);
 }
