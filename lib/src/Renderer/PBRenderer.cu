@@ -32,6 +32,7 @@ class PBRenderer::Impl
         Image<Vector3float> hdr_image;
         Image<Vector3float> gradient_x;
         Image<Vector3float> gradient_y;
+        Image<Vector3float> base;
         Scene scene;
         uint32_t frameIndex;
         uint32_t maxTraceDepth;
@@ -53,6 +54,7 @@ PBRenderer::Impl::~Impl()
     Image<Vector3float>::destroyDeviceObject(hdr_image);
     Image<Vector3float>::destroyDeviceObject(gradient_x);
     Image<Vector3float>::destroyDeviceObject(gradient_y);
+    Image<Vector3float>::destroyDeviceObject(base);
 }
 
 PBRenderer::PBRenderer(const RenderingMethod& method)
@@ -71,11 +73,13 @@ PBRenderer::setOutputSize(const uint32_t& width, const uint32_t& height)
         Image<Vector3float>::destroyDeviceObject(impl->hdr_image);
         Image<Vector3float>::destroyDeviceObject(impl->gradient_x);
         Image<Vector3float>::destroyDeviceObject(impl->gradient_y);
+        Image<Vector3float>::destroyDeviceObject(impl->base);
     }
 
     impl->hdr_image = Image<Vector3float>::createDeviceObject(width, height);
     impl->gradient_x = Image<Vector3float>::createDeviceObject(width, height);
     impl->gradient_y = Image<Vector3float>::createDeviceObject(width, height);
+    impl->base = Image<Vector3float>::createDeviceObject(width, height);
     impl->outputSizeSet = true;
 }
 
@@ -161,9 +165,10 @@ PBRenderer::render(const Camera& camera)
                                         camera,
                                         impl->frameIndex,
                                         impl->maxTraceDepth,
-                                        &impl->hdr_image,
+                                        &impl->base,
                                         &impl->gradient_x,
-                                        &impl->gradient_y);
+                                        &impl->gradient_y,
+                                        &impl->hdr_image);
             ++impl->frameIndex;
         }
         break;

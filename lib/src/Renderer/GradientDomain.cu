@@ -185,16 +185,17 @@ PBRendering::gradientdomain(Scene& scene,
                             const Camera& camera,
                             const uint32_t& frameIndex,
                             const uint32_t& maxTraceDepth,
-                            Image<Vector3float>* output_img,
+                            Image<Vector3float>* base,
                             Image<Vector3float>* gradient_x,
-                            Image<Vector3float>* gradient_y)
+                            Image<Vector3float>* gradient_y,
+                            Image<Vector3float>* output_img)
 {
     const KernelSizeHelper::KernelSize config = KernelSizeHelper::configure(output_img->size());
     detail::gradientdomain_kernel<<<config.blocks, config.threads>>>(scene, 
                                                                  camera,
                                                                  frameIndex,
                                                                  maxTraceDepth, 
-                                                                 *output_img,
+                                                                 *base,
                                                                  *gradient_x,
                                                                  *gradient_y);
     cudaSafeCall(cudaDeviceSynchronize());
