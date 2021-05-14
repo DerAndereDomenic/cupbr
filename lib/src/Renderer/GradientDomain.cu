@@ -233,5 +233,11 @@ PBRendering::gradientdomain(Scene& scene,
                                                                  *gradient_y);
     cudaSafeCall(cudaDeviceSynchronize());
 
+    detail::reconstruction_kernel<<<config.blocks, config.threads>>>(*base,
+                                                                     *gradient_x,
+                                                                     *gradient_y,
+                                                                     *temp);
+    cudaSafeCall(cudaDeviceSynchronize());
+
     //Reconstruct
 }
