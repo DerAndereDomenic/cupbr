@@ -140,6 +140,11 @@ PBRenderer::render(const Camera& camera)
             std::cerr << "[PBRenderer]  METROPOLIS not supported." << std::endl;
         }
         break;
+        case GRADIENTDOMAIN:
+        {
+            std::cerr << "[Gradient Domain] Gradient domain not supported" << std::endl;
+        }
+        break;
     }
 }
 
