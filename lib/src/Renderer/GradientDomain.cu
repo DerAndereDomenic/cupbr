@@ -141,25 +141,41 @@ namespace detail
                                            img);
 
             seed = Math::tea<4>(tid, frameIndex);
-            pixel.x += 1;
-            Vector3float shift = traceImage(pixel,
-                                            tid,
-                                            seed,
-                                            scene,
-                                            camera,
-                                            frameIndex,
-                                            maxTraceDepth,
-                                            gradient_x);
 
-            Vector3float gradient = 0.5f*(base - shift);
+            Vector3float shiftX = traceImage(pixel + Vector2uint32_t(1,0),
+                                             tid,
+                                             seed,
+                                             scene,
+                                             camera,
+                                             frameIndex,
+                                             maxTraceDepth,
+                                             gradient_x);
+
+            seed = Math::tea<4>(tid, frameIndex);
+
+            Vector3float shiftY = traceImage(pixel + Vector2uint32_t(0,1),
+                                             tid,
+                                             seed,
+                                             scene,
+                                             camera,
+                                             frameIndex,
+                                             maxTraceDepth,
+                                             gradient_y);
+
+            Vector3float gradX = 0.5f*(shiftX - base); 
+            Vector3float gradY = 0.5f*(shiftY - base);
 
             if(frameIndex > 0)
             {
                 const float a = 1.0f/(static_cast<float>(frameIndex) + 1.0f);
-                gradient = (1.0f-a)*img[tid] + a*gradient;
+                base = (1.0f-a)*img[tid] + a*base;
+                gradX = (1.0f-a)*gradient_x[tid] + a*gradX;
+                gradY = (1.0f-a)*gradient_y[tid] + a*gradY;
             }
 
-            img[tid] = gradient;
+            img[tid] = base;
+            gradient_x[tid] = gradX;
+            gradient_y[tid] = gradY;
         }
     }
 }
