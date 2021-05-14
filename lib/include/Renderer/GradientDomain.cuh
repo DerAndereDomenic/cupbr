@@ -14,6 +14,7 @@ namespace PBRendering
     *   @param[in] camera The camera
     *   @param[in] maxTraceDepth The maximum number of recursive rays
     *   @param[out] base The base radiance
+    *   @param[out] temp A temporary buffer
     *   @param[out] gradient_x The x gradient image 
     *   @param[out] gradient_y The y gradient image
     *   @param[out] output_img The rendered HDR image
@@ -24,6 +25,7 @@ namespace PBRendering
                    const uint32_t& frameIndex,
                    const uint32_t& maxTraceDepth,
                    Image<Vector3float>* base,
+                   Image<Vector3float>* temp,
                    Image<Vector3float>* gradient_x,
                    Image<Vector3float>* gradient_y,
                    Image<Vector3float>* output_img);
