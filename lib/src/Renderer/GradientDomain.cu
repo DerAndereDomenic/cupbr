@@ -234,11 +234,16 @@ PBRendering::gradientdomain(Scene& scene,
     cudaSafeCall(cudaDeviceSynchronize());
 
     //Reconstruct
-    detail::reconstruction_kernel<<<config.blocks, config.threads>>>(*base,
-                                                                     *gradient_x,
-                                                                     *gradient_y,
-                                                                     *temp);
-    cudaSafeCall(cudaDeviceSynchronize());
+    base->copyDevice2DeviceObject(*output_img);
 
-    temp->copyDevice2DeviceObject(*output_img);
+    for(uint32_t i = 0; i < 5; ++i)
+    {
+        detail::reconstruction_kernel<<<config.blocks, config.threads>>>(*output_img,
+                                                                         *gradient_x,
+                                                                         *gradient_y,
+                                                                         *temp);
+        cudaSafeCall(cudaDeviceSynchronize());
+
+        temp->copyDevice2DeviceObject(*output_img);
+    }
 }
