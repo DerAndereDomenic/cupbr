@@ -156,7 +156,8 @@ PBRenderer::render(const Camera& camera)
                                         camera,
                                         impl->frameIndex,
                                         impl->maxTraceDepth,
-                                        &impl->hdr_image);
+                                        &impl->hdr_image,
+                                        &impl->shift_image);
             ++impl->frameIndex;
         }
         break;

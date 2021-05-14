@@ -149,7 +149,8 @@ PBRendering::gradientdomain(Scene& scene,
                             const Camera& camera,
                             const uint32_t& frameIndex,
                             const uint32_t& maxTraceDepth,
-                            Image<Vector3float>* output_img)
+                            Image<Vector3float>* output_img,
+                            Image<Vector3float>* shift_image)
 {
     const KernelSizeHelper::KernelSize config = KernelSizeHelper::configure(output_img->size());
     detail::gradientdomain_kernel<<<config.blocks, config.threads>>>(scene, 
