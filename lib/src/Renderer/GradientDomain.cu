@@ -233,11 +233,12 @@ PBRendering::gradientdomain(Scene& scene,
                                                                  *gradient_y);
     cudaSafeCall(cudaDeviceSynchronize());
 
+    //Reconstruct
     detail::reconstruction_kernel<<<config.blocks, config.threads>>>(*base,
                                                                      *gradient_x,
                                                                      *gradient_y,
                                                                      *temp);
     cudaSafeCall(cudaDeviceSynchronize());
 
-    //Reconstruct
+    temp->copyDevice2DeviceObject(*output_img);
 }
