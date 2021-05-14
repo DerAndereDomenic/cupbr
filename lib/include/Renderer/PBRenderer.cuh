@@ -70,6 +70,21 @@ class PBRenderer
         */
         Image<Vector3float>*
         getOutputImage();
+
+        /**
+        *   @brief The estimate of x gradients
+        *   @return The x gradient image 
+        */
+        Image<Vector3float>*
+        getGradientX();
+
+        /**
+        *   @brief The estimate of y gradients
+        *   @return The y gradient image 
+        */
+        Image<Vector3float>*
+        getGradientY();
+       
     private:
         class Impl;
         std::unique_ptr<Impl> impl;     /**< The implementation pointer */

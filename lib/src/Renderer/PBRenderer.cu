@@ -175,3 +175,15 @@ PBRenderer::getOutputImage()
 {
     return &impl->hdr_image;
 }
+
+Image<Vector3float>*
+PBRenderer::getGradientX()
+{
+    return &impl->gradient_x;
+}
+
+Image<Vector3float>*
+PBRenderer::getGradientY()
+{
+    return &impl->gradient_y;
+}
