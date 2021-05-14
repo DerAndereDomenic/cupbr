@@ -27,6 +27,20 @@ namespace Tracing
     launchRay(const uint32_t& tid, const uint32_t& width, const uint32_t& height, const Camera& camera, const bool& jitter = false, uint32_t *seed = nullptr);
 
     /**
+    *   @brief Maps a kernel thread index to an output ray
+    *   @param[in] pixel The pixel
+    *   @param[in] width The width of the output image
+    *   @param[in] height The height of the output image
+    *   @param[in] camera The camera
+    *   @param[in] jitter If jittering should be used
+    *   @param[in/out] seed If jitter = true, this is the seed used for the rng
+    *   @return A ray from the eye position through the corresponding pixel
+    */
+    __device__
+    Ray
+    launchRay(const Vector2uint32_t& pixel, const uint32_t& width, const uint32_t& height, const Camera& camera, const bool& jitter,uint32_t* seed);
+
+    /**
     *   @brief Trace a ray through the scene and gather geometry information
     *   @param[in] scene The scene size
     *   @param[in] ray The ray
