@@ -6,7 +6,7 @@
 
 namespace detail
 {
-    __device__ void
+    __device__ Vector3float
     traceImage( const Vector2uint32_t& pixel,
                 const uint32_t& tid,
                 uint32_t& seed,
@@ -107,13 +107,7 @@ namespace detail
             ++trace_depth;
         }while(trace_depth < maxTraceDepth);
 
-        if(frameIndex > 0)
-        {
-            const float a = 1.0f/(static_cast<float>(frameIndex) + 1.0f);
-            radiance = (1.0f-a)*img[tid] + a*radiance;
-        }
-
-        img[tid] = radiance;
+        return radiance;
     }
 
     __global__ void
@@ -136,14 +130,35 @@ namespace detail
         if(pixel.x > 0 && pixel.x < img.width() - 1 && pixel.y > 0 && pixel.y < img.height() - 1)
         {
             uint32_t seed = Math::tea<4>(tid, frameIndex);
-            traceImage(pixel,
-                       tid,
-                       seed,
-                       scene,
-                       camera,
-                       frameIndex,
-                       maxTraceDepth,
-                       img);
+            Vector3float base = traceImage(pixel,
+                                           tid,
+                                           seed,
+                                           scene,
+                                           camera,
+                                           frameIndex,
+                                           maxTraceDepth,
+                                           img);
+
+            seed = Math::tea<4>(tid, frameIndex);
+            pixel.x += 1;
+            Vector3float shift = traceImage(pixel,
+                                            tid,
+                                            seed,
+                                            scene,
+                                            camera,
+                                            frameIndex,
+                                            maxTraceDepth,
+                                            shift_img);
+
+            Vector3float gradient = 0.5f*(base - shift);
+
+            if(frameIndex > 0)
+            {
+                const float a = 1.0f/(static_cast<float>(frameIndex) + 1.0f);
+                gradient = (1.0f-a)*img[tid] + a*gradient;
+            }
+
+            img[tid] = gradient;
         }
     }
 }
