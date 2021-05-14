@@ -121,7 +121,8 @@ namespace detail
                           const Camera camera,
                           const uint32_t frameIndex,
                           const uint32_t maxTraceDepth,
-                          Image<Vector3float> img)
+                          Image<Vector3float> img,
+                          Image<Vector3float> shift_img)
     {
         const uint32_t tid = ThreadHelper::globalThreadIndex();
 
@@ -131,16 +132,19 @@ namespace detail
         }
 
         Vector2uint32_t pixel = ThreadHelper::index2pixel(tid, img.width(), img.height());
-        uint32_t seed = Math::tea<4>(tid, frameIndex);
 
-        traceImage(pixel,
-                   tid,
-                   seed,
-                   scene,
-                   camera,
-                   frameIndex,
-                   maxTraceDepth,
-                   img);
+        if(pixel.x > 0 && pixel.x < img.width() - 1 && pixel.y > 0 && pixel.y < img.height() - 1)
+        {
+            uint32_t seed = Math::tea<4>(tid, frameIndex);
+            traceImage(pixel,
+                       tid,
+                       seed,
+                       scene,
+                       camera,
+                       frameIndex,
+                       maxTraceDepth,
+                       img);
+        }
     }
 }
 
@@ -150,13 +154,14 @@ PBRendering::gradientdomain(Scene& scene,
                             const uint32_t& frameIndex,
                             const uint32_t& maxTraceDepth,
                             Image<Vector3float>* output_img,
-                            Image<Vector3float>* shift_image)
+                            Image<Vector3float>* shift_img)
 {
     const KernelSizeHelper::KernelSize config = KernelSizeHelper::configure(output_img->size());
     detail::gradientdomain_kernel<<<config.blocks, config.threads>>>(scene, 
                                                                  camera,
                                                                  frameIndex,
                                                                  maxTraceDepth, 
-                                                                 *output_img);
+                                                                 *output_img,
+                                                                 *shift_img);
     cudaSafeCall(cudaDeviceSynchronize());
 }
