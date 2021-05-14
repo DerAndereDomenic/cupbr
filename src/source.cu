@@ -113,17 +113,17 @@ int main(int argc, char* argv[])
             mapper = &gamma_mapper;
         }
 
-        if(glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS && !pressed)
+        if(glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS)
         {
             pbrenderer.setMethod(RAYTRACER);
         }
 
-        if(glfwGetKey(window, GLFW_KEY_2) == GLFW_PRESS && !pressed)
+        if(glfwGetKey(window, GLFW_KEY_2) == GLFW_PRESS)
         {
             pbrenderer.setMethod(WHITTED);
         }
 
-        if(glfwGetKey(window, GLFW_KEY_3) == GLFW_PRESS && !pressed)
+        if(glfwGetKey(window, GLFW_KEY_3) == GLFW_PRESS)
         {
             pbrenderer.setMethod(PATHTRACER);
         }
