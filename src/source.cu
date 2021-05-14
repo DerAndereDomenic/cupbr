@@ -128,6 +128,24 @@ int main(int argc, char* argv[])
             pbrenderer.setMethod(PATHTRACER);
         }
 
+        if(glfwGetKey(window, GLFW_KEY_X) == GLFW_PRESS)
+        {
+            reinhard_mapper.registerImage(pbrenderer.getGradientX());
+            gamma_mapper.registerImage(pbrenderer.getGradientX());
+        }
+
+        if(glfwGetKey(window, GLFW_KEY_Y) == GLFW_PRESS)
+        {
+            reinhard_mapper.registerImage(pbrenderer.getGradientY());
+            gamma_mapper.registerImage(pbrenderer.getGradientY());
+        }
+
+        if(glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS)
+        {
+            reinhard_mapper.registerImage(pbrenderer.getOutputImage());
+            gamma_mapper.registerImage(pbrenderer.getOutputImage());
+        }
+
         if(glfwGetKey(window, GLFW_KEY_LEFT_ALT) == GLFW_PRESS && !pressed)
         {
             pressed = true;
