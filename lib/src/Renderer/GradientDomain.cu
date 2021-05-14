@@ -7,16 +7,16 @@
 namespace detail
 {
     __device__ void
-    traceImage( const uint32_t& tid,
+    traceImage( const Vector2uint32_t& pixel,
+                const uint32_t& tid,
+                uint32_t& seed,
                 Scene& scene,
                 const Camera& camera,
                 const uint32_t& frameIndex,
                 const uint32_t& maxTraceDepth,
                 Image<Vector3float> img)
     {
-        uint32_t seed = Math::tea<4>(tid, frameIndex);
-
-        Ray ray = Tracing::launchRay(tid, img.width(), img.height(), camera, true, &seed);
+        Ray ray = Tracing::launchRay(pixel, img.width(), img.height(), camera, true, &seed);
 
         uint32_t trace_depth = 0;
         Vector3float radiance = 0;
@@ -130,7 +130,12 @@ namespace detail
             return;
         }
 
-        traceImage(tid,
+        Vector2uint32_t pixel = ThreadHelper::index2pixel(tid, img.width(), img.height());
+        uint32_t seed = Math::tea<4>(tid, frameIndex);
+
+        traceImage(pixel,
+                   tid,
+                   seed,
                    scene,
                    camera,
                    frameIndex,
