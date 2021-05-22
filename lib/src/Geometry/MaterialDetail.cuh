@@ -4,6 +4,29 @@
 #include <cmath>
 #include <Math/Functions.cuh>
 
+namespace detail
+{
+    __host__ __device__
+    inline float
+    D_GGX(const float& NdotH, const float roughness)
+    {
+        float a2 = roughness * roughness;
+        float d = (NdotH * a2 - NdotH) * NdotH + 1.0f;
+        return a2 / (M_PI * d * d);
+    }
+
+    __host__ __device__
+    inline float
+    V_SmithJointGGX(const float& NdotL, const float& NdotV, const float& roughness)
+    {
+        float a2 = roughness * roughness;
+        float lambdaV = NdotL * (NdotV * NdotV * (1.0f - a2) + a2);
+        float lambdaL = NdotV * (NdotL * NdotL * (1.0f - a2) + a2);
+        return 0.5f / (lambdaV + lambdaL);
+    }
+
+}
+
 __host__ __device__
 inline Vector3float
 Material::brdf(const Vector3float& position, const Vector3float& inc_dir, const Vector3float& out_dir, const Vector3float& normal)
