@@ -221,7 +221,17 @@ __host__ __device__
 inline Vector3float
 Material::brdf_ggx(const Vector3float& position, const Vector3float& inc_dir, const Vector3float& out_dir, const Vector3float& normal)
 {
+    Vector3float H = Math::normalize(inc_dir + out_dir);
+    float NdotH = Math::dot(normal, H);
+    float LdotH = Math::dot(out_dir, H);
+    float NdotL = Math::dot(normal, out_dir);
+    float NdotV = Math::dot(normal, inc_dir);
 
+    float ndf = detail::D_GGX(NdotH, shininess);    //The shininess variable is used as roughness in ggx
+
+    float vis = detail::V_SmithJointGGX(NdotL, NdotV, shininess);
+
+    return ndf * vis * Math::fresnel_schlick(albedo_s, LdotH);
 }
 
 
