@@ -156,7 +156,26 @@ __host__ __device__
 inline Vector4float
 Material::sample_ggx(uint32_t& seed, const Vector3float& inc_dir, const Vector3float& normal)
 {
+    float u = Math::rnd(seed);
+    float v = Math::rnd(seed);
 
+    float cosTheta = sqrtf((1.0f - u) / (1.0f + (shininess*shininess - 1.0f) * u));
+    float sinTheta = sqrtf(fmaxf(0.0f, 1.0f - cosTheta * cosTheta));
+    float phi = 2.0f * M_PI * v;
+
+    float x = sinTheta * cosf(phi);
+    float y = sinTheta * sinf(phi);
+    float z = cosTheta;
+
+    Vector3float H = Math::toLocalFrame(normal, Vector3float(x,y,z));
+    Vector3float L = Math::reflect(inc_dir, H);
+
+    float LdotH = Math::dot(inc_dir, H);
+    float NdotH = Math::dot(normal, H);
+
+    float p = detail::D_GGX(NdotH, shininess) * NdotH / fabsf(4.0f * LdotH);
+
+    return Vector4float(L, p);
 }
 
 __host__ __device__
