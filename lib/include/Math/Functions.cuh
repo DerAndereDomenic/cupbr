@@ -74,6 +74,16 @@ namespace Math
     fresnel_schlick(const float& F0, const float& VdotH);
 
     /**
+    *   @brief Fresnel schlick
+    *   @param[in] F0 The F0 term
+    *   @param[in] VdotH cos of the angle between incoming direction and normal
+    *   @return The fresnel schlick term 
+    */
+    __host__ __device__
+    Vector3float
+    fresnel_schlick(const Vector3float& F0, const float& VdotH);
+
+    /**
     *   @brief Create a seed for the rng
     *   @param[in] val0 Thread id
     *   @param[in] val1 Subframe index
