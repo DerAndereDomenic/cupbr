@@ -53,6 +53,10 @@ namespace detail
         {
             material.type = GLASS;
         }
+        else if(strcmp(type, "GGX") == 0)
+        {
+            material.type = GGX;
+        }
         else
         {
             std::cerr << "Error while loading material: " << type << " is not a valid material type\n"; 
@@ -62,6 +66,7 @@ namespace detail
         tinyxml2::XMLElement* albedo_d_string = material_ptr->FirstChildElement("albedo_d");
         tinyxml2::XMLElement* albedo_s_string = material_ptr->FirstChildElement("albedo_s");
         tinyxml2::XMLElement* shininess_string = material_ptr->FirstChildElement("shininess");
+        tinyxml2::XMLElement* roughness_string = material_ptr->FirstChildElement("roughness");
         tinyxml2::XMLElement* eta_string = material_ptr->FirstChildElement("eta");
 
         if(albedo_d_string != NULL)
@@ -77,6 +82,11 @@ namespace detail
         if(shininess_string != NULL)
         {
             material.shininess = std::stof(shininess_string->GetText());
+        }
+
+        if(roughness_string != NULL)
+        {
+            material.shininess = std::stof(roughness_string->GetText());
         }
 
         if(eta_string != NULL)
