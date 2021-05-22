@@ -12,7 +12,8 @@ enum MaterialType
     LAMBERT,
     PHONG,
     MIRROR,
-    GLASS
+    GLASS,
+    GGX
 };
 
 /**
@@ -28,7 +29,7 @@ class Material
 
         Vector3float albedo_d = Vector3float(1);    /**< The diffuse albedo */
         Vector3float albedo_s = Vector3float(0);    /**< The specular albedo */
-        float shininess = 128.0f*0.4f;              /**< The object shininess */
+        float shininess = 128.0f*0.4f;              /**< The object shininess / roughness for GGX */
         float eta = 1.5f;                           /**< Index of refraction */
 
         MaterialType type = LAMBERT;                /**< The material type */
@@ -104,6 +105,17 @@ class Material
        Vector3float
        btdf_glass(const Vector3float& position, const Vector3float& inc_dir, const Vector3float& out_dir, const Vector3float& normal);
 
+       /**
+        *   @brief Compute GGX brdf
+        *   @param[in] position The position
+        *   @param[in] inc_dir The incoming direction
+        *   @param[in] out_dir The outgoing directio
+        *   @return The brdf
+        */
+       __host__ __device__
+       Vector3float
+       brdf_ggx(const Vector3float& position, const Vector3float& inc_dir, const Vector3float& out_dir, const Vector3float& normal);
+
         /**
         *   @brief Importance sample lambert material
         *   @param[in] seed The seed for the rng
@@ -135,6 +147,17 @@ class Material
        __host__ __device__
        Vector4float
        sample_glass(uint32_t& seed, const Vector3float& inc_dir, const Vector3float& normal);
+
+       /**
+        *   @brief Importance sample gxx material
+        *   @param[in] seed The seed for the rng
+        *   @param[in] inc_dir The incoming direction
+        *   @param[in] normal The surface normal
+        *   @return A 4D Vector. The first three components mark the new direction and the w component the sampling probability 
+        */
+       __host__ __device__
+       Vector4float
+       sample_ggx(uint32_t& seed, const Vector3float& inc_dir, const Vector3float& normal);
 };
 
 #include "../../src/Geometry/MaterialDetail.cuh"

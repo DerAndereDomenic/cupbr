@@ -30,6 +30,11 @@ Material::brdf(const Vector3float& position, const Vector3float& inc_dir, const 
             return btdf_glass(position, inc_dir, out_dir, normal);
         }
         break;
+        case GGX:
+        {
+            return brdf_ggx(position, inc_dir, out_dir, normal);
+        }
+        break;
     }
 
     return Vector3float(0);
@@ -57,6 +62,10 @@ Material::sampleDirection(uint32_t& seed, const Vector3float& inc_dir, const Vec
             return sample_glass(seed, inc_dir, normal);
         }
         break;
+        case GGX:
+        {
+            return sample_ggx(seed, inc_dir, normal);
+        }
     }
 
     return Vector4float(INFINITY);
@@ -121,6 +130,13 @@ Material::sample_glass(uint32_t& seed, const Vector3float& inc_dir, const Vector
 }
 
 __host__ __device__
+inline Vector4float
+Material::sample_ggx(uint32_t& seed, const Vector3float& inc_dir, const Vector3float& normal)
+{
+
+}
+
+__host__ __device__
 inline Vector3float
 Material::brdf_lambert()
 {
@@ -176,6 +192,13 @@ Material::btdf_glass(const Vector3float& position, const Vector3float& inc_dir, 
         }
         return albedo_s * Math::delta(1.0f-Math::dot(refracted,out_dir))/Math::dot(inc_dir,n);
     }
+}
+
+__host__ __device__
+inline Vector3float
+Material::brdf_ggx(const Vector3float& position, const Vector3float& inc_dir, const Vector3float& out_dir, const Vector3float& normal)
+{
+
 }
 
 
