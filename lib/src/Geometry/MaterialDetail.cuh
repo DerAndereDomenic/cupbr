@@ -87,7 +87,7 @@ Material::sampleDirection(uint32_t& seed, const Vector3float& inc_dir, const Vec
         break;
         case GGX:
         {
-            return sample_ggx(seed, inc_dir, normal);
+            return sample_lambert(seed, normal);
         }
     }
 
