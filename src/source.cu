@@ -34,7 +34,7 @@ int main(int argc, char* argv[])
         scene = SceneLoader::loadFromFile(argv[1]);
     }
 
-    PBRenderer pbrenderer(GRADIENTDOMAIN);
+    PBRenderer pbrenderer(PATHTRACER);
     pbrenderer.setOutputSize(width, height);
     pbrenderer.registerScene(scene);
 
