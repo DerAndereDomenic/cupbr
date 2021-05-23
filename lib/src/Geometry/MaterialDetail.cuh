@@ -87,7 +87,7 @@ Material::sampleDirection(uint32_t& seed, const Vector3float& inc_dir, const Vec
         break;
         case GGX:
         {
-            return sample_lambert(seed, normal);
+            return sample_ggx(seed, inc_dir, normal);
         }
     }
 
@@ -172,6 +172,11 @@ Material::sample_ggx(uint32_t& seed, const Vector3float& inc_dir, const Vector3f
 
     float LdotH = Math::dot(inc_dir, H);
     float NdotH = Math::dot(normal, H);
+
+    if(Math::dot(normal, L) <= 0.0f)
+    {
+        return Vector4float(0,0,0,1);
+    }
 
     float p = detail::D_GGX(NdotH, shininess) * NdotH / fabsf(4.0f * LdotH);
 
