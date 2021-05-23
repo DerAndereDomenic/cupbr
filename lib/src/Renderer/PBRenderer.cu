@@ -136,10 +136,13 @@ PBRenderer::render(const Camera& camera)
         break;
         case WHITTED:
         {
+            std::cerr << "[PBRenderer]  WHITTED currently disabled." << std::endl;
+            return;
+            /*
             PBRendering::whitted(impl->scene,
                                  camera,
-                                 impl->maxTraceDepth-1,
-                                 &impl->hdr_image);
+                                 2,
+                                 &impl->hdr_image);*/
         }
         break;
         case PATHTRACER:
