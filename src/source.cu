@@ -77,16 +77,15 @@ int main(int argc, char* argv[])
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
     {
+        std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
         /* Render here */
         glClear(GL_COLOR_BUFFER_BIT);
 
-        std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
         pbrenderer.render(camera);
 
         mapper->toneMap();
         renderer.renderTexture(mapper->getRenderBuffer());
-        std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-        time = std::chrono::duration_cast<std::chrono::microseconds>(end-begin).count();
+        
         ++frame_counter;
 
         if(frame_counter%30 == 0)
@@ -102,7 +101,7 @@ int main(int argc, char* argv[])
         glfwPollEvents();
 
         if(!edit)
-            camera.processInput(window);
+            camera.processInput(window, time);
 
         if(glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS)
         {
@@ -170,6 +169,9 @@ int main(int argc, char* argv[])
             glfwDestroyWindow(window);
             break;
         }
+
+        std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+        time = std::chrono::duration_cast<std::chrono::microseconds>(end-begin).count();
     }
     printf("\n");
 

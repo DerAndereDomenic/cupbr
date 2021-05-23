@@ -2,28 +2,28 @@
 #include <Math/Functions.cuh>
 
 void
-Camera::processInput(GLFWwindow* window)
+Camera::processInput(GLFWwindow* window, const float& delta_time)
 {
     _moved = false;
     //Keyboard
     if(glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
     {
-        _position += 0.1f*_xAxis;
+        _position += 0.00001f*_xAxis*delta_time;
         _moved = true;
     }
     if(glfwGetKey(window,GLFW_KEY_A) == GLFW_PRESS)
     {
-        _position -= 0.1f*_xAxis;
+        _position -= 0.00001f*_xAxis*delta_time;
         _moved = true;
     }
     if(glfwGetKey(window,GLFW_KEY_S) == GLFW_PRESS)
     {
-        _position -= 0.1f*_zAxis;
+        _position -= 0.00001f*_zAxis*delta_time;
         _moved = true;
     }
     if(glfwGetKey(window,GLFW_KEY_W) == GLFW_PRESS)
     {
-        _position += 0.1f*_zAxis;
+        _position += 0.00001f*_zAxis*delta_time;
         _moved = true;
     }
 

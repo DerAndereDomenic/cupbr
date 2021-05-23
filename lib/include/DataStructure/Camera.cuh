@@ -51,10 +51,11 @@ class Camera
 
         /**
         *   @brief Process keyboard and mouse input
-        *   @param[in] window The windo 
+        *   @param[in] window The window
+        *   @param[in] delta_time The time between two frames
         */
         void
-        processInput(GLFWwindow* window);
+        processInput(GLFWwindow* window, const float& delta_time);
 
         /**
         *   @brief Check if the camera was moved last frame
