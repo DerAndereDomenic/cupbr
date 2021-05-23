@@ -50,6 +50,12 @@ namespace detail
 
             inc_dir = Math::normalize(ray.origin() - geom.P);
 
+            //Don't shade back facing geometry
+            if(geom.material.type != GLASS && Math::dot(normal, inc_dir) <= 0.0f)
+            {
+                break;
+            }
+
             uint32_t useEnvironmentMap = scene.useEnvironmentMap ? 1 : 0;
             uint32_t light_sample = static_cast<uint32_t>(Math::rnd(seed) * (scene.light_count + useEnvironmentMap));
 
