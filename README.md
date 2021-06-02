@@ -1,10 +1,8 @@
 # CUPBR
-<center>
 <img title="Sample render" alt="Alt text" src="sample.bmp" width="60%">
-</center>
 
 # Building
-This project is maintained and tested using Arch Linux. We use git submodules to manage dependencies like:
+This project is maintained and tested using Arch Linux. In principle this also runs under windows but is tested less frequently. We use git submodules to manage dependencies like:
 <ul>
     <li> <a href="https://www.glfw.org">glfw</a>
     <li> <a href="https://glad.dav1d.de">glad</a>
