@@ -19,7 +19,7 @@
 #include <Renderer/ToneMapper.cuh>
 #include <Renderer/PBRenderer.cuh>
 
-int main(int argc, char* argv[])
+int run(int argc, char* argv[])
 {
     bool edit = true;
     bool pressed = false;
@@ -207,13 +207,11 @@ int main(int argc, char* argv[])
     mapper->saveToFile("bin/output.bmp");
 
     printf("Rendered Frames: %i\n", frame_counter);
+}
 
-    //TODO
-    reinhard_mapper.~ToneMapper();
-    gamma_mapper.~ToneMapper();
-    pbrenderer.~PBRenderer();
-
+int main(int argc, char* argv[])
+{
+    int exit =  run(argc, argv);
     Memory::allocator()->printStatistics();
-
-    return 0;
+    return exit;
 }
