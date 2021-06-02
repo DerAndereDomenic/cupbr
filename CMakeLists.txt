@@ -34,3 +34,5 @@ include_directories(lib/include
                     external/glfw/include 
                     external/stb
                     external/imgui)
+
+target_compile_definitions(${PROJECT_NAME} PUBLIC _USE_MATH_DEFINES)
