@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION "3.10")
+cmake_minimum_required(VERSION "3.8")
 
 project(CUPBR LANGUAGES CXX C CUDA VERSION 1.0)
 
@@ -36,3 +36,5 @@ include_directories(lib/include
                     external/imgui)
 
 target_compile_definitions(${PROJECT_NAME} PUBLIC _USE_MATH_DEFINES)
+
+set_target_properties(${PROJECT_NAME} PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}")
