@@ -42,10 +42,5 @@ After building the project the CUPBR executable is located in the **/bin** folde
     <li> Escape: Close the application.
     <li> Alt: Lock / Unlock the camera.
     <li> If the camera is unlocked WASD and mouse movement can be used to navigate the scene.
-    <li> R: Reinhard Tone Mapping
-    <li> G: Gamma Tone Mapping
-    <li> 1: Use simple ray tracing
-    <li> 2: Use whitted ray tracing (currently disabled)
-    <li> 3: Use path tracing (default)
+    <li> M: Open / Close Rendering Settings.
 </ul>
-We would like to incorporate some of these functions (like changing the tone mapping, rendering method and more) into an imgui menu in the future.
