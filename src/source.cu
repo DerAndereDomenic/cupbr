@@ -2,7 +2,6 @@
 #include <chrono>
 
 #include <GL/GLRenderer.cuh>
-#include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
 #include <Core/KernelHelper.cuh>
@@ -64,10 +63,10 @@ int main(int argc, char* argv[])
     glfwMakeContextCurrent(window);
     glfwSwapInterval(0);
 
-    if (glewInit() != GLEW_OK)
-	{
-		std::cout <<"RENDERER::GLEWINIT::ERROR\n";
-	}
+    if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress)) {
+        std::cout << "Failed to initialize OpenGL context" << std::endl;
+        return -1;
+    }
 
     GLRenderer renderer(width, height);
     Camera camera;

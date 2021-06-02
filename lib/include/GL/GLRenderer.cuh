@@ -2,9 +2,9 @@
 #define __CUPBR_GL_GLRENDERER_H
 
 #include <DataStructure/RenderBuffer.cuh>
-#include <GL/glew.h>
 
 #include <memory>
+#include <glad/glad.h>
 
 #include <cuda_gl_interop.h>
 
