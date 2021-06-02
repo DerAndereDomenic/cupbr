@@ -14,8 +14,15 @@ class Camera
     public:
         /**
         *   @brief Default constructor 
+        *   @note This camera expects width == height
         */
         Camera() = default;
+
+        /**
+        *   @brief Constructor
+        *   @note This camera can be used for different aspect ratios
+        */
+        Camera(const uint32_t& width, const uint32_t& height);
 
         /**
         *   @brief Get the world position of the camera 
@@ -70,6 +77,7 @@ class Camera
         Vector3float _xAxis = Vector3float(1,0,0);      /**< The image plane x Axis in world space */
         Vector3float _yAxis = Vector3float(0,1,0);      /**< The image plane y Axis in world space */
         Vector3float _zAxis = Vector3float(0,0,1);      /**< The displacement between position and image plane in world space */
+        float _aspect_ratio = 1.0f;                     /**< The cameras aspect ratio */
 
         float _pitch = 0.0f;                            /**< The pitch of the camera */
         float _yaw = 3.14159f/2.0f;                     /**< The yaw of the camera */

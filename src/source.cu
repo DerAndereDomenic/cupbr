@@ -74,7 +74,7 @@ int run(int argc, char* argv[])
     }
 
     GLRenderer renderer(width, height);
-    Camera camera;
+    Camera camera(width,height);
     float time = 0.0f;
     uint32_t frame_counter = 0;
 

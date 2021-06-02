@@ -1,6 +1,13 @@
 #include <DataStructure/Camera.cuh>
 #include <Math/Functions.cuh>
 
+Camera::Camera(const uint32_t& width, const uint32_t& height)
+{
+    _aspect_ratio = static_cast<float>(width) / static_cast<float>(height);
+
+    _xAxis = Vector3float(_aspect_ratio, 0, 0);
+}
+
 void
 Camera::processInput(GLFWwindow* window, const float& delta_time)
 {
@@ -67,6 +74,6 @@ Camera::processInput(GLFWwindow* window, const float& delta_time)
                        sin(_yaw)*cos(_pitch));
 
     _zAxis = front;
-    _xAxis = Math::normalize(Vector3float(_zAxis.z,0,-_zAxis.x));
-    _yAxis = Math::cross(_zAxis, _xAxis);
+    _xAxis = _aspect_ratio * Math::normalize(Vector3float(_zAxis.z,0,-_zAxis.x));
+    _yAxis = Math::cross(_zAxis, _xAxis) / _aspect_ratio;
 }
