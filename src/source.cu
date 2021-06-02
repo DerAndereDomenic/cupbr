@@ -101,6 +101,21 @@ int main(int argc, char* argv[])
         if(enable_render_settings)
         {
             ImGui::Begin("Render settings", &enable_render_settings);
+
+            if(ImGui::BeginMenu("Renderer:"))
+            {
+                if(ImGui::MenuItem("Path Tracing"))
+                {
+                    pbrenderer.setMethod(PATHTRACER);
+                }
+                else if(ImGui::MenuItem("Ray Tracing"))
+                {
+                    pbrenderer.setMethod(RAYTRACER);
+                }
+                
+                ImGui::EndMenu();
+            }
+
             if(ImGui::BeginMenu("Tone Mapping:"))
             {
                 if(ImGui::MenuItem("Reinhard"))
@@ -144,21 +159,6 @@ int main(int argc, char* argv[])
 
         if(!edit)
             camera.processInput(window, time);
-
-        if(glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS)
-        {
-            pbrenderer.setMethod(RAYTRACER);
-        }
-
-        if(glfwGetKey(window, GLFW_KEY_2) == GLFW_PRESS)
-        {
-            pbrenderer.setMethod(WHITTED);
-        }
-
-        if(glfwGetKey(window, GLFW_KEY_3) == GLFW_PRESS)
-        {
-            pbrenderer.setMethod(PATHTRACER);
-        }
 
         if(glfwGetKey(window, GLFW_KEY_X) == GLFW_PRESS)
         {
