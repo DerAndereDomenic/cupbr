@@ -9,6 +9,7 @@ find_package(OpenGL REQUIRED)
 
 add_subdirectory(external/glfw)
 
+set(BUILD_TESTING OFF)
 add_subdirectory(external/tinyxml2)
 
 file (GLOB_RECURSE source_files LIST_DIRECTORIES false "src/*.c*"
