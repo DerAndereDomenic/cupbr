@@ -1,5 +1,5 @@
 # CUPBR
-<img title="Sample render" alt="Alt text" src="sample.bmp" width="60%">
+<img title="Sample render" alt="Alt text" src="sample.bmp">
 
 # Building
 This project is maintained and tested using Arch Linux. In principle this also runs under windows but is tested less frequently. We use git submodules to manage dependencies like:
