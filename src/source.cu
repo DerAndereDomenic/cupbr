@@ -78,6 +78,8 @@ int main(int argc, char* argv[])
     float time = 0.0f;
     uint32_t frame_counter = 0;
 
+    bool enable_render_settings = false;
+
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGuiIO& io = ImGui::GetIO(); (void)io;
@@ -96,10 +98,13 @@ int main(int argc, char* argv[])
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
-        ImGui::Begin("Render settings");
+        if(enable_render_settings)
+        {
+            ImGui::Begin("Render settings");
 
-        ImGui::End();
-
+            ImGui::End();
+        }
+        
         ImGui::Render();
         /* Render here */
         glClear(GL_COLOR_BUFFER_BIT);
@@ -170,6 +175,12 @@ int main(int argc, char* argv[])
             gamma_mapper.registerImage(pbrenderer.getOutputImage());
         }
 
+        if(glfwGetKey(window, GLFW_KEY_M) == GLFW_PRESS && !pressed)
+        {
+            pressed = true;
+            enable_render_settings = !enable_render_settings;
+        }
+
         if(glfwGetKey(window, GLFW_KEY_LEFT_ALT) == GLFW_PRESS && !pressed)
         {
             pressed = true;
@@ -184,7 +195,7 @@ int main(int argc, char* argv[])
             }
         }
 
-        if(glfwGetKey(window, GLFW_KEY_LEFT_ALT) == GLFW_RELEASE)
+        if(glfwGetKey(window, GLFW_KEY_LEFT_ALT) == GLFW_RELEASE && glfwGetKey(window, GLFW_KEY_M) == GLFW_RELEASE)
         {
             pressed = false;
         }
