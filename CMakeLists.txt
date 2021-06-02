@@ -19,4 +19,4 @@ file (GLOB_RECURSE source_files LIST_DIRECTORIES false "src/*.c*"
 add_executable(${PROJECT_NAME} ${source_files})
 
 target_link_libraries(${PROJECT_NAME} glfw -lpthread -lm ${GLEW_LIBRARIES} OpenGL::GL tinyxml2)
-include_directories(lib/include ${GLEW_INCLUDE_DIRS} external/glfw/include vendor)
+include_directories(lib/include ${GLEW_INCLUDE_DIRS} external/glfw/include external/stb)
