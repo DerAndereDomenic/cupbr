@@ -2,7 +2,12 @@
 #include <chrono>
 
 #include <GL/GLRenderer.cuh>
+#define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
+
+#include <imgui.h>
+#include <backends/imgui_impl_glfw.h>
+#include <backends/imgui_impl_opengl3.h>
 
 #include <Core/KernelHelper.cuh>
 #include <Core/Tracing.cuh>
@@ -63,7 +68,7 @@ int main(int argc, char* argv[])
     glfwMakeContextCurrent(window);
     glfwSwapInterval(0);
 
-    if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress)) {
+    if (!gladLoadGL()) {
         std::cout << "Failed to initialize OpenGL context" << std::endl;
         return -1;
     }
