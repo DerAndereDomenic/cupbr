@@ -57,7 +57,7 @@ int main(int argc, char* argv[])
         return -1;
 
     /* Create a windowed mode window and its OpenGL context */
-    window = glfwCreateWindow(width, height, "Hello World", NULL, NULL);
+    window = glfwCreateWindow(width, height, "CUPBR", NULL, NULL);
     if (!window)
     {
         glfwTerminate();
@@ -78,10 +78,29 @@ int main(int argc, char* argv[])
     float time = 0.0f;
     uint32_t frame_counter = 0;
 
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO(); (void)io;
+
+    ImGui::StyleColorsDark();
+
+    ImGui_ImplGlfw_InitForOpenGL(window, true);
+    ImGui_ImplOpenGL3_Init("#version 330");
+
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
     {
         std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
+
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
+
+        ImGui::Begin("Render settings");
+
+        ImGui::End();
+
+        ImGui::Render();
         /* Render here */
         glClear(GL_COLOR_BUFFER_BIT);
 
@@ -97,6 +116,8 @@ int main(int argc, char* argv[])
             printf("\rRender time: %fms : %ffps", time/1000.0f, 1000000.0f/time);
             fflush(stdout);
         }
+
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
