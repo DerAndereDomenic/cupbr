@@ -100,8 +100,20 @@ int main(int argc, char* argv[])
 
         if(enable_render_settings)
         {
-            ImGui::Begin("Render settings");
-
+            ImGui::Begin("Render settings", &enable_render_settings);
+            if(ImGui::BeginMenu("Tone Mapping:"))
+            {
+                if(ImGui::MenuItem("Reinhard"))
+                {
+                    mapper = &reinhard_mapper;
+                }
+                else if(ImGui::MenuItem("Gamma"))
+                {
+                    mapper = &gamma_mapper;
+                }
+                
+                ImGui::EndMenu();
+            }
             ImGui::End();
         }
         
@@ -132,15 +144,6 @@ int main(int argc, char* argv[])
 
         if(!edit)
             camera.processInput(window, time);
-
-        if(glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS)
-        {
-            mapper = &reinhard_mapper;
-        }
-        if(glfwGetKey(window, GLFW_KEY_G) == GLFW_PRESS)
-        {
-            mapper = &gamma_mapper;
-        }
 
         if(glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS)
         {
