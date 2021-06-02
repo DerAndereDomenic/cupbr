@@ -1,5 +1,7 @@
 BUILD_DIR="build"
 
+git submodule init
+
 first_build=false
 
 for OPTION in "$@"
@@ -7,7 +9,8 @@ do
     case "${OPTION}"
     in
         --setup) ;&
-        -s) first_build=true;;
+        -s) first_build=true;
+        rm -rf "$BUILD_DIR";;
     esac
 done
 
