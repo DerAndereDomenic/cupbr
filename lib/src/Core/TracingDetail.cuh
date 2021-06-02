@@ -207,8 +207,8 @@ Tracing::direction2UV(const Vector3float& direction, const uint32_t& width, cons
     float theta = acos(direction.y)/M_PI;
     float phi = (atan2(direction.z, direction.x)+M_PI)/(2.0f*M_PI);
 
-    uint32_t x = static_cast<uint32_t>(width * phi);
-    uint32_t y = static_cast<uint32_t>(height * theta);
+    uint32_t x = static_cast<uint32_t>((width - 1) * phi);
+    uint32_t y = static_cast<uint32_t>((height -1) * theta);
 
     return Vector2uint32_t(x,y);
 }
