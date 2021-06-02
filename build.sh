@@ -1,6 +1,7 @@
 BUILD_DIR="build"
 
 git submodule init
+git submodule update
 
 first_build=false
 
