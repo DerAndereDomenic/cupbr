@@ -6,6 +6,12 @@
 
 namespace detail
 {
+    struct RadiancePayload
+    {
+        Vector3float radiance = 0;
+        Vector3float rayweight = 1;
+    };
+
     __global__ void
     pathtracer_kernel_nee(Scene scene,
                           const Camera camera,
@@ -23,10 +29,10 @@ namespace detail
         uint32_t seed = Math::tea<4>(tid, frameIndex);
 
         Ray ray = Tracing::launchRay(tid, img.width(), img.height(), camera, true, &seed);
+        RadiancePayload payload;
+        ray.setPayload(&payload);
 
         uint32_t trace_depth = 0;
-        Vector3float radiance = 0;
-        Vector3float rayweight = 1;
         Vector3float inc_dir, lightDir, lightRadiance;
         float d;
 
@@ -41,7 +47,7 @@ namespace detail
                 if(scene.useEnvironmentMap)
                 {
                     Vector2uint32_t pixel = Tracing::direction2UV(ray.direction(), scene.environment.width(), scene.environment.height());
-                    radiance += rayweight * scene.environment(pixel);
+                    ray.payload<RadiancePayload>()->radiance += ray.payload<RadiancePayload>()->rayweight * scene.environment(pixel);
                 }
                 break;
             }
@@ -107,25 +113,32 @@ namespace detail
 
             if(Tracing::traceVisibility(scene, d, shadow_ray))
             {
-                radiance += (scene.light_count+useEnvironmentMap)*fmaxf(0.0f, Math::dot(normal,lightDir))*geom.material.brdf(geom.P,inc_dir,lightDir,normal)*lightRadiance*rayweight;
+                ray.payload<RadiancePayload>()->radiance += (scene.light_count+useEnvironmentMap) *
+                                                            fmaxf(0.0f, Math::dot(normal,lightDir)) *
+                                                            geom.material.brdf(geom.P,inc_dir,lightDir,normal) *
+                                                            lightRadiance *
+                                                            ray.payload<RadiancePayload>()->rayweight;
             }
 
             //Indirect illumination
             Vector4float direction_p = geom.material.sampleDirection(seed, inc_dir, geom.N);
             Vector3float direction = Vector3float(direction_p);
-            rayweight = rayweight * fabs(Math::dot(direction, normal))*geom.material.brdf(geom.P, inc_dir, direction, normal)/direction_p.w;
+            ray.payload<RadiancePayload>()->rayweight = ray.payload<RadiancePayload>()->rayweight * 
+                                                        fabs(Math::dot(direction, normal)) * 
+                                                        geom.material.brdf(geom.P, inc_dir, direction, normal)/direction_p.w;
                  
             ray = Ray(geom.P+0.01f*direction, direction);
+            ray.setPayload(&payload);
             ++trace_depth;
         }while(trace_depth < maxTraceDepth);
 
         if(frameIndex > 0)
         {
             const float a = 1.0f/(static_cast<float>(frameIndex) + 1.0f);
-            radiance = (1.0f-a)*img[tid] + a*radiance;
+            ray.payload<RadiancePayload>()->radiance = (1.0f-a)*img[tid] + a*ray.payload<RadiancePayload>()->radiance;
         }
 
-        img[tid] = radiance;
+        img[tid] = ray.payload<RadiancePayload>()->radiance;
     }
 
     __global__ void
