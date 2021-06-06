@@ -24,5 +24,20 @@ Ray::direction() const
     return _direction;
 }
 
+template<class PayloadType>
+__host__ __device__
+void
+Ray::setPayload(PayloadType* payload)
+{
+    _payload = static_cast<void*>(payload);
+}
+
+template<class PayloadType>
+__host__ __device__
+PayloadType*
+Ray::payload()
+{
+    return static_cast<PayloadType*>(_payload);
+}
 
 #endif

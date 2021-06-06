@@ -40,9 +40,31 @@ class Ray
         Vector3float
         direction() const;
 
+        /**
+        *   @brief Set the payload
+        *   @tparam PayloadType The payload class stored in this ray
+        *   @param[in] payload The new payload
+        */
+        template<class PayloadType>
+        __host__ __device__
+        void
+        setPayload(PayloadType* payload);
+
+        /**
+        *   @brief Get the payload stored in this ray
+        *   @tparam PayloadType The payload class stored in this ray
+        *   @return Pointer to the payload 
+        */
+        template<class PayloadType>
+        __host__ __device__
+        PayloadType*
+        payload();
+        
     private:
         Vector3float _origin;       /**< The ray origin */
         Vector3float _direction;    /**< The normalized ray direction */
+        void *_payload;              /**< The ray payload */
+
 };
 
 #include "../../src/Geometry/RayDetail.cuh"
