@@ -207,6 +207,7 @@ int run(int argc, char* argv[])
     mapper->saveToFile("bin/output.bmp");
 
     printf("Rendered Frames: %i\n", frame_counter);
+    return 0;
 }
 
 int main(int argc, char* argv[])
