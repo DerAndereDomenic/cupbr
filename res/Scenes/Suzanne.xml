@@ -1,0 +1,21 @@
+<header>
+    <scene_size>1</scene_size>
+    <light_count>0</light_count>
+</header>
+
+<geometry>
+    <geometry1>
+        <type>MESH</type>
+        <position>0,0,0</position>
+        <path>res/Meshes/suzanne_blender.obj</path>
+        <material>
+            <type>GGX</type>
+            <albedo_s>1,0.8,0.9</albedo_s>
+            <roughness>0.1</roughness>
+        </material>
+    </geometry1>
+</geometry>
+
+<environment>
+    <path>res/hdrtest.hdr</path>
+</environment>
