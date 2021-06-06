@@ -127,8 +127,7 @@ namespace detail
                                                         fabs(Math::dot(direction, normal)) * 
                                                         geom.material.brdf(geom.P, inc_dir, direction, normal)/direction_p.w;
                  
-            ray = Ray(geom.P+0.01f*direction, direction);
-            ray.setPayload(&payload);
+            ray.traceNew(geom.P+0.01f*direction, direction);
             ++trace_depth;
         }while(trace_depth < maxTraceDepth);
 

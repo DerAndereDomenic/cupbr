@@ -25,7 +25,7 @@ Ray::direction() const
 }
 
 __host__ __device__
-void
+inline void
 Ray::traceNew(const Vector3float& origin, const Vector3float& direction)
 {
     _origin = origin;
