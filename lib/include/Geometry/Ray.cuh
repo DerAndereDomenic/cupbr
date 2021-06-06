@@ -41,6 +41,16 @@ class Ray
         direction() const;
 
         /**
+        *   @brief Trace a new ray using the same ray object (This preserves payloads)
+        *   @param[in] origin The ray origin
+        *   @param[in] direction The ray directions
+        *   @note The direction will get normalized 
+        */
+        __host__ __device__
+        void
+        traceNew(const Vector3float& origin, const Vector3float& direction);
+
+        /**
         *   @brief Set the payload
         *   @tparam PayloadType The payload class stored in this ray
         *   @param[in] payload The new payload

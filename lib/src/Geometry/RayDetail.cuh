@@ -24,6 +24,14 @@ Ray::direction() const
     return _direction;
 }
 
+__host__ __device__
+void
+Ray::traceNew(const Vector3float& origin, const Vector3float& direction)
+{
+    _origin = origin;
+    _direction = Math::normalize(direction);
+}
+
 template<class PayloadType>
 __host__ __device__
 void
