@@ -109,6 +109,8 @@ Interactor::handleInteraction()
                                    impl->scene,
                                    impl->camera,
                                    impl->device_material);
+
+            Memory::allocator()->copyDevice2HostObject(impl->device_material, impl->host_material);
         }
     }
 
