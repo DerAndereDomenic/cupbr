@@ -11,7 +11,12 @@ class Interactor::Impl
         int32_t width;
         int32_t height;
 
+        Scene scene;
+        Camera camera;
+
         bool window_registered = false;
+        bool camera_registered = false;
+        bool scene_registered = false;
         bool pressed = false;
 };
 
@@ -29,6 +34,22 @@ Interactor::registerWindow(GLFWwindow* window)
     glfwGetWindowSize(impl->window, &(impl->width), &(impl->height));
 
     impl->window_registered = true;
+}
+
+void
+Interactor::registerScene(Scene& scene)
+{
+    impl->scene = scene;
+
+    impl->scene_registered = true;
+}
+
+void
+Interactor::registerCamera(const Camera& camera)
+{
+    impl->camera = camera;
+
+    impl->camera_registered = true;
 }
 
 void

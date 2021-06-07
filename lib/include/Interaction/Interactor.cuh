@@ -6,6 +6,9 @@
 
 #include <memory>
 
+#include <DataStructure/Camera.cuh>
+#include <Scene/Scene.cuh>
+
 class Interactor
 {
     public:
@@ -15,6 +18,12 @@ class Interactor
 
         void
         registerWindow(GLFWwindow* window);
+
+        void
+        registerScene(Scene& scene);
+
+        void
+        registerCamera(const Camera& camera);
 
         void
         handleInteraction();
