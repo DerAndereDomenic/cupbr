@@ -10,7 +10,8 @@ namespace detail
                      const uint32_t height,
                      Scene scene,
                      const Camera camera,
-                     Material* material)
+                     Material* material,
+                     int32_t* scene_index)
     {
         const Vector2uint32_t pixel(x,y);
         Ray ray = Tracing::launchRay(pixel, width, height, camera);
@@ -24,6 +25,7 @@ namespace detail
             material->albedo_s = geom.material.albedo_s;
             material->shininess = geom.material.shininess;
             material->eta = geom.material.eta;
+            *(scene_index) = geom.scene_index;
         }
     }
 }
@@ -35,7 +37,8 @@ Interaction::pickMouse(const uint32_t& x,
                        const uint32_t& height,
                        Scene& scene,
                        Camera& camera,
-                       Material* outMaterial)
+                       Material* outMaterial,
+                       int32_t* outSceneIndex)
 {
     detail::pickMouse_kernel<<<1,1>>>(x,
                                       y,
@@ -43,6 +46,7 @@ Interaction::pickMouse(const uint32_t& x,
                                       height,
                                       scene,
                                       camera,
-                                      outMaterial);
+                                      outMaterial,
+                                      outSceneIndex);
     cudaSafeCall(cudaDeviceSynchronize());
 }
