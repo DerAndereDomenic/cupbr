@@ -56,12 +56,14 @@ class Interactor
 
         /**
         *   @brief Get the tone mapping type 
+        *   @return The tone mapping type
         */
         ToneMappingType
         getToneMapping();
 
         /**
         *   @brief Get the rendering method 
+        *   @return The rendering method
         */
         RenderingMethod
         getRenderingMethod();

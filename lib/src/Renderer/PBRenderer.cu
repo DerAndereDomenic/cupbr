@@ -204,7 +204,7 @@ PBRenderer::getGradientY()
 }
 
 RenderingMethod
-PBRenderer::getRenderingMethod()
+PBRenderer::getMethod()
 {
     return impl->method;
 }
