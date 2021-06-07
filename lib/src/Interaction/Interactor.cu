@@ -96,7 +96,7 @@ Interactor::handleInteraction()
     }
 
     int32_t state = glfwGetMouseButton(impl->window, GLFW_MOUSE_BUTTON_LEFT);
-    if(state == GLFW_PRESS && !(impl->pressed))
+    if(state == GLFW_PRESS && !(impl->pressed) && !(impl->enable_render_settings))
     {
         impl->pressed = true;
         double xpos, ypos;
