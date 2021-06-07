@@ -45,12 +45,8 @@ int run(int argc, char* argv[])
     pbrenderer.registerScene(scene);
 
     KernelSizeHelper::KernelSize config = KernelSizeHelper::configure(pbrenderer.getOutputImage()->size());
-    ToneMapper reinhard_mapper(REINHARD);
-    ToneMapper gamma_mapper(GAMMA);
-    reinhard_mapper.registerImage(pbrenderer.getOutputImage());
-    gamma_mapper.registerImage(pbrenderer.getOutputImage());
-
-    ToneMapper* mapper = &reinhard_mapper;
+    ToneMapper mapper(REINHARD);
+    mapper.registerImage(pbrenderer.getOutputImage());
 
     GLFWwindow* window;
 
@@ -109,6 +105,11 @@ int run(int argc, char* argv[])
         {
             pbrenderer.setMethod(interactor.getRenderingMethod());
         }
+
+        if(interactor.getToneMapping() != mapper.getType())
+        {
+            mapper.setType(interactor.getToneMapping());
+        }
         
         ImGui::Render();
         /* Render here */
@@ -116,8 +117,8 @@ int run(int argc, char* argv[])
 
         pbrenderer.render(camera);
 
-        mapper->toneMap();
-        renderer.renderTexture(mapper->getRenderBuffer());
+        mapper.toneMap();
+        renderer.renderTexture(mapper.getRenderBuffer());
         
         ++frame_counter;
 
@@ -176,7 +177,7 @@ int run(int argc, char* argv[])
 
     SceneLoader::destroyScene(scene);
 
-    mapper->saveToFile("bin/output.bmp");
+    mapper.saveToFile("bin/output.bmp");
 
     printf("Rendered Frames: %i\n", frame_counter);
     return 0;
