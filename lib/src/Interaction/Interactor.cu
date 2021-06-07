@@ -16,8 +16,8 @@ class Interactor::Impl
         Scene scene;
         Camera camera;
 
-        Geometry* device_geometry;
-        Geometry* host_geometry;
+        Material* device_material;
+        Material* host_material;
 
         bool window_registered = false;
         bool camera_registered = false;
@@ -27,14 +27,14 @@ class Interactor::Impl
 
 Interactor::Impl::Impl()
 {
-    device_geometry = Memory::allocator()->createDeviceObject<Geometry>();
-    host_geometry = Memory::allocator()->createHostObject<Geometry>();
+    device_material = Memory::allocator()->createDeviceObject<Material>();
+    host_material = Memory::allocator()->createHostObject<Material>();
 }
 
 Interactor::Impl::~Impl()
 {
-    Memory::allocator()->destroyDeviceObject<Geometry>(device_geometry);
-    Memory::allocator()->destroyHostArray<Geometry>(host_geometry);
+    Memory::allocator()->destroyDeviceObject<Material>(device_material);
+    Memory::allocator()->destroyHostArray<Material>(host_material);
 }
 
 Interactor::~Interactor() = default;
@@ -108,7 +108,7 @@ Interactor::handleInteraction()
                                    impl->height,
                                    impl->scene,
                                    impl->camera,
-                                   impl->device_geometry);
+                                   impl->device_material);
         }
     }
 
