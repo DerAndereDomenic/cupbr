@@ -38,7 +38,7 @@ namespace Tracing
     */
     __device__
     Ray
-    launchRay(const Vector2uint32_t& pixel, const uint32_t& width, const uint32_t& height, const Camera& camera, const bool& jitter,uint32_t* seed);
+    launchRay(const Vector2uint32_t& pixel, const uint32_t& width, const uint32_t& height, const Camera& camera, const bool& jitter = false,uint32_t* seed = nullptr);
 
     /**
     *   @brief Trace a ray through the scene and gather geometry information
