@@ -116,15 +116,6 @@ Interactor::handleInteraction()
                                    impl->device_material);
 
             Memory::allocator()->copyDevice2HostObject(impl->device_material, impl->host_material);
-
-            //TODO: Make material changable
-            printf("Type: %i\n", impl->host_material->type);
-            printf("Diffuse: %f %f %f\n", impl->host_material->albedo_d.x,
-                                          impl->host_material->albedo_d.y,
-                                          impl->host_material->albedo_d.z);
-            printf("Specular: %f %f %f\n", impl->host_material->albedo_s.x,
-                                           impl->host_material->albedo_s.y,
-                                           impl->host_material->albedo_s.z);
         }
     }
 
@@ -197,12 +188,33 @@ Interactor::handleInteraction()
             }
             ImGui::EndMenu();
         }
-        float f = 0.5f;
-        ImGui::SliderFloat("Roughness", &f, 0.0f, 1.0f);
 
-        float c[] = {0,0,0};
-        ImGui::ColorEdit3("Albedo diffuse", c);
-        ImGui::ColorEdit3("Albedo specular", c);
+        float f = impl->host_material->shininess;
+        if(impl->host_material->type != GGX)
+        {
+            f /= 128.0f;
+        }
+
+        if(ImGui::SliderFloat("Roughness", &f, 0.0f, 1.0f))
+        {
+            
+        }
+
+        Vector3float d = impl->host_material->albedo_d;
+        Vector3float s = impl->host_material->albedo_s;
+
+        float diffuse[] = {d.x, d.y, d.z};
+        float specular[] = {s.x, s.y, s.z};
+
+        if(ImGui::ColorEdit3("Albedo diffuse", diffuse))
+        {
+            
+        }
+        
+        if(ImGui::ColorEdit3("Albedo specular", specular))
+        {
+
+        }
 
         ImGui::End();
     }
