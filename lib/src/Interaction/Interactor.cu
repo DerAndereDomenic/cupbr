@@ -1,12 +1,13 @@
 #include <Interaction/Interactor.cuh>
 #include <Interaction/MousePicker.cuh>
+#include <Core/Memory.cuh>
 
 class Interactor::Impl
 {
     public:
-        Impl() = default;
+        Impl();
         
-        ~Impl() = default;
+        ~Impl();
 
         GLFWwindow* window;
         int32_t width;
@@ -15,11 +16,26 @@ class Interactor::Impl
         Scene scene;
         Camera camera;
 
+        Geometry* device_geometry;
+        Geometry* host_geometry;
+
         bool window_registered = false;
         bool camera_registered = false;
         bool scene_registered = false;
         bool pressed = false;
 };
+
+Interactor::Impl::Impl()
+{
+    device_geometry = Memory::allocator()->createDeviceObject<Geometry>();
+    host_geometry = Memory::allocator()->createHostObject<Geometry>();
+}
+
+Interactor::Impl::~Impl()
+{
+    Memory::allocator()->destroyDeviceObject<Geometry>(device_geometry);
+    Memory::allocator()->destroyHostArray<Geometry>(host_geometry);
+}
 
 Interactor::~Interactor() = default;
 
