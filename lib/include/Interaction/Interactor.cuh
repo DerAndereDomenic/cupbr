@@ -55,6 +55,12 @@ class Interactor
         handleInteraction();
 
         /**
+        *   @brief If the interaction updated the scene
+        *   @return True if a scene element changed 
+        */
+        bool updated();
+
+        /**
         *   @brief Get the tone mapping type 
         *   @return The tone mapping type
         */

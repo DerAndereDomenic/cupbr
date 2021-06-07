@@ -101,7 +101,7 @@ int run(int argc, char* argv[])
 
         interactor.handleInteraction();
 
-        if(interactor.getRenderingMethod() != pbrenderer.getMethod())
+        if(interactor.getRenderingMethod() != pbrenderer.getMethod() || interactor.updated())
         {
             pbrenderer.setMethod(interactor.getRenderingMethod());
         }

@@ -29,6 +29,7 @@ class Interactor::Impl
         bool scene_registered = false;
         bool enable_render_settings = false;
         bool pressed = false;
+        bool material_update = false;
 };
 
 Interactor::Impl::Impl()
@@ -168,7 +169,7 @@ Interactor::handleInteraction()
 
         ImGui::Separator();
 
-        bool material_update = false;
+        impl->material_update = false;
 
         ImGui::Text("Material:");
         if(ImGui::BeginMenu("Type"))
@@ -176,27 +177,27 @@ Interactor::handleInteraction()
             if(ImGui::MenuItem("LAMBERT"))
             {
                 impl->host_material->type = LAMBERT;
-                material_update = true;
+                impl->material_update = true;
             }
             else if(ImGui::MenuItem("PHONG"))
             {
                 impl->host_material->type = PHONG;
-                material_update = true;
+                impl->material_update = true;
             }
             else if(ImGui::MenuItem("GLASS"))
             {
                 impl->host_material->type = GLASS;
-                material_update = true;
+                impl->material_update = true;
             }
             else if(ImGui::MenuItem("MIRROR"))
             {
                 impl->host_material->type = MIRROR;
-                material_update = true;
+                impl->material_update = true;
             }
             else if(ImGui::MenuItem("GGX"))
             {
                 impl->host_material->type = GGX;
-                material_update = true;
+                impl->material_update = true;
             }
             ImGui::EndMenu();
         }
@@ -214,12 +215,12 @@ Interactor::handleInteraction()
             {
                 impl->host_material->shininess *= 128.0f;
             }
-            material_update = true;
+            impl->material_update = true;
         }
 
         if(ImGui::SliderFloat("Eta", &(impl->host_material->eta), 0.0f, 5.0f))
         {
-            material_update = true;
+            impl->material_update = true;
         }
 
         Vector3float d = impl->host_material->albedo_d;
@@ -231,24 +232,30 @@ Interactor::handleInteraction()
         if(ImGui::ColorEdit3("Albedo diffuse", diffuse))
         {
             impl->host_material->albedo_d = Vector3float(diffuse[0], diffuse[1], diffuse[2]);
-            material_update = true;
+            impl->material_update = true;
         }
         
         if(ImGui::ColorEdit3("Albedo specular", specular))
         {   
             impl->host_material->albedo_s = Vector3float(specular[0], specular[1], specular[2]);
-            material_update = true;
+            impl->material_update = true;
         }
 
         ImGui::End();
         
-        if(material_update)
+        if(impl->material_update)
         {
             Memory::allocator()->copyHost2DeviceObject(impl->host_material, impl->device_material);
             Interaction::updateMaterial(impl->scene, impl->scene_index, impl->device_material);
         }
     }
     
+}
+
+bool
+Interactor::updated()
+{
+    return impl->material_update;
 }
 
 ToneMappingType
