@@ -12,19 +12,18 @@ namespace detail
                      const Camera camera,
                      Material* material)
     {
-        //Ortographic projection
-        const float ratio_x = 2.0f*(static_cast<float>(x) / static_cast<float>(width) - 0.5f);
-        const float ratio_y = 2.0f*(static_cast<float>(y) / static_cast<float>(height) - 0.5f);
-
-        const Vector3float world_pos = camera.position() + camera.zAxis() + ratio_x * camera.xAxis() + ratio_y * camera.yAxis();
-
-        Ray ray(world_pos, camera.zAxis());
+        const Vector2uint32_t pixel(x,y);
+        Ray ray = Tracing::launchRay(pixel, width, height, camera);
 
         LocalGeometry geom = Tracing::traceRay(scene, ray);
 
         if(geom.depth != INFINITY)
         {
-            material = &geom.material;
+            material->type = geom.material.type;
+            material->albedo_d = geom.material.albedo_d;
+            material->albedo_s = geom.material.albedo_s;
+            material->shininess = geom.material.shininess;
+            material->eta = geom.material.eta;
         }
     }
 }
