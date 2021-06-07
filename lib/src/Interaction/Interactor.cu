@@ -242,7 +242,11 @@ Interactor::handleInteraction()
 
         ImGui::End();
         
-        
+        if(material_update)
+        {
+            Memory::allocator()->copyHost2DeviceObject(impl->host_material, impl->device_material);
+            Interaction::updateMaterial(impl->scene, impl->scene_index, impl->device_material);
+        }
     }
     
 }
