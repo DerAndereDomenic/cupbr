@@ -1,4 +1,5 @@
 #include <Interaction/Interactor.cuh>
+#include <Interaction/MousePicker.cuh>
 
 class Interactor::Impl
 {
