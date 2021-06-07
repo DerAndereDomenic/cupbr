@@ -1,6 +1,7 @@
 #include <Interaction/Interactor.cuh>
 #include <Interaction/MousePicker.cuh>
 #include <Core/Memory.cuh>
+#include <imgui.h>
 
 class Interactor::Impl
 {
@@ -19,9 +20,13 @@ class Interactor::Impl
         Material* device_material;
         Material* host_material;
 
+        RenderingMethod method = PATHTRACER;
+        ToneMappingType tonemapping = REINHARD;
+
         bool window_registered = false;
         bool camera_registered = false;
         bool scene_registered = false;
+        bool enable_render_settings = false;
         bool pressed = false;
 };
 
@@ -123,9 +128,61 @@ Interactor::handleInteraction()
         }
     }
 
-    if(state == GLFW_RELEASE && impl->pressed)
+    if(glfwGetKey(impl->window, GLFW_KEY_M) == GLFW_PRESS && !(impl->pressed))
+    {
+        impl->pressed = true;
+        impl->enable_render_settings = !(impl->enable_render_settings);
+    }
+
+    if(state == GLFW_RELEASE && glfwGetKey(impl->window, GLFW_KEY_M) == GLFW_RELEASE && impl->pressed)
     {
         impl->pressed = false;
     }
+
+    if(impl->enable_render_settings)
+    {
+        ImGui::Begin("Render settings", &(impl->enable_render_settings));
+
+        if(ImGui::BeginMenu("Renderer:"))
+        {
+            if(ImGui::MenuItem("Path Tracing"))
+            {
+                impl->method = PATHTRACER;
+            }
+            else if(ImGui::MenuItem("Ray Tracing"))
+            {
+                impl->method = RAYTRACER;
+            }
+                
+            ImGui::EndMenu();
+        }
+
+        if(ImGui::BeginMenu("Tone Mapping:"))
+        {
+            if(ImGui::MenuItem("Reinhard"))
+            {
+                impl->tonemapping = REINHARD;
+            }
+            else if(ImGui::MenuItem("Gamma"))
+            {
+                impl->tonemapping = GAMMA;
+            }
+                
+            ImGui::EndMenu();
+        }
+        ImGui::End();
+    }
     
+}
+
+ToneMappingType
+Interactor::getToneMapping()
+{
+    return impl->tonemapping;
+}
+
+RenderingMethod
+Interactor::getRenderingMethod()
+{
+    return impl->method;
 }

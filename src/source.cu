@@ -85,8 +85,6 @@ int run(int argc, char* argv[])
     float time = 0.0f;
     uint32_t frame_counter = 0;
 
-    bool enable_render_settings = false;
-
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGuiIO& io = ImGui::GetIO(); (void)io;
@@ -105,39 +103,7 @@ int run(int argc, char* argv[])
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
-        if(enable_render_settings)
-        {
-            ImGui::Begin("Render settings", &enable_render_settings);
-
-            if(ImGui::BeginMenu("Renderer:"))
-            {
-                if(ImGui::MenuItem("Path Tracing"))
-                {
-                    pbrenderer.setMethod(PATHTRACER);
-                }
-                else if(ImGui::MenuItem("Ray Tracing"))
-                {
-                    pbrenderer.setMethod(RAYTRACER);
-                }
-                
-                ImGui::EndMenu();
-            }
-
-            if(ImGui::BeginMenu("Tone Mapping:"))
-            {
-                if(ImGui::MenuItem("Reinhard"))
-                {
-                    mapper = &reinhard_mapper;
-                }
-                else if(ImGui::MenuItem("Gamma"))
-                {
-                    mapper = &gamma_mapper;
-                }
-                
-                ImGui::EndMenu();
-            }
-            ImGui::End();
-        }
+        interactor.handleInteraction();
         
         ImGui::Render();
         /* Render here */
@@ -164,16 +130,8 @@ int run(int argc, char* argv[])
         /* Poll for and process events */
         glfwPollEvents();
 
-        interactor.handleInteraction();
-
         if(!edit)
             camera.processInput(window, time);
-
-        if(glfwGetKey(window, GLFW_KEY_M) == GLFW_PRESS && !pressed)
-        {
-            pressed = true;
-            enable_render_settings = !enable_render_settings;
-        }
 
         if(glfwGetKey(window, GLFW_KEY_LEFT_ALT) == GLFW_PRESS && !pressed)
         {
@@ -189,7 +147,7 @@ int run(int argc, char* argv[])
             }
         }
 
-        if(glfwGetKey(window, GLFW_KEY_LEFT_ALT) == GLFW_RELEASE && glfwGetKey(window, GLFW_KEY_M) == GLFW_RELEASE)
+        if(glfwGetKey(window, GLFW_KEY_LEFT_ALT) == GLFW_RELEASE)
         {
             pressed = false;
         }

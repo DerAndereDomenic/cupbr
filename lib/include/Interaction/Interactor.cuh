@@ -8,6 +8,8 @@
 
 #include <DataStructure/Camera.cuh>
 #include <Scene/Scene.cuh>
+#include <Renderer/PBRenderer.cuh>
+#include <Renderer/ToneMapper.cuh>
 
 /**
 *   @brief A class to handle user interactions 
@@ -51,6 +53,18 @@ class Interactor
         */
         void
         handleInteraction();
+
+        /**
+        *   @brief Get the tone mapping type 
+        */
+        ToneMappingType
+        getToneMapping();
+
+        /**
+        *   @brief Get the rendering method 
+        */
+        RenderingMethod
+        getRenderingMethod();
     private:
         class Impl;
         std::unique_ptr<Impl> impl;     /**< Implementation pointer */
