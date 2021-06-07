@@ -201,3 +201,9 @@ ToneMapper::getType()
 {
     return impl->type;
 }
+
+void
+ToneMapper::setType(const ToneMappingType& type)
+{
+    impl->type = type;
+}

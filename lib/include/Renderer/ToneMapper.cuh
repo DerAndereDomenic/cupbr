@@ -59,6 +59,13 @@ class ToneMapper
         getType();
 
         /**
+        *   @brief Change the tone mapping
+        *   @param[in] type The new tone mapping type 
+        */
+        void
+        setType(const ToneMappingType& type);
+
+        /**
         *   @brief Store the current render buffer to file
         *   @param[in] path The output path
         */
