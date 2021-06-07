@@ -52,6 +52,13 @@ class ToneMapper
         getRenderBuffer();
 
         /**
+        *   @brief Get the currently selected tone mapping type
+        *   @return The tone mapping type 
+        */
+        ToneMappingType
+        getType();
+
+        /**
         *   @brief Store the current render buffer to file
         *   @param[in] path The output path
         */

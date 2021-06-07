@@ -195,3 +195,9 @@ ToneMapper::saveToFile(const std::string& path)
 
     RenderBuffer::destroyHostObject(host_buffer);
 }
+
+ToneMappingType
+ToneMapper::getType()
+{
+    return impl->type;
+}
