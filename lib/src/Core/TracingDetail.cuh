@@ -67,6 +67,7 @@ Tracing::traceRay(Scene& scene, const Ray& ray)
                     geom.N = plane->getNormal(geom.P);
                     geom.depth = intersection.w;
                     geom.material = plane->material;
+                    geom.scene_index = i;
                 }
             }
             break;
@@ -82,6 +83,7 @@ Tracing::traceRay(Scene& scene, const Ray& ray)
                     geom.N = sphere->getNormal(geom.P);
                     geom.depth = intersection.w;
                     geom.material = sphere->material;
+                    geom.scene_index = i;
                 }
             }
             break;
@@ -97,6 +99,7 @@ Tracing::traceRay(Scene& scene, const Ray& ray)
                     geom.N = quad->getNormal(geom.P);
                     geom.depth = intersection.w;
                     geom.material = quad->material;
+                    geom.scene_index = i;
                 }
             }
             break;
@@ -112,6 +115,7 @@ Tracing::traceRay(Scene& scene, const Ray& ray)
                     geom.N = triangle->getNormal(geom.P);
                     geom.depth = intersection.w;
                     geom.material = triangle->material;
+                    geom.scene_index = i;
                 }
             }
             break;
@@ -127,6 +131,7 @@ Tracing::traceRay(Scene& scene, const Ray& ray)
                     geom.N = mesh->getNormal(geom.P);
                     geom.depth = intersection.w;
                     geom.material = mesh->material;
+                    geom.scene_index = i;
                 }
             }
             break;

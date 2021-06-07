@@ -64,6 +64,7 @@ struct LocalGeometry
     Vector3float P;                     /**< The intersection point in world space */
     Vector3float N;                     /**< The surface normal */
     Material material;                  /**< The object material */
+    int32_t scene_index;                /**< The index in the scene representation */
 };
 
 #include "../../src/Geometry/GeometryDetail.cuh"
