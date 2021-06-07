@@ -102,7 +102,11 @@ Interactor::handleInteraction()
 
         if(x >= 0 && x < impl->width && y >= 0 && y < impl->height)
         {
-            //do mouse picking
+            Interaction::pickMouse(x,
+                                   y,
+                                   impl->scene,
+                                   impl->camera,
+                                   impl->device_geometry);
         }
     }
 
