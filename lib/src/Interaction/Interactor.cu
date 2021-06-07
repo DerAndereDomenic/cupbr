@@ -170,6 +170,40 @@ Interactor::handleInteraction()
                 
             ImGui::EndMenu();
         }
+
+        ImGui::Separator();
+        ImGui::Text("Material:");
+        if(ImGui::BeginMenu("Type"))
+        {
+            if(ImGui::MenuItem("LAMBERT"))
+            {
+
+            }
+            else if(ImGui::MenuItem("PHONG"))
+            {
+
+            }
+            else if(ImGui::MenuItem("GLASS"))
+            {
+
+            }
+            else if(ImGui::MenuItem("MIRROR"))
+            {
+
+            }
+            else if(ImGui::MenuItem("GGX"))
+            {
+
+            }
+            ImGui::EndMenu();
+        }
+        float f = 0.5f;
+        ImGui::SliderFloat("Roughness", &f, 0.0f, 1.0f);
+
+        float c[] = {0,0,0};
+        ImGui::ColorEdit3("Albedo diffuse", c);
+        ImGui::ColorEdit3("Albedo specular", c);
+
         ImGui::End();
     }
     
