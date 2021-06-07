@@ -84,6 +84,13 @@ class PBRenderer
         */
         Image<Vector3float>*
         getGradientY();
+
+        /**
+        *   @brief Get the currently selected rendering method
+        *   @return The rendering method 
+        */
+        RenderingMethod
+        getMethod();
        
     private:
         class Impl;

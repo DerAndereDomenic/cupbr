@@ -202,3 +202,9 @@ PBRenderer::getGradientY()
 {
     return &impl->gradient_y;
 }
+
+RenderingMethod
+PBRenderer::getRenderingMethod()
+{
+    return impl->method;
+}
