@@ -11,11 +11,13 @@ class Interactor
     public:
         Interactor();
 
+        ~Interactor();
+
         void
         registerWindow(GLFWwindow* window);
 
         void
-        updateInteraction();
+        handleInteraction();
     private:
         class Impl;
         std::unique_ptr<Impl> impl;     /**< Implementation pointer */

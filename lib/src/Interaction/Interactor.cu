@@ -12,6 +12,8 @@ class Interactor::Impl
         bool window_registered = false;
 };
 
+Interactor::~Interactor() = default;
+
 Interactor::Interactor()
 {
     impl = std::make_unique<Impl>();
@@ -25,7 +27,7 @@ Interactor::registerWindow(GLFWwindow* window)
 }
 
 void
-Interactor::updateInteraction()
+Interactor::handleInteraction()
 {
 
 }

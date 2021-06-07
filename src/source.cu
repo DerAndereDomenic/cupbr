@@ -19,6 +19,8 @@
 #include <Renderer/ToneMapper.cuh>
 #include <Renderer/PBRenderer.cuh>
 
+#include <Interaction/Interactor.cuh>
+
 int run(int argc, char* argv[])
 {
     bool edit = true;
@@ -75,6 +77,9 @@ int run(int argc, char* argv[])
 
     GLRenderer renderer(width, height);
     Camera camera(width,height);
+    Interactor interactor;
+    interactor.registerWindow(window);
+
     float time = 0.0f;
     uint32_t frame_counter = 0;
 
@@ -156,6 +161,8 @@ int run(int argc, char* argv[])
 
         /* Poll for and process events */
         glfwPollEvents();
+
+        interactor.handleInteraction();
 
         if(!edit)
             camera.processInput(window, time);
