@@ -104,6 +104,11 @@ int run(int argc, char* argv[])
         ImGui::NewFrame();
 
         interactor.handleInteraction();
+
+        if(interactor.getRenderingMethod() != pbrenderer.getMethod())
+        {
+            pbrenderer.setMethod(interactor.getRenderingMethod());
+        }
         
         ImGui::Render();
         /* Render here */
