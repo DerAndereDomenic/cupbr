@@ -55,6 +55,24 @@ Interactor::registerCamera(const Camera& camera)
 void
 Interactor::handleInteraction()
 {
+    if(!impl->window_registered)
+    {
+        std::cerr << "[Interactor] ERROR: No window registered! Call registerWindow()" << std::endl;
+        return;
+    }
+
+    if(!impl->camera_registered)
+    {
+        std::cerr << "[Interactor] ERROR: No camera registered! Call registerCamera()" << std::endl;
+        return;
+    }
+
+    if(!impl->scene_registered)
+    {
+        std::cerr << "[Interactor] ERROR: No scene registered! Call registerScene()" << std::endl;
+        return;
+    }
+
     int32_t state = glfwGetMouseButton(impl->window, GLFW_MOUSE_BUTTON_LEFT);
     if(state == GLFW_PRESS && !(impl->pressed))
     {
