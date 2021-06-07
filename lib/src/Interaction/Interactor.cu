@@ -168,23 +168,23 @@ Interactor::handleInteraction()
         {
             if(ImGui::MenuItem("LAMBERT"))
             {
-
+                impl->host_material->type = LAMBERT;
             }
             else if(ImGui::MenuItem("PHONG"))
             {
-
+                impl->host_material->type = PHONG;
             }
             else if(ImGui::MenuItem("GLASS"))
             {
-
+                impl->host_material->type = GLASS;
             }
             else if(ImGui::MenuItem("MIRROR"))
             {
-
+                impl->host_material->type = MIRROR;
             }
             else if(ImGui::MenuItem("GGX"))
             {
-
+                impl->host_material->type = GGX;
             }
             ImGui::EndMenu();
         }
@@ -197,8 +197,14 @@ Interactor::handleInteraction()
 
         if(ImGui::SliderFloat("Roughness", &f, 0.0f, 1.0f))
         {
-            
+            impl->host_material->shininess = f;
+            if(impl->host_material->type != GGX)
+            {
+                impl->host_material->shininess *= 128.0f;
+            }
         }
+
+        ImGui::SliderFloat("Eta", &(impl->host_material->eta), 0.0f, 5.0f);
 
         Vector3float d = impl->host_material->albedo_d;
         Vector3float s = impl->host_material->albedo_s;
@@ -208,12 +214,12 @@ Interactor::handleInteraction()
 
         if(ImGui::ColorEdit3("Albedo diffuse", diffuse))
         {
-            
+            impl->host_material->albedo_d = Vector3float(diffuse[0], diffuse[1], diffuse[2]);
         }
         
         if(ImGui::ColorEdit3("Albedo specular", specular))
-        {
-
+        {   
+            impl->host_material->albedo_s = Vector3float(specular[0], specular[1], specular[2]);
         }
 
         ImGui::End();
