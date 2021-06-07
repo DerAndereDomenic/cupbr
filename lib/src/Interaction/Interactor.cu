@@ -98,7 +98,7 @@ Interactor::handleInteraction()
         glfwGetCursorPos(impl->window, &xpos, &ypos);
 
         int32_t x = static_cast<int32_t>(xpos);
-        int32_t y = static_cast<int32_t>(ypos);
+        int32_t y = impl->width - static_cast<int32_t>(ypos);   //glfw coordinates are flipped
 
         if(x >= 0 && x < impl->width && y >= 0 && y < impl->height)
         {
@@ -111,6 +111,15 @@ Interactor::handleInteraction()
                                    impl->device_material);
 
             Memory::allocator()->copyDevice2HostObject(impl->device_material, impl->host_material);
+
+            //TODO: Make material changable
+            printf("Type: %i\n", impl->host_material->type);
+            printf("Diffuse: %f %f %f\n", impl->host_material->albedo_d.x,
+                                          impl->host_material->albedo_d.y,
+                                          impl->host_material->albedo_d.z);
+            printf("Specular: %f %f %f\n", impl->host_material->albedo_s.x,
+                                           impl->host_material->albedo_s.y,
+                                           impl->host_material->albedo_s.z);
         }
     }
 
