@@ -38,5 +38,12 @@ Interaction::pickMouse(const uint32_t& x,
                        Camera& camera,
                        Material* outMaterial)
 {
-
+    detail::pickMouse_kernel<<<1,1>>>(x,
+                                      y,
+                                      width,
+                                      height,
+                                      scene,
+                                      camera,
+                                      outMaterial);
+    cudaSafeCall(cudaDeviceSynchronize());
 }
