@@ -104,6 +104,8 @@ Interactor::handleInteraction()
         {
             Interaction::pickMouse(x,
                                    y,
+                                   impl->width,
+                                   impl->height,
                                    impl->scene,
                                    impl->camera,
                                    impl->device_geometry);
