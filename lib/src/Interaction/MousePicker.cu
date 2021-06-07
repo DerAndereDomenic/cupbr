@@ -28,6 +28,19 @@ namespace detail
             *(scene_index) = geom.scene_index;
         }
     }
+
+    __global__ void
+    updateMaterial_kernel(Scene scene,
+                          int32_t* scene_index,
+                          Material* newMaterial)
+    {
+        Geometry* element = scene[*scene_index];
+        element->material.type = newMaterial->type;
+        element->material.albedo_d = newMaterial->albedo_d;
+        element->material.albedo_s = newMaterial->albedo_s;
+        element->material.shininess = newMaterial->shininess;
+        element->material.eta = newMaterial->eta;
+    }
 }
 
 void 
@@ -48,5 +61,14 @@ Interaction::pickMouse(const uint32_t& x,
                                       camera,
                                       outMaterial,
                                       outSceneIndex);
+    cudaSafeCall(cudaDeviceSynchronize());
+}
+
+void
+Interaction::updateMaterial(Scene& scene,
+                            int32_t* scene_index,
+                            Material* newMaterial)
+{
+    detail::updateMaterial_kernel<<<1,1>>>(scene, scene_index, newMaterial);
     cudaSafeCall(cudaDeviceSynchronize());
 }

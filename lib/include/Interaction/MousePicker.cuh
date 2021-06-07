@@ -27,6 +27,11 @@ namespace Interaction
                    Camera& camera,
                    Material* outMaterial,
                    int32_t* sceneIndex);
+
+    void
+    updateMaterial(Scene& scene,
+                   int32_t* scene_index,
+                   Material* newMaterial);
 }
 
 #endif
