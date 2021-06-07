@@ -1,4 +1,5 @@
 #include <Interaction/MousePicker.cuh>
+#include <Core/Tracing.cuh>
 
 namespace detail
 {
@@ -19,11 +20,11 @@ namespace detail
 
         Ray ray(world_pos, camera.zAxis());
 
-        LocalGeometry geom = traceRay(scene, ray);
+        LocalGeometry geom = Tracing::traceRay(scene, ray);
 
         if(geom.depth != INFINITY)
         {
-            material = geom.material;
+            material = &geom.material;
         }
     }
 }
