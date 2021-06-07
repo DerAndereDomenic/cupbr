@@ -28,6 +28,12 @@ namespace Interaction
                    Material* outMaterial,
                    int32_t* sceneIndex);
 
+    /**
+    *   @brief Update the material at the object defined by scene_index
+    *   @param[in] scene The scene
+    *   @param[in] scene_index The index of the object which material we want to change
+    *   @param[in] newMaterial The new material 
+    */
     void
     updateMaterial(Scene& scene,
                    int32_t* scene_index,
