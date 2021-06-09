@@ -20,10 +20,12 @@ namespace detail
     V_SmithJointGGX(const float& NdotL, const float& NdotV, const float& roughness)
     {
         float a2 = roughness * roughness;
-        float lambdaV = NdotL * (NdotV * NdotV * (1.0f - a2) + a2);
-        float lambdaL = NdotV * (NdotL * NdotL * (1.0f - a2) + a2);
-        float G = 1.0f / (1.0f + lambdaL + lambdaV);
-        return G / (4.0f * NdotL * NdotV + EPSILON);
+        float denomA = NdotV * sqrt(a2 + (1.0f - a2) * NdotL * NdotL);
+        float denomB = NdotL * sqrt(a2 + (1.0f - a2) * NdotV * NdotV);
+
+        float G =  2.0f * NdotL * NdotV / (denomA + denomB + EPSILON);
+
+        return G / (4.0f * NdotV * NdotL + EPSILON);
     }
 
 }
