@@ -22,7 +22,8 @@ namespace detail
         float a2 = roughness * roughness;
         float lambdaV = NdotL * (NdotV * NdotV * (1.0f - a2) + a2);
         float lambdaL = NdotV * (NdotL * NdotL * (1.0f - a2) + a2);
-        return 0.5f / (lambdaV + lambdaL);
+        float G = 1.0f / (1.0f + lambdaL + lambdaV);
+        return G / (4.0f * NdotL * NdotV + EPSILON);
     }
 
 }
