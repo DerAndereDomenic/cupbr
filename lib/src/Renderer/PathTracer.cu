@@ -123,6 +123,8 @@ namespace detail
             //Indirect illumination
             Vector4float direction_p = geom.material.sampleDirection(seed, inc_dir, geom.N);
             Vector3float direction = Vector3float(direction_p);
+            if (Math::norm(direction) == 0)
+                break;
             ray.payload<RadiancePayload>()->rayweight = ray.payload<RadiancePayload>()->rayweight * 
                                                         fabs(Math::dot(direction, normal)) * 
                                                         geom.material.brdf(geom.P, inc_dir, direction, normal)/direction_p.w;
