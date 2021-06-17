@@ -30,6 +30,7 @@ class Interactor::Impl
         bool enable_render_settings = false;
         bool pressed = false;
         bool material_update = false;
+        float exposure = 1.0f;
 };
 
 Interactor::Impl::Impl()
@@ -137,6 +138,7 @@ Interactor::handleInteraction()
 
     if(impl->enable_render_settings)
     {
+        impl->material_update = false;
         ImGui::Begin("Render settings", &(impl->enable_render_settings));
 
         if(ImGui::BeginMenu("Renderer:"))
@@ -167,9 +169,12 @@ Interactor::handleInteraction()
             ImGui::EndMenu();
         }
 
-        ImGui::Separator();
+        if(ImGui::SliderFloat("Exposure", &(impl->exposure), 0.01f, 10.0f))
+        {
+            impl->material_update = true;
+        }
 
-        impl->material_update = false;
+        ImGui::Separator();
 
         ImGui::Text("Material:");
         if(ImGui::BeginMenu("Type"))
@@ -268,4 +273,10 @@ RenderingMethod
 Interactor::getRenderingMethod()
 {
     return impl->method;
+}
+
+float
+Interactor::getExposure()
+{
+    return impl->exposure;
 }

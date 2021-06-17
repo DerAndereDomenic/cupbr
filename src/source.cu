@@ -100,6 +100,7 @@ int run(int argc, char* argv[])
         ImGui::NewFrame();
 
         interactor.handleInteraction();
+        mapper.setExposure(interactor.getExposure());
 
         if(interactor.getRenderingMethod() != pbrenderer.getMethod() || interactor.updated())
         {

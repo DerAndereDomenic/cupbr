@@ -73,6 +73,13 @@ class Interactor
         */
         RenderingMethod
         getRenderingMethod();
+
+        /**
+        *   @brief Get the exposure level set by the user
+        *   @return The exposure time
+        */
+        float
+        getExposure();
     private:
         class Impl;
         std::unique_ptr<Impl> impl;     /**< Implementation pointer */
