@@ -13,7 +13,7 @@
 namespace detail
 {
     __global__ void
-    reinhard_kernel(Image<Vector3float> hdr_image, RenderBuffer output)
+    reinhard_kernel(Image<Vector3float> hdr_image, RenderBuffer output, const float exposure)
     {
         const uint32_t tid = ThreadHelper::globalThreadIndex();
 
@@ -25,9 +25,9 @@ namespace detail
         Vector3float radiance = hdr_image[tid];
         Vector3uint8_t color(0);
 
-        float mapped_red = powf(1.0 - expf(-radiance.x), 1.0f/2.2f);
-        float mapped_green = powf(1.0 - expf(-radiance.y), 1.0f/2.2f);
-        float mapped_blue = powf(1.0 - expf(-radiance.z), 1.0f/2.2);
+        float mapped_red = powf(1.0 - expf(-radiance.x * exposure), 1.0f/2.2f);
+        float mapped_green = powf(1.0 - expf(-radiance.y * exposure), 1.0f/2.2f);
+        float mapped_blue = powf(1.0 - expf(-radiance.z * exposure), 1.0f/2.2);
 
         uint8_t red = static_cast<uint8_t>(Math::clamp(mapped_red, 0.0f, 1.0f)*255.0f);
         uint8_t green = static_cast<uint8_t>(Math::clamp(mapped_green, 0.0f, 1.0f)*255.0f);
@@ -91,6 +91,7 @@ class ToneMapper::Impl
         bool isRegistered;                  /**< If a HDR image has been registered */
         RenderBuffer render_buffer;         /**< The output render buffer */
         Image<Vector3float>* hdr_image;     /**< The registered HDR image */
+        float exposure = 1.0f;              /**< The camera exposure */
 };
 
 ToneMapper::Impl::Impl()
@@ -167,7 +168,7 @@ void
 ToneMapper::Impl::toneMappingReinhard()
 {
     KernelSizeHelper::KernelSize config = KernelSizeHelper::configure(hdr_image->size());
-    detail::reinhard_kernel<<<config.blocks, config.threads>>>(*hdr_image, render_buffer);
+    detail::reinhard_kernel<<<config.blocks, config.threads>>>(*hdr_image, render_buffer, exposure);
     cudaSafeCall(cudaDeviceSynchronize());
 }
 
@@ -206,4 +207,10 @@ void
 ToneMapper::setType(const ToneMappingType& type)
 {
     impl->type = type;
+}
+
+void
+ToneMapper::setExposure(const float& exposure)
+{
+    impl->exposure = exposure;
 }

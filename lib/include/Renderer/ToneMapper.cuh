@@ -66,6 +66,13 @@ class ToneMapper
         setType(const ToneMappingType& type);
 
         /**
+        *   @brief Set exposure
+        *   @param[in] exposure The exposure time of the camera
+        */
+        void
+        setExposure(const float& exposure);
+
+        /**
         *   @brief Store the current render buffer to file
         *   @param[in] path The output path
         */
