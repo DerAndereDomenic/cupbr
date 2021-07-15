@@ -3,6 +3,7 @@
 #include <Renderer/Whitted.cuh>
 #include <Renderer/PathTracer.cuh>
 #include <Renderer/GradientDomain.cuh>
+#include <Renderer/VolumeRenderer.cuh>
 
 namespace detail
 {
@@ -179,6 +180,20 @@ PBRenderer::render(const Camera& camera)
                                         &impl->gradient_x,
                                         &impl->gradient_y,
                                         &impl->hdr_image);
+            ++impl->frameIndex;
+        }
+        break;
+        case VOLUME:
+        {
+            if(camera.moved())
+            {
+                impl->frameIndex = 0;
+            }
+            PBRendering::volumetracing(impl->scene,
+                                       camera,
+                                       impl->frameIndex,
+                                       impl->maxTraceDepth,
+                                       &impl->hdr_image);
             ++impl->frameIndex;
         }
         break;

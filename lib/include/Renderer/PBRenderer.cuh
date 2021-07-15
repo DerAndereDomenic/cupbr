@@ -15,7 +15,8 @@ enum RenderingMethod
     WHITTED,
     PATHTRACER,
     METROPOLIS,
-    GRADIENTDOMAIN
+    GRADIENTDOMAIN,
+    VOLUME
 };
 
 /**
