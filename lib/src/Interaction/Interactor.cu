@@ -49,9 +49,10 @@ Interactor::Impl::~Impl()
 
 Interactor::~Interactor() = default;
 
-Interactor::Interactor()
+Interactor::Interactor(const RenderingMethod& method)
 {
     impl = std::make_unique<Impl>();
+    impl->method = method;
 }
 
 void

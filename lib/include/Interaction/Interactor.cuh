@@ -18,9 +18,10 @@ class Interactor
 {
     public:
         /**
-        *   @brief Default constructor 
+        *   @brief Cosntructor
+        *   @param[in] method The rendering method
         */
-        Interactor();
+        Interactor(const RenderingMethod& method);
 
         /**
         *   @brief Default destructor 

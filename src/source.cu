@@ -73,7 +73,7 @@ int run(int argc, char* argv[])
 
     GLRenderer renderer(width, height);
     Camera camera(width,height);
-    Interactor interactor;
+    Interactor interactor(pbrenderer.getMethod());
     interactor.registerWindow(window);
     interactor.registerCamera(camera);
     interactor.registerScene(scene);
