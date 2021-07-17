@@ -290,6 +290,22 @@ SceneLoader::loadFromFile(const std::string& path)
         host_lights[i] = dev_light;
     }
 
+    tinyxml2::XMLElement* volume_head = doc.FirstChildElement("volume");
+    if(volume_head != NULL)
+    {
+        const char* sigma_s_string = volume_head->FirstChildElement("sigma_s")->GetText();
+        const char* sigma_a_string = volume_head->FirstChildElement("sigma_a")->GetText();
+        const char* g_string = volume_head->FirstChildElement("g")->GetText();
+
+        Volume vol;
+
+        vol.sigma_s = std::stof(sigma_s_string);
+        vol.sigma_a = std::stof(sigma_a_string);
+        vol.g = std::stof(g_string);
+
+        scene.volume = vol;
+    }
+
     tinyxml2::XMLElement* environment_head = doc.FirstChildElement("environment");
     if(environment_head != NULL)
     {
