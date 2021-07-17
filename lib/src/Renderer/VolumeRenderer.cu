@@ -271,7 +271,6 @@ namespace detail
         ray.setPayload(&payload);
 
         uint32_t trace_depth = 0;
-        Vector3float inc_dir;
 
         Light light;
 
@@ -279,25 +278,25 @@ namespace detail
         {
             payload.next_ray_valid = false;
             LocalGeometry geom = Tracing::traceRay(scene, ray);
-            if(geom.depth == INFINITY)
-            {
-                if(scene.useEnvironmentMap)
-                {
-                    Vector2uint32_t pixel = Tracing::direction2UV(ray.direction(), scene.environment.width(), scene.environment.height());
-                    payload.radiance += payload.rayweight * scene.environment(pixel);
-                }
-                break;
-            }
-            Vector3float inc_dir = Math::normalize(ray.origin() - geom.P);
+            
+            Vector3float inc_dir = -1.0f*ray.direction(); //Points away from surface
 
             if(!handleMediumInteraction(scene, ray, geom, inc_dir))
             {
+                if(geom.depth == INFINITY)
+                {
+                    if(scene.useEnvironmentMap)
+                    {
+                        Vector2uint32_t pixel = Tracing::direction2UV(ray.direction(), scene.environment.width(), scene.environment.height());
+                        payload.radiance += payload.rayweight * scene.environment(pixel);
+                    }
+                    break;
+                }
+
                 directIlluminationVolumetric(scene, ray, geom, inc_dir);
                 indirectIlluminationVolumetric(ray, geom, inc_dir);
             }
-                 
             ray.traceNew(payload.ray_start+0.01f*payload.out_dir, payload.out_dir);
-
             if (!payload.next_ray_valid)break;
             ++trace_depth;
         }while(trace_depth < maxTraceDepth);
