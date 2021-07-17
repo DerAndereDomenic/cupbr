@@ -142,8 +142,9 @@ namespace detail
     {
         RadiancePayload* payload = ray.payload<RadiancePayload>();
 
-        float sigma_a = 0.01f;
-        float sigma_s = 0.01f;
+        float g = 0.0f;
+        float sigma_a = 0.4f;
+        float sigma_s = 0.4f;
         float sigma_t = sigma_a + sigma_s;
 
         float t = -1.0f/sigma_t * logf(Math::rnd(payload->seed));
@@ -224,23 +225,15 @@ namespace detail
             if(Tracing::traceVisibility(scene, d, shadow_ray))
             {
                 payload->radiance += (scene.light_count+useEnvironmentMap) *
-                                      1.0f / (4.0f * 3.14159f) *
+                                      henyeyGreensteinPhaseFunction(g, Math::dot(lightDir, inc_dir)) *
                                       expf(-sigma_t * d) *
                                       lightRadiance *
                                       payload->rayweight;
             }
 
             //Indirect Illumination
-            float z = Math::rnd(payload->seed) * 2.0f - 1.0f;
-            float phi = Math::rnd(payload->seed)* 2.0f * 3.14159f;
-
-            float r = sqrtf(fmaxf(0.0f, 1.0f - z*z));
-            float x = r*cosf(phi);
-            float y = r*sinf(phi);
-
-            payload->out_dir = Vector3float(x,y,z);
+            payload->out_dir = Vector3float(sampleHenyeyGreensteinPhaseFunction(g, inc_dir, payload->seed));
             payload->ray_start = event_position;
-            payload->rayweight *= 4.0f * 3.14159f;
 
             payload->next_ray_valid = true;
             return true;
@@ -250,10 +243,9 @@ namespace detail
             float pdf = expf(-sigma_t * geom.depth);
             payload->rayweight = payload->rayweight * expf(-sigma_t * geom.depth) / pdf;
             payload->next_ray_valid = true;
+            payload->ray_start = geom.P;
             return false;
         }
-
-        return false;
     }
 
     __global__ void
