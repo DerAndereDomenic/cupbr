@@ -116,12 +116,30 @@ namespace detail
         float sigma_s = 0.01f;
         float sigma_t = sigma_a + sigma_s;
 
-        float t = -1.0f/sigma_t * logf(1-Math::rnd(payload->seed));
+        float t = -1.0f/sigma_t * logf(Math::rnd(payload->seed));
 
         if(t <= geom.depth)
         {
             Vector3float event_position = ray.origin() + t*ray.direction();
 
+            float scattering_prob = sigma_s / sigma_t;
+
+            if(Math::rnd(payload->seed) < scattering_prob)
+            {
+                //Attenuate ray from its start to the medium event
+                payload->rayweight = payload->rayweight * 
+                                     sigma_s / scattering_prob *
+                                     expf(-sigma_t * t) / (sigma_t * expf(-sigma_t * t));
+            }
+            else
+            {
+                payload->rayweight = 0;
+                payload->next_ray_valid = false;
+                return true;
+            }
+
+
+            //Indirect Illumination
             float z = Math::rnd(payload->seed) * 2.0f - 1.0f;
             float phi = Math::rnd(payload->seed)* 2.0f * 3.14159f;
 
@@ -135,6 +153,12 @@ namespace detail
 
             payload->next_ray_valid = true;
             return true;
+        }
+        else
+        {
+            float pdf = expf(-sigma_t * geom.depth);
+            payload->rayweight = payload->rayweight * expf(-sigma_t * geom.depth) / pdf;
+            return false;
         }
 
         return false;
