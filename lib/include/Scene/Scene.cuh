@@ -6,6 +6,16 @@
 #include <DataStructure/Image.cuh>
 
 /**
+*   @brief A struct to model a volume
+*/
+struct Volume
+{
+    float sigma_s;      /**< The scattering coefficient */
+    float sigma_a;      /**< The absorbtion coefficient */
+    float g;            /**< The phase function parameter */
+}
+
+/**
 *   @brief Struct to model a scene
 */
 struct Scene
@@ -14,8 +24,9 @@ struct Scene
     uint32_t scene_size;                /**< The number of objects in the scene */
     Light** lights;                     /**< The light sources in the scene */
     uint32_t light_count;               /**< The light source count */
-    bool useEnvironmentMap = false;    /**< Wether an environment map is loaded */
+    bool useEnvironmentMap = false;     /**< Wether an environment map is loaded */
     Image<Vector3float> environment;    /**< The Environment map */
+    Volume volume;                      /**< The volume inside the scene */
 
     /**
     *   @brief Get a scene element
