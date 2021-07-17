@@ -15,7 +15,7 @@ namespace detail
         bool next_ray_valid;
     };
 
-    __device__ void directIllumination(Scene& scene, Ray& ray, LocalGeometry& geom, Vector3float& inc_dir)
+    __device__ void directIlluminationVolumetric(Scene& scene, Ray& ray, LocalGeometry& geom, Vector3float& inc_dir)
     {
         //Direct illumination
         RadiancePayload* payload = ray.payload<RadiancePayload>();
@@ -91,7 +91,7 @@ namespace detail
         }
     }
 
-    __device__ void indirectIllumination(Ray& ray, LocalGeometry& geom, Vector3float& inc_dir)
+    __device__ void indirectIlluminationVolumetric(Ray& ray, LocalGeometry& geom, Vector3float& inc_dir)
     {
         //Indirect illumination
         RadiancePayload* payload = ray.payload<RadiancePayload>();
@@ -147,8 +147,8 @@ namespace detail
             }
             Vector3float inc_dir = Math::normalize(ray.origin() - geom.P);
 
-            directIllumination(scene, ray, geom, inc_dir);
-            indirectIllumination(ray, geom, inc_dir);
+            directIlluminationVolumetric(scene, ray, geom, inc_dir);
+            indirectIlluminationVolumetric(ray, geom, inc_dir);
                  
             ray.traceNew(geom.P+0.01f*payload.out_dir, payload.out_dir);
 
