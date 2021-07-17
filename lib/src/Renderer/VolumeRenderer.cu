@@ -108,7 +108,7 @@ namespace detail
         payload->next_ray_valid = true;
     }
 
-    __device__ bool handleMediumInteraction(Ray& ray, LocalGeometry& geom, Vector3float& inc_dir)
+    __device__ bool handleMediumInteraction(Scene& scene, Ray& ray, LocalGeometry& geom, Vector3float& inc_dir)
     {
         RadiancePayload* payload = ray.payload<RadiancePayload>();
 
@@ -138,6 +138,67 @@ namespace detail
                 return true;
             }
 
+            //Direct illumination
+            uint32_t useEnvironmentMap = scene.useEnvironmentMap ? 1 : 0;
+            uint32_t light_sample = static_cast<uint32_t>(Math::rnd(payload->seed) * (scene.light_count + useEnvironmentMap));
+
+            Light light;
+            Vector3float lightDir, lightRadiance;
+            float d;
+            if(light_sample != scene.light_count)
+            {
+                light = *(scene.lights[light_sample]); 
+
+                switch(light.type)
+                {
+                    case LightType::POINT:
+                    {
+                        lightDir = Math::normalize(light.position - event_position);
+                        d = Math::norm(light.position - event_position);
+                        lightRadiance = light.intensity / (d*d);
+                    }
+                    break;
+                    case LightType::AREA:
+                    {
+                        float xi1 = Math::rnd(payload->seed) * 2.0f - 1.0f;
+                        float xi2 = Math::rnd(payload->seed) * 2.0f - 1.0f;
+
+                        Vector3float sample = light.position + xi1 * light.halfExtend1 + xi2 * light.halfExtend2;
+                        Vector3float n = Math::normalize(Math::cross(light.halfExtend1, light.halfExtend2));
+                        float area = 4.0f*Math::norm(light.halfExtend1) * Math::norm(light.halfExtend2);
+
+                        lightDir = Math::normalize(sample - event_position);
+                        d = Math::norm(sample - event_position);
+
+                        float NdotL = Math::dot(lightDir, n);
+                        if(NdotL < 0) NdotL *= -1.0f;
+
+                        float solidAngle =  area * NdotL / (d*d);
+
+                        lightRadiance = light.radiance * solidAngle;
+                    }
+                    break;
+                }
+            }
+            else // Use environment map
+            {
+                Vector4float sample = geom.material.sampleDirection(payload->seed, inc_dir, geom.N);
+                lightDir = Vector3float(sample);
+                d = INFINITY; //TODO: Better way to do this
+                Vector2uint32_t pixel = Tracing::direction2UV(lightDir, scene.environment.width(), scene.environment.height());
+                lightRadiance = scene.environment(pixel)/sample.w;
+            }
+                
+            Ray shadow_ray = Ray(event_position + 0.001f*lightDir, lightDir);
+
+            if(Tracing::traceVisibility(scene, d, shadow_ray))
+            {
+                payload->radiance += (scene.light_count+useEnvironmentMap) *
+                                      1.0f / (4.0f * 3.14159f) *
+                                      expf(-sigma_t * d) *
+                                      lightRadiance *
+                                      payload->rayweight;
+            }
 
             //Indirect Illumination
             float z = Math::rnd(payload->seed) * 2.0f - 1.0f;
@@ -158,6 +219,7 @@ namespace detail
         {
             float pdf = expf(-sigma_t * geom.depth);
             payload->rayweight = payload->rayweight * expf(-sigma_t * geom.depth) / pdf;
+            payload->next_ray_valid = true;
             return false;
         }
 
@@ -205,7 +267,7 @@ namespace detail
             }
             Vector3float inc_dir = Math::normalize(ray.origin() - geom.P);
 
-            if(!handleMediumInteraction(ray, geom, inc_dir))
+            if(!handleMediumInteraction(scene, ray, geom, inc_dir))
             {
                 directIlluminationVolumetric(scene, ray, geom, inc_dir);
                 indirectIlluminationVolumetric(ray, geom, inc_dir);
