@@ -11,20 +11,21 @@ namespace detail
         uint32_t seed;
         Vector3float radiance = 0;
         Vector3float rayweight = 1;
+        Vector3float out_dir;
+        bool next_ray_valid;
     };
 
-    __device__ void directIllumination(Scene& scene, Ray& ray, LocalGeometry& geom)
+    __device__ void directIllumination(Scene& scene, Ray& ray, LocalGeometry& geom, Vector3float& inc_dir)
     {
         //Direct illumination
         RadiancePayload* payload = ray.payload<RadiancePayload>();
 
         Vector3float normal = geom.N;
 
-        Vector3float inc_dir = Math::normalize(ray.origin() - geom.P);
-
         //Don't shade back facing geometry
         if(geom.material.type != GLASS && Math::dot(normal, inc_dir) <= 0.0f)
         {
+            payload->rayweight = 0;
             return;
         }
 
@@ -78,7 +79,7 @@ namespace detail
             lightRadiance = scene.environment(pixel)/sample.w;
         }
             
-        Ray shadow_ray = Ray(geom.P + 0.01f*lightDir, lightDir);
+        Ray shadow_ray = Ray(geom.P + 0.001f*lightDir, lightDir);
 
         if(Tracing::traceVisibility(scene, d, shadow_ray))
         {
@@ -88,6 +89,21 @@ namespace detail
                                                         lightRadiance *
                                                         payload->rayweight;
         }
+    }
+
+    __device__ void indirectIllumination(Ray& ray, LocalGeometry& geom, Vector3float& inc_dir)
+    {
+        //Indirect illumination
+        RadiancePayload* payload = ray.payload<RadiancePayload>();
+        Vector4float direction_p = geom.material.sampleDirection(payload->seed, inc_dir, geom.N);
+        Vector3float direction = Vector3float(direction_p);
+        if (Math::norm(direction) == 0)
+            return;
+        ray.payload<RadiancePayload>()->rayweight = ray.payload<RadiancePayload>()->rayweight * 
+                                                    fabs(Math::dot(direction, geom.N)) * 
+                                                    geom.material.brdf(geom.P, inc_dir, direction, geom.N)/direction_p.w;
+        payload->out_dir = direction;
+        payload->next_ray_valid = true;
     }
 
     __global__ void
@@ -118,6 +134,7 @@ namespace detail
 
         do
         {
+            payload.next_ray_valid = false;
             LocalGeometry geom = Tracing::traceRay(scene, ray);
             if(geom.depth == INFINITY)
             {
@@ -130,18 +147,12 @@ namespace detail
             }
             Vector3float inc_dir = Math::normalize(ray.origin() - geom.P);
 
-            directIllumination(scene, ray, geom);
-
-            //Indirect illumination
-            Vector4float direction_p = geom.material.sampleDirection(seed, inc_dir, geom.N);
-            Vector3float direction = Vector3float(direction_p);
-            if (Math::norm(direction) == 0)
-                break;
-            ray.payload<RadiancePayload>()->rayweight = ray.payload<RadiancePayload>()->rayweight * 
-                                                        fabs(Math::dot(direction, geom.N)) * 
-                                                        geom.material.brdf(geom.P, inc_dir, direction, geom.N)/direction_p.w;
+            directIllumination(scene, ray, geom, inc_dir);
+            indirectIllumination(ray, geom, inc_dir);
                  
-            ray.traceNew(geom.P+0.01f*direction, direction);
+            ray.traceNew(geom.P+0.01f*payload.out_dir, payload.out_dir);
+
+            if (!payload.next_ray_valid)break;
             ++trace_depth;
         }while(trace_depth < maxTraceDepth);
 
