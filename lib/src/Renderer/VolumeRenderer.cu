@@ -30,7 +30,7 @@ namespace detail
         
         float g2 = g * g;
         float d = (1.0f - g2) / (1.0f - g + 2.0f*g*u1);
-        float cos_theta = 0.5f/g * (1.0f + g2 - d*d);
+        float cos_theta = Math::clamp(0.5f/g * (1.0f + g2 - d*d), -1.0f, 1.0f);
 
         float sin_theta = sqrtf(fmaxf(0.0f, 1.0f-cos_theta*cos_theta));
         float phi = 2.0f * 3.14159f * u2;
