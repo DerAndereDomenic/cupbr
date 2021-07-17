@@ -11,6 +11,7 @@ namespace detail
         uint32_t seed;
         Vector3float radiance = 0;
         Vector3float rayweight = 1;
+        Vector3float ray_start;
         Vector3float out_dir;
         bool next_ray_valid;
     };
@@ -103,7 +104,40 @@ namespace detail
                                                     fabs(Math::dot(direction, geom.N)) * 
                                                     geom.material.brdf(geom.P, inc_dir, direction, geom.N)/direction_p.w;
         payload->out_dir = direction;
+        payload->ray_start = geom.P;
         payload->next_ray_valid = true;
+    }
+
+    __device__ bool handleMediumInteraction(Ray& ray, LocalGeometry& geom, Vector3float& inc_dir)
+    {
+        RadiancePayload* payload = ray.payload<RadiancePayload>();
+
+        float sigma_a = 0.01f;
+        float sigma_s = 0.01f;
+        float sigma_t = sigma_a + sigma_s;
+
+        float t = -1.0f/sigma_t * logf(1-Math::rnd(payload->seed));
+
+        if(t <= geom.depth)
+        {
+            Vector3float event_position = ray.origin() + t*ray.direction();
+
+            float z = Math::rnd(payload->seed) * 2.0f - 1.0f;
+            float phi = Math::rnd(payload->seed)* 2.0f * 3.14159f;
+
+            float r = sqrtf(fmaxf(0.0f, 1.0f - z*z));
+            float x = r*cosf(phi);
+            float y = r*sinf(phi);
+
+            payload->out_dir = Vector3float(x,y,z);
+            payload->ray_start = event_position;
+            payload->rayweight *= 4.0f * 3.14159f;
+
+            payload->next_ray_valid = true;
+            return true;
+        }
+
+        return false;
     }
 
     __global__ void
@@ -147,10 +181,13 @@ namespace detail
             }
             Vector3float inc_dir = Math::normalize(ray.origin() - geom.P);
 
-            directIlluminationVolumetric(scene, ray, geom, inc_dir);
-            indirectIlluminationVolumetric(ray, geom, inc_dir);
+            if(!handleMediumInteraction(ray, geom, inc_dir))
+            {
+                directIlluminationVolumetric(scene, ray, geom, inc_dir);
+                indirectIlluminationVolumetric(ray, geom, inc_dir);
+            }
                  
-            ray.traceNew(geom.P+0.01f*payload.out_dir, payload.out_dir);
+            ray.traceNew(payload.ray_start+0.01f*payload.out_dir, payload.out_dir);
 
             if (!payload.next_ray_valid)break;
             ++trace_depth;
