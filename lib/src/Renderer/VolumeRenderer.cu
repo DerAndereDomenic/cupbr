@@ -116,7 +116,7 @@ namespace detail
         {
             payload->radiance += (scene.light_count+useEnvironmentMap) *
                                                         fmaxf(0.0f, Math::dot(normal,lightDir)) *
-                                                        expf(-1.1f * d) *
+                                                        expf(-(scene.volume.sigma_s + scene.volume.sigma_a) * d) *
                                                         geom.material.brdf(geom.P,inc_dir,lightDir,normal) *
                                                         lightRadiance *
                                                         payload->rayweight;
@@ -143,9 +143,9 @@ namespace detail
     {
         RadiancePayload* payload = ray.payload<RadiancePayload>();
 
-        float g = 0.0f;
-        float sigma_a = 0.1f;
-        float sigma_s = 1.0f;
+        float g = scene.volume.g;
+        float sigma_a = scene.volume.sigma_a;
+        float sigma_s = scene.volume.sigma_s;
         float sigma_t = sigma_a + sigma_s;
 
         float t = -1.0f/sigma_t * logf(Math::rnd(payload->seed));

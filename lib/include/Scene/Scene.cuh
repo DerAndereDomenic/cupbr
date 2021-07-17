@@ -13,7 +13,7 @@ struct Volume
     float sigma_s = 1.0f;      /**< The scattering coefficient */
     float sigma_a = 1.0f;      /**< The absorbtion coefficient */
     float g = 0.0f;            /**< The phase function parameter */
-}
+};
 
 /**
 *   @brief Struct to model a scene
