@@ -1,47 +1,57 @@
 <header>
-    <scene_size>9</scene_size>
+    <scene_size>11</scene_size>
     <light_count>1</light_count>
 </header>
 
 <geometry>
     <geometry1>
-        <type>PLANE</type>
-        <position>0,-1,0</position>
+        <type>QUAD</type>
+        <position>0,-1,2</position>
         <normal>0,1,0</normal>
+        <extend1>1,0,0</extend1>
+        <extend2>0,0,1</extend2>
         <material>
             <type>LAMBERT</type>
         </material>
     </geometry1>
     <geometry2>
-        <type>PLANE</type>
-        <position>0,1,0</position>
+        <type>QUAD</type>
+        <position>-0.75,1,2</position>
         <normal>0,-1,0</normal>
+        <extend1>0.25,0,0</extend1>
+        <extend2>0,0,1</extend2>
         <material>
             <type>LAMBERT</type>
         </material>
     </geometry2>
     <geometry3>
-        <type>PLANE</type>
-        <position>-1,0,0</position>
+        <type>QUAD</type>
+        <position>-1,0,2</position>
         <normal>1,0,0</normal>
+        <extend1>0,0,1</extend1>
+        <extend2>0,1,0</extend2>
         <material>
             <type>LAMBERT</type>
             <albedo_d>0,1,0</albedo_d>
         </material>
     </geometry3>
     <geometry4>
-        <type>PLANE</type>
-        <position>1,0,0</position>
+        <type>QUAD</type>
+        <position>1,0,2</position>
         <normal>-1,0,0</normal>
+        <extend1>0,1,0</extend1>
+        <extend2>0,0,1</extend2>
         <material>
             <type>LAMBERT</type>
             <albedo_d>1,0,0</albedo_d>
         </material>
     </geometry4>
     <geometry5>
-        <type>PLANE</type>
+        <type>QUAD</type>
         <position>0,0,3</position>
         <normal>0,0,-1</normal>
+        <extend1>1,0,0</extend1>
+        <extend2>0,1,0</extend2>
         <material>
             <type>LAMBERT</type>
         </material>
@@ -83,13 +93,33 @@
             <albedo_d>1,1,1</albedo_d>
         </material>
     </geometry9>
+    <geometry10>
+        <type>QUAD</type>
+        <position>0.75,1,2</position>
+        <normal>0,-1,0</normal>
+        <extend1>0.25,0,0</extend1>
+        <extend2>0,0,1</extend2>
+        <material>
+            <type>LAMBERT</type>
+        </material>
+    </geometry10>
+    <geometry11>
+        <type>QUAD</type>
+        <position>0,1,2</position>
+        <normal>0,-1,0</normal>
+        <extend1>0.25,0,0</extend1>
+        <extend2>0,0,1</extend2>
+        <material>
+            <type>LAMBERT</type>
+        </material>
+    </geometry11>
 </geometry>
 
 <lights>
     <light1>
         <type>POINT</type>
-        <position>0,0.9,2</position>
-        <intensity>10,10,10</intensity>
+        <position>0,2,2</position>
+        <intensity>150,150,150</intensity>
     </light1>
 </lights>
 
