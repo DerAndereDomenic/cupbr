@@ -10,9 +10,9 @@
 */
 struct Volume
 {
-    float sigma_s;      /**< The scattering coefficient */
-    float sigma_a;      /**< The absorbtion coefficient */
-    float g;            /**< The phase function parameter */
+    float sigma_s = 1.0f;      /**< The scattering coefficient */
+    float sigma_a = 1.0f;      /**< The absorbtion coefficient */
+    float g = 0.0f;            /**< The phase function parameter */
 }
 
 /**
