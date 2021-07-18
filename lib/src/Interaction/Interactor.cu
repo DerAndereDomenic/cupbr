@@ -14,7 +14,7 @@ class Interactor::Impl
         int32_t width;
         int32_t height;
 
-        Scene scene;
+        Scene* scene;
         Camera camera;
 
         Material* device_material;
@@ -65,7 +65,7 @@ Interactor::registerWindow(GLFWwindow* window)
 }
 
 void
-Interactor::registerScene(Scene& scene)
+Interactor::registerScene(Scene* scene)
 {
     impl->scene = scene;
 
@@ -117,7 +117,7 @@ Interactor::handleInteraction()
                                    y,
                                    impl->width,
                                    impl->height,
-                                   impl->scene,
+                                   *(impl->scene),
                                    impl->camera,
                                    impl->device_material,
                                    impl->scene_index);
@@ -151,6 +151,10 @@ Interactor::handleInteraction()
             else if(ImGui::MenuItem("Ray Tracing"))
             {
                 impl->method = RAYTRACER;
+            }
+            else if(ImGui::MenuItem("Volume Rendering"))
+            {
+                impl->method = VOLUME;
             }
                 
             ImGui::EndMenu();
@@ -247,12 +251,30 @@ Interactor::handleInteraction()
             impl->material_update = true;
         }
 
+        ImGui::Separator();
+        ImGui::Text("Volume:");
+
+        if(ImGui::SliderFloat("Sigma_a", &(impl->scene->volume.sigma_a), 0.0f, 1.0f))
+        {
+            impl->material_update = true;
+        }
+
+        if(ImGui::SliderFloat("Sigma_s", &(impl->scene->volume.sigma_s), 0.0f, 1.0f))
+        {
+            impl->material_update = true;
+        }
+
+        if(ImGui::SliderFloat("g", &(impl->scene->volume.g), -1.0f, 1.0f))
+        {
+            impl->material_update = true;
+        }
+
         ImGui::End();
         
         if(impl->material_update)
         {
             Memory::allocator()->copyHost2DeviceObject(impl->host_material, impl->device_material);
-            Interaction::updateMaterial(impl->scene, impl->scene_index, impl->device_material);
+            Interaction::updateMaterial(*(impl->scene), impl->scene_index, impl->device_material);
         }
     }
     

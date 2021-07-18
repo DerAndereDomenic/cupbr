@@ -76,7 +76,7 @@ int run(int argc, char* argv[])
     Interactor interactor(pbrenderer.getMethod());
     interactor.registerWindow(window);
     interactor.registerCamera(camera);
-    interactor.registerScene(scene);
+    interactor.registerScene(&scene);
 
     float time = 0.0f;
     uint32_t frame_counter = 0;

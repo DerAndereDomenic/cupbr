@@ -40,7 +40,7 @@ class Interactor
         *   @param[in] scene The scene
         */
         void
-        registerScene(Scene& scene);
+        registerScene(Scene* scene);
 
         /** 
         *   @brief Add the camera
