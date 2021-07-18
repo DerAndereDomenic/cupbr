@@ -42,7 +42,7 @@ int run(int argc, char* argv[])
 
     PBRenderer pbrenderer(VOLUME);
     pbrenderer.setOutputSize(width, height);
-    pbrenderer.registerScene(scene);
+    pbrenderer.registerScene(&scene);
 
     KernelSizeHelper::KernelSize config = KernelSizeHelper::configure(pbrenderer.getOutputImage()->size());
     ToneMapper mapper(REINHARD);

@@ -36,7 +36,7 @@ class PBRenderer::Impl
         Image<Vector3float> base;
         Image<Vector3float> temp;
 
-        Scene scene;
+        Scene* scene;
         uint32_t frameIndex;
         uint32_t maxTraceDepth;
 
@@ -90,7 +90,7 @@ PBRenderer::setOutputSize(const uint32_t& width, const uint32_t& height)
 }
 
 void
-PBRenderer::registerScene(Scene& scene)
+PBRenderer::registerScene(Scene* scene)
 {
     impl->scene = scene;
     impl->sceneRegistered = true;
@@ -130,7 +130,7 @@ PBRenderer::render(const Camera& camera)
     {
         case RAYTRACER:
         {
-            PBRendering::raytracing(impl->scene,
+            PBRendering::raytracing(*(impl->scene),
                                     camera,
                                     &impl->hdr_image);
         }
@@ -152,7 +152,7 @@ PBRenderer::render(const Camera& camera)
             {
                 impl->frameIndex = 0;
             }
-            PBRendering::pathtracing(impl->scene,
+            PBRendering::pathtracing(*(impl->scene),
                                      camera,
                                      impl->frameIndex,
                                      impl->maxTraceDepth,
@@ -171,7 +171,7 @@ PBRenderer::render(const Camera& camera)
             {
                 impl->frameIndex = 0;
             }
-            PBRendering::gradientdomain(impl->scene,
+            PBRendering::gradientdomain(*(impl->scene),
                                         camera,
                                         impl->frameIndex,
                                         impl->maxTraceDepth,
@@ -189,7 +189,7 @@ PBRenderer::render(const Camera& camera)
             {
                 impl->frameIndex = 0;
             }
-            PBRendering::volumetracing(impl->scene,
+            PBRendering::volumetracing(*(impl->scene),
                                        camera,
                                        impl->frameIndex,
                                        impl->maxTraceDepth,
