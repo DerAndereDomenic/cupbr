@@ -15,6 +15,14 @@ namespace detail
         bool next_ray_valid;
     };
 
+    inline __device__
+    void emissiveIllumintation(Ray& ray, LocalGeometry& geom)
+    {
+        RadiancePayload* payload = ray.payload<RadiancePayload>();
+
+        payload->radiance += payload->rayweight * geom.material.albedo_e;
+    }
+
     inline __device__ 
     void directIllumination(Scene& scene, Ray& ray, LocalGeometry& geom, Vector3float& inc_dir)
     {
@@ -149,6 +157,7 @@ namespace detail
             }
             Vector3float inc_dir = Math::normalize(ray.origin() - geom.P);
 
+            emissiveIllumintation(ray, geom);
             directIllumination(scene, ray, geom, inc_dir);
             indirectIllumination(ray, geom, inc_dir);
                  
