@@ -40,7 +40,7 @@ int run(int argc, char* argv[])
         scene = SceneLoader::loadFromFile(argv[1]);
     }
 
-    PBRenderer pbrenderer(VOLUME);
+    PBRenderer pbrenderer(PATHTRACER);
     pbrenderer.setOutputSize(width, height);
     pbrenderer.registerScene(&scene);
 
