@@ -233,11 +233,19 @@ Interactor::handleInteraction()
             impl->material_update = true;
         }
 
+        Vector3float e = impl->host_material->albedo_e;
         Vector3float d = impl->host_material->albedo_d;
         Vector3float s = impl->host_material->albedo_s;
 
+        float emissive[] = { e.x, e.y, e.z };
         float diffuse[] = {d.x, d.y, d.z};
         float specular[] = {s.x, s.y, s.z};
+
+        if(ImGui::ColorEdit3("Albedo emissive", emissive))
+        {
+            impl->host_material->albedo_e = Vector3float(emissive[0], emissive[1], emissive[2]);
+            impl->material_update = true;
+        }
 
         if(ImGui::ColorEdit3("Albedo diffuse", diffuse))
         {
