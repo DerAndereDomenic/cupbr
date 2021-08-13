@@ -21,6 +21,7 @@ namespace detail
         if(geom.depth != INFINITY)
         {
             material->type = geom.material.type;
+            material->albedo_e = geom.material.albedo_e;
             material->albedo_d = geom.material.albedo_d;
             material->albedo_s = geom.material.albedo_s;
             material->shininess = geom.material.shininess;
@@ -36,6 +37,7 @@ namespace detail
     {
         Geometry* element = scene[*scene_index];
         element->material.type = newMaterial->type;
+        element->material.albedo_e = newMaterial->albedo_e;
         element->material.albedo_d = newMaterial->albedo_d;
         element->material.albedo_s = newMaterial->albedo_s;
         element->material.shininess = newMaterial->shininess;
