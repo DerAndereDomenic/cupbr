@@ -63,11 +63,17 @@ namespace detail
         }
 
         //Load material properties
+        tinyxml2::XMLElement* albedo_e_string = material_ptr->FirstChildElement("albedo_e");
         tinyxml2::XMLElement* albedo_d_string = material_ptr->FirstChildElement("albedo_d");
         tinyxml2::XMLElement* albedo_s_string = material_ptr->FirstChildElement("albedo_s");
         tinyxml2::XMLElement* shininess_string = material_ptr->FirstChildElement("shininess");
         tinyxml2::XMLElement* roughness_string = material_ptr->FirstChildElement("roughness");
         tinyxml2::XMLElement* eta_string = material_ptr->FirstChildElement("eta");
+
+        if(albedo_e_string != NULL)
+        {
+            material.albedo_e = string2vector(albedo_e_string->GetText());
+        }
 
         if(albedo_d_string != NULL)
         {
