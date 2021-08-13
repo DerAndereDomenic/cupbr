@@ -15,7 +15,8 @@ namespace detail
         bool next_ray_valid;
     };
 
-    __device__ void directIllumination(Scene& scene, Ray& ray, LocalGeometry& geom, Vector3float& inc_dir)
+    inline __device__ 
+    void directIllumination(Scene& scene, Ray& ray, LocalGeometry& geom, Vector3float& inc_dir)
     {
         //Direct illumination
         RadiancePayload* payload = ray.payload<RadiancePayload>();
@@ -91,7 +92,8 @@ namespace detail
         }
     }
 
-    __device__ void indirectIllumination(Ray& ray, LocalGeometry& geom, Vector3float& inc_dir)
+    inline __device__ 
+    void indirectIllumination(Ray& ray, LocalGeometry& geom, Vector3float& inc_dir)
     {
         //Indirect illumination
         RadiancePayload* payload = ray.payload<RadiancePayload>();
