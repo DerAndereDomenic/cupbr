@@ -41,6 +41,7 @@ PostProcessor::Impl::buildHierarchyBuffers()
 		height /= 2;
 	}
 
+	hdr_image->copyDevice2DeviceObject(host_pyramid[0]);
 	Memory::allocator()->copyHost2DeviceArray<Image<Vector3float>>(pyramid_depth, host_pyramid, pyramid);
 	Memory::allocator()->destroyHostArray<Image<Vector3float>>(host_pyramid);
 }
