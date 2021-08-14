@@ -14,7 +14,9 @@ add_subdirectory(external/tinyxml2)
 
 file (GLOB_RECURSE source_files LIST_DIRECTORIES false "src/*.c*"
                                                        "lib/include/*/*.c*"
-                                                       "lib/src/*/*.c*")
+                                                       "lib/src/*/*.c*"
+													   "lib/include/*/*.h*"
+													   "lib/src/*/*.h*")
 
 set(source_files "${source_files}" "external/glad/src/glad.c"
                                    "external/imgui/imgui.cpp"
