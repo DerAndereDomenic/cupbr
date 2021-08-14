@@ -1,4 +1,5 @@
 #include <PostProcessing/PostProcessor.h>
+#include <PostProcessing/Convolution.cuh>
 
 class PostProcessor::Impl
 {
@@ -51,4 +52,10 @@ Image<Vector3float>*
 PostProcessor::getPostProcessBuffer()
 {
 	return &(impl->output);
+}
+
+void
+PostProcessor::filter(Image<Vector3float>& kernel)
+{
+	PostProcessing::convolve(*(impl->hdr_image), kernel, &(impl->output));
 }

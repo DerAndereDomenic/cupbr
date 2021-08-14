@@ -33,6 +33,13 @@ class PostProcessor
 		*/
 		Image<Vector3float>*
 		getPostProcessBuffer();
+
+		/**
+		*	@brief Filter the image using convolution
+		*	@param[in] kernel The image kernel
+		*/
+		void
+		filter(Image<Vector3float>& kernel);
 	private:
 		class Impl;
 		std::unique_ptr<Impl> impl;		/**< The implementation pointer */
