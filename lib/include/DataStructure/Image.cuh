@@ -24,6 +24,15 @@ public:
     */
     static
     Image createHostObject(const uint32_t width, const uint32_t height);
+
+    /**
+    *   @brief Create a host image with the specified data
+    *   @param[in] data The data (host)
+    *   @param[in] width The image width
+    *   @param[in] height The image height
+    */
+    static
+    Image createHostObject(T* data, const uint32_t width, const uint32_t height);
     
     /**
     *   @brief Create a device image
@@ -33,6 +42,15 @@ public:
     */
     static
     Image createDeviceObject(const uint32_t width, const uint32_t height);
+
+    /**
+    *   @brief Create a device image with the specified data
+    *   @param[in] data The data (host)
+    *   @param[in] width The image width
+    *   @param[in] height The image height
+    */
+    static
+    Image createDeviceObject(T* data, const uint32_t width, const uint32_t height);
     
     /**
     *   @brief Destroys a host image

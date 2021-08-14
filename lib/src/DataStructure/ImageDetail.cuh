@@ -29,6 +29,34 @@ Image<T>::createDeviceObject(const uint32_t width, const uint32_t height)
     
     return result;
 }
+
+template<typename T>
+Image<T>
+Image<T>::createHostObject(T* data, const uint32_t width, const uint32_t height)
+{
+    Image<T> result;
+    result._data = Memory::allocator()->createHostArray<T>(width*height);
+    Memory::allocator()->copyHost2HostArray<T>(width * height, data, result._data);
+    result._width = width;
+    result._height = height;
+    result._size = width*height;
+
+    return result;
+}
+    
+template<typename T>
+Image<T>
+Image<T>::createDeviceObject(T* data, const uint32_t width, const uint32_t height)
+{
+    Image<T> result;
+    result._data = Memory::allocator()->createDeviceArray<T>(width*height);
+    Memory::allocator()->copyHost2DeviceArray<T>(width * height, data, result._data);
+    result._width = width;
+    result._height = height;
+    result._size = width*height;
+    
+    return result;
+}
     
 template<typename T>
 void 
