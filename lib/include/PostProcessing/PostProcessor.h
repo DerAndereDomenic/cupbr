@@ -40,6 +40,12 @@ class PostProcessor
 		*/
 		void
 		filter(Image<Vector3float>& kernel);
+
+		/**
+		*	@brief Apply a bloom effect
+		*/
+		void
+		bloom();
 	private:
 		class Impl;
 		std::unique_ptr<Impl> impl;		/**< The implementation pointer */
