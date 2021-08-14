@@ -21,6 +21,8 @@
 
 #include <Interaction/Interactor.cuh>
 
+#include <PostProcessing/PostProcessor.h>
+
 int run(int argc, char* argv[])
 {
     bool edit = true;
@@ -44,7 +46,18 @@ int run(int argc, char* argv[])
     pbrenderer.setOutputSize(width, height);
     pbrenderer.registerScene(&scene);
 
-    KernelSizeHelper::KernelSize config = KernelSizeHelper::configure(pbrenderer.getOutputImage()->size());
+    PostProcessor postprocessor;
+    postprocessor.registerImage(pbrenderer.getOutputImage());
+
+    Vector3float kernel_data[9] =
+    {
+        Vector3float(1.0),Vector3float(2.0),Vector3float(1.0),
+        Vector3float(0),Vector3float(0),Vector3float(0),
+        Vector3float(-1.0),Vector3float(-2.0),Vector3float(-1.0),
+    };
+
+    Image<Vector3float> kernel = Image<Vector3float>::createDeviceObject(kernel_data, 3, 3);
+
     ToneMapper mapper(REINHARD);
     mapper.registerImage(pbrenderer.getOutputImage());
 
@@ -118,6 +131,8 @@ int run(int argc, char* argv[])
 
         pbrenderer.render(camera);
 
+        //postprocessor.filter(kernel);
+
         mapper.toneMap();
         renderer.renderTexture(mapper.getRenderBuffer());
         
@@ -179,6 +194,8 @@ int run(int argc, char* argv[])
     SceneLoader::destroyScene(scene);
 
     mapper.saveToFile("bin/output.bmp");
+
+    Image<Vector3float>::destroyDeviceObject(kernel);
 
     printf("Rendered Frames: %i\n", frame_counter);
     return 0;
