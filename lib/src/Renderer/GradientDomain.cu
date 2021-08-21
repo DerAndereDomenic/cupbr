@@ -186,7 +186,11 @@ namespace detail
                 Camera camera,
                 const uint32_t frameIndex,
                 const uint32_t maxTraceDepth,
-                Image<Vector3float> img)
+                Image<Vector3float> img,
+                Image<Vector3float> gX_forward,
+                Image<Vector3float> gX_backward,
+                Image<Vector3float> gY_forward,
+                Image<Vector3float> gY_backward)
     {
         const uint32_t tid = ThreadHelper::globalThreadIndex();
 
@@ -239,14 +243,26 @@ namespace detail
         collect_radiance(down_ray, scene, camera, maxTraceDepth);
 
         Vector3float radiance = payload_base.radiance;
+        Vector3float gradient_x_forward = 0.5f * (radiance - payload_left.radiance);
+        Vector3float gradient_x_backward = 0.5f * (payload_right.radiance - radiance);
+        Vector3float gradient_y_forward = 0.5f * (radiance - payload_down.radiance);
+        Vector3float gradient_y_backward = 0.5f * (payload_up.radiance - radiance);
 
         if(frameIndex > 0)
         {
             const float a = 1.0f/(static_cast<float>(frameIndex) + 1.0f);
             radiance = (1.0f-a)*img[tid] + a*radiance;
+            gradient_x_forward = (1.0f - a) * gX_forward[tid] + a * gradient_x_forward;
+            gradient_x_backward = (1.0f - a) * gX_backward[tid] + a * gradient_x_backward;
+            gradient_y_forward = (1.0f - a) * gY_forward[tid] + a * gradient_y_forward;
+            gradient_y_backward = (1.0f - a) * gY_backward[tid] + a * gradient_y_backward;
         }
 
         img[tid] = radiance;
+        gX_forward[tid] = gradient_x_forward;
+        gX_backward[tid] = gradient_x_backward;
+        gY_forward[tid] = gradient_y_forward;
+        gY_backward[tid] = gradient_y_backward;
     }
 }
 
@@ -262,10 +278,14 @@ PBRendering::gradientdomain(Scene& scene,
                             Image<Vector3float>* output_img)
 {
     const KernelSizeHelper::KernelSize config = KernelSizeHelper::configure(output_img->size());
-    detail::gdpt_kernel<<<config.blocks, config.threads>>>(scene, 
-                                                           camera,
-                                                           frameIndex,
-                                                           maxTraceDepth,
-                                                           *output_img);
+    detail::gdpt_kernel << <config.blocks, config.threads >> > (scene,
+                                                                camera,
+                                                                frameIndex,
+                                                                maxTraceDepth,
+                                                                *output_img,
+                                                                *gradient_x_forward,
+                                                                *gradient_x_backward,
+                                                                *gradient_y_forward,
+                                                                *gradient_y_backward);
     cudaSafeCall(cudaDeviceSynchronize());
 }
