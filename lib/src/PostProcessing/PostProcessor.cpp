@@ -128,4 +128,7 @@ PostProcessor::bloom()
 	impl->hdr_image->copyDevice2DeviceObject(impl->host_pyramid_down[0]);
 	PostProcessing::radiance_threshold(impl->host_pyramid_down, impl->threshold);
 	PostProcessing::construct_pyramid(impl->pyramid_down, impl->host_pyramid_down, impl->pyramid_depth);
+
+	//Copy last downsampled image to upscaling pyramid
+	impl->host_pyramid_down[impl->pyramid_depth - 1].copyDevice2DeviceObject(impl->host_pyramid_up[impl->pyramid_depth - 1]);
 }
