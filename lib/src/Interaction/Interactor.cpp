@@ -320,3 +320,9 @@ Interactor::getExposure()
 {
     return impl->exposure;
 }
+
+bool
+Interactor::usePostProcessing()
+{
+    return impl->post_processing;
+}

@@ -81,6 +81,13 @@ class Interactor
         */
         float
         getExposure();
+
+        /**
+        *   @brief If post processing should be used
+        *   @return True if bloom should be activated
+        */
+        bool
+        usePostProcessing();
     private:
         class Impl;
         std::unique_ptr<Impl> impl;     /**< Implementation pointer */
