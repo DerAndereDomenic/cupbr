@@ -150,7 +150,7 @@ int run(int argc, char* argv[])
 
         //postprocessor.filter(kernel);
         if(interactor.usePostProcessing())
-            postprocessor.bloom();
+            postprocessor.bloom(interactor.getThreshold());
 
         mapper.toneMap();
         renderer.renderTexture(mapper.getRenderBuffer());

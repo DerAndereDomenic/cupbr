@@ -23,9 +23,6 @@ class PostProcessor::Impl
 		Image<Vector3float>* pyramid_up;
 		Image<Vector3float>* host_pyramid_up;
 
-		float knee = 0.25f;
-		Vector4float threshold = Vector4float(1.0f, 1.0f - knee, knee*2.0f, 0.25f/knee);
-
 		bool isRegistered;
 };
 
@@ -124,10 +121,10 @@ PostProcessor::filter(Image<Vector3float>& kernel)
 }
 
 void
-PostProcessor::bloom()
+PostProcessor::bloom(const Vector4float& threshold)
 {
 	impl->hdr_image->copyDevice2DeviceObject(impl->host_pyramid_down[0]);
-	PostProcessing::radiance_threshold(impl->host_pyramid_down, impl->threshold);
+	PostProcessing::radiance_threshold(impl->host_pyramid_down, threshold);
 	PostProcessing::construct_pyramid(impl->pyramid_down, impl->host_pyramid_down, impl->pyramid_depth);
 
 	//Copy last downsampled image to upscaling pyramid

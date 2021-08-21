@@ -43,9 +43,10 @@ class PostProcessor
 
 		/**
 		*	@brief Apply a bloom effect
+		*	@param[in] threshold The quadratic threshold curve (threshold, knee - threshold, 2*knee, 0.25/knee)
 		*/
 		void
-		bloom();
+		bloom(const Vector4float& threshold);
 	private:
 		class Impl;
 		std::unique_ptr<Impl> impl;		/**< The implementation pointer */
