@@ -169,7 +169,11 @@ namespace detail
             return;
         }
 
-        const Vector2uint32_t pixel = ThreadHelper::index2pixel(tid, img.width(), img.height());
+        const Vector2int32_t pixel = ThreadHelper::index2pixel(tid, img.width(), img.height());
+        if(pixel.x == 0 || pixel.x == img.width() - 1 || pixel.y == 0 || pixel.y == img.height() - 1)
+        {
+            return;
+        }
 
         uint32_t seed = Math::tea<4>(tid, frameIndex);
 
@@ -178,15 +182,41 @@ namespace detail
         payload_base.seed = seed;
         base_ray.setPayload(&payload_base);
 
+        Ray left_ray = Tracing::launchRay(pixel + Vector2int32_t(-1,0), img.width(), img.height(), camera, true, &seed);
+        RadiancePayload payload_left;
+        payload_left.seed = seed;
+        left_ray.setPayload(&payload_left);
+
+        Ray right_ray = Tracing::launchRay(pixel + Vector2int32_t(1,0), img.width(), img.height(), camera, true, &seed);
+        RadiancePayload payload_right;
+        payload_right.seed = seed;
+        right_ray.setPayload(&payload_right);
+
+        Ray up_ray = Tracing::launchRay(pixel + Vector2int32_t(0,1), img.width(), img.height(), camera, true, &seed);
+        RadiancePayload payload_up;
+        payload_up.seed = seed;
+        up_ray.setPayload(&payload_up);
+
+        Ray down_ray = Tracing::launchRay(pixel + Vector2int32_t(0,-1), img.width(), img.height(), camera, true, &seed);
+        RadiancePayload payload_down;
+        payload_down.seed = seed;
+        down_ray.setPayload(&payload_down);
+
         collect_radiance(base_ray, scene, camera, maxTraceDepth);
+        collect_radiance(left_ray, scene, camera, maxTraceDepth);
+        collect_radiance(right_ray, scene, camera, maxTraceDepth);
+        collect_radiance(up_ray, scene, camera, maxTraceDepth);
+        collect_radiance(down_ray, scene, camera, maxTraceDepth);
+
+        Vector3float radiance = payload_base.radiance;
 
         if(frameIndex > 0)
         {
             const float a = 1.0f/(static_cast<float>(frameIndex) + 1.0f);
-            payload_base.radiance = (1.0f-a)*img[tid] + a*payload_base.radiance;
+            radiance = (1.0f-a)*img[tid] + a*radiance;
         }
 
-        img[tid] = payload_base.radiance;
+        img[tid] = radiance;
     }
 }
 
