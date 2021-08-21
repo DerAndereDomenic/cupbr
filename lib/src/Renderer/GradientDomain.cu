@@ -211,21 +211,25 @@ namespace detail
         Ray left_ray = Tracing::launchRay(pixel + Vector2int32_t(-1,0), img.width(), img.height(), camera, true, &seed);
         RadiancePayload payload_left;
         payload_left.seed = seed;
+        payload_left.base_path = payload_base.path;
         left_ray.setPayload(&payload_left);
 
         Ray right_ray = Tracing::launchRay(pixel + Vector2int32_t(1,0), img.width(), img.height(), camera, true, &seed);
         RadiancePayload payload_right;
         payload_right.seed = seed;
+        payload_right.base_path = payload_base.path;
         right_ray.setPayload(&payload_right);
 
         Ray up_ray = Tracing::launchRay(pixel + Vector2int32_t(0,1), img.width(), img.height(), camera, true, &seed);
         RadiancePayload payload_up;
         payload_up.seed = seed;
+        payload_up.base_path = payload_base.path;
         up_ray.setPayload(&payload_up);
 
         Ray down_ray = Tracing::launchRay(pixel + Vector2int32_t(0,-1), img.width(), img.height(), camera, true, &seed);
         RadiancePayload payload_down;
         payload_down.seed = seed;
+        payload_down.base_path = payload_base.path;
         down_ray.setPayload(&payload_down);
 
         collect_radiance(base_ray, scene, camera, maxTraceDepth);
