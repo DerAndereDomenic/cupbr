@@ -29,6 +29,7 @@ namespace detail
 
         PathData path[10]; //Hard code max trace depth
         PathData* base_path;
+        bool shift = false; //If this is a shift path
     };
 
     inline __device__
@@ -149,6 +150,9 @@ namespace detail
         do
         {
             payload->next_ray_valid = false;
+
+            //Return if no valid base vertex is found for reversibility
+            if (payload->shift && !payload->base_path[payload->trace_depth].valid) return;
             LocalGeometry geom = Tracing::traceRay(scene, ray);
             if(geom.depth == INFINITY)
             {
@@ -216,24 +220,28 @@ namespace detail
         RadiancePayload payload_left;
         payload_left.seed = seed;
         payload_left.base_path = payload_base.path;
+        payload_left.shift = true;
         left_ray.setPayload(&payload_left);
 
         Ray right_ray = Tracing::launchRay(pixel + Vector2int32_t(1,0), img.width(), img.height(), camera, true, &seed);
         RadiancePayload payload_right;
         payload_right.seed = seed;
         payload_right.base_path = payload_base.path;
+        payload_right.shift = true;
         right_ray.setPayload(&payload_right);
 
         Ray up_ray = Tracing::launchRay(pixel + Vector2int32_t(0,1), img.width(), img.height(), camera, true, &seed);
         RadiancePayload payload_up;
         payload_up.seed = seed;
         payload_up.base_path = payload_base.path;
+        payload_up.shift = true;
         up_ray.setPayload(&payload_up);
 
         Ray down_ray = Tracing::launchRay(pixel + Vector2int32_t(0,-1), img.width(), img.height(), camera, true, &seed);
         RadiancePayload payload_down;
         payload_down.seed = seed;
         payload_down.base_path = payload_base.path;
+        payload_down.shift = true;
         down_ray.setPayload(&payload_down);
 
         collect_radiance(base_ray, scene, camera, maxTraceDepth);
