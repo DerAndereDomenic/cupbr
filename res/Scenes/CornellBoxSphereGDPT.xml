@@ -1,0 +1,95 @@
+<header>
+    <scene_size>8</scene_size>
+    <light_count>1</light_count>
+</header>
+
+<geometry>
+    <geometry1>
+        <type>PLANE</type>
+        <position>0,-1,0</position>
+        <normal>0,1,0</normal>
+        <material>
+            <type>GGX</type>
+            <roughness>1</roughness>
+            <albedo_s>1,1,1</albedo_s>
+        </material>
+    </geometry1>
+    <geometry2>
+        <type>PLANE</type>
+        <position>0,1,0</position>
+        <normal>0,-1,0</normal>
+        <material>
+            <type>GGX</type>
+            <roughness>1</roughness>
+            <albedo_s>1,1,1</albedo_s>
+        </material>
+    </geometry2>
+    <geometry3>
+        <type>PLANE</type>
+        <position>-1,0,0</position>
+        <normal>1,0,0</normal>
+        <material>
+            <type>GGX</type>
+            <roughness>1</roughness>
+            <albedo_s>0,1,0</albedo_s>
+        </material>
+    </geometry3>
+    <geometry4>
+        <type>PLANE</type>
+        <position>1,0,0</position>
+        <normal>-1,0,0</normal>
+        <material>
+            <type>GGX</type>
+            <albedo_s>1,0,0</albedo_s>
+            <roughness>1</roughness>
+        </material>
+    </geometry4>
+    <geometry5>
+        <type>PLANE</type>
+        <position>0,0,3</position>
+        <normal>0,0,-1</normal>
+        <material>
+            <type>GGX</type>
+            <roughness>1</roughness>
+            <albedo_s>1,1,1</albedo_s>
+        </material>
+    </geometry5>
+    <geometry6>
+        <type>SPHERE</type>
+        <position>-0.65,-0.75,2.65</position>
+        <radius>0.25</radius>
+        <material>
+            <type>GGX</type>
+            <roughness>1</roughness>
+            <albedo_s>0,0,1</albedo_s>
+        </material>
+    </geometry6>
+    <geometry7>
+        <type>SPHERE</type>
+        <position>0.65,-0.75,2.65</position>
+        <radius>0.25</radius>
+        <material>
+            <type>GGX</type>
+            <roughness>1</roughness>
+            <albedo_s>1,1,1</albedo_s>
+        </material>
+    </geometry7>
+    <geometry8>
+        <type>SPHERE</type>
+        <position>0,-0.75,1.25</position>
+        <radius>0.25</radius>
+        <material>
+            <type>GGX</type>
+            <roughness>1</roughness>
+            <albedo_s>1,1,1</albedo_s>
+        </material>
+    </geometry8>
+</geometry>
+
+<lights>
+    <light1>
+        <type>POINT</type>
+        <position>0,0.9,2</position>
+        <intensity>1,1,1</intensity>
+    </light1>
+</lights>
