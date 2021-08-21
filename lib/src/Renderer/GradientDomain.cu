@@ -169,9 +169,11 @@ namespace detail
             return;
         }
 
+        const Vector2uint32_t pixel = ThreadHelper::index2pixel(tid, img.width(), img.height());
+
         uint32_t seed = Math::tea<4>(tid, frameIndex);
 
-        Ray base_ray = Tracing::launchRay(tid, img.width(), img.height(), camera, true, &seed);
+        Ray base_ray = Tracing::launchRay(pixel, img.width(), img.height(), camera, true, &seed);
         RadiancePayload payload_base;
         payload_base.seed = seed;
         base_ray.setPayload(&payload_base);
