@@ -31,6 +31,10 @@ class PBRenderer::Impl
         //Data
         RenderingMethod method;
         Image<Vector3float> hdr_image;
+        Image<Vector3float> gradient_x_forward;
+        Image<Vector3float> gradient_y_forward;
+        Image<Vector3float> gradient_x_backward;
+        Image<Vector3float> gradient_y_backward;
         Image<Vector3float> gradient_x;
         Image<Vector3float> gradient_y;
         Image<Vector3float> base;
@@ -57,6 +61,10 @@ PBRenderer::Impl::~Impl()
     Image<Vector3float>::destroyDeviceObject(hdr_image);
     Image<Vector3float>::destroyDeviceObject(gradient_x);
     Image<Vector3float>::destroyDeviceObject(gradient_y);
+    Image<Vector3float>::destroyDeviceObject(gradient_x_forward);
+    Image<Vector3float>::destroyDeviceObject(gradient_y_forward);
+    Image<Vector3float>::destroyDeviceObject(gradient_x_backward);
+    Image<Vector3float>::destroyDeviceObject(gradient_y_backward);
     Image<Vector3float>::destroyDeviceObject(base);
     Image<Vector3float>::destroyDeviceObject(temp);
 }
@@ -77,6 +85,10 @@ PBRenderer::setOutputSize(const uint32_t& width, const uint32_t& height)
         Image<Vector3float>::destroyDeviceObject(impl->hdr_image);
         Image<Vector3float>::destroyDeviceObject(impl->gradient_x);
         Image<Vector3float>::destroyDeviceObject(impl->gradient_y);
+        Image<Vector3float>::destroyDeviceObject(impl->gradient_x_forward);
+        Image<Vector3float>::destroyDeviceObject(impl->gradient_y_forward);
+        Image<Vector3float>::destroyDeviceObject(impl->gradient_x_backward);
+        Image<Vector3float>::destroyDeviceObject(impl->gradient_y_backward);
         Image<Vector3float>::destroyDeviceObject(impl->base);
         Image<Vector3float>::destroyDeviceObject(impl->temp);
     }
@@ -84,6 +96,10 @@ PBRenderer::setOutputSize(const uint32_t& width, const uint32_t& height)
     impl->hdr_image = Image<Vector3float>::createDeviceObject(width, height);
     impl->gradient_x = Image<Vector3float>::createDeviceObject(width, height);
     impl->gradient_y = Image<Vector3float>::createDeviceObject(width, height);
+    impl->gradient_x_forward = Image<Vector3float>::createDeviceObject(width, height);
+    impl->gradient_y_forward = Image<Vector3float>::createDeviceObject(width, height);
+    impl->gradient_x_backward = Image<Vector3float>::createDeviceObject(width, height);
+    impl->gradient_y_backward = Image<Vector3float>::createDeviceObject(width, height);
     impl->base = Image<Vector3float>::createDeviceObject(width, height);
     impl->temp = Image<Vector3float>::createDeviceObject(width, height);
     impl->outputSizeSet = true;
@@ -107,6 +123,10 @@ PBRenderer::setMethod(const RenderingMethod& method)
     detail::clearBuffer<<<config.blocks, config.threads>>>(impl->hdr_image);
     detail::clearBuffer<<<config.blocks, config.threads>>>(impl->gradient_x);
     detail::clearBuffer<<<config.blocks, config.threads>>>(impl->gradient_y);
+    detail::clearBuffer<<<config.blocks, config.threads>>>(impl->gradient_x_forward);
+    detail::clearBuffer<<<config.blocks, config.threads>>>(impl->gradient_y_forward);
+    detail::clearBuffer<<<config.blocks, config.threads>>>(impl->gradient_x_backward);
+    detail::clearBuffer<<<config.blocks, config.threads>>>(impl->gradient_y_backward);
     detail::clearBuffer<<<config.blocks, config.threads>>>(impl->temp);
     cudaSafeCall(cudaDeviceSynchronize());
 }
