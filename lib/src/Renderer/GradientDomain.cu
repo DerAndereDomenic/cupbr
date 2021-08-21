@@ -6,10 +6,13 @@
 
 namespace detail
 {
+    #define DIFFUSE_THRESHOLD 0.1f
+
     struct PathData
     {
         Vector3float position;
         Vector3float normal;
+        bool diffuse;
         
         float pdf;
         bool valid;
@@ -22,6 +25,7 @@ namespace detail
         Vector3float rayweight = 1;
         Vector3float out_dir;
         bool next_ray_valid;
+        uint32_t trace_depth = 0;
 
         PathData path[10]; //Hard code max trace depth
         PathData* base_path;
@@ -126,6 +130,7 @@ namespace detail
                                                     geom.material.brdf(geom.P, inc_dir, direction, geom.N)/direction_p.w;
         payload->out_dir = direction;
         payload->next_ray_valid = true;
+        payload->path[payload->trace_depth].pdf = direction_p.w;
     }
 
     __device__ void
@@ -147,6 +152,7 @@ namespace detail
             LocalGeometry geom = Tracing::traceRay(scene, ray);
             if(geom.depth == INFINITY)
             {
+                payload->path[payload->trace_depth].valid = false;
                 if(scene.useEnvironmentMap)
                 {
                     Vector2uint32_t pixel = Tracing::direction2UV(ray.direction(), scene.environment.width(), scene.environment.height());
@@ -154,6 +160,13 @@ namespace detail
                 }
                 break;
             }
+
+            //Store path data
+            payload->path[payload->trace_depth].position = geom.P;
+            payload->path[payload->trace_depth].normal = geom.N;
+            payload->path[payload->trace_depth].valid = true;
+            payload->path[payload->trace_depth].diffuse = geom.material.shininess > DIFFUSE_THRESHOLD;
+
             Vector3float inc_dir = Math::normalize(ray.origin() - geom.P);
 
             emissiveIllumintationGDPT(ray, geom);
@@ -164,6 +177,7 @@ namespace detail
 
             if (!payload->next_ray_valid)break;
             ++trace_depth;
+            ++payload->trace_depth;
         }while(trace_depth < maxTraceDepth);
     }
 
