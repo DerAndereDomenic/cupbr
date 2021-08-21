@@ -59,7 +59,7 @@ int run(int argc, char* argv[])
     Image<Vector3float> kernel = Image<Vector3float>::createDeviceObject(kernel_data, 3, 3);
 
     ToneMapper mapper(REINHARD);
-    mapper.registerImage(pbrenderer.getOutputImage());
+    mapper.registerImage(postprocessor.getPostProcessBuffer());
 
     GLFWwindow* window;
 
@@ -103,6 +103,8 @@ int run(int argc, char* argv[])
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init("#version 330");
 
+    bool post_proc = true;
+
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
     {
@@ -113,6 +115,21 @@ int run(int argc, char* argv[])
         ImGui::NewFrame();
 
         interactor.handleInteraction();
+
+        if(post_proc != interactor.usePostProcessing())
+        {
+            if(interactor.usePostProcessing())
+            {
+                mapper.registerImage(postprocessor.getPostProcessBuffer());
+            }
+            else
+            {
+                mapper.registerImage(pbrenderer.getOutputImage());
+            }
+            post_proc = interactor.usePostProcessing();
+        }
+        
+
         mapper.setExposure(interactor.getExposure());
 
         if(interactor.getRenderingMethod() != pbrenderer.getMethod() || interactor.updated())
@@ -132,6 +149,8 @@ int run(int argc, char* argv[])
         pbrenderer.render(camera);
 
         //postprocessor.filter(kernel);
+        if(interactor.usePostProcessing())
+            postprocessor.bloom();
 
         mapper.toneMap();
         renderer.renderTexture(mapper.getRenderBuffer());
