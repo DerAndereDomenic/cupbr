@@ -17,8 +17,8 @@ class PostProcessor::Impl
 
 		uint32_t pyramid_depth = 6;
 
-		Image<Vector3float>* pyramid;
-		Image<Vector3float>* host_pyramid;
+		Image<Vector3float>* pyramid_down;
+		Image<Vector3float>* host_pyramid_down;
 
 		float threshold = 1.0f;
 
@@ -33,33 +33,33 @@ PostProcessor::Impl::Impl()
 void
 PostProcessor::Impl::buildHierarchyBuffers()
 {
-	pyramid = Memory::allocator()->createDeviceArray<Image<Vector3float>>(pyramid_depth);
-	host_pyramid = Memory::allocator()->createHostArray<Image<Vector3float>>(pyramid_depth);
+	pyramid_down = Memory::allocator()->createDeviceArray<Image<Vector3float>>(pyramid_depth);
+	host_pyramid_down = Memory::allocator()->createHostArray<Image<Vector3float>>(pyramid_depth);
 	uint32_t width = hdr_image->width();
 	uint32_t height = hdr_image->height();
 
 	for(uint32_t i = 0; i < pyramid_depth; ++i)
 	{
-		host_pyramid[i] = Image<Vector3float>::createDeviceObject(width, height);
+		host_pyramid_down[i] = Image<Vector3float>::createDeviceObject(width, height);
 		width /= 2;
 		height /= 2;
 	}
 
-	hdr_image->copyDevice2DeviceObject(host_pyramid[0]);
-	Memory::allocator()->copyHost2DeviceArray<Image<Vector3float>>(pyramid_depth, host_pyramid, pyramid);
+	hdr_image->copyDevice2DeviceObject(host_pyramid_down[0]);
+	Memory::allocator()->copyHost2DeviceArray<Image<Vector3float>>(pyramid_depth, host_pyramid_down, pyramid_down);
 }
 
 void
 PostProcessor::Impl::destroyHierarchyBuffers()
 {
-	Memory::allocator()->copyDevice2HostArray<Image<Vector3float>>(pyramid_depth, pyramid, host_pyramid);
+	Memory::allocator()->copyDevice2HostArray<Image<Vector3float>>(pyramid_depth, pyramid_down, host_pyramid_down);
 
 	for(uint32_t i = 0; i < pyramid_depth; ++i)
 	{
-		Image<Vector3float>::destroyDeviceObject(host_pyramid[i]);
+		Image<Vector3float>::destroyDeviceObject(host_pyramid_down[i]);
 	}
-	Memory::allocator()->destroyDeviceArray<Image<Vector3float>>(pyramid);
-	Memory::allocator()->destroyHostArray<Image<Vector3float>>(host_pyramid);
+	Memory::allocator()->destroyDeviceArray<Image<Vector3float>>(pyramid_down);
+	Memory::allocator()->destroyHostArray<Image<Vector3float>>(host_pyramid_down);
 }
 
 PostProcessor::Impl::~Impl()
@@ -99,7 +99,7 @@ PostProcessor::registerImage(Image<Vector3float>* hdr_image)
 Image<Vector3float>*
 PostProcessor::getPostProcessBuffer()
 {
-	return &(impl->output);
+	return impl->host_pyramid_down;// &(impl->output);
 }
 
 void
@@ -111,7 +111,7 @@ PostProcessor::filter(Image<Vector3float>& kernel)
 void
 PostProcessor::bloom()
 {
-	impl->hdr_image->copyDevice2DeviceObject(impl->host_pyramid[0]);
-	PostProcessing::radiance_threshold(impl->host_pyramid, impl->threshold);
-	PostProcessing::construct_pyramid(impl->pyramid, impl->host_pyramid, impl->pyramid_depth);
+	impl->hdr_image->copyDevice2DeviceObject(impl->host_pyramid_down[0]);
+	PostProcessing::radiance_threshold(impl->host_pyramid_down, impl->threshold);
+	PostProcessing::construct_pyramid(impl->pyramid_down, impl->host_pyramid_down, impl->pyramid_depth);
 }
