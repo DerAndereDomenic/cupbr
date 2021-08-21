@@ -264,6 +264,33 @@ namespace detail
         gY_forward[tid] = gradient_y_forward;
         gY_backward[tid] = gradient_y_backward;
     }
+
+    __global__ void
+    init_kernel(Image<Vector3float> reconstruction,
+                Image<Vector3float> base,
+                Image<Vector3float> gradient_x_forward,
+                Image<Vector3float> gradient_x_backward,
+                Image<Vector3float> gradient_y_forward,
+                Image<Vector3float> gradient_y_backward,
+                Image<Vector3float> gradient_x,
+                Image<Vector3float> gradient_y)
+    {
+        const uint32_t tid = ThreadHelper::globalThreadIndex();
+
+        if(tid >= reconstruction.size())
+        {
+            return;
+        }
+
+        reconstruction[tid] = base[tid];
+
+        const Vector2uint32_t pixel = ThreadHelper::index2pixel(tid, reconstruction.width(), reconstruction.height());
+
+        if (pixel.x == 0 || pixel.y == 0 || pixel.x == reconstruction.width() - 1 || pixel.y == reconstruction.height() - 1)return;
+
+        gradient_x[tid] = gradient_x_forward[tid] + gradient_x_backward[tid];
+        gradient_y[tid] = gradient_y_forward[tid] + gradient_y_backward[tid];
+    }
 }
 
 void
