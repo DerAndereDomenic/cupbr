@@ -29,6 +29,7 @@ namespace PostProcessing
 	*	@param[in] host_pyramid_down The downsampled pyramid (host)
 	*	@param[in] host_pyramid_up The upsampled pyramid (host)
 	*	@param[in] pyramid_depth The pyramid depth
+	*	@param[in] hdr_image The hdr image
 	*	@param[out] output The final output image
 	*/
 	void
@@ -37,6 +38,7 @@ namespace PostProcessing
 						Image<Vector3float>* host_pyramid_down,
 						Image<Vector3float>* host_pyramid_up,
 						const uint32_t& pyramid_depth,
+						const Image<Vector3float>* hdr_image,
 						Image<Vector3float>* output);
 }
 

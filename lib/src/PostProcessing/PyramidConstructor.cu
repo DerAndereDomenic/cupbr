@@ -130,6 +130,7 @@ PostProcessing::upscale_and_combine(Image<Vector3float>* pyramid_down,
 									Image<Vector3float>* host_pyramid_down,
 									Image<Vector3float>* host_pyramid_up,
 									const uint32_t& pyramid_depth,
+									const Image<Vector3float>* hdr_image,
 									Image<Vector3float>* output)
 {
 	for(int32_t i = pyramid_depth - 2; i >= 0; --i)

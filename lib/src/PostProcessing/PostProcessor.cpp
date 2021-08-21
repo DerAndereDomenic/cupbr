@@ -137,5 +137,6 @@ PostProcessor::bloom()
 										impl->host_pyramid_down,
 										impl->host_pyramid_up,
 										impl->pyramid_depth,
+										impl->hdr_image,
 										&(impl->output));
 }
