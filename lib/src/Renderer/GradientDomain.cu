@@ -313,10 +313,21 @@ PBRendering::gradientdomain(Scene& scene,
                                                                 camera,
                                                                 frameIndex,
                                                                 maxTraceDepth,
-                                                                *output_img,
+                                                                *base,
                                                                 *gradient_x_forward,
                                                                 *gradient_x_backward,
                                                                 *gradient_y_forward,
                                                                 *gradient_y_backward);
+    cudaSafeCall(cudaDeviceSynchronize());
+
+    detail::init_kernel << <config.blocks, config.threads >> > (*output_img,
+                                                                *base,
+                                                                *gradient_x_forward,
+                                                                *gradient_x_backward,
+                                                                *gradient_y_forward,
+                                                                *gradient_y_backward,
+                                                                *gradient_x,
+                                                                *gradient_y);
+
     cudaSafeCall(cudaDeviceSynchronize());
 }
