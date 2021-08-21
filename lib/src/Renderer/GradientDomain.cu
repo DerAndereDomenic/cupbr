@@ -415,4 +415,16 @@ PBRendering::gradientdomain(Scene& scene,
                                                                 *gradient_y);
 
     cudaSafeCall(cudaDeviceSynchronize());
+
+    //Optimization
+    for(uint32_t i = 0; i < 50; ++i)
+    {
+        detail::optimization_kernel << <config.blocks, config.threads >> > (*output_img,
+                                                                            *gradient_x,
+                                                                            *gradient_y,
+                                                                            *temp);
+        cudaSafeCall(cudaDeviceSynchronize());
+
+        temp->copyDevice2DeviceObject(*output_img);
+    }
 }
