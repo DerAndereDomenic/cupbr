@@ -113,7 +113,7 @@ PostProcessor::registerImage(Image<Vector3float>* hdr_image)
 Image<Vector3float>*
 PostProcessor::getPostProcessBuffer()
 {
-	return impl->host_pyramid_up;// &(impl->output);
+	return &(impl->output);
 }
 
 void
@@ -136,5 +136,6 @@ PostProcessor::bloom()
 										impl->pyramid_up,
 										impl->host_pyramid_down,
 										impl->host_pyramid_up,
-										impl->pyramid_depth);
+										impl->pyramid_depth,
+										&(impl->output));
 }

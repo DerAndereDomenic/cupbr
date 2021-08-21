@@ -129,7 +129,8 @@ PostProcessing::upscale_and_combine(Image<Vector3float>* pyramid_down,
 									Image<Vector3float>* pyramid_up,
 									Image<Vector3float>* host_pyramid_down,
 									Image<Vector3float>* host_pyramid_up,
-									const uint32_t& pyramid_depth)
+									const uint32_t& pyramid_depth,
+									Image<Vector3float>* output)
 {
 	for(int32_t i = pyramid_depth - 2; i >= 0; --i)
 	{
@@ -138,4 +139,6 @@ PostProcessing::upscale_and_combine(Image<Vector3float>* pyramid_down,
 		detail::upscale_and_combine_kernel << <config.blocks, config.threads >> > (pyramid_down, pyramid_up, i);
 		cudaDeviceSynchronize();
 	}
+
+
 }
