@@ -1,5 +1,6 @@
 #include <PostProcessing/PyramidConstructor.h>
 #include <Core/KernelHelper.cuh>
+#include <Math/Functions.cuh>
 
 namespace detail
 {
@@ -13,13 +14,28 @@ namespace detail
 			return;
 		}
 
-		Vector3float color = img[tid];
+		/*Vector3float color = img[tid];
 
 		float red = color.x > threshold ? color.x : 0.0f;
 		float green = color.y > threshold ? color.y : 0.0f;
 		float blue = color.z > threshold ? color.z : 0.0f;
 
-		img[tid] = Vector3float(red, green, blue);
+		img[tid] = Vector3float(red, green, blue);*/
+
+		Vector3float color = img[tid];
+		float knee = 1.0f;
+
+		Vector3float curve(threshold - knee, knee * 2, 0.25 / knee);
+
+		float brightness = color.x > color.y ? color.x : color.y;
+		brightness = color.z > brightness ? color.z : brightness;
+
+		float rq = Math::clamp(brightness - curve.x, 0.0f, curve.y);
+		rq = curve.z * rq * rq;
+
+		color *= fmaxf(rq, brightness - threshold) / fmaxf(brightness, 1e-5f);
+
+		img[tid] = color;
 	}
 
 	__global__ void
