@@ -56,6 +56,51 @@ namespace detail
 			
 		current_image[tid] = result / 4.0f;
 	}
+
+	__global__ void
+	upscale_and_combine_kernel(Image<Vector3float>* pyramid_down, Image<Vector3float>* pyramid_up, const uint32_t depth)
+	{
+		const uint32_t tid = ThreadHelper::globalThreadIndex();
+
+		Image<Vector3float> new_image = pyramid_up[depth];
+
+		if(tid >= new_image.size())
+		{
+			return;
+		}
+
+		Image<Vector3float> last_image = pyramid_down[depth + 1];
+		Image<Vector3float> current_image = pyramid_down[depth];
+
+		Vector3float result = 0;
+
+		Vector2int32_t pixel = ThreadHelper::index2pixel(tid, current_image.width(), current_image.height());
+		Vector2int32_t downsampled = pixel / 2;
+
+		float kernel[3][3] =
+		{
+			1.0f, 2.0f, 1.0f,
+			2.0f, 4.0f, 2.0f,
+			1.0f, 2.0f, 1.0f
+		};
+
+		for(int32_t u = -1; u < 2; ++u)
+		{
+			for(int32_t v = -1; v < 2; ++v)
+			{
+				Vector2int32_t sample = downsampled + Vector2int32_t(u, v);
+
+				if (sample.x < 0)sample.x = 0;
+				if (sample.x >= last_image.width())sample.x = last_image.width() - 1;
+				if (sample.y < 0)sample.y = 0;
+				if (sample.y >= last_image.height())sample.y = last_image.height() - 1;
+
+				result += last_image(static_cast<Vector2uint32_t>(sample)) * kernel[u + 1][v + 1];
+			}
+		}
+
+		new_image[tid] = result / 16.0f;
+	}
 }
 
 void
@@ -77,4 +122,14 @@ PostProcessing::construct_pyramid(Image<Vector3float>* pyramid, Image<Vector3flo
 		detail::downsample_kernel << <config.blocks, config.threads >> > (pyramid, i);
 		cudaDeviceSynchronize();
 	}
+}
+
+void
+PostProcessing::upscale_and_combine(Image<Vector3float>* pyramid_down,
+									Image<Vector3float>* pyramid_up,
+									Image<Vector3float>* host_pyramid_down,
+									Image<Vector3float>* host_pyramid_up,
+									const uint32_t& pyramid_depth)
+{
+	
 }
