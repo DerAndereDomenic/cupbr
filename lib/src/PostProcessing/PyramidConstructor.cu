@@ -101,6 +101,19 @@ namespace detail
 
 		new_image[tid] = result / 16.0f + current_image[tid];
 	}
+
+	__global__ void
+	combine_kernel(Image<Vector3float> hdr_image, Image<Vector3float> last_image, Image<Vector3float> output)
+	{
+		const uint32_t tid = ThreadHelper::globalThreadIndex();
+
+		if(tid >= output.size())
+		{
+			return;
+		}
+
+		output[tid] = hdr_image[tid] + last_image[tid];
+	}
 }
 
 void
@@ -141,5 +154,7 @@ PostProcessing::upscale_and_combine(Image<Vector3float>* pyramid_down,
 		cudaDeviceSynchronize();
 	}
 
-
+	const KernelSizeHelper::KernelSize config = KernelSizeHelper::configure(output->size());
+	detail::combine_kernel << <config.blocks, config.threads >> > (*hdr_image, host_pyramid_up[0], *output);
+	cudaDeviceSynchronize();
 }
