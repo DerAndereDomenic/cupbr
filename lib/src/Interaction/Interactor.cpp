@@ -50,6 +50,8 @@ Interactor::Impl::Impl()
     device_material = Memory::allocator()->createDeviceObject<Material>();
     host_material = Memory::allocator()->createHostObject<Material>();
     scene_index = Memory::allocator()->createDeviceObject<int32_t>();
+
+    compute_threshold();
 }
 
 Interactor::Impl::~Impl()
@@ -297,12 +299,12 @@ Interactor::handleInteraction()
             
         }
 
-        if(ImGui::SliderFloat("Threshold", &(impl->threshold), 0.0f, 10.0f))
+        if(ImGui::SliderFloat("Threshold", &(impl->threshold), 0.0f, 2.0f))
         {
             impl->compute_threshold();
         }
 
-        if(ImGui::SliderFloat("Knee", &(impl->knee), 0.0f, 10.0f))
+        if(ImGui::SliderFloat("Knee", &(impl->knee), 0.0f, 1.0f))
         {
             impl->compute_threshold();
         }
