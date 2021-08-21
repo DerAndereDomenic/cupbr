@@ -11,7 +11,7 @@ namespace PostProcessing
 	*	@param[in] threshold The threshold
 	*/
 	void
-	radiance_threshold(Image<Vector3float>* img, const float& threshold);
+	radiance_threshold(Image<Vector3float>* img, const Vector4float& threshold);
 
 	/**
 	*	@brief Construct the image pyramid

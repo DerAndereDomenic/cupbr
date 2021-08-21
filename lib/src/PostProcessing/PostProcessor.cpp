@@ -23,7 +23,8 @@ class PostProcessor::Impl
 		Image<Vector3float>* pyramid_up;
 		Image<Vector3float>* host_pyramid_up;
 
-		float threshold = 1.0f;
+		float knee = 1.0f;
+		Vector4float threshold = Vector4float(1.0f, 1.0f - knee, knee*2.0f, 0.25f/knee);
 
 		bool isRegistered;
 };

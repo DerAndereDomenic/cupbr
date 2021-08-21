@@ -5,7 +5,7 @@
 namespace detail
 {
 	__global__ void
-	thresholding_kernel(Image<Vector3float> img, const float threshold)
+	thresholding_kernel(Image<Vector3float> img, const Vector4float threshold)
 	{
 		const uint32_t tid = ThreadHelper::globalThreadIndex();
 
@@ -14,26 +14,16 @@ namespace detail
 			return;
 		}
 
-		/*Vector3float color = img[tid];
-
-		float red = color.x > threshold ? color.x : 0.0f;
-		float green = color.y > threshold ? color.y : 0.0f;
-		float blue = color.z > threshold ? color.z : 0.0f;
-
-		img[tid] = Vector3float(red, green, blue);*/
-
 		Vector3float color = img[tid];
 		float knee = 1.0f;
-
-		Vector3float curve(threshold - knee, knee * 2, 0.25 / knee);
 
 		float brightness = color.x > color.y ? color.x : color.y;
 		brightness = color.z > brightness ? color.z : brightness;
 
-		float rq = Math::clamp(brightness - curve.x, 0.0f, curve.y);
-		rq = curve.z * rq * rq;
+		float rq = Math::clamp(brightness - threshold.y, 0.0f, threshold.z);
+		rq = threshold.w * rq * rq;
 
-		color *= fmaxf(rq, brightness - threshold) / fmaxf(brightness, 1e-5f);
+		color *= fmaxf(rq, brightness - threshold.x) / fmaxf(brightness, 1e-5f);
 
 		img[tid] = color;
 	}
@@ -133,7 +123,7 @@ namespace detail
 }
 
 void
-PostProcessing::radiance_threshold(Image<Vector3float>* img, const float& threshold)
+PostProcessing::radiance_threshold(Image<Vector3float>* img, const Vector4float& threshold)
 {
 	const KernelSizeHelper::KernelSize config = KernelSizeHelper::configure(img->size());
 
