@@ -6,6 +6,15 @@
 
 namespace detail
 {
+    struct PathData
+    {
+        Vector3float position;
+        Vector3float normal;
+        
+        float pdf;
+        bool valid;
+    };
+
     struct RadiancePayload
     {
         uint32_t seed;
@@ -13,6 +22,9 @@ namespace detail
         Vector3float rayweight = 1;
         Vector3float out_dir;
         bool next_ray_valid;
+
+        PathData path[10]; //Hard code max trace depth
+        PathData* base_path;
     };
 
     inline __device__
