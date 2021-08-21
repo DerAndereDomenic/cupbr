@@ -21,6 +21,21 @@ namespace PostProcessing
 	*/
 	void
 	construct_pyramid(Image<Vector3float>* pyramid, Image<Vector3float>* host_pyramid, const uint32_t& pyramid_depth);
+
+	/**
+	*	@brief Construct the upsampled pyramid
+	*	@param[in] pyramid_down The downsampled pyramid (device)
+	*	@param[in] pyramid_up The upsampled pyramid (device)
+	*	@param[in] host_pyramid_down The downsampled pyramid (host)
+	*	@param[in] host_pyramid_up The upsampled pyramid (host)
+	*	@param[in] pyramid_depth The pyramid depth
+	*/
+	void
+	upscale_and_combine(Image<Vector3float>* pyramid_down,
+						Image<Vector3float>* pyramid_up,
+						Image<Vector3float>* host_pyramid_down,
+						Image<Vector3float>* host_pyramid_up,
+						const uint32_t& pyramid_depth);
 }
 
 #endif
