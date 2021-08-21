@@ -116,12 +116,51 @@ namespace detail
         payload->next_ray_valid = true;
     }
 
+    __device__ void
+    collect_radiance(Ray& ray,
+                     Scene& scene,
+                     const Camera& camera,
+                     const uint32_t& maxTraceDepth)
+    {
+        RadiancePayload* payload = ray.payload<RadiancePayload>();
+
+        uint32_t trace_depth = 0;
+        Vector3float inc_dir;
+
+        Light light;
+
+        do
+        {
+            payload->next_ray_valid = false;
+            LocalGeometry geom = Tracing::traceRay(scene, ray);
+            if(geom.depth == INFINITY)
+            {
+                if(scene.useEnvironmentMap)
+                {
+                    Vector2uint32_t pixel = Tracing::direction2UV(ray.direction(), scene.environment.width(), scene.environment.height());
+                    payload->radiance += payload->rayweight * scene.environment(pixel);
+                }
+                break;
+            }
+            Vector3float inc_dir = Math::normalize(ray.origin() - geom.P);
+
+            emissiveIllumintationGDPT(ray, geom);
+            directIlluminationGDPT(scene, ray, geom, inc_dir);
+            indirectIlluminationGDPT(ray, geom, inc_dir);
+                 
+            ray.traceNew(geom.P+0.01f*payload->out_dir, payload->out_dir);
+
+            if (!payload->next_ray_valid)break;
+            ++trace_depth;
+        }while(trace_depth < maxTraceDepth);
+    }
+
     __global__ void
-    gdpathtracer_kernel_nee(Scene scene,
-                          const Camera camera,
-                          const uint32_t frameIndex,
-                          const uint32_t maxTraceDepth,
-                          Image<Vector3float> img)
+    gdpt_kernel(Scene scene,
+                Camera camera,
+                const uint32_t frameIndex,
+                const uint32_t maxTraceDepth,
+                Image<Vector3float> img)
     {
         const uint32_t tid = ThreadHelper::globalThreadIndex();
 
@@ -132,48 +171,20 @@ namespace detail
 
         uint32_t seed = Math::tea<4>(tid, frameIndex);
 
-        Ray ray = Tracing::launchRay(tid, img.width(), img.height(), camera, true, &seed);
-        RadiancePayload payload;
-        payload.seed = seed;
-        ray.setPayload(&payload);
+        Ray base_ray = Tracing::launchRay(tid, img.width(), img.height(), camera, true, &seed);
+        RadiancePayload payload_base;
+        payload_base.seed = seed;
+        base_ray.setPayload(&payload_base);
 
-        uint32_t trace_depth = 0;
-        Vector3float inc_dir;
-
-        Light light;
-
-        do
-        {
-            payload.next_ray_valid = false;
-            LocalGeometry geom = Tracing::traceRay(scene, ray);
-            if(geom.depth == INFINITY)
-            {
-                if(scene.useEnvironmentMap)
-                {
-                    Vector2uint32_t pixel = Tracing::direction2UV(ray.direction(), scene.environment.width(), scene.environment.height());
-                    payload.radiance += payload.rayweight * scene.environment(pixel);
-                }
-                break;
-            }
-            Vector3float inc_dir = Math::normalize(ray.origin() - geom.P);
-
-            emissiveIllumintationGDPT(ray, geom);
-            directIlluminationGDPT(scene, ray, geom, inc_dir);
-            indirectIlluminationGDPT(ray, geom, inc_dir);
-                 
-            ray.traceNew(geom.P+0.01f*payload.out_dir, payload.out_dir);
-
-            if (!payload.next_ray_valid)break;
-            ++trace_depth;
-        }while(trace_depth < maxTraceDepth);
+        collect_radiance(base_ray, scene, camera, maxTraceDepth);
 
         if(frameIndex > 0)
         {
             const float a = 1.0f/(static_cast<float>(frameIndex) + 1.0f);
-            ray.payload<RadiancePayload>()->radiance = (1.0f-a)*img[tid] + a*ray.payload<RadiancePayload>()->radiance;
+            payload_base.radiance = (1.0f-a)*img[tid] + a*payload_base.radiance;
         }
 
-        img[tid] = ray.payload<RadiancePayload>()->radiance;
+        img[tid] = payload_base.radiance;
     }
 }
 
@@ -189,10 +200,10 @@ PBRendering::gradientdomain(Scene& scene,
                             Image<Vector3float>* output_img)
 {
     const KernelSizeHelper::KernelSize config = KernelSizeHelper::configure(output_img->size());
-    detail::gdpathtracer_kernel_nee<<<config.blocks, config.threads>>>(scene, 
-                                                                       camera,
-                                                                       frameIndex,
-                                                                       maxTraceDepth,
-                                                                       *output_img);
+    detail::gdpt_kernel<<<config.blocks, config.threads>>>(scene, 
+                                                           camera,
+                                                           frameIndex,
+                                                           maxTraceDepth,
+                                                           *output_img);
     cudaSafeCall(cudaDeviceSynchronize());
 }
