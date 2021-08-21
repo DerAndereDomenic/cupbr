@@ -299,6 +299,83 @@ namespace detail
         gradient_x[tid] = gradient_x_forward[tid] + gradient_x_backward[tid];
         gradient_y[tid] = gradient_y_forward[tid] + gradient_y_backward[tid];
     }
+
+    inline __device__ float
+    compute_median(float* values)
+    {
+        float median = 0.0f;
+        uint32_t arg_min = 0;
+        uint32_t arg_max = 0;
+
+        #define INNER_LOOP(i)\
+            median += values[i];\
+            if(values[i] < values[arg_min])\
+            {\
+                arg_min = i;\
+            }\
+            if (values[i] > values[arg_max])\
+            {\
+                arg_max = i;\
+            }
+
+        INNER_LOOP(0);
+        INNER_LOOP(1);
+        INNER_LOOP(2);
+        INNER_LOOP(3);
+
+        #undef INNER_LOOP
+
+        return (median - values[arg_min] - values[arg_max]) / 2.0f;
+    }
+
+    __global__ void
+    optimization_kernel(Image<Vector3float> reconstruction,
+                        Image<Vector3float> gradient_x,
+                        Image<Vector3float> gradient_y,
+                        Image<Vector3float> temp)
+    {
+        const uint32_t tid = ThreadHelper::globalThreadIndex();
+
+        if(tid >= reconstruction.size())
+        {
+            return;
+        }
+
+        const Vector2uint32_t pixel = ThreadHelper::index2pixel(tid, reconstruction.width(), reconstruction.height());
+
+        if (pixel.x == 0 || pixel.y == 0 || pixel.x == reconstruction.width() - 1 || pixel.y == reconstruction.height() - 1)return;
+
+        Vector2uint32_t pixel_left(pixel.x - 1, pixel.y);
+        Vector2uint32_t pixel_right(pixel.x + 1, pixel.y);
+        Vector2uint32_t pixel_up(pixel.x, pixel.y + 1);
+        Vector2uint32_t pixel_down(pixel.x, pixel.y - 1);
+
+        Vector3float v1 = reconstruction(pixel_left) + gradient_x(pixel_left);
+        Vector3float v2 = reconstruction(pixel_down) + gradient_y(pixel_down);
+        Vector3float v3 = reconstruction(pixel_right) - gradient_x[tid];
+        Vector3float v4 = reconstruction(pixel_up) - gradient_y[tid];
+
+        float values_red[4] =
+        {
+            v1.x, v2.x, v3.x, v4.x
+        };
+
+        float values_green[4] =
+        {
+            v1.y, v2.y, v3.y, v4.y
+        };
+
+        float values_blue[4] =
+        {
+            v1.z, v2.z, v3.z, v4.z
+        };
+
+        float med_red = compute_median(values_red);
+        float med_green = compute_median(values_green);
+        float med_blue = compute_median(values_blue);
+
+        temp[tid] = Vector3float(med_red, med_green, med_blue);
+    }
 }
 
 void
