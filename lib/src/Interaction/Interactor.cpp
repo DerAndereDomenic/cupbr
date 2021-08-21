@@ -353,3 +353,9 @@ Interactor::Impl::compute_threshold()
 {
     threshold_curve = Vector4float(threshold, knee - threshold, 2.0f * knee, 0.25f / knee);
 }
+
+Vector4float
+Interactor::getThreshold()
+{
+    return impl->threshold_curve;
+}

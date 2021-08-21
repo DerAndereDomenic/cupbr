@@ -88,6 +88,13 @@ class Interactor
         */
         bool
         usePostProcessing();
+
+        /**
+        *   @brief Get the quadratic thresholding curve for bloom
+        *   @return The vector containing the curve (threshold, knee - threshold, 2*knee, 0.25/knee)
+        */
+        Vector4float
+        getThreshold();
     private:
         class Impl;
         std::unique_ptr<Impl> impl;     /**< Implementation pointer */
