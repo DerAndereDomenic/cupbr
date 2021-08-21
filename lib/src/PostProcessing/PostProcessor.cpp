@@ -113,7 +113,7 @@ PostProcessor::registerImage(Image<Vector3float>* hdr_image)
 Image<Vector3float>*
 PostProcessor::getPostProcessBuffer()
 {
-	return impl->host_pyramid_down;// &(impl->output);
+	return impl->host_pyramid_up;// &(impl->output);
 }
 
 void
@@ -131,4 +131,10 @@ PostProcessor::bloom()
 
 	//Copy last downsampled image to upscaling pyramid
 	impl->host_pyramid_down[impl->pyramid_depth - 1].copyDevice2DeviceObject(impl->host_pyramid_up[impl->pyramid_depth - 1]);
+
+	PostProcessing::upscale_and_combine(impl->pyramid_down,
+										impl->pyramid_up,
+										impl->host_pyramid_down,
+										impl->host_pyramid_up,
+										impl->pyramid_depth);
 }
