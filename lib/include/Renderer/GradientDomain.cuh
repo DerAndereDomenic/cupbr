@@ -17,6 +17,10 @@ namespace PBRendering
     *   @param[out] temp A temporary buffer
     *   @param[out] gradient_x The x gradient image 
     *   @param[out] gradient_y The y gradient image
+    *   @param[out] gradient_x_forward The forward shift x gradients
+    *   @param[out] gradient_x_backward The backward shift x gradients
+    *   @param[out] gradient_y_forward The forward shift y gradients
+    *   @param[out] gradient_y_backward The backward shift y gradients
     *   @param[out] output_img The rendered HDR image
     */
     void
@@ -28,6 +32,10 @@ namespace PBRendering
                    Image<Vector3float>* temp,
                    Image<Vector3float>* gradient_x,
                    Image<Vector3float>* gradient_y,
+                   Image<Vector3float>* gradient_x_forward,
+                   Image<Vector3float>* gradient_x_backward,
+                   Image<Vector3float>* gradient_y_forward,
+                   Image<Vector3float>* gradient_y_backward,
                    Image<Vector3float>* output_img);
 }
 

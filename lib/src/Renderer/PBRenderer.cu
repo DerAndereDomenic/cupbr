@@ -199,6 +199,10 @@ PBRenderer::render(const Camera& camera)
                                         &impl->temp,
                                         &impl->gradient_x,
                                         &impl->gradient_y,
+                                        &impl->gradient_x_forward,
+                                        &impl->gradient_x_backward,
+                                        &impl->gradient_y_forward,
+                                        &impl->gradient_y_backward,
                                         &impl->hdr_image);
             ++impl->frameIndex;
         }
