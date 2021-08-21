@@ -24,6 +24,7 @@ class Interactor::Impl
         RenderingMethod method = PATHTRACER;
         ToneMappingType tonemapping = REINHARD;
 
+        //Helper
         bool window_registered = false;
         bool camera_registered = false;
         bool scene_registered = false;
@@ -31,7 +32,17 @@ class Interactor::Impl
         bool pressed = false;
         bool material_update = false;
         bool post_processing = false;
+
+        //Tone Mapping
         float exposure = 1.0f;
+
+        //Bloom
+        void compute_threshold();
+
+        float knee = 1.0f;
+        float threshold = 1.0f;
+
+        Vector4float threshold_curve;
 };
 
 Interactor::Impl::Impl()
@@ -286,6 +297,16 @@ Interactor::handleInteraction()
             
         }
 
+        if(ImGui::SliderFloat("Threshold", &(impl->threshold), 0.0f, 10.0f))
+        {
+            impl->compute_threshold();
+        }
+
+        if(ImGui::SliderFloat("Knee", &(impl->knee), 0.0f, 10.0f))
+        {
+            impl->compute_threshold();
+        }
+
         ImGui::End();
         
         if(impl->material_update)
@@ -325,4 +346,10 @@ bool
 Interactor::usePostProcessing()
 {
     return impl->post_processing;
+}
+
+void
+Interactor::Impl::compute_threshold()
+{
+    threshold_curve = Vector4float(threshold, knee - threshold, 2.0f * knee, 0.25f / knee);
 }
