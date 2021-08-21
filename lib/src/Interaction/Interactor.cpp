@@ -30,6 +30,7 @@ class Interactor::Impl
         bool enable_render_settings = false;
         bool pressed = false;
         bool material_update = false;
+        bool post_processing = false;
         float exposure = 1.0f;
 };
 
@@ -275,6 +276,14 @@ Interactor::handleInteraction()
         if(ImGui::SliderFloat("g", &(impl->scene->volume.g), -1.0f, 1.0f))
         {
             impl->material_update = true;
+        }
+
+        ImGui::Separator();
+        ImGui::Text("PostProcessing");
+
+        if(ImGui::Checkbox("Bloom", &(impl->post_processing)))
+        {
+            
         }
 
         ImGui::End();
