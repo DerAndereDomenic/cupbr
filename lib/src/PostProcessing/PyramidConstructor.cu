@@ -99,7 +99,7 @@ namespace detail
 			}
 		}
 
-		new_image[tid] = result / 16.0f;
+		new_image[tid] = result / 16.0f + current_image[tid];
 	}
 }
 
