@@ -131,5 +131,11 @@ PostProcessing::upscale_and_combine(Image<Vector3float>* pyramid_down,
 									Image<Vector3float>* host_pyramid_up,
 									const uint32_t& pyramid_depth)
 {
-	
+	for(int32_t i = pyramid_depth - 2; i >= 0; --i)
+	{
+		const KernelSizeHelper::KernelSize config = KernelSizeHelper::configure(host_pyramid_up[i].size());
+
+		detail::upscale_and_combine_kernel << <config.blocks, config.threads >> > (pyramid_down, pyramid_up, i);
+		cudaDeviceSynchronize();
+	}
 }
