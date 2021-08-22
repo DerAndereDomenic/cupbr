@@ -171,7 +171,7 @@ namespace detail
             payload->path[payload->trace_depth].valid = true;
             payload->path[payload->trace_depth].diffuse = geom.material.shininess > DIFFUSE_THRESHOLD;
 
-            Vector3float inc_dir = Math::normalize(ray.origin() - geom.P);
+            Vector3float inc_dir = -1.0f * ray.direction();
 
             emissiveIllumintationGDPT(ray, geom);
             directIlluminationGDPT(scene, ray, geom, inc_dir);

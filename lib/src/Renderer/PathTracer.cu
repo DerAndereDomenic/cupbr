@@ -155,7 +155,7 @@ namespace detail
                 }
                 break;
             }
-            Vector3float inc_dir = Math::normalize(ray.origin() - geom.P);
+            Vector3float inc_dir = -1.0f*ray.direction();
 
             emissiveIllumintation(ray, geom);
             directIllumination(scene, ray, geom, inc_dir);
