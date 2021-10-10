@@ -1,25 +1,11 @@
 #include <iostream>
 #include <chrono>
 
-#include <GL/GLRenderer.cuh>
-
 #include <imgui.h>
 #include <backends/imgui_impl_glfw.h>
 #include <backends/imgui_impl_opengl3.h>
 
-#include <Core/KernelHelper.cuh>
-#include <Core/Tracing.cuh>
-
-#include <DataStructure/Camera.cuh>
-
-#include <Scene/SceneLoader.cuh>
-
-#include <Renderer/ToneMapper.cuh>
-#include <Renderer/PBRenderer.cuh>
-
-#include <Interaction/Interactor.cuh>
-
-#include <PostProcessing/PostProcessor.h>
+#include <CUPBR.cuh>
 
 int run(int argc, char* argv[])
 {
