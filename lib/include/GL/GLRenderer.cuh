@@ -8,6 +8,9 @@
 
 #include <cuda_gl_interop.h>
 
+#define GLFW_INCLUDE_NONE
+#include <GLFW/glfw3.h>
+
 class GLRenderer
 {
     public:
