@@ -12,11 +12,9 @@ add_subdirectory(external/glfw)
 set(BUILD_TESTING OFF)
 add_subdirectory(external/tinyxml2)
 
-file (GLOB_RECURSE source_files LIST_DIRECTORIES false "src/*.c*"
-                                                       "lib/include/*/*.c*"
-                                                       "lib/src/*/*.c*"
-													   "lib/include/*/*.h*"
-													   "lib/src/*/*.h*")
+file (GLOB_RECURSE source_files LIST_DIRECTORIES false "src/**.c*"
+                                                       "lib/**.c*"
+                                                       "lib/**.h*")
 
 set(source_files "${source_files}" "external/glad/src/glad.c"
                                    "external/imgui/imgui.cpp"
