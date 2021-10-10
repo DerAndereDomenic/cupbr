@@ -11,11 +11,13 @@
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
 
-class GLRenderer
+namespace cupbr
 {
+    class GLRenderer
+    {
     public:
         /**
-        *   @brief Default constructor 
+        *   @brief Default constructor
         */
         GLRenderer() = default;
 
@@ -33,13 +35,15 @@ class GLRenderer
 
         /**
         *   @brief Render a device image on a quad
-        *   @param[in] img The device image 
+        *   @param[in] img The device image
         */
         void
-        renderTexture(const RenderBuffer& img);
+            renderTexture(const RenderBuffer& img);
     private:
         class Impl;
         std::unique_ptr<Impl> impl;     /**< Implementation pointer */
-};
+    };
+
+} //namespace cupbr
 
 #endif

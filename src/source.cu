@@ -7,6 +7,8 @@
 
 #include <CUPBR.cuh>
 
+using namespace cupbr;
+
 int run(int argc, char* argv[])
 {
     bool edit = true;

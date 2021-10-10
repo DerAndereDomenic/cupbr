@@ -1,6 +1,9 @@
 #include <Geometry/Mesh.cuh>
 
-Mesh::Mesh()
+namespace cupbr
 {
-    type = GeometryType::MESH;
-}
+    Mesh::Mesh()
+    {
+        type = GeometryType::MESH;
+    }
+} //namespace cupbr

@@ -4,12 +4,14 @@
 #include <Math/VectorTypes_fwd.h>
 #include <Core/CUDA.cuh>
 
-/**
-*	@brief A 2D vector
-*/
-template<typename T>
-struct Vector2
+namespace cupbr
 {
+	/**
+	*	@brief A 2D vector
+	*/
+	template<typename T>
+	struct Vector2
+	{
 	public:
 		/**
 		*	@brief Default constructor.
@@ -22,35 +24,35 @@ struct Vector2
 		*	@param[in] y The y coordinate
 		*/
 		__host__ __device__
-		Vector2(const T& x, const T& y);
+			Vector2(const T& x, const T& y);
 
 		/**
 		*	@brief Creats a constant 2D vector.
 		*	@param[in] v The value
 		*/
 		__host__ __device__
-		Vector2(const T& v);
+			Vector2(const T& v);
 
 		/**
 		*	@brief Cast between vector types.
 		*/
 		template<typename S>
 		__host__ __device__
-		operator Vector2<S>() const
+			operator Vector2<S>() const
 		{
 			return Vector2<S>(static_cast<S>(x), static_cast<S>(y));
 		}
 
 		T x;	/**< The x coordinate*/
 		T y;	/**< The y coordinate*/
-};
+	};
 
-/**
-*	@brief A 3D vector
-*/
-template<typename T>
-struct Vector3
-{
+	/**
+	*	@brief A 3D vector
+	*/
+	template<typename T>
+	struct Vector3
+	{
 	public:
 		/**
 		*	@brief Default constructor.
@@ -64,29 +66,29 @@ struct Vector3
 		*	@param[in] z The z coordinate
 		*/
 		__host__ __device__
-		Vector3(const T& x, const T& y, const T& z);
+			Vector3(const T& x, const T& y, const T& z);
 
 		/**
 		*	@brief Creats a constant 3D vector.
 		*	@param[in] v The value
 		*/
 		__host__ __device__
-		Vector3(const T& v);
+			Vector3(const T& v);
 
 		/**
 		*	@brief Creates a 3D vector from a 4D vector
 		*	@param[in] v The 4D vector
-		*	@note The w component is discarded 
-		*/ 
+		*	@note The w component is discarded
+		*/
 		__host__ __device__
-		Vector3(const Vector4<T>& v);
+			Vector3(const Vector4<T>& v);
 
 		/**
 		*	@brief Cast between vector types.
 		*/
 		template<typename S>
 		__host__ __device__
-		operator Vector3<S>() const
+			operator Vector3<S>() const
 		{
 			return Vector3<S>(static_cast<S>(x), static_cast<S>(y), static_cast<S>(z));
 		}
@@ -94,14 +96,14 @@ struct Vector3
 		T x;	/**< The x coordinate*/
 		T y;	/**< The y coordinate*/
 		T z;	/**< The z coordinate*/
-};
+	};
 
-/**
-*	@brief A 4D vector
-*/
-template<typename T>
-struct Vector4
-{
+	/**
+	*	@brief A 4D vector
+	*/
+	template<typename T>
+	struct Vector4
+	{
 	public:
 		/**
 		*	@brief Default constructor.
@@ -116,29 +118,29 @@ struct Vector4
 		*	@param[in] w The w coordinate
 		*/
 		__host__ __device__
-		Vector4(const T& x, const T& y, const T& z, const T& w);
+			Vector4(const T& x, const T& y, const T& z, const T& w);
 
 		/**
 		*	@brief Creates a 4D vector from a 3D one.
 		*	@param[in] v A 3D vector
-		*	@param[in] w The w component 
+		*	@param[in] w The w component
 		*/
 		__host__ __device__
-		Vector4(const Vector3<T>& v, const T& w);
+			Vector4(const Vector3<T>& v, const T& w);
 
 		/**
 		*	@brief Creats a constant 4D vector.
 		*	@param[in] v The value
 		*/
 		__host__ __device__
-		Vector4(const T& v);
+			Vector4(const T& v);
 
 		/**
 		*	@brief Cast between vector types.
 		*/
 		template<typename S>
 		__host__ __device__
-		operator Vector4<S>() const
+			operator Vector4<S>() const
 		{
 			return Vector4<S>(static_cast<S>(x), static_cast<S>(y), static_cast<S>(z), static_cast<S>(w));
 		}
@@ -147,7 +149,9 @@ struct Vector4
 		T y;	/**< The y coordinate*/
 		T z;	/**< The z coordinate*/
 		T w;	/**< The w coordinate*/
-};
+	};
+
+} //namespace cupbr
 
 #include "../../src/Math/VectorTypesDetail.h"
 

@@ -6,23 +6,25 @@
 #include <Geometry/Material.cuh>
 #include <cmath>
 
-/**
-*   @brief A class to model different geometry types 
-*/
-enum GeometryType
+namespace cupbr
 {
-    SPHERE,
-    PLANE,
-    QUAD,
-    TRIANGLE,
-    MESH
-};
+    /**
+    *   @brief A class to model different geometry types
+    */
+    enum GeometryType
+    {
+        SPHERE,
+        PLANE,
+        QUAD,
+        TRIANGLE,
+        MESH
+    };
 
-/**
-*   @brief Model scene geometry
-*/
-class Geometry
-{
+    /**
+    *   @brief Model scene geometry
+    */
+    class Geometry
+    {
     public:
         /**
         *   @brief Default constructor
@@ -36,8 +38,8 @@ class Geometry
         *   @note If no intersection was found the vector will be INFINITY
         */
         __host__ __device__
-        Vector4float
-        computeRayIntersection(const Ray& ray);
+            Vector4float
+            computeRayIntersection(const Ray& ray);
 
         /**
         *   @brief Get the normal at a specified point
@@ -46,26 +48,27 @@ class Geometry
         *   @note If no normal is found at this point the vector will be INFINITY
         */
         __host__ __device__
-        Vector3float
-        getNormal(const Vector3float& x);
+            Vector3float
+            getNormal(const Vector3float& x);
 
         Material material;  /**< The material of the object */
         GeometryType type;  /**< The geometry type */
     private:
-};
+    };
 
-/**
-*   @brief A struct to model the local surface geometry 
-*/
-struct LocalGeometry
-{
-    GeometryType type;                  /**< The geometry type */
-    float depth = INFINITY;             /**< The depth */
-    Vector3float P;                     /**< The intersection point in world space */
-    Vector3float N;                     /**< The surface normal */
-    Material material;                  /**< The object material */
-    int32_t scene_index;                /**< The index in the scene representation */
-};
+    /**
+    *   @brief A struct to model the local surface geometry
+    */
+    struct LocalGeometry
+    {
+        GeometryType type;                  /**< The geometry type */
+        float depth = INFINITY;             /**< The depth */
+        Vector3float P;                     /**< The intersection point in world space */
+        Vector3float N;                     /**< The surface normal */
+        Material material;                  /**< The object material */
+        int32_t scene_index;                /**< The index in the scene representation */
+    };
+} //namespace cupbr
 
 #include "../../src/Geometry/GeometryDetail.cuh"
 

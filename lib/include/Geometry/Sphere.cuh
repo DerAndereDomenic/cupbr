@@ -3,11 +3,13 @@
 
 #include <Geometry/Geometry.cuh>
 
-/**
-*   @brief A class to model a sphere
-*/
-class Sphere : public Geometry
+namespace cupbr
 {
+    /**
+    *   @brief A class to model a sphere
+    */
+    class Sphere : public Geometry
+    {
     public:
         /**
         *   @brief Default constructor
@@ -20,37 +22,38 @@ class Sphere : public Geometry
         *   @param[in] radius The radius
         */
         __host__ __device__
-        Sphere(const Vector3float& position, const float& radius);
+            Sphere(const Vector3float& position, const float& radius);
 
         /**
         *   @brief Get the sphere position in world space
         *   @return The 3D world position
         */
         __host__ __device__
-        Vector3float
-        position() const;
+            Vector3float
+            position() const;
 
         /**
         *   @brief Get the sphere radius
         *   @return The radius
         */
         __host__ __device__
-        float
-        radius() const;
+            float
+            radius() const;
 
         //Override
         __host__ __device__
-        Vector4float
-        computeRayIntersection(const Ray& ray);
+            Vector4float
+            computeRayIntersection(const Ray& ray);
 
         //Override
         __host__ __device__
-        Vector3float
-        getNormal(const Vector3float& x);
+            Vector3float
+            getNormal(const Vector3float& x);
     private:
         Vector3float _position;     /**< 3D world position of the sphere */
         float _radius;              /**< The radius */
-};
+    };
+} //namespace cupbr
 
 #include "../../src/Geometry/SphereDetail.cuh"
 

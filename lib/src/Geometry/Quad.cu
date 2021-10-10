@@ -1,6 +1,10 @@
 #include <Geometry/Quad.cuh>
 
-Quad::Quad()
+namespace cupbr
 {
-    type = GeometryType::QUAD;
-}
+    Quad::Quad()
+    {
+        type = GeometryType::QUAD;
+    }
+
+} //namespace cupbr

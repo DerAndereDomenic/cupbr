@@ -4,15 +4,17 @@
 #include <Geometry/Geometry.cuh>
 #include <Geometry/Triangle.cuh>
 
-/**
-*   @brief A class to model a Mesh
-*/
-class Mesh : public Geometry
+namespace cupbr
 {
+    /**
+    *   @brief A class to model a Mesh
+    */
+    class Mesh : public Geometry
+    {
     public:
         /**
-        *   @brief Default constructor 
-        */ 
+        *   @brief Default constructor
+        */
         Mesh();
 
         /**
@@ -21,34 +23,36 @@ class Mesh : public Geometry
         *   @param[in] num_triangles The number of triangles
         */
         __host__ __device__
-        Mesh(Triangle** triangle_buffer, const uint32_t& num_triangles);
+            Mesh(Triangle** triangle_buffer, const uint32_t& num_triangles);
 
         //Override
         __host__ __device__
-        Vector4float
-        computeRayIntersection(const Ray& ray);
+            Vector4float
+            computeRayIntersection(const Ray& ray);
 
         //Override
         __host__ __device__
-        Vector3float
-        getNormal(const Vector3float& x);
+            Vector3float
+            getNormal(const Vector3float& x);
 
         /**
         *   @brief Get the number of triangles
-        *   @return The number of triangles 
+        *   @return The number of triangles
         */
         __host__ __device__
-        uint32_t
-        num_triangles();
+            uint32_t
+            num_triangles();
 
         __host__ __device__
-        Triangle**
-        triangles();
+            Triangle**
+            triangles();
     private:
         Triangle** _triangles;       /**< The plane position */
         Vector3float _normal;       /**< The plane normal */
         uint32_t _num_triangles;    /**< The number of triangles */
-};
+    };
+
+} //namespace cupbr
 
 #include "../../src/Geometry/MeshDetail.cuh"
 

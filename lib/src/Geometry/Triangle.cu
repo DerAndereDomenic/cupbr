@@ -1,6 +1,9 @@
 #include <Geometry/Triangle.cuh>
 
-Triangle::Triangle()
+namespace cupbr
 {
-    type = GeometryType::TRIANGLE;
-}
+    Triangle::Triangle()
+    {
+        type = GeometryType::TRIANGLE;
+    }
+} //namespace cupbr

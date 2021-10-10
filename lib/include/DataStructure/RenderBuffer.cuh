@@ -3,6 +3,9 @@
 
 #include <DataStructure/Image.cuh>
 
-using RenderBuffer = Image<Vector4uint8_t>;
+namespace cupbr
+{
+	using RenderBuffer = Image<Vector4uint8_t>;
+} // namespace cupbr
 
 #endif

@@ -1,6 +1,9 @@
 #include <Geometry/Plane.cuh>
 
-Plane::Plane()
+namespace cupbr
 {
-    type = GeometryType::PLANE;
-}
+    Plane::Plane()
+    {
+        type = GeometryType::PLANE;
+    }
+} //namespace cupbr

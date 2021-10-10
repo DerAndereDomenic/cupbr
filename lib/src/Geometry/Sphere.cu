@@ -1,6 +1,10 @@
 #include <Geometry/Sphere.cuh>
 
-Sphere::Sphere()
+namespace cupbr
 {
-    type = GeometryType::SPHERE;
-}
+    Sphere::Sphere()
+    {
+        type = GeometryType::SPHERE;
+    }
+
+} //namespace cupbr

@@ -10,56 +10,58 @@
 #include <Geometry/Mesh.cuh>
 #include <Math/Functions.cuh>
 
-__device__
-inline Ray
-Tracing::launchRay(const uint32_t& tid, const uint32_t& width, const uint32_t& height, const Camera& camera, const bool& jitter,uint32_t* seed)
+namespace cupbr
 {
-    const Vector2uint32_t pixel = ThreadHelper::index2pixel(tid, width, height);
-
-    float jitter_x = jitter ? Math::rnd(*seed) : 0.0f;
-    float jitter_y = jitter ? Math::rnd(*seed) : 0.0f;
-
-    const float ratio_x = 2.0f*((static_cast<float>(pixel.x) + jitter_x)/width - 0.5f);
-    const float ratio_y = 2.0f*((static_cast<float>(pixel.y) + jitter_y)/height - 0.5f);
-
-    const Vector3float world_pos = camera.position() + camera.zAxis() + ratio_x*camera.xAxis() + ratio_y*camera.yAxis();
-
-    return Ray(camera.position(), world_pos - camera.position());
-}
-
-__device__
-inline Ray
-Tracing::launchRay(const Vector2uint32_t& pixel, const uint32_t& width, const uint32_t& height, const Camera& camera, const bool& jitter,uint32_t* seed)
-{
-    float jitter_x = jitter ? Math::rnd(*seed) : 0.0f;
-    float jitter_y = jitter ? Math::rnd(*seed) : 0.0f;
-
-    const float ratio_x = 2.0f*((static_cast<float>(pixel.x) + jitter_x)/width - 0.5f);
-    const float ratio_y = 2.0f*((static_cast<float>(pixel.y) + jitter_y)/height - 0.5f);
-
-    const Vector3float world_pos = camera.position() + camera.zAxis() + ratio_x*camera.xAxis() + ratio_y*camera.yAxis();
-
-    return Ray(camera.position(), world_pos - camera.position());
-}
-
-__device__
-inline LocalGeometry
-Tracing::traceRay(Scene& scene, const Ray& ray)
-{
-    Vector4float intersection(INFINITY);
-
-    LocalGeometry geom;
-
-    for(uint32_t i = 0; i < scene.scene_size; ++i)
+    __device__
+        inline Ray
+        Tracing::launchRay(const uint32_t& tid, const uint32_t& width, const uint32_t& height, const Camera& camera, const bool& jitter, uint32_t* seed)
     {
-        Geometry* scene_element = scene[i];
-        switch(scene_element->type)
+        const Vector2uint32_t pixel = ThreadHelper::index2pixel(tid, width, height);
+
+        float jitter_x = jitter ? Math::rnd(*seed) : 0.0f;
+        float jitter_y = jitter ? Math::rnd(*seed) : 0.0f;
+
+        const float ratio_x = 2.0f * ((static_cast<float>(pixel.x) + jitter_x) / width - 0.5f);
+        const float ratio_y = 2.0f * ((static_cast<float>(pixel.y) + jitter_y) / height - 0.5f);
+
+        const Vector3float world_pos = camera.position() + camera.zAxis() + ratio_x * camera.xAxis() + ratio_y * camera.yAxis();
+
+        return Ray(camera.position(), world_pos - camera.position());
+    }
+
+    __device__
+        inline Ray
+        Tracing::launchRay(const Vector2uint32_t& pixel, const uint32_t& width, const uint32_t& height, const Camera& camera, const bool& jitter, uint32_t* seed)
+    {
+        float jitter_x = jitter ? Math::rnd(*seed) : 0.0f;
+        float jitter_y = jitter ? Math::rnd(*seed) : 0.0f;
+
+        const float ratio_x = 2.0f * ((static_cast<float>(pixel.x) + jitter_x) / width - 0.5f);
+        const float ratio_y = 2.0f * ((static_cast<float>(pixel.y) + jitter_y) / height - 0.5f);
+
+        const Vector3float world_pos = camera.position() + camera.zAxis() + ratio_x * camera.xAxis() + ratio_y * camera.yAxis();
+
+        return Ray(camera.position(), world_pos - camera.position());
+    }
+
+    __device__
+        inline LocalGeometry
+        Tracing::traceRay(Scene& scene, const Ray& ray)
+    {
+        Vector4float intersection(INFINITY);
+
+        LocalGeometry geom;
+
+        for (uint32_t i = 0; i < scene.scene_size; ++i)
         {
+            Geometry* scene_element = scene[i];
+            switch (scene_element->type)
+            {
             case GeometryType::PLANE:
             {
-                Plane *plane = static_cast<Plane*>(scene[i]);
+                Plane* plane = static_cast<Plane*>(scene[i]);
                 Vector4float intersection_plane = plane->computeRayIntersection(ray);
-                if(intersection_plane.w <= intersection.w)
+                if (intersection_plane.w <= intersection.w)
                 {
                     intersection = intersection_plane;
                     geom.type = GeometryType::PLANE;
@@ -73,9 +75,9 @@ Tracing::traceRay(Scene& scene, const Ray& ray)
             break;
             case GeometryType::SPHERE:
             {
-                Sphere *sphere = static_cast<Sphere*>(scene_element);
+                Sphere* sphere = static_cast<Sphere*>(scene_element);
                 Vector4float intersection_sphere = sphere->computeRayIntersection(ray);
-                if(intersection_sphere.w <= intersection.w)
+                if (intersection_sphere.w <= intersection.w)
                 {
                     intersection = intersection_sphere;
                     geom.type = GeometryType::SPHERE;
@@ -89,9 +91,9 @@ Tracing::traceRay(Scene& scene, const Ray& ray)
             break;
             case GeometryType::QUAD:
             {
-                Quad *quad = static_cast<Quad*>(scene[i]);
+                Quad* quad = static_cast<Quad*>(scene[i]);
                 Vector4float intersection_quad = quad->computeRayIntersection(ray);
-                if(intersection_quad.w <= intersection.w)
+                if (intersection_quad.w <= intersection.w)
                 {
                     intersection = intersection_quad;
                     geom.type = GeometryType::PLANE;
@@ -105,9 +107,9 @@ Tracing::traceRay(Scene& scene, const Ray& ray)
             break;
             case GeometryType::TRIANGLE:
             {
-                Triangle *triangle = static_cast<Triangle*>(scene[i]);
+                Triangle* triangle = static_cast<Triangle*>(scene[i]);
                 Vector4float intersection_triangle = triangle->computeRayIntersection(ray);
-                if(intersection_triangle.w <= intersection.w)
+                if (intersection_triangle.w <= intersection.w)
                 {
                     intersection = intersection_triangle;
                     geom.type = GeometryType::TRIANGLE;
@@ -121,9 +123,9 @@ Tracing::traceRay(Scene& scene, const Ray& ray)
             break;
             case GeometryType::MESH:
             {
-                Mesh *mesh = static_cast<Mesh*>(scene[i]);
+                Mesh* mesh = static_cast<Mesh*>(scene[i]);
                 Vector4float intersection_mesh = mesh->computeRayIntersection(ray);
-                if(intersection_mesh.w <= intersection.w)
+                if (intersection_mesh.w <= intersection.w)
                 {
                     intersection = intersection_mesh;
                     geom.type = GeometryType::MESH;
@@ -135,26 +137,26 @@ Tracing::traceRay(Scene& scene, const Ray& ray)
                 }
             }
             break;
+            }
         }
+
+        return geom;
     }
 
-    return geom;
-}
-
-__device__
-inline bool
-Tracing::traceVisibility(Scene& scene, const float& lightDist, const Ray& ray)
-{
-    for(uint32_t i = 0; i < scene.scene_size; ++i)
+    __device__
+        inline bool
+        Tracing::traceVisibility(Scene& scene, const float& lightDist, const Ray& ray)
     {
-        Geometry* scene_element = scene[i];
-        switch(scene_element->type)
+        for (uint32_t i = 0; i < scene.scene_size; ++i)
         {
+            Geometry* scene_element = scene[i];
+            switch (scene_element->type)
+            {
             case GeometryType::PLANE:
             {
-                Plane *plane = static_cast<Plane*>(scene[i]);
+                Plane* plane = static_cast<Plane*>(scene[i]);
                 Vector4float intersection_plane = plane->computeRayIntersection(ray);
-                if(intersection_plane.w != INFINITY && intersection_plane.w < lightDist)
+                if (intersection_plane.w != INFINITY && intersection_plane.w < lightDist)
                 {
                     return false;
                 }
@@ -162,9 +164,9 @@ Tracing::traceVisibility(Scene& scene, const float& lightDist, const Ray& ray)
             break;
             case GeometryType::SPHERE:
             {
-                Sphere *sphere = static_cast<Sphere*>(scene_element);
+                Sphere* sphere = static_cast<Sphere*>(scene_element);
                 Vector4float intersection_sphere = sphere->computeRayIntersection(ray);
-                if(intersection_sphere.w != INFINITY && intersection_sphere.w < lightDist)
+                if (intersection_sphere.w != INFINITY && intersection_sphere.w < lightDist)
                 {
                     return false;
                 }
@@ -172,9 +174,9 @@ Tracing::traceVisibility(Scene& scene, const float& lightDist, const Ray& ray)
             break;
             case GeometryType::QUAD:
             {
-                Quad *quad = static_cast<Quad*>(scene[i]);
+                Quad* quad = static_cast<Quad*>(scene[i]);
                 Vector4float intersection_quad = quad->computeRayIntersection(ray);
-                if(intersection_quad.w != INFINITY && intersection_quad.w < lightDist)
+                if (intersection_quad.w != INFINITY && intersection_quad.w < lightDist)
                 {
                     return false;
                 }
@@ -182,9 +184,9 @@ Tracing::traceVisibility(Scene& scene, const float& lightDist, const Ray& ray)
             break;
             case GeometryType::TRIANGLE:
             {
-                Triangle *triangle = static_cast<Triangle*>(scene[i]);
+                Triangle* triangle = static_cast<Triangle*>(scene[i]);
                 Vector4float intersection_triangle = triangle->computeRayIntersection(ray);
-                if(intersection_triangle.w != INFINITY && intersection_triangle.w < lightDist)
+                if (intersection_triangle.w != INFINITY && intersection_triangle.w < lightDist)
                 {
                     return false;
                 }
@@ -192,30 +194,32 @@ Tracing::traceVisibility(Scene& scene, const float& lightDist, const Ray& ray)
             break;
             case GeometryType::MESH:
             {
-                Mesh *mesh = static_cast<Mesh*>(scene[i]);
+                Mesh* mesh = static_cast<Mesh*>(scene[i]);
                 Vector4float intersection_mesh = mesh->computeRayIntersection(ray);
-                if(intersection_mesh.w != INFINITY && intersection_mesh.w < lightDist)
+                if (intersection_mesh.w != INFINITY && intersection_mesh.w < lightDist)
                 {
                     return false;
                 }
             }
             break;
+            }
         }
+        return true;
     }
-    return true;
-}
 
-__device__
-inline Vector2uint32_t
-Tracing::direction2UV(const Vector3float& direction, const uint32_t& width, const uint32_t& height)
-{
-    float theta = acos(direction.y)/M_PI;
-    float phi = (atan2(direction.z, direction.x)+M_PI)/(2.0f*M_PI);
+    __device__
+        inline Vector2uint32_t
+        Tracing::direction2UV(const Vector3float& direction, const uint32_t& width, const uint32_t& height)
+    {
+        float theta = acos(direction.y) / M_PI;
+        float phi = (atan2(direction.z, direction.x) + M_PI) / (2.0f * M_PI);
 
-    uint32_t x = static_cast<uint32_t>((width - 1) * phi);
-    uint32_t y = static_cast<uint32_t>((height -1) * theta);
+        uint32_t x = static_cast<uint32_t>((width - 1) * phi);
+        uint32_t y = static_cast<uint32_t>((height - 1) * theta);
 
-    return Vector2uint32_t(x,y);
-}
+        return Vector2uint32_t(x, y);
+    }
+
+} //namespace cupbr
 
 #endif

@@ -3,32 +3,35 @@
 
 #include <Math/Vector.h>
 
-/**
-*   @brief Model the light type
-*/
-enum LightType
-{
-    POINT,      /**< A point light source */
-    AREA        /**< A area light source */
-};
-
-/**
-*   @brief A struct to model a light source 
-*/
-struct Light
+namespace cupbr
 {
     /**
-    *   @brief Default constructor 
+    *   @brief Model the light type
     */
-    Light() = default;
+    enum LightType
+    {
+        POINT,      /**< A point light source */
+        AREA        /**< A area light source */
+    };
 
-    LightType type = POINT;     /**< The light type */
+    /**
+    *   @brief A struct to model a light source
+    */
+    struct Light
+    {
+        /**
+        *   @brief Default constructor
+        */
+        Light() = default;
 
-    Vector3float position;      /**< The light position */
-    Vector3float intensity;     /**< The light intensity (point) */
-    Vector3float radiance;      /**< The light radiance (area) */
-    Vector3float halfExtend1;   /**< The first half extend in world space (area) */
-    Vector3float halfExtend2;   /**< The second half extend in world space (area) */
-};
+        LightType type = POINT;     /**< The light type */
+
+        Vector3float position;      /**< The light position */
+        Vector3float intensity;     /**< The light intensity (point) */
+        Vector3float radiance;      /**< The light radiance (area) */
+        Vector3float halfExtend1;   /**< The first half extend in world space (area) */
+        Vector3float halfExtend2;   /**< The second half extend in world space (area) */
+    };
+} //namespace cupbr
 
 #endif

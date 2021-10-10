@@ -5,17 +5,20 @@
 #include <DataStructure/Image.cuh>
 #include <DataStructure/Camera.cuh>
 
-namespace PBRendering
+namespace cupbr
 {
-    /**
-    *   @brief Render the scene using conventional ray tracing
-    *   @param[in] scene The scene to render
-    *   @param[out] output_img The resulting HDR rendering 
-    */
-    void
-    raytracing(Scene& scene,
-               const Camera& camera,
-               Image<Vector3float>* output_img);
-}
+    namespace PBRendering
+    {
+        /**
+        *   @brief Render the scene using conventional ray tracing
+        *   @param[in] scene The scene to render
+        *   @param[out] output_img The resulting HDR rendering
+        */
+        void
+            raytracing(Scene& scene,
+                const Camera& camera,
+                Image<Vector3float>* output_img);
+    } //namespace PBRendering
+} //namespace cupbr
 
 #endif
