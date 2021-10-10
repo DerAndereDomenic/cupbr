@@ -10,7 +10,7 @@ namespace cupbr
     /**
     *   @brief The types of materials supported
     */
-    enum MaterialType
+    enum class MaterialType
     {
         LAMBERT,
         PHONG,
@@ -30,13 +30,13 @@ namespace cupbr
         */
         Material() = default;
 
-        Vector3float albedo_e = Vector3float(0);    /**< The emissive albedo */
-        Vector3float albedo_d = Vector3float(1);    /**< The diffuse albedo */
-        Vector3float albedo_s = Vector3float(0);    /**< The specular albedo */
-        float shininess = 128.0f * 0.4f;              /**< The object shininess / roughness for GGX */
-        float eta = 1.5f;                           /**< Index of refraction */
+        Vector3float albedo_e = Vector3float(0);                    /**< The emissive albedo */
+        Vector3float albedo_d = Vector3float(1);                    /**< The diffuse albedo */
+        Vector3float albedo_s = Vector3float(0);                    /**< The specular albedo */
+        float shininess = 128.0f * 0.4f;                            /**< The object shininess / roughness for GGX */
+        float eta = 1.5f;                                           /**< Index of refraction */
 
-        MaterialType type = LAMBERT;                /**< The material type */
+        MaterialType type = MaterialType::LAMBERT;                  /**< The material type */
 
         /**
         *   @brief Compute the brdf of the material

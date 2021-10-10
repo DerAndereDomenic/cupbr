@@ -150,14 +150,14 @@ namespace cupbr
 
         switch (impl->method)
         {
-        case RAYTRACER:
+        case RenderingMethod::RAYTRACER:
         {
             PBRendering::raytracing(*(impl->scene),
                 camera,
                 &impl->hdr_image);
         }
         break;
-        case WHITTED:
+        case RenderingMethod::WHITTED:
         {
             std::cerr << "[PBRenderer]  WHITTED currently disabled." << std::endl;
             return;
@@ -168,7 +168,7 @@ namespace cupbr
                                  &impl->hdr_image);*/
         }
         break;
-        case PATHTRACER:
+        case RenderingMethod::PATHTRACER:
         {
             if (camera.moved())
             {
@@ -182,12 +182,12 @@ namespace cupbr
             ++impl->frameIndex;
         }
         break;
-        case METROPOLIS:
+        case RenderingMethod::METROPOLIS:
         {
             std::cerr << "[PBRenderer]  METROPOLIS not supported." << std::endl;
         }
         break;
-        case GRADIENTDOMAIN:
+        case RenderingMethod::GRADIENTDOMAIN:
         {
             if (camera.moved())
             {
@@ -209,7 +209,7 @@ namespace cupbr
             ++impl->frameIndex;
         }
         break;
-        case VOLUME:
+        case RenderingMethod::VOLUME:
         {
             if (camera.moved())
             {

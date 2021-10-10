@@ -23,8 +23,8 @@ namespace cupbr
         Material* host_material;
         int32_t* scene_index;
 
-        RenderingMethod method = PATHTRACER;
-        ToneMappingType tonemapping = REINHARD;
+        RenderingMethod method = RenderingMethod::PATHTRACER;
+        ToneMappingType tonemapping = ToneMappingType::REINHARD;
 
         //Helper
         bool window_registered = false;
@@ -162,15 +162,15 @@ namespace cupbr
             {
                 if (ImGui::MenuItem("Path Tracing"))
                 {
-                    impl->method = PATHTRACER;
+                    impl->method = RenderingMethod::PATHTRACER;
                 }
                 else if (ImGui::MenuItem("Ray Tracing"))
                 {
-                    impl->method = RAYTRACER;
+                    impl->method = RenderingMethod::RAYTRACER;
                 }
                 else if (ImGui::MenuItem("Volume Rendering"))
                 {
-                    impl->method = VOLUME;
+                    impl->method = RenderingMethod::VOLUME;
                 }
 
                 ImGui::EndMenu();
@@ -180,11 +180,11 @@ namespace cupbr
             {
                 if (ImGui::MenuItem("Reinhard"))
                 {
-                    impl->tonemapping = REINHARD;
+                    impl->tonemapping = ToneMappingType::REINHARD;
                 }
                 else if (ImGui::MenuItem("Gamma"))
                 {
-                    impl->tonemapping = GAMMA;
+                    impl->tonemapping = ToneMappingType::GAMMA;
                 }
 
                 ImGui::EndMenu();
@@ -202,34 +202,34 @@ namespace cupbr
             {
                 if (ImGui::MenuItem("LAMBERT"))
                 {
-                    impl->host_material->type = LAMBERT;
+                    impl->host_material->type = MaterialType::LAMBERT;
                     impl->material_update = true;
                 }
                 else if (ImGui::MenuItem("PHONG"))
                 {
-                    impl->host_material->type = PHONG;
+                    impl->host_material->type = MaterialType::PHONG;
                     impl->material_update = true;
                 }
                 else if (ImGui::MenuItem("GLASS"))
                 {
-                    impl->host_material->type = GLASS;
+                    impl->host_material->type = MaterialType::GLASS;
                     impl->material_update = true;
                 }
                 else if (ImGui::MenuItem("MIRROR"))
                 {
-                    impl->host_material->type = MIRROR;
+                    impl->host_material->type = MaterialType::MIRROR;
                     impl->material_update = true;
                 }
                 else if (ImGui::MenuItem("GGX"))
                 {
-                    impl->host_material->type = GGX;
+                    impl->host_material->type = MaterialType::GGX;
                     impl->material_update = true;
                 }
                 ImGui::EndMenu();
             }
 
             float f = impl->host_material->shininess;
-            if (impl->host_material->type != GGX)
+            if (impl->host_material->type != MaterialType::GGX)
             {
                 f /= 128.0f;
             }
@@ -237,7 +237,7 @@ namespace cupbr
             if (ImGui::SliderFloat("Roughness", &f, 0.0f, 1.0f))
             {
                 impl->host_material->shininess = f;
-                if (impl->host_material->type != GGX)
+                if (impl->host_material->type != MaterialType::GGX)
                 {
                     impl->host_material->shininess *= 128.0f;
                 }

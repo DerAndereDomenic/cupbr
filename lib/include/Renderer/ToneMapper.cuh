@@ -10,7 +10,7 @@ namespace cupbr
     /**
     *   @brief A enum to switch between Tone mapping algorithms
     */
-    enum ToneMappingType
+    enum class ToneMappingType
     {
         REINHARD,
         GAMMA
@@ -26,7 +26,7 @@ namespace cupbr
         *   @brief Create a tone mapper
         *   @param[in] type The tone mapping type
         */
-        ToneMapper(const ToneMappingType& type = REINHARD);
+        ToneMapper(const ToneMappingType& type = ToneMappingType::REINHARD);
 
         /**
         *   @brief Destructor

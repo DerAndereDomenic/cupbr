@@ -56,7 +56,7 @@ namespace cupbr
             Vector3float normal = geom.N;
 
             //Don't shade back facing geometry
-            if (geom.material.type != GLASS && Math::dot(normal, inc_dir) <= 0.0f)
+            if (geom.material.type != MaterialType::GLASS && Math::dot(normal, inc_dir) <= 0.0f)
             {
                 payload->rayweight = 0;
                 return;

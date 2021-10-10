@@ -11,7 +11,7 @@ namespace cupbr
     /**
     *   @brief The different rendering methods
     */
-    enum RenderingMethod
+    enum class RenderingMethod
     {
         RAYTRACER,
         WHITTED,
@@ -31,7 +31,7 @@ namespace cupbr
         *   @brief Create the renderer
         *   @param[in] method The rendering method (default = RAYTRACER)
         */
-        PBRenderer(const RenderingMethod& method = RAYTRACER);
+        PBRenderer(const RenderingMethod& method = RenderingMethod::RAYTRACER);
 
         /**
         *   @brief Destructor

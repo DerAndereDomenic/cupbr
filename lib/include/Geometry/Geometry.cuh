@@ -11,7 +11,7 @@ namespace cupbr
     /**
     *   @brief A class to model different geometry types
     */
-    enum GeometryType
+    enum class GeometryType
     {
         SPHERE,
         PLANE,

@@ -141,12 +141,12 @@ namespace cupbr
         {
             switch (impl->type)
             {
-            case REINHARD:
+            case ToneMappingType::REINHARD:
             {
                 impl->toneMappingReinhard();
             }
             break;
-            case GAMMA:
+            case ToneMappingType::GAMMA:
             {
                 impl->toneMappingGamma();
             }

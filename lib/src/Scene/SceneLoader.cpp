@@ -41,23 +41,23 @@ namespace cupbr
 
             if (strcmp(type, "LAMBERT") == 0)
             {
-                material.type = LAMBERT;
+                material.type = MaterialType::LAMBERT;
             }
             else if (strcmp(type, "PHONG") == 0)
             {
-                material.type = PHONG;
+                material.type = MaterialType::PHONG;
             }
             else if (strcmp(type, "MIRROR") == 0)
             {
-                material.type = MIRROR;
+                material.type = MaterialType::MIRROR;
             }
             else if (strcmp(type, "GLASS") == 0)
             {
-                material.type = GLASS;
+                material.type = MaterialType::GLASS;
             }
             else if (strcmp(type, "GGX") == 0)
             {
-                material.type = GGX;
+                material.type = MaterialType::GGX;
             }
             else
             {
@@ -359,44 +359,44 @@ namespace cupbr
             Memory::allocator()->copyDevice2HostObject(host_scene[i], &geom);
             switch (geom.type)
             {
-            case PLANE:
-            {
-                Memory::allocator()->destroyDeviceObject<Plane>(static_cast<Plane*>(host_scene[i]));
-            }
-            break;
-            case SPHERE:
-            {
-                Memory::allocator()->destroyDeviceObject<Sphere>(static_cast<Sphere*>(host_scene[i]));
-            }
-            break;
-            case QUAD:
-            {
-                Memory::allocator()->destroyDeviceObject<Quad>(static_cast<Quad*>(host_scene[i]));
-            }
-            break;
-            case TRIANGLE:
-            {
-                Memory::allocator()->destroyDeviceObject<Triangle>(static_cast<Triangle*>(host_scene[i]));
-            }
-            break;
-            case MESH:
-            {
-                Mesh mesh;
-                Memory::allocator()->copyDevice2HostObject<Mesh>(static_cast<Mesh*>(host_scene[i]), &mesh);
-                Memory::allocator()->destroyDeviceObject<Mesh>(static_cast<Mesh*>(host_scene[i]));
-
-                Triangle** host_triangles = Memory::allocator()->createHostArray<Triangle*>(mesh.num_triangles());
-                Memory::allocator()->copyDevice2HostArray<Triangle*>(mesh.num_triangles(), mesh.triangles(), host_triangles);
-                Memory::allocator()->destroyDeviceArray<Triangle*>(mesh.triangles());
-
-                for (uint32_t i = 0; i < mesh.num_triangles(); ++i)
+                case GeometryType::PLANE:
                 {
-                    Memory::allocator()->destroyDeviceObject<Triangle>(host_triangles[i]);
+                    Memory::allocator()->destroyDeviceObject<Plane>(static_cast<Plane*>(host_scene[i]));
                 }
+                break;
+                case GeometryType::SPHERE:
+                {
+                    Memory::allocator()->destroyDeviceObject<Sphere>(static_cast<Sphere*>(host_scene[i]));
+                }
+                break;
+                case GeometryType::QUAD:
+                {
+                    Memory::allocator()->destroyDeviceObject<Quad>(static_cast<Quad*>(host_scene[i]));
+                }
+                break;
+                case GeometryType::TRIANGLE:
+                {
+                    Memory::allocator()->destroyDeviceObject<Triangle>(static_cast<Triangle*>(host_scene[i]));
+                }
+                break;
+                case GeometryType::MESH:
+                {
+                    Mesh mesh;
+                    Memory::allocator()->copyDevice2HostObject<Mesh>(static_cast<Mesh*>(host_scene[i]), &mesh);
+                    Memory::allocator()->destroyDeviceObject<Mesh>(static_cast<Mesh*>(host_scene[i]));
 
-                Memory::allocator()->destroyHostArray<Triangle*>(host_triangles);
-            }
-            break;
+                    Triangle** host_triangles = Memory::allocator()->createHostArray<Triangle*>(mesh.num_triangles());
+                    Memory::allocator()->copyDevice2HostArray<Triangle*>(mesh.num_triangles(), mesh.triangles(), host_triangles);
+                    Memory::allocator()->destroyDeviceArray<Triangle*>(mesh.triangles());
+
+                    for (uint32_t i = 0; i < mesh.num_triangles(); ++i)
+                    {
+                        Memory::allocator()->destroyDeviceObject<Triangle>(host_triangles[i]);
+                    }
+
+                    Memory::allocator()->destroyHostArray<Triangle*>(host_triangles);
+                }
+                break;
             }
         }
 

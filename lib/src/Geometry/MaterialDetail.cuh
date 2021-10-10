@@ -38,31 +38,31 @@ namespace cupbr
     {
         switch (type)
         {
-        case LAMBERT:
-        {
-            return brdf_lambert();
-        }
-        break;
-        case PHONG:
-        {
-            return brdf_phong(position, inc_dir, out_dir, normal) + brdf_lambert();
-        }
-        break;
-        case MIRROR:
-        {
-            return brdf_mirror(position, inc_dir, out_dir, normal);
-        }
-        break;
-        case GLASS:
-        {
-            return btdf_glass(position, inc_dir, out_dir, normal);
-        }
-        break;
-        case GGX:
-        {
-            return brdf_ggx(position, inc_dir, out_dir, normal);
-        }
-        break;
+            case MaterialType::LAMBERT:
+            {
+                return brdf_lambert();
+            }
+            break;
+            case MaterialType::PHONG:
+            {
+                return brdf_phong(position, inc_dir, out_dir, normal) + brdf_lambert();
+            }
+            break;
+            case MaterialType::MIRROR:
+            {
+                return brdf_mirror(position, inc_dir, out_dir, normal);
+            }
+            break;
+            case MaterialType::GLASS:
+            {
+                return btdf_glass(position, inc_dir, out_dir, normal);
+            }
+            break;
+            case MaterialType::GGX:
+            {
+                return brdf_ggx(position, inc_dir, out_dir, normal);
+            }
+            break;
         }
 
         return Vector3float(0);
@@ -74,26 +74,27 @@ namespace cupbr
     {
         switch (type)
         {
-        case LAMBERT:
-        case PHONG:
-        {
-            return sample_lambert(seed, normal);
-        }
-        break;
-        case MIRROR:
-        {
-            return sample_mirror(inc_dir, normal);
-        }
-        break;
-        case GLASS:
-        {
-            return sample_glass(seed, inc_dir, normal);
-        }
-        break;
-        case GGX:
-        {
-            return sample_ggx(seed, inc_dir, normal);
-        }
+            case MaterialType::LAMBERT:
+            case MaterialType::PHONG:
+            {
+                return sample_lambert(seed, normal);
+            }
+            break;
+            case MaterialType::MIRROR:
+            {
+                return sample_mirror(inc_dir, normal);
+            }
+            break;
+            case MaterialType::GLASS:
+            {
+                return sample_glass(seed, inc_dir, normal);
+            }
+            break;
+            case MaterialType::GGX:
+            {
+                return sample_ggx(seed, inc_dir, normal);
+            }
+            break;
         }
 
         return Vector4float(INFINITY);

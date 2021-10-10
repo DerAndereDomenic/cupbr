@@ -28,7 +28,7 @@ int run(int argc, char* argv[])
         scene = SceneLoader::loadFromFile(argv[1]);
     }
 
-    PBRenderer pbrenderer(PATHTRACER);
+    PBRenderer pbrenderer(RenderingMethod::PATHTRACER);
     pbrenderer.setOutputSize(width, height);
     pbrenderer.registerScene(&scene);
 
@@ -44,7 +44,7 @@ int run(int argc, char* argv[])
 
     Image<Vector3float> kernel = Image<Vector3float>::createDeviceObject(kernel_data, 3, 3);
 
-    ToneMapper mapper(REINHARD);
+    ToneMapper mapper(ToneMappingType::REINHARD);
     mapper.registerImage(postprocessor.getPostProcessBuffer());
 
     GLFWwindow* window;
