@@ -15,6 +15,10 @@ void check(cudaError_t error, char const *const func, const char *const file, in
     }
 }
 
+#ifdef _DEBUG
 #define cudaSafeCall(val) check((val), #val, __FILE__, __LINE__)
+#else
+#define cudaSafeCall(val) val
+#endif
 
 #endif
