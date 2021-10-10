@@ -28,7 +28,11 @@ set(source_files "${source_files}" "external/glad/src/glad.c"
 
 add_executable(${PROJECT_NAME} ${source_files})
 
-target_link_libraries(${PROJECT_NAME} glfw -lpthread -lm ${GLEW_LIBRARIES} OpenGL::GL tinyxml2)
+if(MSVC)
+	target_link_libraries(${PROJECT_NAME} glfw ${GLEW_LIBRARIES} OpenGL::GL tinyxml2)
+else()
+	target_link_libraries(${PROJECT_NAME} glfw -lpthread -lm ${GLEW_LIBRARIES} OpenGL::GL tinyxml2)
+endif()
 include_directories(lib/include 
                     external/glad/include 
                     external/glfw/include 

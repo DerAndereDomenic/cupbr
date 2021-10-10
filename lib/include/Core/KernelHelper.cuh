@@ -52,8 +52,8 @@ namespace cupbr
         struct KernelSize
         {
             const uint32_t THREADS_PER_BLOCK = 128;     /**< The number of threads per block */
-            uint32_t blocks;                            /**< The number of blocks */
-            uint32_t threads;                           /**< The number of threads */
+            uint32_t blocks = 0;                        /**< The number of blocks */
+            uint32_t threads = 0;                       /**< The number of threads */
         };
 
         /**

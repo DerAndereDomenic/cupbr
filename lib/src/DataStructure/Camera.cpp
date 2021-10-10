@@ -43,22 +43,22 @@ namespace cupbr
 
         if (_firstMouse)
         {
-            _lastX = xpos;
-            _lastY = ypos;
+            _lastX = static_cast<float>(xpos);
+            _lastY = static_cast<float>(ypos);
             _firstMouse = false;
         }
 
         float sensitivity = 0.002f;
-        float xoffset = _lastX - xpos;
-        float yoffset = _lastY - ypos;
+        float xoffset = _lastX - static_cast<float>(xpos);
+        float yoffset = _lastY - static_cast<float>(ypos);
 
         if (!(Math::safeFloatEqual(xoffset, 0.0f) && Math::safeFloatEqual(yoffset, 0.0f)))
         {
             _moved = true;
         }
 
-        _lastX = xpos;
-        _lastY = ypos;
+        _lastX = static_cast<float>(xpos);
+        _lastY = static_cast<float>(ypos);
 
         xoffset *= sensitivity;
         yoffset *= sensitivity;

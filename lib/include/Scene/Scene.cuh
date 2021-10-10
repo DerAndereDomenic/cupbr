@@ -22,13 +22,13 @@ namespace cupbr
     */
     struct Scene
     {
-        Geometry** geometry;                /**< The scene geometry */
-        uint32_t scene_size;                /**< The number of objects in the scene */
-        Light** lights;                     /**< The light sources in the scene */
-        uint32_t light_count;               /**< The light source count */
-        bool useEnvironmentMap = false;     /**< Wether an environment map is loaded */
-        Image<Vector3float> environment;    /**< The Environment map */
-        Volume volume;                      /**< The volume inside the scene */
+        Geometry** geometry = nullptr;              /**< The scene geometry */
+        uint32_t scene_size = 0;                    /**< The number of objects in the scene */
+        Light** lights = nullptr;                   /**< The light sources in the scene */
+        uint32_t light_count = 0;                   /**< The light source count */
+        bool useEnvironmentMap = false;             /**< Wether an environment map is loaded */
+        Image<Vector3float> environment = {};       /**< The Environment map */
+        Volume volume = {};                         /**< The volume inside the scene */
 
         /**
         *   @brief Get a scene element

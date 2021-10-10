@@ -100,7 +100,7 @@ namespace cupbr
         const float x = N.x;
         const float y = N.y;
         const float z = N.z;
-        const float sz = (z >= 0) ? 1 : -1;
+        const float sz = (z >= 0.0f) ? 1.0f : -1.0f;
         const float a = 1.0f / (sz + z);
         const float ya = y * a;
         const float b = x * ya;

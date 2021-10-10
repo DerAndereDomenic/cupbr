@@ -62,10 +62,10 @@ namespace cupbr
                 Vector3float reflected = Math::reflect(inc_dir, geom.N);
                 Ray new_ray = Ray(geom.P + EPSILON * reflected, reflected);
 
-                radiance = estimateRadiance(new_ray,
-                    scene,
-                    traceDepth + 1,
-                    maxTraceDepth) * geom.material.brdf(geom.P, inc_dir, reflected, geom.N) * max(0.0f, Math::dot(geom.N, reflected));
+                //radiance = estimateRadiance(new_ray,
+                //    scene,
+                //    traceDepth + 1,
+                //    maxTraceDepth) * geom.material.brdf(geom.P, inc_dir, reflected, geom.N) * max(0.0f, Math::dot(geom.N, reflected));
             }
             break;
             case MaterialType::GLASS:
@@ -89,10 +89,10 @@ namespace cupbr
                         maxTraceDepth);//*geom.material.brdf(geom.P, inc_dir, refracted, geom.N)*max(0.0f, Math::dot(geom.N,refracted));
                 }
 
-                radiance += (F)*estimateRadiance(Ray(geom.P + 0.01f * reflected, reflected),
-                    scene,
-                    traceDepth + 1,
-                    maxTraceDepth);//*geom.material.brdf(geom.P, inc_dir, reflected, geom.N)*max(0.0f, Math::dot(geom.N,reflected));
+                //radiance += (F)*estimateRadiance(Ray(geom.P + 0.01f * reflected, reflected),
+                //    scene,
+                //    traceDepth + 1,
+                //    maxTraceDepth);//*geom.material.brdf(geom.P, inc_dir, reflected, geom.N)*max(0.0f, Math::dot(geom.N,reflected));
 
             }
             break;
@@ -115,10 +115,10 @@ namespace cupbr
             }
 
             Ray ray = Tracing::launchRay(tid, img.width(), img.height(), camera);
-            img[tid] = estimateRadiance(ray,
-                scene,
-                0,
-                maxTraceDepth);
+            //img[tid] = estimateRadiance(ray,
+            //    scene,
+            //    0,
+            //    maxTraceDepth);
         }
     } //namespace detail
 

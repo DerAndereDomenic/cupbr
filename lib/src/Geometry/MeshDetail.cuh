@@ -21,7 +21,7 @@ namespace cupbr
         Mesh::computeRayIntersection(const Ray& ray)
     {
         Vector4float intersection(INFINITY);
-        Vector3float normal;
+        Vector3float normal = 0;
         for (uint32_t i = 0; i < _num_triangles; ++i)
         {
             Vector4float intersection_triangle = _triangles[i]->computeRayIntersection(ray);
@@ -31,7 +31,9 @@ namespace cupbr
                 normal = _triangles[i]->getNormal(Vector3float(intersection));
             }
         }
-        _normal = normal;
+
+        //TODO: HERE IS A RACE CONDITION
+        _normal = Vector3float(normal);
         return intersection;
     }
 

@@ -140,7 +140,6 @@ namespace cupbr
             ray.setPayload(&payload);
 
             uint32_t trace_depth = 0;
-            Vector3float inc_dir;
 
             Light light;
 

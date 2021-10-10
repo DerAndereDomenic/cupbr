@@ -51,8 +51,8 @@ namespace cupbr
             Vector3float
             getNormal(const Vector3float& x);
 
-        Material material;  /**< The material of the object */
-        GeometryType type;  /**< The geometry type */
+        Material material = {};                         /**< The material of the object */
+        GeometryType type = GeometryType::MESH;         /**< The geometry type */
     private:
     };
 

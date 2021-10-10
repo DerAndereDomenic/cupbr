@@ -17,7 +17,6 @@ namespace cupbr
 			}
 
 			Vector3float color = img[tid];
-			float knee = 1.0f;
 
 			float brightness = color.x > color.y ? color.x : color.y;
 			brightness = color.z > brightness ? color.z : brightness;

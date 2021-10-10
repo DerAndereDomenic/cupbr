@@ -209,7 +209,9 @@ namespace cupbr
     void
         GLRenderer::renderTexture(const RenderBuffer& img)
     {
-        cudaSafeCall(cudaMemcpyToArray(impl->_texture_ptr, 0, 0, img.data(), 4 * img.size(), cudaMemcpyDeviceToDevice));
+        //Deprecated
+        //cudaSafeCall(cudaMemcpyToArray(impl->_texture_ptr, 0, 0, img.data(), 4 * img.size(), cudaMemcpyDeviceToDevice));
+        cudaSafeCall(cudaMemcpy2DToArray(impl->_texture_ptr, 0, 0, img.data(), img.width() * sizeof(Vector4uint8_t), img.width() * sizeof(Vector4uint8_t), img.height(), cudaMemcpyDeviceToDevice));
 
         glDrawArrays(GL_TRIANGLES, 0, 6);
     }

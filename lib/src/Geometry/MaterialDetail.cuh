@@ -14,7 +14,7 @@ namespace cupbr
         {
             float a2 = roughness * roughness;
             float d = (NdotH * a2 - NdotH) * NdotH + 1.0f;
-            return a2 / (M_PI * d * d);
+            return a2 / (static_cast<float>(M_PI) * d * d);
         }
 
         __host__ __device__
@@ -167,7 +167,7 @@ namespace cupbr
 
         float cosTheta = sqrtf((1.0f - u) / (1.0f + (shininess * shininess - 1.0f) * u));
         float sinTheta = sqrtf(fmaxf(0.0f, 1.0f - cosTheta * cosTheta));
-        float phi = 2.0f * M_PI * v;
+        float phi = 2.0f * static_cast<float>(M_PI) * v;
 
         float x = sinTheta * cosf(phi);
         float y = sinTheta * sinf(phi);

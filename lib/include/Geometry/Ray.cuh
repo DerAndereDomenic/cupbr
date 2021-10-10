@@ -73,9 +73,9 @@ namespace cupbr
             payload();
 
     private:
-        Vector3float _origin;       /**< The ray origin */
-        Vector3float _direction;    /**< The normalized ray direction */
-        void* _payload;              /**< The ray payload */
+        Vector3float _origin = 0;           /**< The ray origin */
+        Vector3float _direction = 0;        /**< The normalized ray direction */
+        void* _payload = nullptr;           /**< The ray payload */
 
     };
 } //namespace cupbr
