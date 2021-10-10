@@ -49,18 +49,18 @@ namespace cupbr
 
     Interactor::Impl::Impl()
     {
-        device_material = Memory::allocator()->createDeviceObject<Material>();
-        host_material = Memory::allocator()->createHostObject<Material>();
-        scene_index = Memory::allocator()->createDeviceObject<int32_t>();
+        device_material = Memory::createDeviceObject<Material>();
+        host_material = Memory::createHostObject<Material>();
+        scene_index = Memory::createDeviceObject<int32_t>();
 
         compute_threshold();
     }
 
     Interactor::Impl::~Impl()
     {
-        Memory::allocator()->destroyDeviceObject<Material>(device_material);
-        Memory::allocator()->destroyHostArray<Material>(host_material);
-        Memory::allocator()->destroyDeviceObject<int32_t>(scene_index);
+        Memory::destroyDeviceObject<Material>(device_material);
+        Memory::destroyHostArray<Material>(host_material);
+        Memory::destroyDeviceObject<int32_t>(scene_index);
     }
 
     Interactor::~Interactor() = default;
@@ -138,7 +138,7 @@ namespace cupbr
                     impl->device_material,
                     impl->scene_index);
 
-                Memory::allocator()->copyDevice2HostObject(impl->device_material, impl->host_material);
+                Memory::copyDevice2HostObject(impl->device_material, impl->host_material);
             }
         }
 
@@ -315,7 +315,7 @@ namespace cupbr
 
             if (impl->material_update)
             {
-                Memory::allocator()->copyHost2DeviceObject(impl->host_material, impl->device_material);
+                Memory::copyHost2DeviceObject(impl->host_material, impl->device_material);
                 Interaction::updateMaterial(*(impl->scene), impl->scene_index, impl->device_material);
             }
         }

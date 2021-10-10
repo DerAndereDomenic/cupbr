@@ -209,6 +209,6 @@ int run(int argc, char* argv[])
 int main(int argc, char* argv[])
 {
     int exit =  run(argc, argv);
-    Memory::allocator()->printStatistics();
+    Memory::printStatistics();
     return exit;
 }

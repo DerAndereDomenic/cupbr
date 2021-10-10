@@ -36,11 +36,11 @@ namespace cupbr
 	void
 		PostProcessor::Impl::buildHierarchyBuffers()
 	{
-		pyramid_down = Memory::allocator()->createDeviceArray<Image<Vector3float>>(pyramid_depth);
-		host_pyramid_down = Memory::allocator()->createHostArray<Image<Vector3float>>(pyramid_depth);
+		pyramid_down = Memory::createDeviceArray<Image<Vector3float>>(pyramid_depth);
+		host_pyramid_down = Memory::createHostArray<Image<Vector3float>>(pyramid_depth);
 
-		pyramid_up = Memory::allocator()->createDeviceArray<Image<Vector3float>>(pyramid_depth);
-		host_pyramid_up = Memory::allocator()->createHostArray<Image<Vector3float>>(pyramid_depth);
+		pyramid_up = Memory::createDeviceArray<Image<Vector3float>>(pyramid_depth);
+		host_pyramid_up = Memory::createHostArray<Image<Vector3float>>(pyramid_depth);
 
 		uint32_t width = hdr_image->width();
 		uint32_t height = hdr_image->height();
@@ -54,26 +54,26 @@ namespace cupbr
 		}
 
 		hdr_image->copyDevice2DeviceObject(host_pyramid_down[0]);
-		Memory::allocator()->copyHost2DeviceArray<Image<Vector3float>>(pyramid_depth, host_pyramid_down, pyramid_down);
-		Memory::allocator()->copyHost2DeviceArray<Image<Vector3float>>(pyramid_depth, host_pyramid_up, pyramid_up);
+		Memory::copyHost2DeviceArray<Image<Vector3float>>(pyramid_depth, host_pyramid_down, pyramid_down);
+		Memory::copyHost2DeviceArray<Image<Vector3float>>(pyramid_depth, host_pyramid_up, pyramid_up);
 	}
 
 	void
 		PostProcessor::Impl::destroyHierarchyBuffers()
 	{
-		Memory::allocator()->copyDevice2HostArray<Image<Vector3float>>(pyramid_depth, pyramid_down, host_pyramid_down);
-		Memory::allocator()->copyDevice2HostArray<Image<Vector3float>>(pyramid_depth, pyramid_up, host_pyramid_up);
+		Memory::copyDevice2HostArray<Image<Vector3float>>(pyramid_depth, pyramid_down, host_pyramid_down);
+		Memory::copyDevice2HostArray<Image<Vector3float>>(pyramid_depth, pyramid_up, host_pyramid_up);
 
 		for (uint32_t i = 0; i < pyramid_depth; ++i)
 		{
 			Image<Vector3float>::destroyDeviceObject(host_pyramid_down[i]);
 			Image<Vector3float>::destroyDeviceObject(host_pyramid_up[i]);
 		}
-		Memory::allocator()->destroyDeviceArray<Image<Vector3float>>(pyramid_down);
-		Memory::allocator()->destroyHostArray<Image<Vector3float>>(host_pyramid_down);
+		Memory::destroyDeviceArray<Image<Vector3float>>(pyramid_down);
+		Memory::destroyHostArray<Image<Vector3float>>(host_pyramid_down);
 
-		Memory::allocator()->destroyDeviceArray<Image<Vector3float>>(pyramid_up);
-		Memory::allocator()->destroyHostArray<Image<Vector3float>>(host_pyramid_up);
+		Memory::destroyDeviceArray<Image<Vector3float>>(pyramid_up);
+		Memory::destroyHostArray<Image<Vector3float>>(host_pyramid_up);
 	}
 
 	PostProcessor::Impl::~Impl()

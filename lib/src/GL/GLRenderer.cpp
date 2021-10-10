@@ -114,20 +114,20 @@ namespace cupbr
         {
             int32_t length;
             glGetShaderiv(vertexShader, GL_INFO_LOG_LENGTH, &length);
-            char* infoLog = Memory::allocator()->createHostArray<char>(length);
+            char* infoLog = Memory::createHostArray<char>(length);
             glGetShaderInfoLog(vertexShader, length, &length, infoLog);
             std::cout << infoLog << std::endl;
-            Memory::allocator()->destroyHostArray<char>(infoLog);
+            Memory::destroyHostArray<char>(infoLog);
         }
 
         if (!fragmentSuccess)
         {
             int32_t length;
             glGetShaderiv(fragmentShader, GL_INFO_LOG_LENGTH, &length);
-            char* infoLog = Memory::allocator()->createHostArray<char>(length);
+            char* infoLog = Memory::createHostArray<char>(length);
             glGetShaderInfoLog(fragmentShader, length, &length, infoLog);
             std::cout << infoLog << std::endl;
-            Memory::allocator()->destroyHostArray<char>(infoLog);
+            Memory::destroyHostArray<char>(infoLog);
         }
 
         ///////////////////////////////////////////////////////
@@ -146,10 +146,10 @@ namespace cupbr
         {
             int32_t length;
             glGetProgramiv(_shader, GL_INFO_LOG_LENGTH, &length);
-            char* infoLog = Memory::allocator()->createHostArray<char>(length);
+            char* infoLog = Memory::createHostArray<char>(length);
             glGetProgramInfoLog(_shader, length, &length, infoLog);
             std::cout << infoLog << std::endl;
-            Memory::allocator()->destroyHostArray<char>(infoLog);
+            Memory::destroyHostArray<char>(infoLog);
         }
 
         glDeleteShader(vertexShader);

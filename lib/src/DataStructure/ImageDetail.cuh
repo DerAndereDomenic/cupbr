@@ -11,7 +11,7 @@ namespace cupbr
         Image<T>::createHostObject(const uint32_t width, const uint32_t height)
     {
         Image<T> result;
-        result._data = Memory::allocator()->createHostArray<T>(width * height);
+        result._data = Memory::createHostArray<T>(width * height);
         result._width = width;
         result._height = height;
         result._size = width * height;
@@ -24,7 +24,7 @@ namespace cupbr
         Image<T>::createDeviceObject(const uint32_t width, const uint32_t height)
     {
         Image<T> result;
-        result._data = Memory::allocator()->createDeviceArray<T>(width * height);
+        result._data = Memory::createDeviceArray<T>(width * height);
         result._width = width;
         result._height = height;
         result._size = width * height;
@@ -37,8 +37,8 @@ namespace cupbr
         Image<T>::createHostObject(T* data, const uint32_t width, const uint32_t height)
     {
         Image<T> result;
-        result._data = Memory::allocator()->createHostArray<T>(width * height);
-        Memory::allocator()->copyHost2HostArray<T>(width * height, data, result._data);
+        result._data = Memory::createHostArray<T>(width * height);
+        Memory::copyHost2HostArray<T>(width * height, data, result._data);
         result._width = width;
         result._height = height;
         result._size = width * height;
@@ -51,8 +51,8 @@ namespace cupbr
         Image<T>::createDeviceObject(T* data, const uint32_t width, const uint32_t height)
     {
         Image<T> result;
-        result._data = Memory::allocator()->createDeviceArray<T>(width * height);
-        Memory::allocator()->copyHost2DeviceArray<T>(width * height, data, result._data);
+        result._data = Memory::createDeviceArray<T>(width * height);
+        Memory::copyHost2DeviceArray<T>(width * height, data, result._data);
         result._width = width;
         result._height = height;
         result._size = width * height;
@@ -67,7 +67,7 @@ namespace cupbr
         object._width = 0;
         object._height = 0;
         object._size = 0;
-        Memory::allocator()->destroyHostArray<T>(object._data);
+        Memory::destroyHostArray<T>(object._data);
     }
 
     template<typename T>
@@ -77,7 +77,7 @@ namespace cupbr
         object._width = 0;
         object._height = 0;
         object._size = 0;
-        Memory::allocator()->destroyDeviceArray<T>(object._data);
+        Memory::destroyDeviceArray<T>(object._data);
     }
 
     template<typename T>
@@ -87,7 +87,7 @@ namespace cupbr
         host_object._width = _width;
         host_object._height = _height;
         host_object._size = _size;
-        Memory::allocator()->copyHost2HostArray<T>(_size, _data, host_object._data);
+        Memory::copyHost2HostArray<T>(_size, _data, host_object._data);
     }
 
     template<typename T>
@@ -97,7 +97,7 @@ namespace cupbr
         device_object._width = _width;
         device_object._height = _height;
         device_object._size = _size;
-        Memory::allocator()->copyHost2DeviceArray<T>(_size, _data, device_object._data);
+        Memory::copyHost2DeviceArray<T>(_size, _data, device_object._data);
     }
 
     template<typename T>
@@ -107,7 +107,7 @@ namespace cupbr
         device_object._width = _width;
         device_object._height = _height;
         device_object._size = _size;
-        Memory::allocator()->copyDevice2DeviceArray<T>(_size, _data, device_object._data);
+        Memory::copyDevice2DeviceArray<T>(_size, _data, device_object._data);
     }
 
     template<typename T>
@@ -117,7 +117,7 @@ namespace cupbr
         host_object._width = _width;
         host_object._height = _height;
         host_object._size = _size;
-        Memory::allocator()->copyDevice2HostArray<T>(_size, _data, host_object._data);
+        Memory::copyDevice2HostArray<T>(_size, _data, host_object._data);
     }
 
     template<typename T>

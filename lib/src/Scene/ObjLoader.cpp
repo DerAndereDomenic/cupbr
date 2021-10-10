@@ -56,25 +56,25 @@ namespace cupbr
 
         file.close();
 
-        Triangle** host_triangles = Memory::allocator()->createHostArray<Triangle*>(indices.size());
-        Triangle** dev_triangles = Memory::allocator()->createDeviceArray<Triangle*>(indices.size());
+        Triangle** host_triangles = Memory::createHostArray<Triangle*>(indices.size());
+        Triangle** dev_triangles = Memory::createDeviceArray<Triangle*>(indices.size());
 
         for (uint32_t i = 0; i < indices.size(); ++i)
         {
             Vector3uint32_t index = indices[i];
             Triangle host_triangle(vertices[index.x], vertices[index.y], vertices[index.z]);
-            Triangle* triangle = Memory::allocator()->createDeviceObject<Triangle>();
-            Memory::allocator()->copyHost2DeviceObject<Triangle>(&host_triangle, triangle);
+            Triangle* triangle = Memory::createDeviceObject<Triangle>();
+            Memory::copyHost2DeviceObject<Triangle>(&host_triangle, triangle);
             host_triangles[i] = triangle;
         }
 
-        Memory::allocator()->copyHost2DeviceArray<Triangle*>(indices.size(), host_triangles, dev_triangles);
+        Memory::copyHost2DeviceArray<Triangle*>(indices.size(), host_triangles, dev_triangles);
 
-        Memory::allocator()->destroyHostArray<Triangle*>(host_triangles);
+        Memory::destroyHostArray<Triangle*>(host_triangles);
 
         Mesh host_mesh(dev_triangles, indices.size());
-        Mesh* mesh = Memory::allocator()->createHostObject<Mesh>();
-        Memory::allocator()->copyHost2HostObject<Mesh>(&host_mesh, mesh);
+        Mesh* mesh = Memory::createHostObject<Mesh>();
+        Memory::copyHost2HostObject<Mesh>(&host_mesh, mesh);
 
         return mesh;
     }
