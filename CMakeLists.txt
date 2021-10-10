@@ -12,33 +12,37 @@ add_subdirectory(external/glfw)
 set(BUILD_TESTING OFF)
 add_subdirectory(external/tinyxml2)
 
-file (GLOB_RECURSE source_files LIST_DIRECTORIES false "src/**.c*"
-                                                       "lib/**.c*"
-                                                       "lib/**.h*")
+file (GLOB_RECURSE cupbr_files LIST_DIRECTORIES false "lib/**.c*"
+                                                      "lib/**.h*")
 
-set(source_files "${source_files}" "external/glad/src/glad.c"
-                                   "external/imgui/imgui.cpp"
-                                   "external/imgui/imgui_demo.cpp"
-                                   "external/imgui/imgui_draw.cpp"
-                                   "external/imgui/imgui_tables.cpp"
-                                   "external/imgui/imgui_widgets.cpp"
-                                   "external/imgui/backends/imgui_impl_glfw.cpp"
-                                   "external/imgui/backends/imgui_impl_opengl3.cpp")
+add_library(CUPBR STATIC "${cupbr_files}")
+
+add_library(glad STATIC "external/glad/src/glad.c")
+
+add_library(imgui STATIC "external/imgui/imgui.cpp"
+                         "external/imgui/imgui_demo.cpp"
+                         "external/imgui/imgui_draw.cpp"
+                         "external/imgui/imgui_tables.cpp"
+                         "external/imgui/imgui_widgets.cpp"
+                         "external/imgui/backends/imgui_impl_glfw.cpp"
+                         "external/imgui/backends/imgui_impl_opengl3.cpp")
 
 
-add_executable(${PROJECT_NAME} ${source_files})
+add_executable(Renderer "src/source.cu")
 
 if(MSVC)
-	target_link_libraries(${PROJECT_NAME} glfw ${GLEW_LIBRARIES} OpenGL::GL tinyxml2)
+	target_link_libraries(Renderer glfw OpenGL::GL tinyxml2 glad imgui CUPBR)
 else()
-	target_link_libraries(${PROJECT_NAME} glfw -lpthread -lm ${GLEW_LIBRARIES} OpenGL::GL tinyxml2)
+	target_link_libraries(Renderer glfw -lpthread -lm OpenGL::GL tinyxml2 glad imgui CUPBR)
 endif()
 include_directories(lib/include 
                     external/glad/include 
                     external/glfw/include 
                     external/stb
-                    external/imgui)
+                    external/imgui
+                    external/tinyxml2)
 
-target_compile_definitions(${PROJECT_NAME} PUBLIC _USE_MATH_DEFINES)
+target_compile_definitions(CUPBR PUBLIC _USE_MATH_DEFINES)
+target_compile_definitions(Renderer PUBLIC _USE_MATH_DEFINES)
 
-set_target_properties(${PROJECT_NAME} PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}")
+set_target_properties(Renderer PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}")
