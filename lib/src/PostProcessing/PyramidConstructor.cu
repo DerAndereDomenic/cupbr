@@ -91,6 +91,7 @@ namespace cupbr
 				1.0f, 2.0f, 1.0f
 			};
 
+            Vector2uint32_t image_lookup;
 			for (int32_t u = -1; u < 2; ++u)
 			{
 				for (int32_t v = -1; v < 2; ++v)
@@ -102,7 +103,8 @@ namespace cupbr
 					if (sample.y < 0)sample.y = 0;
 					if (sample.y >= last_image.height())sample.y = last_image.height() - 1;
 
-					result += last_image(static_cast<Vector2uint32_t>(sample)) * kernel[u + 1][v + 1];
+                    image_lookup = static_cast<Vector2uint32_t>(sample);
+					result += last_image(image_lookup) * kernel[u + 1][v + 1];
 				}
 			}
 
@@ -121,7 +123,7 @@ namespace cupbr
 
 			output[tid] = hdr_image[tid] + last_image[tid];
 		}
-	} //namespace cupbr
+	} //namespace detail
 
 	void
 		PostProcessing::radiance_threshold(Image<Vector3float>* img, const Vector4float& threshold)

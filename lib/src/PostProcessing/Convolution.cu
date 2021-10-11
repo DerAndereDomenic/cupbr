@@ -29,13 +29,17 @@ namespace cupbr
 			}
 
 			Vector3float result = 0;
+            Vector2uint32_t kernel_lookup;
+            Vector2uint32_t image_lookup;
 
 			for (int32_t u = -kernel_width_half; u <= kernel_width_half; ++u)
 			{
 				for (int32_t v = -kernel_height_half; v <= kernel_height_half; ++v)
 				{
-					Vector3float kernel_value = kernel(Vector2uint32_t(kernel_width_half + u, kernel_height_half + v));
-					Vector3float image_value = input(Vector2uint32_t(pixel.x + u, pixel.y + v));
+                    kernel_lookup = Vector2uint32_t(kernel_width_half + u, kernel_height_half + v);
+                    image_lookup = Vector2uint32_t(pixel.x + u, pixel.y + v);
+					Vector3float kernel_value = kernel(kernel_lookup);
+					Vector3float image_value = input(image_lookup);
 
 					result += kernel_value * image_value;
 				}

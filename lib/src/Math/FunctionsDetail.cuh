@@ -2,6 +2,7 @@
 #define __CUPBR_MATH_FUNCTIONSDETAIL_CUH
 
 #include <Core/CUDA.cuh>
+#include <cmath>
 
 namespace cupbr
 {
@@ -9,7 +10,7 @@ namespace cupbr
         inline bool
         Math::safeFloatEqual(const float& lhs, const float& rhs, const float& eps)
     {
-        return fabsf(lhs - rhs) < eps;
+        return std::abs(lhs - rhs) < eps;
     }
 
     template<typename T>

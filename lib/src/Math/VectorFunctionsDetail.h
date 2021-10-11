@@ -3,6 +3,7 @@
 
 #include <Math/VectorTypes.h>
 #include <Math/VectorOperations.h>
+#include <cmath>
 
 namespace cupbr
 {
@@ -10,7 +11,7 @@ namespace cupbr
 	T
 		Math::norm(const Vector2<T>& v)
 	{
-		return sqrtf(dot(v, v));
+		return std::sqrt(dot(v, v));
 	}
 
 	template<typename T>

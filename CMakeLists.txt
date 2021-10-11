@@ -4,6 +4,9 @@ project(CUPBR LANGUAGES CXX C CUDA VERSION 1.0)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/bin)
 
+set(CMAKE_C_STANDARD 99)
+set(CMAKE_CXX_STANDARD 17)
+
 set(OpenGL_GL_PREFERENCE GLVND)
 find_package(OpenGL REQUIRED)
 
@@ -33,14 +36,16 @@ add_executable(Renderer "src/source.cu")
 if(MSVC)
 	target_link_libraries(Renderer glfw OpenGL::GL tinyxml2 glad imgui CUPBR)
 else()
-	target_link_libraries(Renderer glfw -lpthread -lm OpenGL::GL tinyxml2 glad imgui CUPBR)
+    target_link_libraries(CUPBR -lpthread -lm OpenGL::GL tinyxml2 glad imgui)
+	target_link_libraries(Renderer glfw CUPBR)
 endif()
 include_directories(lib/include 
                     external/glad/include 
                     external/glfw/include 
                     external/stb
                     external/imgui
-                    external/tinyxml2)
+                    external/tinyxml2
+                    ${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES})
 
 target_compile_definitions(CUPBR PUBLIC _USE_MATH_DEFINES)
 target_compile_definitions(Renderer PUBLIC _USE_MATH_DEFINES)
