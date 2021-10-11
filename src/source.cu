@@ -1,10 +1,6 @@
 #include <iostream>
 #include <chrono>
 
-#include <imgui.h>
-#include <backends/imgui_impl_glfw.h>
-#include <backends/imgui_impl_opengl3.h>
-
 #include <CUPBR.cuh>
 
 using namespace cupbr;
@@ -96,7 +92,6 @@ int run(int argc, char* argv[])
             mapper.setType(interactor.getToneMapping());
         }
         
-        ImGui::Render();
         /* Render here */
         glClear(GL_COLOR_BUFFER_BIT);
 
