@@ -4,6 +4,7 @@
 /// ------- GL ---------
 
 #include <GL/GLRenderer.cuh>
+#include <GL/Window.h>
 
 /// ------- CORE ---------
 

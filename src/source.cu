@@ -47,58 +47,26 @@ int run(int argc, char* argv[])
     ToneMapper mapper(ToneMappingType::REINHARD);
     mapper.registerImage(postprocessor.getPostProcessBuffer());
 
-    GLFWwindow* window;
-
-    /* Initialize the library */
-    if (!glfwInit())
-        return -1;
-
-    /* Create a windowed mode window and its OpenGL context */
-    window = glfwCreateWindow(width, height, "CUPBR", NULL, NULL);
-    if (!window)
-    {
-        glfwTerminate();
-        return -1;
-    }
-
-    /* Make the window's context current */
-    glfwMakeContextCurrent(window);
-    glfwSwapInterval(0);
-
-    if (!gladLoadGL()) {
-        std::cout << "Failed to initialize OpenGL context" << std::endl;
-        return -1;
-    }
+    Window window("CUPBR", width, height);
 
     GLRenderer renderer(width, height);
     Camera camera(width,height);
     Interactor interactor(pbrenderer.getMethod());
-    interactor.registerWindow(window);
+    interactor.registerWindow((GLFWwindow*)window.getInternalWindow());
     interactor.registerCamera(camera);
     interactor.registerScene(&scene);
 
     float time = 0.0f;
     uint32_t frame_counter = 0;
 
-    IMGUI_CHECKVERSION();
-    ImGui::CreateContext();
-    ImGuiIO& io = ImGui::GetIO(); (void)io;
-
-    ImGui::StyleColorsDark();
-
-    ImGui_ImplGlfw_InitForOpenGL(window, true);
-    ImGui_ImplOpenGL3_Init("#version 330");
-
     bool post_proc = true;
 
     /* Loop until the user closes the window */
-    while (!glfwWindowShouldClose(window))
+    while (!glfwWindowShouldClose((GLFWwindow*)window.getInternalWindow()))
     {
         std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
 
-        ImGui_ImplOpenGL3_NewFrame();
-        ImGui_ImplGlfw_NewFrame();
-        ImGui::NewFrame();
+        window.imguiBegin();
 
         interactor.handleInteraction();
 
@@ -149,39 +117,35 @@ int run(int argc, char* argv[])
             fflush(stdout);
         }
 
-        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+        window.imguiEnd();
 
-        /* Swap front and back buffers */
-        glfwSwapBuffers(window);
-
-        /* Poll for and process events */
-        glfwPollEvents();
+        window.spinOnce();
 
         if(!edit)
-            camera.processInput(window, time);
+            camera.processInput((GLFWwindow*)window.getInternalWindow(), time);
 
-        if(glfwGetKey(window, GLFW_KEY_LEFT_ALT) == GLFW_PRESS && !pressed)
+        if(glfwGetKey((GLFWwindow*)window.getInternalWindow(), GLFW_KEY_LEFT_ALT) == GLFW_PRESS && !pressed)
         {
             pressed = true;
             edit = !edit;
             if(edit)
             {
-                glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+                glfwSetInputMode((GLFWwindow*)window.getInternalWindow(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
             }
             else
             {
-                glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+                glfwSetInputMode((GLFWwindow*)window.getInternalWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
             }
         }
 
-        if(glfwGetKey(window, GLFW_KEY_LEFT_ALT) == GLFW_RELEASE)
+        if(glfwGetKey((GLFWwindow*)window.getInternalWindow(), GLFW_KEY_LEFT_ALT) == GLFW_RELEASE)
         {
             pressed = false;
         }
 
-        if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+        if(glfwGetKey((GLFWwindow*)window.getInternalWindow(), GLFW_KEY_ESCAPE) == GLFW_PRESS)
         {
-            glfwDestroyWindow(window);
+            glfwDestroyWindow((GLFWwindow*)window.getInternalWindow());
             break;
         }
 
@@ -189,12 +153,6 @@ int run(int argc, char* argv[])
         time = static_cast<float>(std::chrono::duration_cast<std::chrono::microseconds>(end-begin).count());
     }
     printf("\n");
-
-    ImGui_ImplOpenGL3_Shutdown();
-    ImGui_ImplGlfw_Shutdown();
-    ImGui::DestroyContext();
-
-    glfwTerminate();
 
     SceneLoader::destroyScene(scene);
 
