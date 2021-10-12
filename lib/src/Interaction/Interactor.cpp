@@ -30,7 +30,6 @@ namespace cupbr
         bool window_registered = false;
         bool camera_registered = false;
         bool scene_registered = false;
-        bool enable_render_settings = false;
         bool pressed = false;
         bool material_update = false;
         bool post_processing = false;
@@ -125,7 +124,7 @@ namespace cupbr
         }
 
         int32_t state = glfwGetMouseButton((GLFWwindow*)impl->window.getInternalWindow(), GLFW_MOUSE_BUTTON_LEFT);
-        if (state == GLFW_PRESS && !(impl->pressed) && !(impl->enable_render_settings))
+        if (state == GLFW_PRESS && !(impl->pressed))
         {
             impl->pressed = true;
             double xpos, ypos;
@@ -152,7 +151,6 @@ namespace cupbr
         if (glfwGetKey((GLFWwindow*)impl->window.getInternalWindow(), GLFW_KEY_M) == GLFW_PRESS && !(impl->pressed))
         {
             impl->pressed = true;
-            impl->enable_render_settings = !(impl->enable_render_settings);
         }
 
         if (state == GLFW_RELEASE && glfwGetKey((GLFWwindow*)impl->window.getInternalWindow(), GLFW_KEY_M) == GLFW_RELEASE && impl->pressed)
@@ -160,171 +158,171 @@ namespace cupbr
             impl->pressed = false;
         }
 
-        if (impl->enable_render_settings)
+        impl->material_update = false;
+
+        ImGui::SetNextWindowPos(ImVec2(impl->window.width() - 400, 0));
+        ImGui::SetNextWindowSize(ImVec2(400, impl->window.height()));
+        ImGui::Begin("Render settings");
+
+        if (ImGui::BeginMenu("Renderer:"))
         {
-            impl->material_update = false;
-            ImGui::Begin("Render settings", &(impl->enable_render_settings));
-
-            if (ImGui::BeginMenu("Renderer:"))
+            if (ImGui::MenuItem("Path Tracing"))
             {
-                if (ImGui::MenuItem("Path Tracing"))
-                {
-                    impl->method = RenderingMethod::PATHTRACER;
-                }
-                else if (ImGui::MenuItem("Ray Tracing"))
-                {
-                    impl->method = RenderingMethod::RAYTRACER;
-                }
-                else if (ImGui::MenuItem("Volume Rendering"))
-                {
-                    impl->method = RenderingMethod::VOLUME;
-                }
-
-                ImGui::EndMenu();
+                impl->method = RenderingMethod::PATHTRACER;
+            }
+            else if (ImGui::MenuItem("Ray Tracing"))
+            {
+                impl->method = RenderingMethod::RAYTRACER;
+            }
+            else if (ImGui::MenuItem("Volume Rendering"))
+            {
+                impl->method = RenderingMethod::VOLUME;
             }
 
-            if (ImGui::BeginMenu("Tone Mapping:"))
-            {
-                if (ImGui::MenuItem("Reinhard"))
-                {
-                    impl->tonemapping = ToneMappingType::REINHARD;
-                }
-                else if (ImGui::MenuItem("Gamma"))
-                {
-                    impl->tonemapping = ToneMappingType::GAMMA;
-                }
+            ImGui::EndMenu();
+        }
 
-                ImGui::EndMenu();
+        if (ImGui::BeginMenu("Tone Mapping:"))
+        {
+            if (ImGui::MenuItem("Reinhard"))
+            {
+                impl->tonemapping = ToneMappingType::REINHARD;
+            }
+            else if (ImGui::MenuItem("Gamma"))
+            {
+                impl->tonemapping = ToneMappingType::GAMMA;
             }
 
-            if (ImGui::SliderFloat("Exposure", &(impl->exposure), 0.01f, 10.0f))
+            ImGui::EndMenu();
+        }
+
+        if (ImGui::SliderFloat("Exposure", &(impl->exposure), 0.01f, 10.0f))
+        {
+            impl->material_update = true;
+        }
+
+        ImGui::Separator();
+
+        ImGui::Text("Material:");
+        if (ImGui::BeginMenu("Type"))
+        {
+            if (ImGui::MenuItem("LAMBERT"))
             {
+                impl->host_material->type = MaterialType::LAMBERT;
                 impl->material_update = true;
             }
-
-            ImGui::Separator();
-
-            ImGui::Text("Material:");
-            if (ImGui::BeginMenu("Type"))
+            else if (ImGui::MenuItem("PHONG"))
             {
-                if (ImGui::MenuItem("LAMBERT"))
-                {
-                    impl->host_material->type = MaterialType::LAMBERT;
-                    impl->material_update = true;
-                }
-                else if (ImGui::MenuItem("PHONG"))
-                {
-                    impl->host_material->type = MaterialType::PHONG;
-                    impl->material_update = true;
-                }
-                else if (ImGui::MenuItem("GLASS"))
-                {
-                    impl->host_material->type = MaterialType::GLASS;
-                    impl->material_update = true;
-                }
-                else if (ImGui::MenuItem("MIRROR"))
-                {
-                    impl->host_material->type = MaterialType::MIRROR;
-                    impl->material_update = true;
-                }
-                else if (ImGui::MenuItem("GGX"))
-                {
-                    impl->host_material->type = MaterialType::GGX;
-                    impl->material_update = true;
-                }
-                ImGui::EndMenu();
+                impl->host_material->type = MaterialType::PHONG;
+                impl->material_update = true;
             }
+            else if (ImGui::MenuItem("GLASS"))
+            {
+                impl->host_material->type = MaterialType::GLASS;
+                impl->material_update = true;
+            }
+            else if (ImGui::MenuItem("MIRROR"))
+            {
+                impl->host_material->type = MaterialType::MIRROR;
+                impl->material_update = true;
+            }
+            else if (ImGui::MenuItem("GGX"))
+            {
+                impl->host_material->type = MaterialType::GGX;
+                impl->material_update = true;
+            }
+            ImGui::EndMenu();
+        }
 
-            float f = impl->host_material->shininess;
+        float f = impl->host_material->shininess;
+        if (impl->host_material->type != MaterialType::GGX)
+        {
+            f /= 128.0f;
+        }
+
+        if (ImGui::SliderFloat("Roughness", &f, 0.0f, 1.0f))
+        {
+            impl->host_material->shininess = f;
             if (impl->host_material->type != MaterialType::GGX)
             {
-                f /= 128.0f;
+                impl->host_material->shininess *= 128.0f;
             }
+            impl->material_update = true;
+        }
 
-            if (ImGui::SliderFloat("Roughness", &f, 0.0f, 1.0f))
-            {
-                impl->host_material->shininess = f;
-                if (impl->host_material->type != MaterialType::GGX)
-                {
-                    impl->host_material->shininess *= 128.0f;
-                }
-                impl->material_update = true;
-            }
+        if (ImGui::SliderFloat("Eta", &(impl->host_material->eta), 0.0f, 5.0f))
+        {
+            impl->material_update = true;
+        }
 
-            if (ImGui::SliderFloat("Eta", &(impl->host_material->eta), 0.0f, 5.0f))
-            {
-                impl->material_update = true;
-            }
+        Vector3float e = impl->host_material->albedo_e;
+        Vector3float d = impl->host_material->albedo_d;
+        Vector3float s = impl->host_material->albedo_s;
 
-            Vector3float e = impl->host_material->albedo_e;
-            Vector3float d = impl->host_material->albedo_d;
-            Vector3float s = impl->host_material->albedo_s;
+        float emissive[] = { e.x, e.y, e.z };
+        float diffuse[] = { d.x, d.y, d.z };
+        float specular[] = { s.x, s.y, s.z };
 
-            float emissive[] = { e.x, e.y, e.z };
-            float diffuse[] = { d.x, d.y, d.z };
-            float specular[] = { s.x, s.y, s.z };
+        if (ImGui::ColorEdit3("Albedo emissive", emissive))
+        {
+            impl->host_material->albedo_e = Vector3float(emissive[0], emissive[1], emissive[2]);
+            impl->material_update = true;
+        }
 
-            if (ImGui::ColorEdit3("Albedo emissive", emissive))
-            {
-                impl->host_material->albedo_e = Vector3float(emissive[0], emissive[1], emissive[2]);
-                impl->material_update = true;
-            }
+        if (ImGui::ColorEdit3("Albedo diffuse", diffuse))
+        {
+            impl->host_material->albedo_d = Vector3float(diffuse[0], diffuse[1], diffuse[2]);
+            impl->material_update = true;
+        }
 
-            if (ImGui::ColorEdit3("Albedo diffuse", diffuse))
-            {
-                impl->host_material->albedo_d = Vector3float(diffuse[0], diffuse[1], diffuse[2]);
-                impl->material_update = true;
-            }
+        if (ImGui::ColorEdit3("Albedo specular", specular))
+        {
+            impl->host_material->albedo_s = Vector3float(specular[0], specular[1], specular[2]);
+            impl->material_update = true;
+        }
 
-            if (ImGui::ColorEdit3("Albedo specular", specular))
-            {
-                impl->host_material->albedo_s = Vector3float(specular[0], specular[1], specular[2]);
-                impl->material_update = true;
-            }
+        ImGui::Separator();
+        ImGui::Text("Volume:");
 
-            ImGui::Separator();
-            ImGui::Text("Volume:");
+        if (ImGui::SliderFloat("Sigma_a", &(impl->scene->volume.sigma_a), 0.0f, 1.0f))
+        {
+            impl->material_update = true;
+        }
 
-            if (ImGui::SliderFloat("Sigma_a", &(impl->scene->volume.sigma_a), 0.0f, 1.0f))
-            {
-                impl->material_update = true;
-            }
+        if (ImGui::SliderFloat("Sigma_s", &(impl->scene->volume.sigma_s), 0.0f, 1.0f))
+        {
+            impl->material_update = true;
+        }
 
-            if (ImGui::SliderFloat("Sigma_s", &(impl->scene->volume.sigma_s), 0.0f, 1.0f))
-            {
-                impl->material_update = true;
-            }
+        if (ImGui::SliderFloat("g", &(impl->scene->volume.g), -1.0f, 1.0f))
+        {
+            impl->material_update = true;
+        }
 
-            if (ImGui::SliderFloat("g", &(impl->scene->volume.g), -1.0f, 1.0f))
-            {
-                impl->material_update = true;
-            }
+        ImGui::Separator();
+        ImGui::Text("PostProcessing");
 
-            ImGui::Separator();
-            ImGui::Text("PostProcessing");
+        if (ImGui::Checkbox("Bloom", &(impl->post_processing)))
+        {
 
-            if (ImGui::Checkbox("Bloom", &(impl->post_processing)))
-            {
+        }
 
-            }
+        if (ImGui::SliderFloat("Threshold", &(impl->threshold), 0.0f, 2.0f))
+        {
+            impl->compute_threshold();
+        }
 
-            if (ImGui::SliderFloat("Threshold", &(impl->threshold), 0.0f, 2.0f))
-            {
-                impl->compute_threshold();
-            }
+        if (ImGui::SliderFloat("Knee", &(impl->knee), 0.0f, 1.0f))
+        {
+            impl->compute_threshold();
+        }
 
-            if (ImGui::SliderFloat("Knee", &(impl->knee), 0.0f, 1.0f))
-            {
-                impl->compute_threshold();
-            }
+        ImGui::End();
 
-            ImGui::End();
-
-            if (impl->material_update)
-            {
-                Memory::copyHost2DeviceObject(impl->host_material, impl->device_material);
-                Interaction::updateMaterial(*(impl->scene), impl->scene_index, impl->device_material);
-            }
+        if (impl->material_update)
+        {
+            Memory::copyHost2DeviceObject(impl->host_material, impl->device_material);
+            Interaction::updateMaterial(*(impl->scene), impl->scene_index, impl->device_material);
         }
 
     }

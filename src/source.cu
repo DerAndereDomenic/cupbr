@@ -39,7 +39,7 @@ int run(int argc, char* argv[])
     ToneMapper mapper(ToneMappingType::REINHARD);
     mapper.registerImage(postprocessor.getPostProcessBuffer());
 
-    Window window("CUPBR", width, height);
+    Window window("CUPBR", width + 400, height);
 
     GLRenderer renderer(width, height);
     Camera camera(width,height);
@@ -54,6 +54,8 @@ int run(int argc, char* argv[])
     uint32_t frame_counter = 0;
 
     bool post_proc = true;
+
+    glViewport(0,0, width, height);
 
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose((GLFWwindow*)window.getInternalWindow()))
