@@ -5,15 +5,8 @@
 
 using namespace cupbr;
 
-void onEvent(Interactor* interactor, Event& event)
-{
-    interactor->onEvent(event);
-}
-
 int run(int argc, char* argv[])
 {
-    bool edit = true;
-    bool pressed = false;
     const uint32_t width = 1024, height = 1024, menu_width = 400;
 
     cudaSafeCall(cudaSetDevice(0));
@@ -45,10 +38,10 @@ int run(int argc, char* argv[])
     Camera camera(width,height);
     Interactor interactor(pbrenderer.getMethod());
     interactor.registerWindow(window, menu_width);
-    interactor.registerCamera(camera);
+    interactor.registerCamera(&camera);
     interactor.registerScene(&scene);
 
-    window.setEventCallback(std::bind(&onEvent, &interactor, std::placeholders::_1));
+    window.setEventCallback(std::bind(&Interactor::onEvent, &interactor, std::placeholders::_1));
 
     float time = 0.0f;
     uint32_t frame_counter = 0;
@@ -95,7 +88,7 @@ int run(int argc, char* argv[])
         /* Render here */
         glClear(GL_COLOR_BUFFER_BIT);
 
-        pbrenderer.render(camera);
+        pbrenderer.render(&camera);
 
         if(interactor.usePostProcessing())
             postprocessor.bloom(interactor.getThreshold());
@@ -115,29 +108,7 @@ int run(int argc, char* argv[])
 
         window.spinOnce();
 
-        if(!edit)
-            camera.processInput((GLFWwindow*)window.getInternalWindow(), time);
-
-        if(glfwGetKey((GLFWwindow*)window.getInternalWindow(), GLFW_KEY_LEFT_ALT) == GLFW_PRESS && !pressed)
-        {
-            pressed = true;
-            edit = !edit;
-            if(edit)
-            {
-                glfwSetInputMode((GLFWwindow*)window.getInternalWindow(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-            }
-            else
-            {
-                glfwSetInputMode((GLFWwindow*)window.getInternalWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-            }
-        }
-
-        if(glfwGetKey((GLFWwindow*)window.getInternalWindow(), GLFW_KEY_LEFT_ALT) == GLFW_RELEASE)
-        {
-            pressed = false;
-        }
-
-        if(glfwGetKey((GLFWwindow*)window.getInternalWindow(), GLFW_KEY_ESCAPE) == GLFW_PRESS)
+        if(interactor.shouldClose())
         {
             glfwDestroyWindow((GLFWwindow*)window.getInternalWindow());
             break;

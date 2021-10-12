@@ -50,7 +50,7 @@ namespace cupbr
         *   @param[in] camera The camera
         */
         void
-            registerCamera(const Camera& camera);
+            registerCamera(Camera* camera);
 
         /**
         *   @brief The function called on event
@@ -106,6 +106,13 @@ namespace cupbr
         */
         Vector4float
             getThreshold();
+
+        /**
+        *   @brief If the application should be closed
+        *   @return True if escape was pressed
+        */
+        bool
+            shouldClose();
     private:
         class Impl;
         std::unique_ptr<Impl> impl;     /**< Implementation pointer */

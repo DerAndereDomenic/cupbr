@@ -2,6 +2,8 @@
 #include <Interaction/MousePicker.cuh>
 #include <Core/Memory.cuh>
 #include <imgui.h>
+#include <Core/KeyEvent.h>
+#include <Core/MouseEvent.h>
 
 namespace cupbr
 {
@@ -18,7 +20,7 @@ namespace cupbr
         int32_t menu_width;
 
         Scene* scene;
-        Camera camera;
+        Camera* camera;
 
         Material* device_material;
         Material* host_material;
@@ -31,9 +33,10 @@ namespace cupbr
         bool window_registered = false;
         bool camera_registered = false;
         bool scene_registered = false;
-        bool pressed = false;
         bool material_update = false;
         bool post_processing = false;
+        bool close = false;
+        bool edit_mode = true;
 
         //Tone Mapping
         float exposure = 1.0f;
@@ -91,7 +94,7 @@ namespace cupbr
     }
 
     void
-        Interactor::registerCamera(const Camera& camera)
+        Interactor::registerCamera(Camera* camera)
     {
         impl->camera = camera;
 
@@ -100,9 +103,59 @@ namespace cupbr
 
     bool
         Interactor::onEvent(Event& event)
+    {
+        if (event.getEventType() == EventType::MouseButtonPressed)
         {
-            return true;
+            double xpos, ypos;
+            glfwGetCursorPos((GLFWwindow*)impl->window.getInternalWindow(), &xpos, &ypos);
+
+            int32_t x = static_cast<int32_t>(xpos);
+            int32_t y = impl->width - static_cast<int32_t>(ypos);   //glfw coordinates are flipped
+
+            if (x >= 0 && x < impl->width && y >= 0 && y < impl->height)
+            {
+                Interaction::pickMouse(x,
+                    y,
+                    impl->width,
+                    impl->height,
+                    *(impl->scene),
+                    *(impl->camera),
+                    impl->device_material,
+                    impl->scene_index);
+
+                Memory::copyDevice2HostObject(impl->device_material, impl->host_material);
+                return true;
+            }
         }
+
+        if(event.getEventType() == EventType::KeyPressed)
+        {
+            KeyPressedEvent e = *(KeyPressedEvent*)&event;
+
+            if(e.getKeyCode() == GLFW_KEY_LEFT_ALT)
+            {
+                impl->edit_mode = !impl->edit_mode;
+                if(impl->edit_mode)
+                {
+                    glfwSetInputMode((GLFWwindow*)(impl->window.getInternalWindow()), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+                }
+                else
+                {
+                    glfwSetInputMode((GLFWwindow*)(impl->window.getInternalWindow()), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+                }
+
+                return true;
+            }
+
+            if(e.getKeyCode() == GLFW_KEY_ESCAPE)
+            {
+                impl->close = true;
+                return true;
+            }
+        }
+
+        return false;
+    }
 
     void
         Interactor::handleInteraction()
@@ -125,40 +178,8 @@ namespace cupbr
             return;
         }
 
-        int32_t state = glfwGetMouseButton((GLFWwindow*)impl->window.getInternalWindow(), GLFW_MOUSE_BUTTON_LEFT);
-        if (state == GLFW_PRESS && !(impl->pressed))
-        {
-            impl->pressed = true;
-            double xpos, ypos;
-            glfwGetCursorPos((GLFWwindow*)impl->window.getInternalWindow(), &xpos, &ypos);
-
-            int32_t x = static_cast<int32_t>(xpos);
-            int32_t y = impl->width - static_cast<int32_t>(ypos);   //glfw coordinates are flipped
-
-            if (x >= 0 && x < impl->width && y >= 0 && y < impl->height)
-            {
-                Interaction::pickMouse(x,
-                    y,
-                    impl->width,
-                    impl->height,
-                    *(impl->scene),
-                    impl->camera,
-                    impl->device_material,
-                    impl->scene_index);
-
-                Memory::copyDevice2HostObject(impl->device_material, impl->host_material);
-            }
-        }
-
-        if (glfwGetKey((GLFWwindow*)impl->window.getInternalWindow(), GLFW_KEY_M) == GLFW_PRESS && !(impl->pressed))
-        {
-            impl->pressed = true;
-        }
-
-        if (state == GLFW_RELEASE && glfwGetKey((GLFWwindow*)impl->window.getInternalWindow(), GLFW_KEY_M) == GLFW_RELEASE && impl->pressed)
-        {
-            impl->pressed = false;
-        }
+        if(!impl->edit_mode)
+            impl->camera->processInput((GLFWwindow*)(impl->window.getInternalWindow()), 3000);
 
         impl->material_update = false;
 
@@ -356,6 +377,12 @@ namespace cupbr
         Interactor::getThreshold()
     {
         return impl->threshold_curve;
+    }
+
+    bool
+        Interactor::shouldClose()
+    {
+        return impl->close;
     }
 
 } //namespace cupbr

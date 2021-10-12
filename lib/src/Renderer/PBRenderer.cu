@@ -134,7 +134,7 @@ namespace cupbr
     }
 
     void
-        PBRenderer::render(const Camera& camera)
+        PBRenderer::render(Camera* camera)
     {
         if (!impl->outputSizeSet)
         {
@@ -153,7 +153,7 @@ namespace cupbr
         case RenderingMethod::RAYTRACER:
         {
             PBRendering::raytracing(*(impl->scene),
-                camera,
+                *camera,
                 &impl->hdr_image);
         }
         break;
@@ -170,12 +170,12 @@ namespace cupbr
         break;
         case RenderingMethod::PATHTRACER:
         {
-            if (camera.moved())
+            if (camera->moved())
             {
                 impl->frameIndex = 0;
             }
             PBRendering::pathtracing(*(impl->scene),
-                camera,
+                *camera,
                 impl->frameIndex,
                 impl->maxTraceDepth,
                 &impl->hdr_image);
@@ -189,12 +189,12 @@ namespace cupbr
         break;
         case RenderingMethod::GRADIENTDOMAIN:
         {
-            if (camera.moved())
+            if (camera->moved())
             {
                 impl->frameIndex = 0;
             }
             PBRendering::gradientdomain(*(impl->scene),
-                camera,
+                *camera,
                 impl->frameIndex,
                 impl->maxTraceDepth,
                 &impl->base,
@@ -211,12 +211,12 @@ namespace cupbr
         break;
         case RenderingMethod::VOLUME:
         {
-            if (camera.moved())
+            if (camera->moved())
             {
                 impl->frameIndex = 0;
             }
             PBRendering::volumetracing(*(impl->scene),
-                camera,
+                *camera,
                 impl->frameIndex,
                 impl->maxTraceDepth,
                 &impl->hdr_image);
