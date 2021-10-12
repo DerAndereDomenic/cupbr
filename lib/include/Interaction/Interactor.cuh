@@ -1,8 +1,7 @@
 #ifndef __CUPBR_INTERACTION_INTERACTOR_CUH
 #define __CUPBR_INTERACTION_INTERACTOR_CUH
 
-#define GLFW_INCLUDE_NONE
-#include <GLFW/glfw3.h>
+#include <GL/Window.h>
 
 #include <memory>
 
@@ -35,7 +34,7 @@ namespace cupbr
         *   @param[in] window The window
         */
         void
-            registerWindow(GLFWwindow* window);
+            registerWindow(const Window& window);
 
         /**
         *   @brief Add the scene we want to interact with

@@ -12,7 +12,7 @@ namespace cupbr
 
         ~Impl();
 
-        GLFWwindow* window;
+        Window window;
         int32_t width;
         int32_t height;
 
@@ -72,10 +72,11 @@ namespace cupbr
     }
 
     void
-        Interactor::registerWindow(GLFWwindow* window)
+        Interactor::registerWindow(const Window& window)
     {
         impl->window = window;
-        glfwGetWindowSize(impl->window, &(impl->width), &(impl->height));
+        impl->width = window.width();
+        impl->height = window.height();
 
         impl->window_registered = true;
     }
@@ -117,12 +118,12 @@ namespace cupbr
             return;
         }
 
-        int32_t state = glfwGetMouseButton(impl->window, GLFW_MOUSE_BUTTON_LEFT);
+        int32_t state = glfwGetMouseButton((GLFWwindow*)impl->window.getInternalWindow(), GLFW_MOUSE_BUTTON_LEFT);
         if (state == GLFW_PRESS && !(impl->pressed) && !(impl->enable_render_settings))
         {
             impl->pressed = true;
             double xpos, ypos;
-            glfwGetCursorPos(impl->window, &xpos, &ypos);
+            glfwGetCursorPos((GLFWwindow*)impl->window.getInternalWindow(), &xpos, &ypos);
 
             int32_t x = static_cast<int32_t>(xpos);
             int32_t y = impl->width - static_cast<int32_t>(ypos);   //glfw coordinates are flipped
@@ -142,13 +143,13 @@ namespace cupbr
             }
         }
 
-        if (glfwGetKey(impl->window, GLFW_KEY_M) == GLFW_PRESS && !(impl->pressed))
+        if (glfwGetKey((GLFWwindow*)impl->window.getInternalWindow(), GLFW_KEY_M) == GLFW_PRESS && !(impl->pressed))
         {
             impl->pressed = true;
             impl->enable_render_settings = !(impl->enable_render_settings);
         }
 
-        if (state == GLFW_RELEASE && glfwGetKey(impl->window, GLFW_KEY_M) == GLFW_RELEASE && impl->pressed)
+        if (state == GLFW_RELEASE && glfwGetKey((GLFWwindow*)impl->window.getInternalWindow(), GLFW_KEY_M) == GLFW_RELEASE && impl->pressed)
         {
             impl->pressed = false;
         }

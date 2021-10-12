@@ -13,6 +13,12 @@ namespace cupbr
     class Window
     {
         public:
+
+            /**
+            *   @brief Default constructor
+            */
+            Window() = default;
+            
             /**
             *   @brief Constructor
             *   @param[in] title The title
@@ -51,13 +57,13 @@ namespace cupbr
             *   @brief Get the window width
             *   @return The width 
             */
-            inline uint32_t width() {return _width;}
+            inline uint32_t width() const {return _width;}
 
             /**
             *   @brief Get the window height
             *   @return The height 
             */
-            inline uint32_t height() {return _height;}
+            inline uint32_t height() const {return _height;}
 
         private:
             GLFWwindow* _internal_window;       /**< The internal window */
