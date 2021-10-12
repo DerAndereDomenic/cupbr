@@ -5,6 +5,8 @@
 #include <Core/KeyEvent.h>
 #include <Core/MouseEvent.h>
 //#include <filesystem>
+#define _SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING
+#include <experimental/filesystem>
 
 namespace cupbr
 {
@@ -196,8 +198,20 @@ namespace cupbr
                 if(ImGui::BeginMenu("Scene"))
                 {
                     std::string path = "res/Scenes";
-                    //for(const auto& entry : std::filesystem::directory_iterator(path))
-                    //    std::cout << entry.path() << std::endl;
+                    std::vector<std::string> paths;
+                    for(auto entry : std::experimental::filesystem::directory_iterator(path))
+                    {
+                        paths.push_back(entry.path().string());
+                    }
+
+                    for(std::string s : paths)
+                    {
+                        if(ImGui::MenuItem(s.c_str()))
+                        {
+                            
+                        }
+                    }
+
                     ImGui::EndMenu();
                 }
                 ImGui::EndMenuBar();
