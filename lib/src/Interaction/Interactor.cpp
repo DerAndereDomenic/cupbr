@@ -164,74 +164,64 @@ namespace cupbr
         ImGui::SetNextWindowSize(ImVec2(400, impl->window.height()));
         ImGui::Begin("Render settings");
 
-        if (ImGui::BeginMenu("Renderer:"))
+        ImGui::Text("Renderer:");
+        ImGui::Separator();
+        if (ImGui::MenuItem("Path Tracing"))
         {
-            if (ImGui::MenuItem("Path Tracing"))
-            {
-                impl->method = RenderingMethod::PATHTRACER;
-            }
-            else if (ImGui::MenuItem("Ray Tracing"))
-            {
-                impl->method = RenderingMethod::RAYTRACER;
-            }
-            else if (ImGui::MenuItem("Volume Rendering"))
-            {
-                impl->method = RenderingMethod::VOLUME;
-            }
-
-            ImGui::EndMenu();
+            impl->method = RenderingMethod::PATHTRACER;
+        }
+        else if (ImGui::MenuItem("Ray Tracing"))
+        {
+            impl->method = RenderingMethod::RAYTRACER;
+        }
+        else if (ImGui::MenuItem("Volume Rendering"))
+        {
+            impl->method = RenderingMethod::VOLUME;
         }
 
-        if (ImGui::BeginMenu("Tone Mapping:"))
+        ImGui::Text("Tone Mapping:");
+        ImGui::Separator();
+        if (ImGui::MenuItem("Reinhard"))
         {
-            if (ImGui::MenuItem("Reinhard"))
-            {
-                impl->tonemapping = ToneMappingType::REINHARD;
-            }
-            else if (ImGui::MenuItem("Gamma"))
-            {
-                impl->tonemapping = ToneMappingType::GAMMA;
-            }
-
-            ImGui::EndMenu();
+            impl->tonemapping = ToneMappingType::REINHARD;
+        }
+        else if (ImGui::MenuItem("Gamma"))
+        {
+            impl->tonemapping = ToneMappingType::GAMMA;
         }
 
-        if (ImGui::SliderFloat("Exposure", &(impl->exposure), 0.01f, 10.0f))
-        {
-            impl->material_update = true;
-        }
+
+        ImGui::SliderFloat("Exposure", &(impl->exposure), 0.01f, 10.0f);
 
         ImGui::Separator();
 
         ImGui::Text("Material:");
-        if (ImGui::BeginMenu("Type"))
+        ImGui::Separator();
+        ImGui::Text("Type:");
+        if (ImGui::MenuItem("LAMBERT"))
         {
-            if (ImGui::MenuItem("LAMBERT"))
-            {
-                impl->host_material->type = MaterialType::LAMBERT;
-                impl->material_update = true;
-            }
-            else if (ImGui::MenuItem("PHONG"))
-            {
-                impl->host_material->type = MaterialType::PHONG;
-                impl->material_update = true;
-            }
-            else if (ImGui::MenuItem("GLASS"))
-            {
-                impl->host_material->type = MaterialType::GLASS;
-                impl->material_update = true;
-            }
-            else if (ImGui::MenuItem("MIRROR"))
-            {
-                impl->host_material->type = MaterialType::MIRROR;
-                impl->material_update = true;
-            }
-            else if (ImGui::MenuItem("GGX"))
-            {
-                impl->host_material->type = MaterialType::GGX;
-                impl->material_update = true;
-            }
-            ImGui::EndMenu();
+            impl->host_material->type = MaterialType::LAMBERT;
+            impl->material_update = true;
+        }
+        else if (ImGui::MenuItem("PHONG"))
+        {
+            impl->host_material->type = MaterialType::PHONG;
+            impl->material_update = true;
+        }
+        else if (ImGui::MenuItem("GLASS"))
+        {
+            impl->host_material->type = MaterialType::GLASS;
+            impl->material_update = true;
+        }
+        else if (ImGui::MenuItem("MIRROR"))
+        {
+            impl->host_material->type = MaterialType::MIRROR;
+            impl->material_update = true;
+        }
+        else if (ImGui::MenuItem("GGX"))
+        {
+            impl->host_material->type = MaterialType::GGX;
+            impl->material_update = true;
         }
 
         float f = impl->host_material->shininess;
@@ -302,10 +292,7 @@ namespace cupbr
         ImGui::Separator();
         ImGui::Text("PostProcessing");
 
-        if (ImGui::Checkbox("Bloom", &(impl->post_processing)))
-        {
-
-        }
+        ImGui::Checkbox("Bloom", &(impl->post_processing));
 
         if (ImGui::SliderFloat("Threshold", &(impl->threshold), 0.0f, 2.0f))
         {
