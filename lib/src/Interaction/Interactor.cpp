@@ -14,7 +14,7 @@ namespace cupbr
 
         ~Impl();
 
-        Window window;
+        Window* window;
         int32_t width; // Width of the framebuffer without menu
         int32_t height;
         int32_t menu_width;
@@ -75,11 +75,11 @@ namespace cupbr
     }
 
     void
-        Interactor::registerWindow(const Window& window, const int32_t& menu_width)
+        Interactor::registerWindow(Window* window, const int32_t& menu_width)
     {
         impl->window = window;
-        impl->width = window.width() - menu_width;
-        impl->height = window.height();
+        impl->width = window->width() - menu_width;
+        impl->height = window->height();
         impl->menu_width = menu_width;
 
         impl->window_registered = true;
@@ -107,7 +107,7 @@ namespace cupbr
         if (event.getEventType() == EventType::MouseButtonPressed)
         {
             double xpos, ypos;
-            glfwGetCursorPos((GLFWwindow*)impl->window.getInternalWindow(), &xpos, &ypos);
+            glfwGetCursorPos((GLFWwindow*)impl->window->getInternalWindow(), &xpos, &ypos);
 
             int32_t x = static_cast<int32_t>(xpos);
             int32_t y = impl->width - static_cast<int32_t>(ypos);   //glfw coordinates are flipped
@@ -137,11 +137,11 @@ namespace cupbr
                 impl->edit_mode = !impl->edit_mode;
                 if(impl->edit_mode)
                 {
-                    glfwSetInputMode((GLFWwindow*)(impl->window.getInternalWindow()), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+                    glfwSetInputMode((GLFWwindow*)(impl->window->getInternalWindow()), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
                 }
                 else
                 {
-                    glfwSetInputMode((GLFWwindow*)(impl->window.getInternalWindow()), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+                    glfwSetInputMode((GLFWwindow*)(impl->window->getInternalWindow()), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
                 }
 
                 return true;
@@ -179,7 +179,7 @@ namespace cupbr
         }
 
         if(!impl->edit_mode)
-            impl->camera->processInput((GLFWwindow*)(impl->window.getInternalWindow()), 3000);
+            impl->camera->processInput((GLFWwindow*)(impl->window->getInternalWindow()), impl->window->delta_time());
 
         impl->material_update = false;
 

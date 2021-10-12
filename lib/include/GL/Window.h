@@ -73,11 +73,19 @@ namespace cupbr
             */
             inline uint32_t height() const {return _height;}
 
+            /**
+            *   @brief Get the delta time
+            *   @return delta_time in s 
+            */
+            inline float delta_time() const {return _delta_time;}
+
         private:
             GLFWwindow* _internal_window;       /**< The internal window */
             uint32_t _width;                    /**< The window width */
             uint32_t _height;                   /**< The window height */
             EventCallbackFn _event_callback;    /**< The event callback */
+            float _delta_time = 0;              /**< The delta time */
+            float _last_time = 0;               /**< The last time events were polled */
     };
 
 } //namespace cupbr

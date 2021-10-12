@@ -1,5 +1,4 @@
 #include <iostream>
-#include <chrono>
 
 #include <CUPBR.cuh>
 
@@ -37,13 +36,12 @@ int run(int argc, char* argv[])
     GLRenderer renderer(width, height);
     Camera camera(width,height);
     Interactor interactor(pbrenderer.getMethod());
-    interactor.registerWindow(window, menu_width);
+    interactor.registerWindow(&window, menu_width);
     interactor.registerCamera(&camera);
     interactor.registerScene(&scene);
 
     window.setEventCallback(std::bind(&Interactor::onEvent, &interactor, std::placeholders::_1));
 
-    float time = 0.0f;
     uint32_t frame_counter = 0;
 
     bool post_proc = true;
@@ -53,8 +51,6 @@ int run(int argc, char* argv[])
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose((GLFWwindow*)window.getInternalWindow()))
     {
-        std::chrono::steady_clock::time_point begin = std::chrono::steady_clock::now();
-
         window.imguiBegin();
 
         interactor.handleInteraction();
@@ -100,7 +96,7 @@ int run(int argc, char* argv[])
 
         if(frame_counter%30 == 0)
         {
-            printf("\rRender time: %fms : %ffps", time/1000.0f, 1000000.0f/time);
+            printf("\rRender time: %fms : %ffps", window.delta_time()*1000.0f, 1.0f/window.delta_time());
             fflush(stdout);
         }
 
@@ -113,9 +109,6 @@ int run(int argc, char* argv[])
             glfwDestroyWindow((GLFWwindow*)window.getInternalWindow());
             break;
         }
-
-        std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-        time = static_cast<float>(std::chrono::duration_cast<std::chrono::microseconds>(end-begin).count());
     }
     printf("\n");
 

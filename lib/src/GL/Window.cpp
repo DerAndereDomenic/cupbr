@@ -150,6 +150,9 @@ namespace cupbr
     void
     Window::spinOnce()
     {
+        double current_time = glfwGetTime();
+        _delta_time = current_time - _last_time;
+        _last_time = current_time;
         glfwSwapBuffers(_internal_window);
         glfwPollEvents();
     }

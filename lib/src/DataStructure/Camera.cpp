@@ -17,22 +17,22 @@ namespace cupbr
         //Keyboard
         if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
         {
-            _position += 0.00001f * _xAxis * delta_time;
+            _position += 4.0f * _xAxis * delta_time;
             _moved = true;
         }
         if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
         {
-            _position -= 0.00001f * _xAxis * delta_time;
+            _position -= 4.0f * _xAxis * delta_time;
             _moved = true;
         }
         if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
         {
-            _position -= 0.00001f * _zAxis * delta_time;
+            _position -= 4.0f * _zAxis * delta_time;
             _moved = true;
         }
         if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
         {
-            _position += 0.00001f * _zAxis * delta_time;
+            _position += 4.0f * _zAxis * delta_time;
             _moved = true;
         }
 

@@ -36,7 +36,7 @@ namespace cupbr
         *   @param[in] menu_width The width of the menu
         */
         void
-            registerWindow(const Window& window, const int32_t& menu_width);
+            registerWindow(Window* window, const int32_t& menu_width);
 
         /**
         *   @brief Add the scene we want to interact with
