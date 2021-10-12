@@ -12,6 +12,9 @@
 #include <Core/KernelHelper.cuh>
 #include <Core/Memory.cuh>
 #include <Core/Tracing.cuh>
+#include <Core/Event.h>
+#include <Core/KeyEvent.h>
+#include <Core/MouseEvent.h>
 
 /// ------- DATASTRUCTURE ---------
 
