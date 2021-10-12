@@ -48,12 +48,22 @@ int run(int argc, char* argv[])
 
     glViewport(0,0, width, height);
 
+    std::string scene_path;
+
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose((GLFWwindow*)window.getInternalWindow()))
     {
         window.imguiBegin();
 
         interactor.handleInteraction();
+
+        if(interactor.resetScene(scene_path))
+        {
+            SceneLoader::destroyScene(scene);
+            scene = SceneLoader::loadFromFile(scene_path);
+            camera = Camera(width, height);
+            pbrenderer.reset();
+        }
 
         if(post_proc != interactor.usePostProcessing())
         {

@@ -95,6 +95,12 @@ namespace cupbr
         RenderingMethod
             getMethod();
 
+        /**
+        *   @brief Reset the current render
+        */
+        void
+            reset();
+
     private:
         class Impl;
         std::unique_ptr<Impl> impl;     /**< The implementation pointer */

@@ -40,6 +40,9 @@ namespace cupbr
         bool post_processing = false;
         bool close = false;
         bool edit_mode = true;
+        bool reset_scene = false;
+
+        std::string scene_path;
 
         //Tone Mapping
         float exposure = 1.0f;
@@ -185,6 +188,7 @@ namespace cupbr
             impl->camera->processInput((GLFWwindow*)(impl->window->getInternalWindow()), impl->window->delta_time());
 
         impl->material_update = false;
+        impl->reset_scene = false;
 
         bool dummy = true;
         if(impl->edit_mode)
@@ -208,7 +212,8 @@ namespace cupbr
                     {
                         if(ImGui::MenuItem(s.c_str()))
                         {
-                            
+                            impl->reset_scene = true;
+                            impl->scene_path = s;
                         }
                     }
 
@@ -413,6 +418,13 @@ namespace cupbr
         Interactor::shouldClose()
     {
         return impl->close;
+    }
+
+    bool
+        Interactor::resetScene(std::string& file_path)
+    {
+        file_path = impl->scene_path;
+        return impl->reset_scene;
     }
 
 } //namespace cupbr

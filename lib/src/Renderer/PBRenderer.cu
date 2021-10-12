@@ -250,4 +250,10 @@ namespace cupbr
         return impl->method;
     }
 
+    void
+        PBRenderer::reset()
+    {
+        impl->frameIndex = 0;
+    }
+
 } //namespace cupbr

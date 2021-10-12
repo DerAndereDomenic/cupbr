@@ -113,6 +113,14 @@ namespace cupbr
         */
         bool
             shouldClose();
+
+        /**
+        *   @brief Check if a new scene was loaded
+        *   @param[out] file_path The path to the new scene
+        *   @return True if a new scene was selected
+        */
+        bool
+            resetScene(std::string& file_path);
     private:
         class Impl;
         std::unique_ptr<Impl> impl;     /**< Implementation pointer */
