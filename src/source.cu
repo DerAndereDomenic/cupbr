@@ -31,15 +31,6 @@ int run(int argc, char* argv[])
     PostProcessor postprocessor;
     postprocessor.registerImage(pbrenderer.getOutputImage());
 
-    Vector3float kernel_data[9] =
-    {
-        Vector3float(1.0),Vector3float(2.0),Vector3float(1.0),
-        Vector3float(0),Vector3float(0),Vector3float(0),
-        Vector3float(-1.0),Vector3float(-2.0),Vector3float(-1.0),
-    };
-
-    Image<Vector3float> kernel = Image<Vector3float>::createDeviceObject(kernel_data, 3, 3);
-
     ToneMapper mapper(ToneMappingType::REINHARD);
     mapper.registerImage(postprocessor.getPostProcessBuffer());
 
@@ -97,7 +88,6 @@ int run(int argc, char* argv[])
 
         pbrenderer.render(camera);
 
-        //postprocessor.filter(kernel);
         if(interactor.usePostProcessing())
             postprocessor.bloom(interactor.getThreshold());
 
@@ -152,8 +142,6 @@ int run(int argc, char* argv[])
     SceneLoader::destroyScene(scene);
 
     mapper.saveToFile("bin/output.bmp");
-
-    Image<Vector3float>::destroyDeviceObject(kernel);
 
     printf("Rendered Frames: %i\n", frame_counter);
     return 0;
