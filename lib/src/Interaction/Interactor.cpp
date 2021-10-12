@@ -4,6 +4,7 @@
 #include <imgui.h>
 #include <Core/KeyEvent.h>
 #include <Core/MouseEvent.h>
+//#include <filesystem>
 
 namespace cupbr
 {
@@ -183,11 +184,24 @@ namespace cupbr
 
         impl->material_update = false;
 
+        bool dummy = true;
         if(impl->edit_mode)
         {
             ImGui::SetNextWindowPos(ImVec2(impl->width, 0));
             ImGui::SetNextWindowSize(ImVec2(impl->menu_width, impl->height));
-            ImGui::Begin("Render settings");
+            ImGui::Begin("Render settings", &dummy, ImGuiWindowFlags_MenuBar);
+            
+            if(ImGui::BeginMenuBar())
+            {
+                if(ImGui::BeginMenu("Scene"))
+                {
+                    std::string path = "res/Scenes";
+                    //for(const auto& entry : std::filesystem::directory_iterator(path))
+                    //    std::cout << entry.path() << std::endl;
+                    ImGui::EndMenu();
+                }
+                ImGui::EndMenuBar();
+            }
 
             ImGui::Text("Renderer:");
             ImGui::Separator();
