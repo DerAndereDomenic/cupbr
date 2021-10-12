@@ -2,13 +2,12 @@
 #include <chrono>
 
 #include <CUPBR.cuh>
-#include <functional>
 
 using namespace cupbr;
 
-void onEvent(const Event& event)
+void onEvent(Interactor* interactor, Event& event)
 {
-    //TODO: Handle events
+    interactor->onEvent(event);
 }
 
 int run(int argc, char* argv[])
@@ -41,7 +40,6 @@ int run(int argc, char* argv[])
     mapper.registerImage(postprocessor.getPostProcessBuffer());
 
     Window window("CUPBR", width, height);
-    window.setEventCallback(std::bind(&onEvent, std::placeholders::_1));
 
     GLRenderer renderer(width, height);
     Camera camera(width,height);
@@ -49,6 +47,8 @@ int run(int argc, char* argv[])
     interactor.registerWindow(window);
     interactor.registerCamera(camera);
     interactor.registerScene(&scene);
+
+    window.setEventCallback(std::bind(&onEvent, &interactor, std::placeholders::_1));
 
     float time = 0.0f;
     uint32_t frame_counter = 0;

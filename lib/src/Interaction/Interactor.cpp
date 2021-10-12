@@ -97,6 +97,12 @@ namespace cupbr
         impl->camera_registered = true;
     }
 
+    bool
+        Interactor::onEvent(Event& event)
+        {
+            return true;
+        }
+
     void
         Interactor::handleInteraction()
     {

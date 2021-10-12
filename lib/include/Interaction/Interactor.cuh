@@ -5,6 +5,7 @@
 
 #include <memory>
 
+#include <Core/Event.h>
 #include <DataStructure/Camera.cuh>
 #include <Scene/Scene.cuh>
 #include <Renderer/PBRenderer.cuh>
@@ -49,6 +50,14 @@ namespace cupbr
         */
         void
             registerCamera(const Camera& camera);
+
+        /**
+        *   @brief The function called on event
+        *   @param[in] event The event to handle 
+        *   @return True if the event was handled
+        */
+        bool 
+            onEvent(Event& event);
 
         /**
         *   @brief This handles the user interaction. It should be called every frame
