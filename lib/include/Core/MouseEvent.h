@@ -59,19 +59,20 @@ namespace cupbr
             EVENT_CLASS_TYPE(MouseButtonPressed)
     };
 
-    class MouseButtonReleaseEvent : public MouseButtonEvent
+    class MouseButtonReleasedEvent : public MouseButtonEvent
     {
-        MouseButtonReleaseEvent(int button)
-            :MouseButtonEvent(button) {}
+        public:
+            MouseButtonReleasedEvent(int button)
+                :MouseButtonEvent(button) {}
 
-        std::string toString() const override
-        {
-            std::stringstream ss;
-            ss << "MouseButtonReleasedEvent: " << m_button;
-            return ss.str();
-        }
+            std::string toString() const override
+            {
+                std::stringstream ss;
+                ss << "MouseButtonReleasedEvent: " << m_button;
+                return ss.str();
+            }
 
-        EVENT_CLASS_TYPE(MouseButtonReleased)
+            EVENT_CLASS_TYPE(MouseButtonReleased)
     };
 
 } //namespace cupbr

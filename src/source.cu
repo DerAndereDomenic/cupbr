@@ -2,8 +2,14 @@
 #include <chrono>
 
 #include <CUPBR.cuh>
+#include <functional>
 
 using namespace cupbr;
+
+void onEvent(const Event& event)
+{
+    //TODO: Handle events
+}
 
 int run(int argc, char* argv[])
 {
@@ -35,6 +41,7 @@ int run(int argc, char* argv[])
     mapper.registerImage(postprocessor.getPostProcessBuffer());
 
     Window window("CUPBR", width, height);
+    window.setEventCallback(std::bind(&onEvent, std::placeholders::_1));
 
     GLRenderer renderer(width, height);
     Camera camera(width,height);

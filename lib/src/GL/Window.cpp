@@ -9,6 +9,9 @@
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
 
+#include <Core/KeyEvent.h>
+#include <Core/MouseEvent.h>
+
 namespace cupbr
 {
     static bool s_glfw_initialized = false;
@@ -50,6 +53,64 @@ namespace cupbr
         ImGui_ImplOpenGL3_Init("#version 330");
 
         s_imgui_initialized = true;
+
+        glfwSetWindowUserPointer(_internal_window, &_event_callback);
+
+        glfwSetMouseButtonCallback(_internal_window, [](GLFWwindow* window, int button, int action, int mode)
+        {
+            EventCallbackFn fnc = *(EventCallbackFn*)glfwGetWindowUserPointer(window);
+
+            switch(action)
+            {
+                case GLFW_PRESS:
+                {
+                    MouseButtonPressedEvent event = MouseButtonPressedEvent(button);
+                    fnc(event);
+                    break;
+                }
+                case GLFW_RELEASE:
+                {
+                    MouseButtonReleasedEvent event = MouseButtonReleasedEvent(button);
+                    fnc(event);
+                    break;
+                }
+            }
+        });
+
+        glfwSetCursorPosCallback(_internal_window, [](GLFWwindow* window, double x, double y)
+        {
+            EventCallbackFn fnc = *(EventCallbackFn*)glfwGetWindowUserPointer(window);
+
+            MouseMovedEvent event = MouseMovedEvent(float(x), float(y));
+            fnc(event);
+        });
+
+        glfwSetKeyCallback(_internal_window, [](GLFWwindow* window, int key, int scancode, int action, int mods)
+        {
+            EventCallbackFn fnc = *(EventCallbackFn*)glfwGetWindowUserPointer(window);
+
+            switch(action)
+            {
+                case GLFW_PRESS:
+                {
+                    KeyPressedEvent event = KeyPressedEvent(key, 0);
+                    fnc(event);
+                    break;
+                }
+                case GLFW_RELEASE:
+                {
+                    KeyReleasedEvent event = KeyReleasedEvent(key);
+                    fnc(event);
+                    break;
+                }
+                case GLFW_REPEAT:
+                {
+                    KeyPressedEvent event = KeyPressedEvent(key, 1);
+                    fnc(event);
+                    break;
+                }
+            }
+        });
     }
 
     Window::~Window()

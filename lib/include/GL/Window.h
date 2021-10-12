@@ -2,6 +2,8 @@
 #define __CUPBR_GL_WINDOW_H
 
 #include <cstdint>
+#include <functional>
+#include <Core/Event.h>
 
 struct GLFWwindow;
 
@@ -13,12 +15,12 @@ namespace cupbr
     class Window
     {
         public:
-
+            using EventCallbackFn = std::function<void(Event&)>;
             /**
             *   @brief Default constructor
             */
             Window() = default;
-            
+
             /**
             *   @brief Constructor
             *   @param[in] title The title
@@ -48,6 +50,12 @@ namespace cupbr
             void spinOnce();
 
             /**
+            *   @brief Set the event callback
+            *   @param[in] callback The callback function called on events 
+            */
+            inline void setEventCallback(const EventCallbackFn& callback) {_event_callback = callback;}
+
+            /**
             *   @brief Get the internal window handle
             *   @return The window handle 
             */
@@ -69,6 +77,7 @@ namespace cupbr
             GLFWwindow* _internal_window;       /**< The internal window */
             uint32_t _width;                    /**< The window width */
             uint32_t _height;                   /**< The window height */
+            EventCallbackFn _event_callback;    /**< The event callback */
     };
 
 } //namespace cupbr
