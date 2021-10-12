@@ -14,7 +14,7 @@ int run(int argc, char* argv[])
 {
     bool edit = true;
     bool pressed = false;
-    const uint32_t width = 1024, height = 1024;
+    const uint32_t width = 1024, height = 1024, menu_width = 400;
 
     cudaSafeCall(cudaSetDevice(0));
 
@@ -39,12 +39,12 @@ int run(int argc, char* argv[])
     ToneMapper mapper(ToneMappingType::REINHARD);
     mapper.registerImage(postprocessor.getPostProcessBuffer());
 
-    Window window("CUPBR", width + 400, height);
+    Window window("CUPBR", width + menu_width, height);
 
     GLRenderer renderer(width, height);
     Camera camera(width,height);
     Interactor interactor(pbrenderer.getMethod());
-    interactor.registerWindow(window);
+    interactor.registerWindow(window, menu_width);
     interactor.registerCamera(camera);
     interactor.registerScene(&scene);
 

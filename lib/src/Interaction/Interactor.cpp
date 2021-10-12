@@ -13,8 +13,9 @@ namespace cupbr
         ~Impl();
 
         Window window;
-        int32_t width;
+        int32_t width; // Width of the framebuffer without menu
         int32_t height;
+        int32_t menu_width;
 
         Scene* scene;
         Camera camera;
@@ -71,11 +72,12 @@ namespace cupbr
     }
 
     void
-        Interactor::registerWindow(const Window& window)
+        Interactor::registerWindow(const Window& window, const int32_t& menu_width)
     {
         impl->window = window;
-        impl->width = window.width();
+        impl->width = window.width() - menu_width;
         impl->height = window.height();
+        impl->menu_width = menu_width;
 
         impl->window_registered = true;
     }
@@ -160,8 +162,8 @@ namespace cupbr
 
         impl->material_update = false;
 
-        ImGui::SetNextWindowPos(ImVec2(impl->window.width() - 400, 0));
-        ImGui::SetNextWindowSize(ImVec2(400, impl->window.height()));
+        ImGui::SetNextWindowPos(ImVec2(impl->width, 0));
+        ImGui::SetNextWindowSize(ImVec2(impl->menu_width, impl->height));
         ImGui::Begin("Render settings");
 
         ImGui::Text("Renderer:");
