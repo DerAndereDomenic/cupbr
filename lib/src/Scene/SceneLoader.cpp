@@ -333,6 +333,8 @@ namespace cupbr
             scene.useEnvironmentMap = true;
             scene.environment = dbuffer;
 
+            stbi_image_free(data);
+
             Image<Vector3float>::destroyHostObject(buffer);
         }
 
@@ -346,7 +348,7 @@ namespace cupbr
     }
 
     void
-        SceneLoader::destroyScene(Scene scene)
+        SceneLoader::destroyScene(Scene& scene)
     {
         Geometry** host_scene = Memory::createHostArray<Geometry*>(scene.scene_size);
         Light** host_lights = Memory::createHostArray<Light*>(scene.light_count);

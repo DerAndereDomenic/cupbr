@@ -20,7 +20,7 @@ namespace cupbr
         *   @param[in] scene The scene to be destroyed
         */
         void
-            destroyScene(Scene scene);
+            destroyScene(Scene& scene);
     } //namespace SceneLoader
 } //namespace cupbr
 
