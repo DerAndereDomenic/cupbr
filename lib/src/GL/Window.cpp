@@ -11,6 +11,7 @@
 
 #include <Core/KeyEvent.h>
 #include <Core/MouseEvent.h>
+#include <Core/WindowEvent.h>
 
 namespace cupbr
 {
@@ -110,6 +111,15 @@ namespace cupbr
                     break;
                 }
             }
+        });
+
+        glfwSetDropCallback(_internal_window, [](GLFWwindow* window, int num_paths, const char* paths[])
+        {
+            EventCallbackFn fnc = *(EventCallbackFn*)glfwGetWindowUserPointer(window);
+
+            FileDroppedEvent event = FileDroppedEvent(paths[0]);
+
+            fnc(event);
         });
     }
 

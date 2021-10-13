@@ -15,7 +15,8 @@ namespace cupbr
         KeyReleased,
         MouseButtonPressed,
         MouseButtonReleased,
-        MouseMoved
+        MouseMoved,
+        FileDropped
     };
 
     enum EventCategory
@@ -25,7 +26,9 @@ namespace cupbr
         EventCategoryInput = BIT(0),
         EventCategoryKeyboard = BIT(1),
         EventCategoryMouseButton= BIT(2),
-        EventCategoryMouse = BIT(3)
+        EventCategoryMouse = BIT(3),
+        EventCategoryWindow = BIT(4),
+        EventCategoryFile = BIT(5)
         #undef BIT
     };
 
