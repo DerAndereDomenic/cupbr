@@ -4,6 +4,8 @@
 #include <imgui.h>
 #include <Core/KeyEvent.h>
 #include <Core/MouseEvent.h>
+#include <Core/WindowEvent.h>
+
 //#include <filesystem>
 #define _SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING
 #include <experimental/filesystem>
@@ -160,6 +162,15 @@ namespace cupbr
             }
         }
 
+        if(event.getEventType() == EventType::FileDropped)
+        {
+            FileDroppedEvent e = *(FileDroppedEvent*)&event;
+
+            impl->reset_scene = true;
+            impl->scene_path = e.getFilePath();
+            return true;
+        }
+
         return false;
     }
 
@@ -188,7 +199,6 @@ namespace cupbr
             impl->camera->processInput((GLFWwindow*)(impl->window->getInternalWindow()), impl->window->delta_time());
 
         impl->material_update = false;
-        impl->reset_scene = false;
 
         bool dummy = true;
         if(impl->edit_mode)
@@ -423,8 +433,10 @@ namespace cupbr
     bool
         Interactor::resetScene(std::string& file_path)
     {
+        bool should_reset = impl->reset_scene;
+        impl->reset_scene = false;
         file_path = impl->scene_path;
-        return impl->reset_scene;
+        return should_reset;
     }
 
 } //namespace cupbr
