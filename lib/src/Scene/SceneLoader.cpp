@@ -94,7 +94,7 @@ namespace cupbr
 
             if (roughness_string != NULL)
             {
-                material.shininess = std::stof(roughness_string->GetText());
+                material.roughness = std::max(1e-4f, std::stof(roughness_string->GetText()));
             }
 
             if (eta_string != NULL)

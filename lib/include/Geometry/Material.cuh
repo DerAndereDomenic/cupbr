@@ -33,7 +33,8 @@ namespace cupbr
         Vector3float albedo_e = Vector3float(0);                    /**< The emissive albedo */
         Vector3float albedo_d = Vector3float(1);                    /**< The diffuse albedo */
         Vector3float albedo_s = Vector3float(0);                    /**< The specular albedo */
-        float shininess = 128.0f * 0.4f;                            /**< The object shininess / roughness for GGX */
+        float shininess = 128.0f * 0.4f;                            /**< The object shininess */
+        float roughness = 1.0f;                                     /**< The material roughness for ggx */
         float eta = 1.5f;                                           /**< Index of refraction */
 
         MaterialType type = MaterialType::LAMBERT;                  /**< The material type */

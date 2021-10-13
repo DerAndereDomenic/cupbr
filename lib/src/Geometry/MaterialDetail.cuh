@@ -165,7 +165,7 @@ namespace cupbr
         float u = Math::rnd(seed);
         float v = Math::rnd(seed);
 
-        float cosTheta = sqrtf((1.0f - u) / (1.0f + (shininess * shininess - 1.0f) * u));
+        float cosTheta = sqrtf((1.0f - u) / (1.0f + (roughness * roughness - 1.0f) * u));
         float sinTheta = sqrtf(fmaxf(0.0f, 1.0f - cosTheta * cosTheta));
         float phi = 2.0f * static_cast<float>(M_PI) * v;
 
@@ -184,7 +184,7 @@ namespace cupbr
             return Vector4float(0, 0, 0, 1);
         }
 
-        float p = detail::D_GGX(NdotH, shininess) * NdotH / fabsf(4.0f * LdotH);
+        float p = detail::D_GGX(NdotH, roughness) * NdotH / fabsf(4.0f * LdotH);
 
         return Vector4float(L, p);
     }
@@ -257,9 +257,9 @@ namespace cupbr
         float NdotL = Math::dot(normal, out_dir);
         float NdotV = Math::dot(normal, inc_dir);
 
-        float ndf = detail::D_GGX(NdotH, shininess);    //The shininess variable is used as roughness in ggx
+        float ndf = detail::D_GGX(NdotH, roughness);
 
-        float vis = detail::V_SmithJointGGX(NdotL, NdotV, shininess);
+        float vis = detail::V_SmithJointGGX(NdotL, NdotV, roughness);
 
         return ndf * vis * Math::fresnel_schlick(albedo_s, LdotH);
     }

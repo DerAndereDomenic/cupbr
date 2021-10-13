@@ -28,6 +28,7 @@ namespace cupbr
                 material->albedo_s = geom.material.albedo_s;
                 material->shininess = geom.material.shininess;
                 material->eta = geom.material.eta;
+                material->roughness = geom.material.roughness;
                 *(scene_index) = geom.scene_index;
             }
         }
@@ -44,6 +45,7 @@ namespace cupbr
             element->material.albedo_s = newMaterial->albedo_s;
             element->material.shininess = newMaterial->shininess;
             element->material.eta = newMaterial->eta;
+            element->material.roughness = newMaterial->roughness;
         }
     } //namespace detail
 

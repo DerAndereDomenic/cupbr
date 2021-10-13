@@ -292,19 +292,13 @@ namespace cupbr
                 impl->material_update = true;
             }
 
-            float f = impl->host_material->shininess;
-            if (impl->host_material->type != MaterialType::GGX)
+            if (ImGui::SliderFloat("Shininess", &(impl->host_material->shininess), 0.0f, 128.0f))
             {
-                f /= 128.0f;
+                impl->material_update = true;
             }
 
-            if (ImGui::SliderFloat("Roughness", &f, 0.0f, 1.0f))
+            if(ImGui::SliderFloat("Roughness", &(impl->host_material->roughness), 1e-3f, 1.0f))
             {
-                impl->host_material->shininess = f;
-                if (impl->host_material->type != MaterialType::GGX)
-                {
-                    impl->host_material->shininess *= 128.0f;
-                }
                 impl->material_update = true;
             }
 
