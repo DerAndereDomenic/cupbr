@@ -6,6 +6,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/bin)
 
 set(CMAKE_C_STANDARD 99)
 set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CUDA_STANDARD 14)
 
 set(OpenGL_GL_PREFERENCE GLVND)
 find_package(OpenGL REQUIRED)
@@ -36,7 +37,7 @@ add_executable(Renderer "src/source.cu")
 if(MSVC)
 	target_link_libraries(Renderer glfw OpenGL::GL tinyxml2 glad imgui CUPBR)
 else()
-    target_link_libraries(CUPBR -lpthread -lm OpenGL::GL tinyxml2 glad imgui)
+    target_link_libraries(CUPBR -lpthread -lm OpenGL::GL tinyxml2 glad imgui -lstdc++fs)
 	target_link_libraries(Renderer glfw CUPBR)
 endif()
 include_directories(lib/include 
