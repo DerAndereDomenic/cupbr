@@ -72,36 +72,7 @@ namespace cupbr
             {
                 light = *(scene.lights[light_sample]);
 
-                switch (light.type)
-                {
-                case LightType::POINT:
-                {
-                    lightDir = Math::normalize(light.position - geom.P);
-                    d = Math::norm(light.position - geom.P);
-                    lightRadiance = light.intensity / (d * d);
-                }
-                break;
-                case LightType::AREA:
-                {
-                    float xi1 = Math::rnd(payload->seed) * 2.0f - 1.0f;
-                    float xi2 = Math::rnd(payload->seed) * 2.0f - 1.0f;
-
-                    Vector3float sample = light.position + xi1 * light.halfExtend1 + xi2 * light.halfExtend2;
-                    Vector3float n = Math::normalize(Math::cross(light.halfExtend1, light.halfExtend2));
-                    float area = 4.0f * Math::norm(light.halfExtend1) * Math::norm(light.halfExtend2);
-
-                    lightDir = Math::normalize(sample - geom.P);
-                    d = Math::norm(sample - geom.P);
-
-                    float NdotL = Math::dot(lightDir, n);
-                    if (NdotL < 0) NdotL *= -1.0f;
-
-                    float solidAngle = area * NdotL / (d * d);
-
-                    lightRadiance = light.radiance * solidAngle;
-                }
-                break;
-                }
+                lightRadiance = light.sample(payload->seed, geom.P, lightDir, d);
             }
             else // Use environment map
             {
@@ -183,36 +154,7 @@ namespace cupbr
                 {
                     light = *(scene.lights[light_sample]);
 
-                    switch (light.type)
-                    {
-                    case LightType::POINT:
-                    {
-                        lightDir = Math::normalize(light.position - event_position);
-                        d = Math::norm(light.position - event_position);
-                        lightRadiance = light.intensity / (d * d);
-                    }
-                    break;
-                    case LightType::AREA:
-                    {
-                        float xi1 = Math::rnd(payload->seed) * 2.0f - 1.0f;
-                        float xi2 = Math::rnd(payload->seed) * 2.0f - 1.0f;
-
-                        Vector3float sample = light.position + xi1 * light.halfExtend1 + xi2 * light.halfExtend2;
-                        Vector3float n = Math::normalize(Math::cross(light.halfExtend1, light.halfExtend2));
-                        float area = 4.0f * Math::norm(light.halfExtend1) * Math::norm(light.halfExtend2);
-
-                        lightDir = Math::normalize(sample - event_position);
-                        d = Math::norm(sample - event_position);
-
-                        float NdotL = Math::dot(lightDir, n);
-                        if (NdotL < 0) NdotL *= -1.0f;
-
-                        float solidAngle = area * NdotL / (d * d);
-
-                        lightRadiance = light.radiance * solidAngle;
-                    }
-                    break;
-                    }
+                    lightRadiance = light.sample(payload->seed, event_position, lightDir, d);
                 }
                 else // Use environment map
                 {
