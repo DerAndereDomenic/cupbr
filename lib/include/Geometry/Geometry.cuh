@@ -25,7 +25,7 @@ namespace cupbr
     */
     class Geometry
     {
-    public:
+        public:
         /**
         *   @brief Default constructor
         */
@@ -38,8 +38,7 @@ namespace cupbr
         *   @note If no intersection was found the vector will be INFINITY
         */
         __host__ __device__
-            Vector4float
-            computeRayIntersection(const Ray& ray);
+        Vector4float computeRayIntersection(const Ray& ray);
 
         /**
         *   @brief Get the normal at a specified point
@@ -48,12 +47,11 @@ namespace cupbr
         *   @note If no normal is found at this point the vector will be INFINITY
         */
         __host__ __device__
-            Vector3float
-            getNormal(const Vector3float& x);
+        Vector3float getNormal(const Vector3float& x);
 
         Material material = {};                         /**< The material of the object */
         GeometryType type = GeometryType::MESH;         /**< The geometry type */
-    private:
+        private:
     };
 
     /**

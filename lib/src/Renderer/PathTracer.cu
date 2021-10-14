@@ -18,7 +18,7 @@ namespace cupbr
         };
 
         inline __device__
-            void emissiveIllumintation(Ray& ray, LocalGeometry& geom)
+        void emissiveIllumintation(Ray& ray, LocalGeometry& geom)
         {
             RadiancePayload* payload = ray.payload<RadiancePayload>();
 
@@ -26,7 +26,7 @@ namespace cupbr
         }
 
         inline __device__
-            void directIllumination(Scene& scene, Ray& ray, LocalGeometry& geom, Vector3float& inc_dir)
+        void directIllumination(Scene& scene, Ray& ray, LocalGeometry& geom, Vector3float& inc_dir)
         {
             //Direct illumination
             RadiancePayload* payload = ray.payload<RadiancePayload>();
@@ -74,7 +74,7 @@ namespace cupbr
         }
 
         inline __device__
-            void indirectIllumination(Ray& ray, LocalGeometry& geom, Vector3float& inc_dir)
+        void indirectIllumination(Ray& ray, LocalGeometry& geom, Vector3float& inc_dir)
         {
             //Indirect illumination
             RadiancePayload* payload = ray.payload<RadiancePayload>();
@@ -90,11 +90,11 @@ namespace cupbr
         }
 
         __global__ void
-            pathtracer_kernel_nee(Scene scene,
-                const Camera camera,
-                const uint32_t frameIndex,
-                const uint32_t maxTraceDepth,
-                Image<Vector3float> img)
+        pathtracer_kernel_nee(Scene scene,
+                              const Camera camera,
+                              const uint32_t frameIndex,
+                              const uint32_t maxTraceDepth,
+                              Image<Vector3float> img)
         {
             const uint32_t tid = ThreadHelper::globalThreadIndex();
 
@@ -149,11 +149,11 @@ namespace cupbr
         }
 
         __global__ void
-            pathtracer_kernel(Scene scene,
-                const Camera camera,
-                const uint32_t frameIndex,
-                const uint32_t maxTraceDepth,
-                Image<Vector3float> img)
+        pathtracer_kernel(Scene scene,
+                          const Camera camera,
+                          const uint32_t frameIndex,
+                          const uint32_t maxTraceDepth,
+                          Image<Vector3float> img)
         {
             const uint32_t tid = ThreadHelper::globalThreadIndex();
 
@@ -238,18 +238,18 @@ namespace cupbr
     } //namespace detail
 
     void
-        PBRendering::pathtracing(Scene& scene,
-            const Camera& camera,
-            const uint32_t& frameIndex,
-            const uint32_t& maxTraceDepth,
-            Image<Vector3float>* output_img)
+    PBRendering::pathtracing(Scene& scene,
+                             const Camera& camera,
+                             const uint32_t& frameIndex,
+                             const uint32_t& maxTraceDepth,
+                             Image<Vector3float>* output_img)
     {
         const KernelSizeHelper::KernelSize config = KernelSizeHelper::configure(output_img->size());
         detail::pathtracer_kernel_nee << <config.blocks, config.threads >> > (scene,
-            camera,
-            frameIndex,
-            maxTraceDepth,
-            *output_img);
+                                                                              camera,
+                                                                              frameIndex,
+                                                                              maxTraceDepth,
+                                                                              *output_img);
         cudaSafeCall(cudaDeviceSynchronize());
     }
 

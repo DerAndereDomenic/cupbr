@@ -10,7 +10,7 @@ namespace cupbr
     */
     class Triangle : public Geometry
     {
-    public:
+        public:
         /**
         *   @brief Default constructor
         */
@@ -24,18 +24,17 @@ namespace cupbr
         *   @note The normal will get normalized
         */
         __host__ __device__
-            Triangle(const Vector3float& vertex1, const Vector3float& vertex2, const Vector3float& vertex3);
+        Triangle(const Vector3float& vertex1, const Vector3float& vertex2, const Vector3float& vertex3);
 
         //Override
         __host__ __device__
-            Vector4float
-            computeRayIntersection(const Ray& ray);
+        Vector4float computeRayIntersection(const Ray& ray);
 
         //Override
         __host__ __device__
-            Vector3float
-            getNormal(const Vector3float& x);
-    private:
+        Vector3float getNormal(const Vector3float& x);
+
+        private:
         Vector3float _vertex1;     /**< The first vertex */
         Vector3float _vertex2;     /**< The second vertex */
         Vector3float _vertex3;     /**< The third vertex */

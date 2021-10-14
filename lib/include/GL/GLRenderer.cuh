@@ -15,7 +15,7 @@ namespace cupbr
 {
     class GLRenderer
     {
-    public:
+        public:
         /**
         *   @brief Default constructor
         */
@@ -37,9 +37,9 @@ namespace cupbr
         *   @brief Render a device image on a quad
         *   @param[in] img The device image
         */
-        void
-            renderTexture(const RenderBuffer& img);
-    private:
+        void renderTexture(const RenderBuffer& img);
+
+        private:
         class Impl;
         std::unique_ptr<Impl> impl;     /**< Implementation pointer */
     };

@@ -36,8 +36,7 @@ namespace cupbr
         *   @return The geometry
         */
         __host__ __device__
-            Geometry*
-            operator[](const uint32_t index) const;
+        Geometry* operator[](const uint32_t index) const;
     };
 } //namespace cupbr
 

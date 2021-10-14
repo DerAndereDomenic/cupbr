@@ -7,8 +7,8 @@
 namespace cupbr
 {
     __host__ __device__
-        inline
-        Quad::Quad(const Vector3float& position, const Vector3float& normal, const Vector3float& extend1, const Vector3float& extend2)
+    inline
+    Quad::Quad(const Vector3float& position, const Vector3float& normal, const Vector3float& extend1, const Vector3float& extend2)
         :_position(position),
         _normal(Math::normalize(normal)),
         _extend1(extend1),
@@ -18,8 +18,8 @@ namespace cupbr
     }
 
     __host__ __device__
-        inline Vector4float
-        Quad::computeRayIntersection(const Ray& ray)
+    inline Vector4float
+    Quad::computeRayIntersection(const Ray& ray)
     {
         float PdotN = Math::dot(_position, _normal);
         float OdotN = Math::dot(ray.origin(), _normal);
@@ -48,15 +48,15 @@ namespace cupbr
     }
 
     __host__ __device__
-        inline Vector3float
-        Quad::getNormal(const Vector3float& x)
+    inline Vector3float
+    Quad::getNormal(const Vector3float& x)
     {
         return _normal;
     }
 
     __host__ __device__
-        inline Vector3float
-        Quad::position()
+    inline Vector3float
+    Quad::position()
     {
         return _position;
     }

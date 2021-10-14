@@ -13,8 +13,8 @@ namespace cupbr
         *   @param[in] position An offset for the mesh
         *   @return A (host) pointer to a mesh
         */
-        Mesh*
-            loadObj(const char* path, const Vector3float& position);
+        Mesh* loadObj(const char* path, const Vector3float& position);
+
     } //namespace ObjLoader
 } //namespace cupbr
 

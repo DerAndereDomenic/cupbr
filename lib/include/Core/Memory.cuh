@@ -11,7 +11,7 @@ namespace cupbr
     */
     class Memory
     {
-    public:
+        public:
 
         /**
         *   @brief Create an object allocated on the CPU (Host)
@@ -159,7 +159,7 @@ namespace cupbr
         *   @brief Prints the statistic of the allocator
         */
         static void printStatistics() { instance->printStatisticsImpl(); }
-    private:
+        private:
 
         template<typename T>
         T* createHostObjectImpl();

@@ -24,7 +24,7 @@ namespace cupbr
     */
     class Material
     {
-    public:
+        public:
         /**
         *   @brief Default constructor
         */
@@ -48,8 +48,7 @@ namespace cupbr
         *   @pre dot(inc_dir,out_dir) >= 0
         */
         __host__ __device__
-            Vector3float
-            brdf(const Vector3float& position, const Vector3float& inc_dir, const Vector3float& out_dir, const Vector3float& normal);
+        Vector3float brdf(const Vector3float& position, const Vector3float& inc_dir, const Vector3float& out_dir, const Vector3float& normal);
 
         /**
         *   @brief Importance sample the material
@@ -60,9 +59,9 @@ namespace cupbr
         *   @note For glass the w component is 0 for reflection and 1 for refraction
         */
         __host__ __device__
-            Vector4float
-            sampleDirection(uint32_t& seed, const Vector3float& inc_dir, const Vector3float& normal);
-    private:
+        Vector4float sampleDirection(uint32_t& seed, const Vector3float& inc_dir, const Vector3float& normal);
+
+        private:
         /**
         *   @brief Compute the lambert brdf
         *   @param[in] position The position
@@ -72,8 +71,7 @@ namespace cupbr
         *   @pre dot(inc_dir,out_dir) >= 0
         */
         __host__ __device__
-            Vector3float
-            brdf_lambert();
+        Vector3float brdf_lambert();
 
         /**
         *   @brief Compute the phong brdf
@@ -84,8 +82,7 @@ namespace cupbr
         *   @pre dot(inc_dir,out_dir) >= 0
         */
         __host__ __device__
-            Vector3float
-            brdf_phong(const Vector3float& position, const Vector3float& inc_dir, const Vector3float& out_dir, const Vector3float& normal);
+        Vector3float brdf_phong(const Vector3float& position, const Vector3float& inc_dir, const Vector3float& out_dir, const Vector3float& normal);
 
         /**
         *   @brief Compute the mirror brdf
@@ -96,8 +93,7 @@ namespace cupbr
         *   @pre dot(inc_dir,out_dir) >= 0
         */
         __host__ __device__
-            Vector3float
-            brdf_mirror(const Vector3float& position, const Vector3float& inc_dir, const Vector3float& out_dir, const Vector3float& normal);
+        Vector3float brdf_mirror(const Vector3float& position, const Vector3float& inc_dir, const Vector3float& out_dir, const Vector3float& normal);
 
         /**
         *   @brief Compute glass btdf
@@ -107,8 +103,7 @@ namespace cupbr
         *   @return The btdf
         */
         __host__ __device__
-            Vector3float
-            btdf_glass(const Vector3float& position, const Vector3float& inc_dir, const Vector3float& out_dir, const Vector3float& normal);
+        Vector3float btdf_glass(const Vector3float& position, const Vector3float& inc_dir, const Vector3float& out_dir, const Vector3float& normal);
 
         /**
          *   @brief Compute GGX brdf
@@ -118,8 +113,7 @@ namespace cupbr
          *   @return The brdf
          */
         __host__ __device__
-            Vector3float
-            brdf_ggx(const Vector3float& position, const Vector3float& inc_dir, const Vector3float& out_dir, const Vector3float& normal);
+        Vector3float brdf_ggx(const Vector3float& position, const Vector3float& inc_dir, const Vector3float& out_dir, const Vector3float& normal);
 
         /**
         *   @brief Importance sample lambert material
@@ -128,8 +122,7 @@ namespace cupbr
         *   @return A 4D Vector. The first three components mark the new direction and the w component the sampling probability
         */
         __host__ __device__
-            Vector4float
-            sample_lambert(uint32_t& seed, const Vector3float& normal);
+        Vector4float sample_lambert(uint32_t& seed, const Vector3float& normal);
 
         /**
         *   @brief Importance sample mirror material
@@ -138,8 +131,7 @@ namespace cupbr
         *   @return A 4D Vector. The first three components mark the new direction and the w component the sampling probability
         */
         __host__ __device__
-            Vector4float
-            sample_mirror(const Vector3float& inc_dir, const Vector3float& normal);
+        Vector4float sample_mirror(const Vector3float& inc_dir, const Vector3float& normal);
 
         /**
         *   @brief Importance sample glass material
@@ -150,8 +142,7 @@ namespace cupbr
         *   @note The w component is 0 for reflection and 1 for refraction
         */
         __host__ __device__
-            Vector4float
-            sample_glass(uint32_t& seed, const Vector3float& inc_dir, const Vector3float& normal);
+        Vector4float sample_glass(uint32_t& seed, const Vector3float& inc_dir, const Vector3float& normal);
 
         /**
          *   @brief Importance sample gxx material
@@ -161,8 +152,7 @@ namespace cupbr
          *   @return A 4D Vector. The first three components mark the new direction and the w component the sampling probability
          */
         __host__ __device__
-            Vector4float
-            sample_ggx(uint32_t& seed, const Vector3float& inc_dir, const Vector3float& normal);
+        Vector4float sample_ggx(uint32_t& seed, const Vector3float& inc_dir, const Vector3float& normal);
     };
 
 } //namespace cupbr

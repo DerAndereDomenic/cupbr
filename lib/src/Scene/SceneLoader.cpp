@@ -18,7 +18,7 @@ namespace cupbr
     namespace detail
     {
         Vector3float
-            string2vector(const char* str)
+        string2vector(const char* str)
         {
             std::stringstream ss(str);
             std::string item;
@@ -33,7 +33,7 @@ namespace cupbr
         }
 
         Material
-            loadMaterial(tinyxml2::XMLElement* material_ptr)
+        loadMaterial(tinyxml2::XMLElement* material_ptr)
         {
             Material material;
 
@@ -107,7 +107,7 @@ namespace cupbr
     } //namespace detail
 
     Scene
-        SceneLoader::loadFromFile(const std::string& path)
+    SceneLoader::loadFromFile(const std::string& path)
     {
         Scene scene = Scene();
 
@@ -348,7 +348,7 @@ namespace cupbr
     }
 
     void
-        SceneLoader::destroyScene(Scene& scene)
+    SceneLoader::destroyScene(Scene& scene)
     {
         Geometry** host_scene = Memory::createHostArray<Geometry*>(scene.scene_size);
         Light** host_lights = Memory::createHostArray<Light*>(scene.light_count);

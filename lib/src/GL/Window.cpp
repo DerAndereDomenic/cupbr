@@ -21,11 +21,11 @@ namespace cupbr
 
     Window::Window(const char* title, const uint32_t& width, const uint32_t& height)
         :_width(width),
-         _height(height)
+        _height(height)
     {
-        if(!s_glfw_initialized)
+        if (!s_glfw_initialized)
         {
-            if(glfwInit())
+            if (glfwInit())
             {
                 s_glfw_initialized = true;
             }
@@ -36,9 +36,9 @@ namespace cupbr
         glfwMakeContextCurrent(_internal_window);
         glfwSwapInterval(0);
 
-        if(!s_glad_initialized)
+        if (!s_glad_initialized)
         {
-            if(gladLoadGL())
+            if (gladLoadGL())
             {
                 s_glad_initialized = true;
             }
@@ -61,7 +61,7 @@ namespace cupbr
         {
             EventCallbackFn fnc = *(EventCallbackFn*)glfwGetWindowUserPointer(window);
 
-            switch(action)
+            switch (action)
             {
                 case GLFW_PRESS:
                 {
@@ -90,7 +90,7 @@ namespace cupbr
         {
             EventCallbackFn fnc = *(EventCallbackFn*)glfwGetWindowUserPointer(window);
 
-            switch(action)
+            switch (action)
             {
                 case GLFW_PRESS:
                 {
@@ -125,7 +125,7 @@ namespace cupbr
 
     Window::~Window()
     {
-        if(s_imgui_initialized)
+        if (s_imgui_initialized)
         {
             ImGui_ImplOpenGL3_Shutdown();
             ImGui_ImplGlfw_Shutdown();
@@ -134,7 +134,7 @@ namespace cupbr
             s_imgui_initialized = false;
         }
 
-        if(s_glfw_initialized)
+        if (s_glfw_initialized)
         {
             glfwTerminate();
 
@@ -142,7 +142,7 @@ namespace cupbr
         }
     }
 
-    void 
+    void
     Window::imguiBegin()
     {
         ImGui_ImplOpenGL3_NewFrame();
@@ -150,7 +150,7 @@ namespace cupbr
         ImGui::NewFrame();
     }
 
-    void 
+    void
     Window::imguiEnd()
     {
         ImGui::Render();

@@ -8,7 +8,7 @@ namespace cupbr
 {
     namespace detail
     {
-#define DIFFUSE_THRESHOLD 0.1f
+        #define DIFFUSE_THRESHOLD 0.1f
 
         struct PathData
         {
@@ -35,7 +35,7 @@ namespace cupbr
         };
 
         inline __device__
-            void emissiveIllumintationGDPT(Ray& ray, LocalGeometry& geom)
+        void emissiveIllumintationGDPT(Ray& ray, LocalGeometry& geom)
         {
             RadiancePayload* payload = ray.payload<RadiancePayload>();
 
@@ -43,7 +43,7 @@ namespace cupbr
         }
 
         inline __device__
-            void directIlluminationGDPT(Scene& scene, Ray& ray, LocalGeometry& geom, Vector3float& inc_dir)
+        void directIlluminationGDPT(Scene& scene, Ray& ray, LocalGeometry& geom, Vector3float& inc_dir)
         {
             //Direct illumination
             RadiancePayload* payload = ray.payload<RadiancePayload>();
@@ -91,7 +91,7 @@ namespace cupbr
         }
 
         inline __device__
-            void indirectIlluminationGDPT(Ray& ray, LocalGeometry& geom, Vector3float& inc_dir)
+        void indirectIlluminationGDPT(Ray& ray, LocalGeometry& geom, Vector3float& inc_dir)
         {
             //Indirect illumination
             RadiancePayload* payload = ray.payload<RadiancePayload>();
@@ -108,10 +108,10 @@ namespace cupbr
         }
 
         __device__ void
-            collect_radiance(Ray& ray,
-                Scene& scene,
-                const Camera& camera,
-                const uint32_t& maxTraceDepth)
+        collect_radiance(Ray& ray,
+                         Scene& scene,
+                         const Camera& camera,
+                         const uint32_t& maxTraceDepth)
         {
             RadiancePayload* payload = ray.payload<RadiancePayload>();
 
@@ -158,15 +158,15 @@ namespace cupbr
         }
 
         __global__ void
-            gdpt_kernel(Scene scene,
-                Camera camera,
-                const uint32_t frameIndex,
-                const uint32_t maxTraceDepth,
-                Image<Vector3float> img,
-                Image<Vector3float> gX_forward,
-                Image<Vector3float> gX_backward,
-                Image<Vector3float> gY_forward,
-                Image<Vector3float> gY_backward)
+        gdpt_kernel(Scene scene,
+                    Camera camera,
+                    const uint32_t frameIndex,
+                    const uint32_t maxTraceDepth,
+                    Image<Vector3float> img,
+                    Image<Vector3float> gX_forward,
+                    Image<Vector3float> gX_backward,
+                    Image<Vector3float> gY_forward,
+                    Image<Vector3float> gY_backward)
         {
             const uint32_t tid = ThreadHelper::globalThreadIndex();
 
@@ -246,14 +246,14 @@ namespace cupbr
         }
 
         __global__ void
-            init_kernel(Image<Vector3float> reconstruction,
-                Image<Vector3float> base,
-                Image<Vector3float> gradient_x_forward,
-                Image<Vector3float> gradient_x_backward,
-                Image<Vector3float> gradient_y_forward,
-                Image<Vector3float> gradient_y_backward,
-                Image<Vector3float> gradient_x,
-                Image<Vector3float> gradient_y)
+        init_kernel(Image<Vector3float> reconstruction,
+                    Image<Vector3float> base,
+                    Image<Vector3float> gradient_x_forward,
+                    Image<Vector3float> gradient_x_backward,
+                    Image<Vector3float> gradient_y_forward,
+                    Image<Vector3float> gradient_y_backward,
+                    Image<Vector3float> gradient_x,
+                    Image<Vector3float> gradient_y)
         {
             const uint32_t tid = ThreadHelper::globalThreadIndex();
 
@@ -273,13 +273,13 @@ namespace cupbr
         }
 
         inline __device__ float
-            compute_median(float* values)
+        compute_median(float* values)
         {
             float median = 0.0f;
             uint32_t arg_min = 0;
             uint32_t arg_max = 0;
 
-#define INNER_LOOP(i)\
+            #define INNER_LOOP(i)\
             median += values[i];\
             if(values[i] < values[arg_min])\
             {\
@@ -295,16 +295,16 @@ namespace cupbr
             INNER_LOOP(2);
             INNER_LOOP(3);
 
-#undef INNER_LOOP
+            #undef INNER_LOOP
 
             return (median - values[arg_min] - values[arg_max]) / 2.0f;
         }
 
         __global__ void
-            optimization_kernel(Image<Vector3float> reconstruction,
-                Image<Vector3float> gradient_x,
-                Image<Vector3float> gradient_y,
-                Image<Vector3float> temp)
+        optimization_kernel(Image<Vector3float> reconstruction,
+                            Image<Vector3float> gradient_x,
+                            Image<Vector3float> gradient_y,
+                            Image<Vector3float> temp)
         {
             const uint32_t tid = ThreadHelper::globalThreadIndex();
 
@@ -351,40 +351,40 @@ namespace cupbr
     } //namespace detail
 
     void
-        PBRendering::gradientdomain(Scene& scene,
-            const Camera& camera,
-            const uint32_t& frameIndex,
-            const uint32_t& maxTraceDepth,
-            Image<Vector3float>* base,
-            Image<Vector3float>* temp,
-            Image<Vector3float>* gradient_x,
-            Image<Vector3float>* gradient_y,
-            Image<Vector3float>* gradient_x_forward,
-            Image<Vector3float>* gradient_x_backward,
-            Image<Vector3float>* gradient_y_forward,
-            Image<Vector3float>* gradient_y_backward,
-            Image<Vector3float>* output_img)
+    PBRendering::gradientdomain(Scene& scene,
+                                const Camera& camera,
+                                const uint32_t& frameIndex,
+                                const uint32_t& maxTraceDepth,
+                                Image<Vector3float>* base,
+                                Image<Vector3float>* temp,
+                                Image<Vector3float>* gradient_x,
+                                Image<Vector3float>* gradient_y,
+                                Image<Vector3float>* gradient_x_forward,
+                                Image<Vector3float>* gradient_x_backward,
+                                Image<Vector3float>* gradient_y_forward,
+                                Image<Vector3float>* gradient_y_backward,
+                                Image<Vector3float>* output_img)
     {
         const KernelSizeHelper::KernelSize config = KernelSizeHelper::configure(output_img->size());
         detail::gdpt_kernel << <config.blocks, config.threads >> > (scene,
-            camera,
-            frameIndex,
-            maxTraceDepth,
-            *base,
-            *gradient_x_forward,
-            *gradient_x_backward,
-            *gradient_y_forward,
-            *gradient_y_backward);
+                                                                    camera,
+                                                                    frameIndex,
+                                                                    maxTraceDepth,
+                                                                    *base,
+                                                                    *gradient_x_forward,
+                                                                    *gradient_x_backward,
+                                                                    *gradient_y_forward,
+                                                                    *gradient_y_backward);
         cudaSafeCall(cudaDeviceSynchronize());
 
         detail::init_kernel << <config.blocks, config.threads >> > (*output_img,
-            *base,
-            *gradient_x_forward,
-            *gradient_x_backward,
-            *gradient_y_forward,
-            *gradient_y_backward,
-            *gradient_x,
-            *gradient_y);
+                                                                    *base,
+                                                                    *gradient_x_forward,
+                                                                    *gradient_x_backward,
+                                                                    *gradient_y_forward,
+                                                                    *gradient_y_backward,
+                                                                    *gradient_x,
+                                                                    *gradient_y);
 
         cudaSafeCall(cudaDeviceSynchronize());
 
@@ -392,9 +392,9 @@ namespace cupbr
         for (uint32_t i = 0; i < 50; ++i)
         {
             detail::optimization_kernel << <config.blocks, config.threads >> > (*output_img,
-                *gradient_x,
-                *gradient_y,
-                *temp);
+                                                                                *gradient_x,
+                                                                                *gradient_y,
+                                                                                *temp);
             cudaSafeCall(cudaDeviceSynchronize());
 
             temp->copyDevice2DeviceObject(*output_img);

@@ -25,7 +25,7 @@ namespace cupbr
         None = 0,
         EventCategoryInput = BIT(0),
         EventCategoryKeyboard = BIT(1),
-        EventCategoryMouseButton= BIT(2),
+        EventCategoryMouseButton = BIT(2),
         EventCategoryMouse = BIT(3),
         EventCategoryWindow = BIT(4),
         EventCategoryFile = BIT(5)
@@ -42,16 +42,16 @@ namespace cupbr
     {
         friend class EventDispatcher;
         public:
-            virtual EventType getEventType() const = 0;
-            virtual const char* getName() const = 0;
-            virtual int getCategoryFlags() const = 0;
-            virtual std::string toString() const {return getName();}
+        virtual EventType getEventType() const = 0;
+        virtual const char* getName() const = 0;
+        virtual int getCategoryFlags() const = 0;
+        virtual std::string toString() const { return getName(); }
 
-            inline bool isInsideCategory(EventCategory category)
-            {
-                return getCategoryFlags() & category;
-            }
-            bool handled = false;
+        inline bool isInsideCategory(EventCategory category)
+        {
+            return getCategoryFlags() & category;
+        }
+        bool handled = false;
     };
 
     class EventDispatcher
@@ -59,22 +59,24 @@ namespace cupbr
         template<typename T>
         using EventFn = std::function<bool(T&)>;
         public:
-            EventDispatcher(Event& event)
-                : m_event(event) {}
+        EventDispatcher(Event& event)
+            : m_event(event)
+        {
+        }
 
-            template<typename T>
-            bool dispatch(EventFn<T> func)
+        template<typename T>
+        bool dispatch(EventFn<T> func)
+        {
+            if (m_event.getEventType() == T::getStaticType())
             {
-                if(m_event.getEventType() == T::getStaticType())
-                {
-                    m_event.handled = func(*(T*)&m_event);
-                    return true;
-                }
-                return false;
+                m_event.handled = func(*(T*)&m_event);
+                return true;
             }
+            return false;
+        }
 
         private:
-            Event& m_event;
+        Event& m_event;
     };
 
     inline std::ostream& operator<<(std::ostream& os, const Event& e)

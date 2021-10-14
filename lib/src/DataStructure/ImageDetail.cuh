@@ -8,7 +8,7 @@ namespace cupbr
 {
     template<typename T>
     Image<T>
-        Image<T>::createHostObject(const uint32_t width, const uint32_t height)
+    Image<T>::createHostObject(const uint32_t width, const uint32_t height)
     {
         Image<T> result;
         result._data = Memory::createHostArray<T>(width * height);
@@ -21,7 +21,7 @@ namespace cupbr
 
     template<typename T>
     Image<T>
-        Image<T>::createDeviceObject(const uint32_t width, const uint32_t height)
+    Image<T>::createDeviceObject(const uint32_t width, const uint32_t height)
     {
         Image<T> result;
         result._data = Memory::createDeviceArray<T>(width * height);
@@ -34,7 +34,7 @@ namespace cupbr
 
     template<typename T>
     Image<T>
-        Image<T>::createHostObject(T* data, const uint32_t width, const uint32_t height)
+    Image<T>::createHostObject(T* data, const uint32_t width, const uint32_t height)
     {
         Image<T> result;
         result._data = Memory::createHostArray<T>(width * height);
@@ -48,7 +48,7 @@ namespace cupbr
 
     template<typename T>
     Image<T>
-        Image<T>::createDeviceObject(T* data, const uint32_t width, const uint32_t height)
+    Image<T>::createDeviceObject(T* data, const uint32_t width, const uint32_t height)
     {
         Image<T> result;
         result._data = Memory::createDeviceArray<T>(width * height);
@@ -62,7 +62,7 @@ namespace cupbr
 
     template<typename T>
     void
-        Image<T>::destroyHostObject(Image<T>& object)
+    Image<T>::destroyHostObject(Image<T>& object)
     {
         object._width = 0;
         object._height = 0;
@@ -72,7 +72,7 @@ namespace cupbr
 
     template<typename T>
     void
-        Image<T>::destroyDeviceObject(Image<T>& object)
+    Image<T>::destroyDeviceObject(Image<T>& object)
     {
         object._width = 0;
         object._height = 0;
@@ -82,7 +82,7 @@ namespace cupbr
 
     template<typename T>
     void
-        Image<T>::copyHost2HostObject(Image<T>& host_object)
+    Image<T>::copyHost2HostObject(Image<T>& host_object)
     {
         host_object._width = _width;
         host_object._height = _height;
@@ -92,7 +92,7 @@ namespace cupbr
 
     template<typename T>
     void
-        Image<T>::copyHost2DeviceObject(Image<T>& device_object)
+    Image<T>::copyHost2DeviceObject(Image<T>& device_object)
     {
         device_object._width = _width;
         device_object._height = _height;
@@ -102,7 +102,7 @@ namespace cupbr
 
     template<typename T>
     void
-        Image<T>::copyDevice2DeviceObject(Image<T>& device_object)
+    Image<T>::copyDevice2DeviceObject(Image<T>& device_object)
     {
         device_object._width = _width;
         device_object._height = _height;
@@ -112,7 +112,7 @@ namespace cupbr
 
     template<typename T>
     void
-        Image<T>::copyDevice2HostObject(Image<T>& host_object)
+    Image<T>::copyDevice2HostObject(Image<T>& host_object)
     {
         host_object._width = _width;
         host_object._height = _height;
@@ -122,16 +122,16 @@ namespace cupbr
 
     template<typename T>
     __host__ __device__
-        T&
-        Image<T>::operator[](unsigned int index)
+    T&
+    Image<T>::operator[](unsigned int index)
     {
         return _data[index];
     }
 
     template<typename T>
     __host__ __device__
-        T&
-        Image<T>::operator()(Vector2uint32_t& pixel)
+    T&
+    Image<T>::operator()(Vector2uint32_t& pixel)
     {
         unsigned int index = ThreadHelper::pixel2index(pixel, _width);
         return _data[index];
@@ -139,32 +139,32 @@ namespace cupbr
 
     template<typename T>
     __host__ __device__
-        T*
-        Image<T>::data() const
+    T*
+    Image<T>::data() const
     {
         return _data;
     }
 
     template<typename T>
     __host__ __device__
-        uint32_t
-        Image<T>::width() const
+    uint32_t
+    Image<T>::width() const
     {
         return _width;
     }
 
     template<typename T>
     __host__ __device__
-        uint32_t
-        Image<T>::height() const
+    uint32_t
+    Image<T>::height() const
     {
         return _height;
     }
 
     template<typename T>
     __host__ __device__
-        uint32_t
-        Image<T>::size() const
+    uint32_t
+    Image<T>::size() const
     {
         return _size;
     }

@@ -15,8 +15,7 @@ namespace cupbr
         *   @return The thread index
         */
         __device__
-            uint32_t
-            globalThreadIndex();
+        uint32_t globalThreadIndex();
 
         /**
         *   @brief Convertes a 1D index to a 2D pixel
@@ -26,8 +25,7 @@ namespace cupbr
         *   @return The corresponding pixel
         */
         __host__ __device__
-            Vector2uint32_t
-            index2pixel(const uint32_t& index, const uint32_t& width, const uint32_t& height);
+        Vector2uint32_t index2pixel(const uint32_t& index, const uint32_t& width, const uint32_t& height);
 
         /**
         *   @brief Converts a 2D pixel to a 1D index
@@ -36,8 +34,7 @@ namespace cupbr
         *   @return The corresponding index
         */
         __host__ __device__
-            uint32_t
-            pixel2index(const Vector2uint32_t& pixel, const uint32_t& width);
+        uint32_t pixel2index(const Vector2uint32_t& pixel, const uint32_t& width);
     } //namespace ThreadHelper
 
     /**
@@ -61,8 +58,7 @@ namespace cupbr
         *   @param[in] size The overall number of threads needed
         *   @note The returned blocks*threads >= size
         */
-        __host__
-            KernelSize configure(const uint32_t& size);
+        KernelSize configure(const uint32_t& size);
     } //namespace KernelSizeHelper
 
 } //namespace cupbr

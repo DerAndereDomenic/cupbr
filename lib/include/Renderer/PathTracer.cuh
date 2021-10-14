@@ -17,12 +17,11 @@ namespace cupbr
         *   @param[in] maxTraceDepth The maximum number of recursive rays
         *   @param[out] output_img The rendered HDR image
         */
-        void
-            pathtracing(Scene& scene,
-                const Camera& camera,
-                const uint32_t& frameIndex,
-                const uint32_t& maxTraceDepth,
-                Image<Vector3float>* output_img);
+        void pathtracing(Scene& scene,
+                         const Camera& camera,
+                         const uint32_t& frameIndex,
+                         const uint32_t& maxTraceDepth,
+                         Image<Vector3float>* output_img);
     } //namespace PBRendering
 } //namespace cupbr
 

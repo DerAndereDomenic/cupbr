@@ -6,14 +6,14 @@ namespace cupbr
     namespace detail
     {
         __global__ void
-            pickMouse_kernel(const uint32_t x,
-                const uint32_t y,
-                const uint32_t width,
-                const uint32_t height,
-                Scene scene,
-                const Camera camera,
-                Material* material,
-                int32_t* scene_index)
+        pickMouse_kernel(const uint32_t x,
+                         const uint32_t y,
+                         const uint32_t width,
+                         const uint32_t height,
+                         Scene scene,
+                         const Camera camera,
+                         Material* material,
+                         int32_t* scene_index)
         {
             const Vector2uint32_t pixel(x, y);
             Ray ray = Tracing::launchRay(pixel, width, height, camera);
@@ -34,9 +34,9 @@ namespace cupbr
         }
 
         __global__ void
-            updateMaterial_kernel(Scene scene,
-                int32_t* scene_index,
-                Material* newMaterial)
+        updateMaterial_kernel(Scene scene,
+                              int32_t* scene_index,
+                              Material* newMaterial)
         {
             Geometry* element = scene[*scene_index];
             element->material.type = newMaterial->type;
@@ -50,30 +50,30 @@ namespace cupbr
     } //namespace detail
 
     void
-        Interaction::pickMouse(const uint32_t& x,
-            const uint32_t& y,
-            const uint32_t& width,
-            const uint32_t& height,
-            Scene& scene,
-            Camera& camera,
-            Material* outMaterial,
-            int32_t* outSceneIndex)
+    Interaction::pickMouse(const uint32_t& x,
+                           const uint32_t& y,
+                           const uint32_t& width,
+                           const uint32_t& height,
+                           Scene& scene,
+                           Camera& camera,
+                           Material* outMaterial,
+                           int32_t* outSceneIndex)
     {
         detail::pickMouse_kernel << <1, 1 >> > (x,
-            y,
-            width,
-            height,
-            scene,
-            camera,
-            outMaterial,
-            outSceneIndex);
+                                                y,
+                                                width,
+                                                height,
+                                                scene,
+                                                camera,
+                                                outMaterial,
+                                                outSceneIndex);
         cudaSafeCall(cudaDeviceSynchronize());
     }
 
     void
-        Interaction::updateMaterial(Scene& scene,
-            int32_t* scene_index,
-            Material* newMaterial)
+    Interaction::updateMaterial(Scene& scene,
+                                int32_t* scene_index,
+                                Material* newMaterial)
     {
         detail::updateMaterial_kernel << <1, 1 >> > (scene, scene_index, newMaterial);
         cudaSafeCall(cudaDeviceSynchronize());

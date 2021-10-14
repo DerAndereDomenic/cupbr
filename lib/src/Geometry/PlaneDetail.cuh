@@ -7,8 +7,8 @@
 namespace cupbr
 {
     __host__ __device__
-        inline
-        Plane::Plane(const Vector3float& position, const Vector3float& normal)
+    inline
+    Plane::Plane(const Vector3float& position, const Vector3float& normal)
         :_position(position),
         _normal(Math::normalize(normal))
     {
@@ -16,8 +16,8 @@ namespace cupbr
     }
 
     __host__ __device__
-        inline Vector4float
-        Plane::computeRayIntersection(const Ray& ray)
+    inline Vector4float
+    Plane::computeRayIntersection(const Ray& ray)
     {
         float PdotN = Math::dot(_position, _normal);
         float OdotN = Math::dot(ray.origin(), _normal);
@@ -36,15 +36,15 @@ namespace cupbr
     }
 
     __host__ __device__
-        inline Vector3float
-        Plane::getNormal(const Vector3float& x)
+    inline Vector3float
+    Plane::getNormal(const Vector3float& x)
     {
         return _normal;
     }
 
     __host__ __device__
-        inline Vector3float
-        Plane::position()
+    inline Vector3float
+    Plane::position()
     {
         return _position;
     }

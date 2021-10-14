@@ -14,7 +14,7 @@ namespace cupbr
 {
     class Interactor::Impl
     {
-    public:
+        public:
         Impl();
 
         ~Impl();
@@ -83,7 +83,7 @@ namespace cupbr
     }
 
     void
-        Interactor::registerWindow(Window* window, const int32_t& menu_width)
+    Interactor::registerWindow(Window* window, const int32_t& menu_width)
     {
         impl->window = window;
         impl->width = window->width() - menu_width;
@@ -94,7 +94,7 @@ namespace cupbr
     }
 
     void
-        Interactor::registerScene(Scene* scene)
+    Interactor::registerScene(Scene* scene)
     {
         impl->scene = scene;
 
@@ -102,7 +102,7 @@ namespace cupbr
     }
 
     void
-        Interactor::registerCamera(Camera* camera)
+    Interactor::registerCamera(Camera* camera)
     {
         impl->camera = camera;
 
@@ -110,7 +110,7 @@ namespace cupbr
     }
 
     bool
-        Interactor::onEvent(Event& event)
+    Interactor::onEvent(Event& event)
     {
         if (event.getEventType() == EventType::MouseButtonPressed)
         {
@@ -123,27 +123,27 @@ namespace cupbr
             if (x >= 0 && x < impl->width && y >= 0 && y < impl->height)
             {
                 Interaction::pickMouse(x,
-                    y,
-                    impl->width,
-                    impl->height,
-                    *(impl->scene),
-                    *(impl->camera),
-                    impl->device_material,
-                    impl->scene_index);
+                                       y,
+                                       impl->width,
+                                       impl->height,
+                                       *(impl->scene),
+                                       *(impl->camera),
+                                       impl->device_material,
+                                       impl->scene_index);
 
                 Memory::copyDevice2HostObject(impl->device_material, impl->host_material);
                 return true;
             }
         }
 
-        if(event.getEventType() == EventType::KeyPressed)
+        if (event.getEventType() == EventType::KeyPressed)
         {
             KeyPressedEvent e = *(KeyPressedEvent*)&event;
 
-            if(e.getKeyCode() == GLFW_KEY_LEFT_ALT)
+            if (e.getKeyCode() == GLFW_KEY_LEFT_ALT)
             {
                 impl->edit_mode = !impl->edit_mode;
-                if(impl->edit_mode)
+                if (impl->edit_mode)
                 {
                     glfwSetInputMode((GLFWwindow*)(impl->window->getInternalWindow()), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
                 }
@@ -155,14 +155,14 @@ namespace cupbr
                 return true;
             }
 
-            if(e.getKeyCode() == GLFW_KEY_ESCAPE)
+            if (e.getKeyCode() == GLFW_KEY_ESCAPE)
             {
                 impl->close = true;
                 return true;
             }
         }
 
-        if(event.getEventType() == EventType::FileDropped)
+        if (event.getEventType() == EventType::FileDropped)
         {
             FileDroppedEvent e = *(FileDroppedEvent*)&event;
 
@@ -175,7 +175,7 @@ namespace cupbr
     }
 
     void
-        Interactor::handleInteraction()
+    Interactor::handleInteraction()
     {
         if (!impl->window_registered)
         {
@@ -195,32 +195,32 @@ namespace cupbr
             return;
         }
 
-        if(!impl->edit_mode)
+        if (!impl->edit_mode)
             impl->camera->processInput((GLFWwindow*)(impl->window->getInternalWindow()), impl->window->delta_time());
 
         impl->material_update = false;
 
         bool dummy = true;
-        if(impl->edit_mode)
+        if (impl->edit_mode)
         {
             ImGui::SetNextWindowPos(ImVec2(impl->width, 0));
             ImGui::SetNextWindowSize(ImVec2(impl->menu_width, impl->height));
             ImGui::Begin("Render settings", &dummy, ImGuiWindowFlags_MenuBar);
-            
-            if(ImGui::BeginMenuBar())
+
+            if (ImGui::BeginMenuBar())
             {
-                if(ImGui::BeginMenu("Scene"))
+                if (ImGui::BeginMenu("Scene"))
                 {
                     std::string path = "res/Scenes";
                     std::vector<std::string> paths;
-                    for(auto entry : std::experimental::filesystem::directory_iterator(path))
+                    for (auto entry : std::experimental::filesystem::directory_iterator(path))
                     {
                         paths.push_back(entry.path().string());
                     }
 
-                    for(std::string s : paths)
+                    for (std::string s : paths)
                     {
-                        if(ImGui::MenuItem(s.c_str()))
+                        if (ImGui::MenuItem(s.c_str()))
                         {
                             impl->reset_scene = true;
                             impl->scene_path = s;
@@ -297,7 +297,7 @@ namespace cupbr
                 impl->material_update = true;
             }
 
-            if(ImGui::SliderFloat("Roughness", &(impl->host_material->roughness), 1e-3f, 1.0f))
+            if (ImGui::SliderFloat("Roughness", &(impl->host_material->roughness), 1e-3f, 1.0f))
             {
                 impl->material_update = true;
             }
@@ -377,55 +377,55 @@ namespace cupbr
     }
 
     bool
-        Interactor::updated()
+    Interactor::updated()
     {
         return impl->material_update;
     }
 
     ToneMappingType
-        Interactor::getToneMapping()
+    Interactor::getToneMapping()
     {
         return impl->tonemapping;
     }
 
     RenderingMethod
-        Interactor::getRenderingMethod()
+    Interactor::getRenderingMethod()
     {
         return impl->method;
     }
 
     float
-        Interactor::getExposure()
+    Interactor::getExposure()
     {
         return impl->exposure;
     }
 
     bool
-        Interactor::usePostProcessing()
+    Interactor::usePostProcessing()
     {
         return impl->post_processing;
     }
 
     void
-        Interactor::Impl::compute_threshold()
+    Interactor::Impl::compute_threshold()
     {
         threshold_curve = Vector4float(threshold, knee - threshold, 2.0f * knee, 0.25f / knee);
     }
 
     Vector4float
-        Interactor::getThreshold()
+    Interactor::getThreshold()
     {
         return impl->threshold_curve;
     }
 
     bool
-        Interactor::shouldClose()
+    Interactor::shouldClose()
     {
         return impl->close;
     }
 
     bool
-        Interactor::resetScene(std::string& file_path)
+    Interactor::resetScene(std::string& file_path)
     {
         bool should_reset = impl->reset_scene;
         impl->reset_scene = false;

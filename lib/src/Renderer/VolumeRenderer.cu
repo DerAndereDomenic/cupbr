@@ -193,11 +193,11 @@ namespace cupbr
         }
 
         __global__ void
-            volume_kernel(Scene scene,
-                const Camera camera,
-                const uint32_t frameIndex,
-                const uint32_t maxTraceDepth,
-                Image<Vector3float> img)
+        volume_kernel(Scene scene,
+                      const Camera camera,
+                      const uint32_t frameIndex,
+                      const uint32_t maxTraceDepth,
+                      Image<Vector3float> img)
         {
             const uint32_t tid = ThreadHelper::globalThreadIndex();
 
@@ -255,18 +255,18 @@ namespace cupbr
     } //namespace detail
 
     void
-        PBRendering::volumetracing(Scene& scene,
-            const Camera& camera,
-            const uint32_t& frameIndex,
-            const uint32_t& maxTraceDepth,
-            Image<Vector3float>* output_img)
+    PBRendering::volumetracing(Scene& scene,
+                               const Camera& camera,
+                               const uint32_t& frameIndex,
+                               const uint32_t& maxTraceDepth,
+                               Image<Vector3float>* output_img)
     {
         const KernelSizeHelper::KernelSize config = KernelSizeHelper::configure(output_img->size());
         detail::volume_kernel << <config.blocks, config.threads >> > (scene,
-            camera,
-            frameIndex,
-            maxTraceDepth,
-            *output_img);
+                                                                      camera,
+                                                                      frameIndex,
+                                                                      maxTraceDepth,
+                                                                      *output_img);
         cudaSafeCall(cudaDeviceSynchronize());
     }
 

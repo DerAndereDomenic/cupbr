@@ -10,7 +10,7 @@ namespace cupbr
     */
     class Plane : public Geometry
     {
-    public:
+        public:
         /**
         *   @brief Default constructor
         */
@@ -23,26 +23,24 @@ namespace cupbr
         *   @note The normal will get normalized
         */
         __host__ __device__
-            Plane(const Vector3float& position, const Vector3float& normal);
+        Plane(const Vector3float& position, const Vector3float& normal);
 
         //Override
         __host__ __device__
-            Vector4float
-            computeRayIntersection(const Ray& ray);
+        Vector4float computeRayIntersection(const Ray& ray);
 
         //Override
         __host__ __device__
-            Vector3float
-            getNormal(const Vector3float& x);
+        Vector3float getNormal(const Vector3float& x);
 
         /**
         *   @brief Get the position of the plane
         *   @return The position to define the plane
         */
         __host__ __device__
-            Vector3float
-            position();
-    private:
+        Vector3float position();
+
+        private:
         Vector3float _position;     /**< The plane position */
         Vector3float _normal;       /**< The plane normal */
     };

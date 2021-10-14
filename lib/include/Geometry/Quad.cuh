@@ -10,7 +10,7 @@ namespace cupbr
     */
     class Quad : public Geometry
     {
-    public:
+        public:
         /**
         *   @brief Default constructor
         */
@@ -25,26 +25,24 @@ namespace cupbr
         *   @note The normal will get normalized
         */
         __host__ __device__
-            Quad(const Vector3float& position, const Vector3float& normal, const Vector3float& extend1, const Vector3float& extend2);
+        Quad(const Vector3float& position, const Vector3float& normal, const Vector3float& extend1, const Vector3float& extend2);
 
         //Override
         __host__ __device__
-            Vector4float
-            computeRayIntersection(const Ray& ray);
+        Vector4float computeRayIntersection(const Ray& ray);
 
         //Override
         __host__ __device__
-            Vector3float
-            getNormal(const Vector3float& x);
+        Vector3float getNormal(const Vector3float& x);
 
         /**
         *   @brief Get the position of the Quad
         *   @return The position to define the quad
         */
         __host__ __device__
-            Vector3float
-            position();
-    private:
+        Vector3float position();
+
+        private:
         Vector3float _position;     /**< The plane position */
         Vector3float _normal;       /**< The plane normal */
         Vector3float _extend1;      /**< The extend in the first direction */

@@ -10,7 +10,7 @@ namespace cupbr
     */
     class Ray
     {
-    public:
+        public:
         /**
         *   @brief Default constructor
         */
@@ -23,15 +23,14 @@ namespace cupbr
         *   @note The direction will get normalized by the constructor
         */
         __host__ __device__
-            Ray(const Vector3float& origin, const Vector3float direction);
+        Ray(const Vector3float& origin, const Vector3float direction);
 
         /**
         *   @brief Get a reference to the ray origin
         *   @return The ray origin
         */
         __host__ __device__
-            Vector3float
-            origin() const;
+        Vector3float origin() const;
 
         /**
         *   @brief Get a reference to the ray direction
@@ -39,8 +38,7 @@ namespace cupbr
         *   @note Normalized
         */
         __host__ __device__
-            Vector3float
-            direction() const;
+        Vector3float direction() const;
 
         /**
         *   @brief Trace a new ray using the same ray object (This preserves payloads)
@@ -49,8 +47,7 @@ namespace cupbr
         *   @note The direction will get normalized
         */
         __host__ __device__
-            void
-            traceNew(const Vector3float& origin, const Vector3float& direction);
+        void traceNew(const Vector3float& origin, const Vector3float& direction);
 
         /**
         *   @brief Set the payload
@@ -59,8 +56,7 @@ namespace cupbr
         */
         template<class PayloadType>
         __host__ __device__
-            void
-            setPayload(PayloadType* payload);
+        void setPayload(PayloadType* payload);
 
         /**
         *   @brief Get the payload stored in this ray
@@ -69,10 +65,9 @@ namespace cupbr
         */
         template<class PayloadType>
         __host__ __device__
-            PayloadType*
-            payload();
+        PayloadType* payload();
 
-    private:
+        private:
         Vector3float _origin = 0;           /**< The ray origin */
         Vector3float _direction = 0;        /**< The normalized ray direction */
         void* _payload = nullptr;           /**< The ray payload */

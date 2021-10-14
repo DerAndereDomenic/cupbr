@@ -8,9 +8,10 @@ namespace cupbr
 {
     namespace detail
     {
-        __global__ void raytracing_kernel(Image<Vector3float> img,
-            Scene scene,
-            const Camera camera)
+        __global__
+        void raytracing_kernel(Image<Vector3float> img,
+                               Scene scene,
+                               const Camera camera)
         {
             const uint32_t tid = ThreadHelper::globalThreadIndex();
 
@@ -54,9 +55,9 @@ namespace cupbr
     } //namespace cupbr
 
     void
-        PBRendering::raytracing(Scene& scene,
-            const Camera& camera,
-            Image<Vector3float>* output_img)
+    PBRendering::raytracing(Scene& scene,
+                            const Camera& camera,
+                            Image<Vector3float>* output_img)
     {
         KernelSizeHelper::KernelSize config = KernelSizeHelper::configure(output_img->size());
         detail::raytracing_kernel << <config.blocks, config.threads >> > (*output_img, scene, camera);

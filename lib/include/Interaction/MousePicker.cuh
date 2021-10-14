@@ -22,13 +22,13 @@ namespace cupbr
         *   @param[out] sceneIndex The scene index of the hit object
         */
         void pickMouse(const uint32_t& x,
-            const uint32_t& y,
-            const uint32_t& width,
-            const uint32_t& height,
-            Scene& scene,
-            Camera& camera,
-            Material* outMaterial,
-            int32_t* sceneIndex);
+                       const uint32_t& y,
+                       const uint32_t& width,
+                       const uint32_t& height,
+                       Scene& scene,
+                       Camera& camera,
+                       Material* outMaterial,
+                       int32_t* sceneIndex);
 
         /**
         *   @brief Update the material at the object defined by scene_index
@@ -36,10 +36,9 @@ namespace cupbr
         *   @param[in] scene_index The index of the object which material we want to change
         *   @param[in] newMaterial The new material
         */
-        void
-            updateMaterial(Scene& scene,
-                int32_t* scene_index,
-                Material* newMaterial);
+        void updateMaterial(Scene& scene,
+                            int32_t* scene_index,
+                            Material* newMaterial);
     } //namespace Interaction
 } //namespace cupbr
 

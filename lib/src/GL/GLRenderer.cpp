@@ -9,7 +9,7 @@ namespace cupbr
 {
     class GLRenderer::Impl
     {
-    public:
+        public:
         Impl(const uint32_t& width, const uint32_t& height);
 
         ~Impl();
@@ -61,7 +61,7 @@ namespace cupbr
     GLRenderer::~GLRenderer() = default;
 
     void
-        GLRenderer::Impl::createShader()
+    GLRenderer::Impl::createShader()
     {
         std::string vertexCode =
             "#version 330 core\n\
@@ -160,7 +160,7 @@ namespace cupbr
     }
 
     void
-        GLRenderer::Impl::createQuadVBO()
+    GLRenderer::Impl::createQuadVBO()
     {
         ///////////////////////////////////////////////////////
         ///             Vertex Buffer                       ///
@@ -188,7 +188,7 @@ namespace cupbr
     }
 
     void
-        GLRenderer::Impl::createGLTexture(const uint32_t& width, const uint32_t& height)
+    GLRenderer::Impl::createGLTexture(const uint32_t& width, const uint32_t& height)
     {
         ///////////////////////////////////////////////////////
         ///             Screen Texture                      ///
@@ -207,7 +207,7 @@ namespace cupbr
     }
 
     void
-        GLRenderer::renderTexture(const RenderBuffer& img)
+    GLRenderer::renderTexture(const RenderBuffer& img)
     {
         //Deprecated
         //cudaSafeCall(cudaMemcpyToArray(impl->_texture_ptr, 0, 0, img.data(), 4 * img.size(), cudaMemcpyDeviceToDevice));

@@ -11,7 +11,7 @@ namespace cupbr
     }
 
     void
-        Camera::processInput(GLFWwindow* window, const float& delta_time)
+    Camera::processInput(GLFWwindow* window, const float& delta_time)
     {
         _moved = false;
         //Keyboard
@@ -72,8 +72,8 @@ namespace cupbr
             _pitch = -3.14159f / 2.0f;
 
         Vector3float front(cos(_yaw) * cos(_pitch),
-            sin(_pitch),
-            sin(_yaw) * cos(_pitch));
+                           sin(_pitch),
+                           sin(_yaw) * cos(_pitch));
 
         _zAxis = front;
         _xAxis = _aspect_ratio * Math::normalize(Vector3float(_zAxis.z, 0, -_zAxis.x));

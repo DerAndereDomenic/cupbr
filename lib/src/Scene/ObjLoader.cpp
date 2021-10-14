@@ -11,7 +11,7 @@
 namespace cupbr
 {
     Mesh*
-        ObjLoader::loadObj(const char* path, const Vector3float& position)
+    ObjLoader::loadObj(const char* path, const Vector3float& position)
     {
         std::ifstream file;
         file.open(path);

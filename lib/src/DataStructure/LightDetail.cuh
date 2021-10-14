@@ -5,16 +5,16 @@
 
 namespace cupbr
 {
-	__host__ __device__
+    __host__ __device__
     inline Vector3float
     Light::sample(uint32_t& seed, const Vector3float& position, Vector3float& lightDir, float& distance)
     {
-        switch(type)
+        switch (type)
         {
-        case POINT:
-            return sample_point(seed, position, lightDir, distance);
-        case AREA:
-            return sample_area(seed, position, lightDir, distance);
+            case POINT:
+                return sample_point(seed, position, lightDir, distance);
+            case AREA:
+                return sample_area(seed, position, lightDir, distance);
         }
 
         return Vector3float(0);

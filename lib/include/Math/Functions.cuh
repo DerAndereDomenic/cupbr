@@ -17,8 +17,7 @@ namespace cupbr
         *   @return True if |lhs-rhs|<eps
         */
         __host__ __device__
-            bool
-            safeFloatEqual(const float& lhs, const float& rhs, const float& eps = EPSILON);
+        bool safeFloatEqual(const float& lhs, const float& rhs, const float& eps = EPSILON);
 
         /**
         *   @brief Clamp a value
@@ -30,8 +29,7 @@ namespace cupbr
         */
         template<typename T>
         __host__ __device__
-            T
-            clamp(const T& x, const T& mini, const T& maxi);
+        T clamp(const T& x, const T& mini, const T& maxi);
 
         /**
         *   @brief Delta distribution
@@ -39,8 +37,7 @@ namespace cupbr
         *   @return One if inp equals zero, zero else
         */
         __host__ __device__
-            float
-            delta(const float& inp);
+        float delta(const float& inp);
 
         /**
         *   @brief Reflect the incoming direction on the normal
@@ -51,8 +48,7 @@ namespace cupbr
         *   @post dot(out_dir,normal) > 0
         */
         __host__ __device__
-            Vector3float
-            reflect(const Vector3float& inc_dir, const Vector3float& normal);
+        Vector3float reflect(const Vector3float& inc_dir, const Vector3float& normal);
 
         /**
         *   @brief Refract the incoming direction on the normal
@@ -62,8 +58,7 @@ namespace cupbr
         *   @return The refracted direction
         */
         __host__ __device__
-            Vector3float
-            refract(const float& eta, const Vector3float& inc_dir, const Vector3float& normal);
+        Vector3float refract(const float& eta, const Vector3float& inc_dir, const Vector3float& normal);
 
         /**
         *   @brief Fresnel schlick
@@ -72,8 +67,7 @@ namespace cupbr
         *   @return The fresnel schlick term
         */
         __host__ __device__
-            float
-            fresnel_schlick(const float& F0, const float& VdotH);
+        float fresnel_schlick(const float& F0, const float& VdotH);
 
         /**
         *   @brief Fresnel schlick
@@ -82,8 +76,7 @@ namespace cupbr
         *   @return The fresnel schlick term
         */
         __host__ __device__
-            Vector3float
-            fresnel_schlick(const Vector3float& F0, const float& VdotH);
+        Vector3float fresnel_schlick(const Vector3float& F0, const float& VdotH);
 
         /**
         *   @brief Create a seed for the rng
@@ -93,8 +86,7 @@ namespace cupbr
         */
         template<uint32_t N>
         __host__ __device__
-            uint32_t
-            tea(uint32_t val0, uint32_t val1);
+        uint32_t tea(uint32_t val0, uint32_t val1);
 
         /**
         *   @brief Create a random float between 0 and 1
@@ -102,8 +94,7 @@ namespace cupbr
         *   @return The random number
         */
         __host__ __device__
-            float
-            rnd(uint32_t& prev);
+        float rnd(uint32_t& prev);
 
         /**
         *   @brief Convert a direction into a local coordinate frame
@@ -112,8 +103,7 @@ namespace cupbr
         *   @return The direction in local coordinates
         */
         __host__ __device__
-            Vector3float
-            toLocalFrame(const Vector3float& N, const Vector3float& direction);
+        Vector3float toLocalFrame(const Vector3float& N, const Vector3float& direction);
 
     } //namespace Math
 } //namespace cupbr

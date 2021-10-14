@@ -9,8 +9,8 @@ namespace cupbr
     namespace detail
     {
         __host__ __device__
-            inline float
-            D_GGX(const float& NdotH, const float roughness)
+        inline float
+        D_GGX(const float& NdotH, const float roughness)
         {
             float a2 = roughness * roughness;
             float d = (NdotH * a2 - NdotH) * NdotH + 1.0f;
@@ -18,8 +18,8 @@ namespace cupbr
         }
 
         __host__ __device__
-            inline float
-            V_SmithJointGGX(const float& NdotL, const float& NdotV, const float& roughness)
+        inline float
+        V_SmithJointGGX(const float& NdotL, const float& NdotV, const float& roughness)
         {
             float a2 = roughness * roughness;
             float denomA = NdotV * sqrt(a2 + (1.0f - a2) * NdotL * NdotL);
@@ -33,8 +33,8 @@ namespace cupbr
     } //namespace detail
 
     __host__ __device__
-        inline Vector3float
-        Material::brdf(const Vector3float& position, const Vector3float& inc_dir, const Vector3float& out_dir, const Vector3float& normal)
+    inline Vector3float
+    Material::brdf(const Vector3float& position, const Vector3float& inc_dir, const Vector3float& out_dir, const Vector3float& normal)
     {
         switch (type)
         {
@@ -69,8 +69,8 @@ namespace cupbr
     }
 
     __host__ __device__
-        inline Vector4float
-        Material::sampleDirection(uint32_t& seed, const Vector3float& inc_dir, const Vector3float& normal)
+    inline Vector4float
+    Material::sampleDirection(uint32_t& seed, const Vector3float& inc_dir, const Vector3float& normal)
     {
         switch (type)
         {
@@ -101,8 +101,8 @@ namespace cupbr
     }
 
     __host__ __device__
-        inline Vector4float
-        Material::sample_lambert(uint32_t& seed, const Vector3float& normal)
+    inline Vector4float
+    Material::sample_lambert(uint32_t& seed, const Vector3float& normal)
     {
         const float xi_1 = Math::rnd(seed);
         const float xi_2 = Math::rnd(seed);
@@ -122,8 +122,8 @@ namespace cupbr
     }
 
     __host__ __device__
-        inline Vector4float
-        Material::sample_mirror(const Vector3float& inc_dir, const Vector3float& normal)
+    inline Vector4float
+    Material::sample_mirror(const Vector3float& inc_dir, const Vector3float& normal)
     {
         Vector3float direction = Math::reflect(inc_dir, normal);
 
@@ -131,8 +131,8 @@ namespace cupbr
     }
 
     __host__ __device__
-        inline Vector4float
-        Material::sample_glass(uint32_t& seed, const Vector3float& inc_dir, const Vector3float& n)
+    inline Vector4float
+    Material::sample_glass(uint32_t& seed, const Vector3float& inc_dir, const Vector3float& n)
     {
         const float NdotV = Math::dot(inc_dir, n);
         bool outside = NdotV > 0.0f;
@@ -159,8 +159,8 @@ namespace cupbr
     }
 
     __host__ __device__
-        inline Vector4float
-        Material::sample_ggx(uint32_t& seed, const Vector3float& inc_dir, const Vector3float& normal)
+    inline Vector4float
+    Material::sample_ggx(uint32_t& seed, const Vector3float& inc_dir, const Vector3float& normal)
     {
         float u = Math::rnd(seed);
         float v = Math::rnd(seed);
@@ -190,31 +190,31 @@ namespace cupbr
     }
 
     __host__ __device__
-        inline Vector3float
-        Material::brdf_lambert()
+    inline Vector3float
+    Material::brdf_lambert()
     {
         return albedo_d / static_cast<float>(M_PI);
     }
 
     __host__ __device__
-        inline Vector3float
-        Material::brdf_phong(const Vector3float& position, const Vector3float& inc_dir, const Vector3float& out_dir, const Vector3float& normal)
+    inline Vector3float
+    Material::brdf_phong(const Vector3float& position, const Vector3float& inc_dir, const Vector3float& out_dir, const Vector3float& normal)
     {
         Vector3float halfDir = Math::normalize(inc_dir + out_dir);
         return albedo_s * powf(fmaxf(0.0f, Math::dot(halfDir, normal)), shininess);
     }
 
     __host__ __device__
-        inline Vector3float
-        Material::brdf_mirror(const Vector3float& position, const Vector3float& inc_dir, const Vector3float& out_dir, const Vector3float& normal)
+    inline Vector3float
+    Material::brdf_mirror(const Vector3float& position, const Vector3float& inc_dir, const Vector3float& out_dir, const Vector3float& normal)
     {
         Vector3float reflected = Math::reflect(inc_dir, normal);
         return albedo_s * Math::delta(1.0f - Math::dot(out_dir, reflected)) / Math::dot(inc_dir, normal);
     }
 
     __host__ __device__
-        inline Vector3float
-        Material::btdf_glass(const Vector3float& position, const Vector3float& inc_dir, const Vector3float& out_dir, const Vector3float& normal)
+    inline Vector3float
+    Material::btdf_glass(const Vector3float& position, const Vector3float& inc_dir, const Vector3float& out_dir, const Vector3float& normal)
     {
         //TODO
         //Vector3float refracted = Math::refract(eta, inc_dir, normal);
@@ -231,7 +231,8 @@ namespace cupbr
             }
 
         }
-        else {
+        else
+        {
             Vector3float refracted;
             Vector3float n = normal;
             if (Math::dot(inc_dir, normal) > 0)
@@ -248,8 +249,8 @@ namespace cupbr
     }
 
     __host__ __device__
-        inline Vector3float
-        Material::brdf_ggx(const Vector3float& position, const Vector3float& inc_dir, const Vector3float& out_dir, const Vector3float& normal)
+    inline Vector3float
+    Material::brdf_ggx(const Vector3float& position, const Vector3float& inc_dir, const Vector3float& out_dir, const Vector3float& normal)
     {
         Vector3float H = Math::normalize(inc_dir + out_dir);
         float NdotH = Math::dot(normal, H);

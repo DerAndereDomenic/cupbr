@@ -6,8 +6,8 @@
 namespace cupbr
 {
     __host__ __device__
-        inline
-        Sphere::Sphere(const Vector3float& position, const float& radius)
+    inline
+    Sphere::Sphere(const Vector3float& position, const float& radius)
         :_position(position),
         _radius(radius)
     {
@@ -15,22 +15,22 @@ namespace cupbr
     }
 
     __host__ __device__
-        inline Vector3float
-        Sphere::position() const
+    inline Vector3float
+    Sphere::position() const
     {
         return _position;
     }
 
     __host__ __device__
-        inline float
-        Sphere::radius() const
+    inline float
+    Sphere::radius() const
     {
         return _radius;
     }
 
     __host__ __device__
-        inline Vector4float
-        Sphere::computeRayIntersection(const Ray& ray)
+    inline Vector4float
+    Sphere::computeRayIntersection(const Ray& ray)
     {
         const Vector3float origin = ray.origin();
         const Vector3float direction = ray.direction();
@@ -60,8 +60,8 @@ namespace cupbr
     }
 
     __host__ __device__
-        inline Vector3float
-        Sphere::getNormal(const Vector3float& x)
+    inline Vector3float
+    Sphere::getNormal(const Vector3float& x)
     {
         return Math::normalize(x - _position);
     }

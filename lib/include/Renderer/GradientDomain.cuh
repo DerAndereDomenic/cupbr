@@ -25,20 +25,19 @@ namespace cupbr
         *   @param[out] gradient_y_backward The backward shift y gradients
         *   @param[out] output_img The rendered HDR image
         */
-        void
-            gradientdomain(Scene& scene,
-                const Camera& camera,
-                const uint32_t& frameIndex,
-                const uint32_t& maxTraceDepth,
-                Image<Vector3float>* base,
-                Image<Vector3float>* temp,
-                Image<Vector3float>* gradient_x,
-                Image<Vector3float>* gradient_y,
-                Image<Vector3float>* gradient_x_forward,
-                Image<Vector3float>* gradient_x_backward,
-                Image<Vector3float>* gradient_y_forward,
-                Image<Vector3float>* gradient_y_backward,
-                Image<Vector3float>* output_img);
+        void gradientdomain(Scene& scene,
+                            const Camera& camera,
+                            const uint32_t& frameIndex,
+                            const uint32_t& maxTraceDepth,
+                            Image<Vector3float>* base,
+                            Image<Vector3float>* temp,
+                            Image<Vector3float>* gradient_x,
+                            Image<Vector3float>* gradient_y,
+                            Image<Vector3float>* gradient_x_forward,
+                            Image<Vector3float>* gradient_x_backward,
+                            Image<Vector3float>* gradient_y_forward,
+                            Image<Vector3float>* gradient_y_backward,
+                            Image<Vector3float>* output_img);
     } //namespace PBRendering
 
 } //namespace cupbr

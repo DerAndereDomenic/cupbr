@@ -4,15 +4,15 @@
 namespace cupbr
 {
     __host__ __device__
-        inline Vector4float
-        Geometry::computeRayIntersection(const Ray& ray)
+    inline Vector4float
+    Geometry::computeRayIntersection(const Ray& ray)
     {
         return Vector4float(INFINITY);
     }
 
     __host__ __device__
-        inline Vector3float
-        Geometry::getNormal(const Vector3float& x)
+    inline Vector3float
+    Geometry::getNormal(const Vector3float& x)
     {
         return Vector3float(INFINITY);
     }

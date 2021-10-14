@@ -10,7 +10,7 @@ namespace cupbr
     namespace detail
     {
         __global__ void
-            clearBuffer(Image<Vector3float> img)
+        clearBuffer(Image<Vector3float> img)
         {
             const uint32_t tid = ThreadHelper::globalThreadIndex();
 
@@ -25,7 +25,7 @@ namespace cupbr
 
     class PBRenderer::Impl
     {
-    public:
+        public:
         Impl();
 
         ~Impl();
@@ -80,7 +80,7 @@ namespace cupbr
     PBRenderer::~PBRenderer() = default;
 
     void
-        PBRenderer::setOutputSize(const uint32_t& width, const uint32_t& height)
+    PBRenderer::setOutputSize(const uint32_t& width, const uint32_t& height)
     {
         if (impl->outputSizeSet)
         {
@@ -108,14 +108,14 @@ namespace cupbr
     }
 
     void
-        PBRenderer::registerScene(Scene* scene)
+    PBRenderer::registerScene(Scene* scene)
     {
         impl->scene = scene;
         impl->sceneRegistered = true;
     }
 
     void
-        PBRenderer::setMethod(const RenderingMethod& method)
+    PBRenderer::setMethod(const RenderingMethod& method)
     {
         impl->method = method;
 
@@ -134,7 +134,7 @@ namespace cupbr
     }
 
     void
-        PBRenderer::render(Camera* camera)
+    PBRenderer::render(Camera* camera)
     {
         if (!impl->outputSizeSet)
         {
@@ -150,108 +150,108 @@ namespace cupbr
 
         switch (impl->method)
         {
-        case RenderingMethod::RAYTRACER:
-        {
-            PBRendering::raytracing(*(impl->scene),
-                *camera,
-                &impl->hdr_image);
-        }
-        break;
-        case RenderingMethod::WHITTED:
-        {
-            std::cerr << "[PBRenderer]  WHITTED currently disabled." << std::endl;
-            return;
-            /*
-            PBRendering::whitted(impl->scene,
-                                 camera,
-                                 2,
-                                 &impl->hdr_image);*/
-        }
-        break;
-        case RenderingMethod::PATHTRACER:
-        {
-            if (camera->moved())
+            case RenderingMethod::RAYTRACER:
             {
-                impl->frameIndex = 0;
+                PBRendering::raytracing(*(impl->scene),
+                                        *camera,
+                                        &impl->hdr_image);
             }
-            PBRendering::pathtracing(*(impl->scene),
-                *camera,
-                impl->frameIndex,
-                impl->maxTraceDepth,
-                &impl->hdr_image);
-            ++impl->frameIndex;
-        }
-        break;
-        case RenderingMethod::METROPOLIS:
-        {
-            std::cerr << "[PBRenderer]  METROPOLIS not supported." << std::endl;
-        }
-        break;
-        case RenderingMethod::GRADIENTDOMAIN:
-        {
-            if (camera->moved())
+            break;
+            case RenderingMethod::WHITTED:
             {
-                impl->frameIndex = 0;
+                std::cerr << "[PBRenderer]  WHITTED currently disabled." << std::endl;
+                return;
+                /*
+                PBRendering::whitted(impl->scene,
+                                     camera,
+                                     2,
+                                     &impl->hdr_image);*/
             }
-            PBRendering::gradientdomain(*(impl->scene),
-                *camera,
-                impl->frameIndex,
-                impl->maxTraceDepth,
-                &impl->base,
-                &impl->temp,
-                &impl->gradient_x,
-                &impl->gradient_y,
-                &impl->gradient_x_forward,
-                &impl->gradient_x_backward,
-                &impl->gradient_y_forward,
-                &impl->gradient_y_backward,
-                &impl->hdr_image);
-            ++impl->frameIndex;
-        }
-        break;
-        case RenderingMethod::VOLUME:
-        {
-            if (camera->moved())
+            break;
+            case RenderingMethod::PATHTRACER:
             {
-                impl->frameIndex = 0;
+                if (camera->moved())
+                {
+                    impl->frameIndex = 0;
+                }
+                PBRendering::pathtracing(*(impl->scene),
+                                         *camera,
+                                         impl->frameIndex,
+                                         impl->maxTraceDepth,
+                                         &impl->hdr_image);
+                ++impl->frameIndex;
             }
-            PBRendering::volumetracing(*(impl->scene),
-                *camera,
-                impl->frameIndex,
-                impl->maxTraceDepth,
-                &impl->hdr_image);
-            ++impl->frameIndex;
-        }
-        break;
+            break;
+            case RenderingMethod::METROPOLIS:
+            {
+                std::cerr << "[PBRenderer]  METROPOLIS not supported." << std::endl;
+            }
+            break;
+            case RenderingMethod::GRADIENTDOMAIN:
+            {
+                if (camera->moved())
+                {
+                    impl->frameIndex = 0;
+                }
+                PBRendering::gradientdomain(*(impl->scene),
+                                            *camera,
+                                            impl->frameIndex,
+                                            impl->maxTraceDepth,
+                                            &impl->base,
+                                            &impl->temp,
+                                            &impl->gradient_x,
+                                            &impl->gradient_y,
+                                            &impl->gradient_x_forward,
+                                            &impl->gradient_x_backward,
+                                            &impl->gradient_y_forward,
+                                            &impl->gradient_y_backward,
+                                            &impl->hdr_image);
+                ++impl->frameIndex;
+            }
+            break;
+            case RenderingMethod::VOLUME:
+            {
+                if (camera->moved())
+                {
+                    impl->frameIndex = 0;
+                }
+                PBRendering::volumetracing(*(impl->scene),
+                                           *camera,
+                                           impl->frameIndex,
+                                           impl->maxTraceDepth,
+                                           &impl->hdr_image);
+                ++impl->frameIndex;
+            }
+            break;
         }
     }
 
     Image<Vector3float>*
-        PBRenderer::getOutputImage()
+    PBRenderer::getOutputImage()
     {
         return &impl->hdr_image;
     }
 
     Image<Vector3float>*
-        PBRenderer::getGradientX()
+    PBRenderer::getGradientX()
     {
         return &impl->gradient_x;
     }
 
     Image<Vector3float>*
-        PBRenderer::getGradientY()
+    PBRenderer::getGradientY()
     {
         return &impl->gradient_y;
     }
 
     RenderingMethod
-        PBRenderer::getMethod()
+    PBRenderer::getMethod()
     {
         return impl->method;
     }
 
     void
-        PBRenderer::reset()
+    PBRenderer::reset()
     {
         impl->frameIndex = 0;
     }

@@ -14,10 +14,9 @@ namespace cupbr
         *   @param[in] scene The scene to render
         *   @param[out] output_img The resulting HDR rendering
         */
-        void
-            raytracing(Scene& scene,
-                const Camera& camera,
-                Image<Vector3float>* output_img);
+        void raytracing(Scene& scene,
+                        const Camera& camera,
+                        Image<Vector3float>* output_img);
     } //namespace PBRendering
 } //namespace cupbr
 

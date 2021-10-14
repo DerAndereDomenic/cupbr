@@ -5,19 +5,18 @@
 
 namespace cupbr
 {
-	namespace PostProcessing
-	{
-		/**
-		*	@brief Apply convolution on the input
-		*	@param[in] input The input image
-		*	@param[in] kernel The image kernel
-		*	@param[out] The filtered output
-		*/
-		void
-			convolve(Image<Vector3float>& input,
-				Image<Vector3float>& kernel,
-				Image<Vector3float>* output);
-	} //namespace PostProcessing
+    namespace PostProcessing
+    {
+        /**
+        *	@brief Apply convolution on the input
+        *	@param[in] input The input image
+        *	@param[in] kernel The image kernel
+        *	@param[out] The filtered output
+        */
+        void convolve(Image<Vector3float>& input,
+                      Image<Vector3float>& kernel,
+                      Image<Vector3float>* output);
+    } //namespace PostProcessing
 } //namespace cupbr
 
 #endif

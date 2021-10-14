@@ -15,7 +15,7 @@ namespace cupbr
     namespace detail
     {
         __global__ void
-            reinhard_kernel(Image<Vector3float> hdr_image, RenderBuffer output, const float exposure)
+        reinhard_kernel(Image<Vector3float> hdr_image, RenderBuffer output, const float exposure)
         {
             const uint32_t tid = ThreadHelper::globalThreadIndex();
 
@@ -41,15 +41,15 @@ namespace cupbr
         }
 
         __device__
-            float
-            apply_srgb_gamma(const float& c)
+        float
+        apply_srgb_gamma(const float& c)
         {
             return c <= 0.0031308f ? 12.92f * c : 1.055f * powf(c, 1.0f / 2.4f) - 0.055f;
         }
 
         __global__
-            void
-            gamma_kernel(Image<Vector3float> hdr_image, RenderBuffer output)
+        void
+        gamma_kernel(Image<Vector3float> hdr_image, RenderBuffer output)
         {
             const uint32_t tid = ThreadHelper::globalThreadIndex();
 
@@ -71,7 +71,7 @@ namespace cupbr
 
     class ToneMapper::Impl
     {
-    public:
+        public:
         Impl();
 
         ~Impl();
@@ -79,14 +79,12 @@ namespace cupbr
         /**
         *   @brief The Reinhard tone mapping algorithm
         */
-        void
-            toneMappingReinhard();
+        void toneMappingReinhard();
 
         /**
         *   @brief The Gamme tone mapping algorihm
         */
-        void
-            toneMappingGamma();
+        void toneMappingGamma();
 
         //Data
         ToneMappingType type;               /**< The tone mapping algorithm */
@@ -121,7 +119,7 @@ namespace cupbr
 
 
     void
-        ToneMapper::registerImage(Image<Vector3float>* hdr_image)
+    ToneMapper::registerImage(Image<Vector3float>* hdr_image)
     {
         //Delete old render buffer if an image has been registered
         if (impl->isRegistered)
@@ -135,22 +133,22 @@ namespace cupbr
     }
 
     void
-        ToneMapper::toneMap()
+    ToneMapper::toneMap()
     {
         if (impl->isRegistered)
         {
             switch (impl->type)
             {
-            case ToneMappingType::REINHARD:
-            {
-                impl->toneMappingReinhard();
-            }
-            break;
-            case ToneMappingType::GAMMA:
-            {
-                impl->toneMappingGamma();
-            }
-            break;
+                case ToneMappingType::REINHARD:
+                {
+                    impl->toneMappingReinhard();
+                }
+                break;
+                case ToneMappingType::GAMMA:
+                {
+                    impl->toneMappingGamma();
+                }
+                break;
             }
         }
         else
@@ -161,13 +159,13 @@ namespace cupbr
 
 
     RenderBuffer
-        ToneMapper::getRenderBuffer()
+    ToneMapper::getRenderBuffer()
     {
         return impl->render_buffer;
     }
 
     void
-        ToneMapper::Impl::toneMappingReinhard()
+    ToneMapper::Impl::toneMappingReinhard()
     {
         KernelSizeHelper::KernelSize config = KernelSizeHelper::configure(hdr_image->size());
         detail::reinhard_kernel << <config.blocks, config.threads >> > (*hdr_image, render_buffer, exposure);
@@ -175,7 +173,7 @@ namespace cupbr
     }
 
     void
-        ToneMapper::Impl::toneMappingGamma()
+    ToneMapper::Impl::toneMappingGamma()
     {
         KernelSizeHelper::KernelSize config = KernelSizeHelper::configure(hdr_image->size());
         detail::gamma_kernel << <config.blocks, config.threads >> > (*hdr_image, render_buffer);
@@ -183,7 +181,7 @@ namespace cupbr
     }
 
     void
-        ToneMapper::saveToFile(const std::string& path)
+    ToneMapper::saveToFile(const std::string& path)
     {
         RenderBuffer host_buffer = RenderBuffer::createHostObject(impl->hdr_image->width(), impl->hdr_image->height());
 
@@ -200,19 +198,19 @@ namespace cupbr
     }
 
     ToneMappingType
-        ToneMapper::getType()
+    ToneMapper::getType()
     {
         return impl->type;
     }
 
     void
-        ToneMapper::setType(const ToneMappingType& type)
+    ToneMapper::setType(const ToneMappingType& type)
     {
         impl->type = type;
     }
 
     void
-        ToneMapper::setExposure(const float& exposure)
+    ToneMapper::setExposure(const float& exposure)
     {
         impl->exposure = exposure;
     }

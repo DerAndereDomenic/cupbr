@@ -7,8 +7,8 @@
 namespace cupbr
 {
     __host__ __device__
-        inline
-        Mesh::Mesh(Triangle** triangle_buffer, const uint32_t& num_triangles)
+    inline
+    Mesh::Mesh(Triangle** triangle_buffer, const uint32_t& num_triangles)
         :_triangles(triangle_buffer),
         _normal(0),
         _num_triangles(num_triangles)
@@ -17,8 +17,8 @@ namespace cupbr
     }
 
     __host__ __device__
-        inline Vector4float
-        Mesh::computeRayIntersection(const Ray& ray)
+    inline Vector4float
+    Mesh::computeRayIntersection(const Ray& ray)
     {
         Vector4float intersection(INFINITY);
         Vector3float normal = 0;
@@ -38,22 +38,22 @@ namespace cupbr
     }
 
     __host__ __device__
-        inline Vector3float
-        Mesh::getNormal(const Vector3float& x)
+    inline Vector3float
+    Mesh::getNormal(const Vector3float& x)
     {
         return _normal;
     }
 
     __host__ __device__
-        inline uint32_t
-        Mesh::num_triangles()
+    inline uint32_t
+    Mesh::num_triangles()
     {
         return _num_triangles;
     }
 
     __host__ __device__
-        inline Triangle**
-        Mesh::triangles()
+    inline Triangle**
+    Mesh::triangles()
     {
         return _triangles;
     }

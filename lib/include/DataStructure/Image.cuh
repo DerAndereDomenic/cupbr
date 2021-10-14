@@ -12,7 +12,7 @@ namespace cupbr
     template<typename T>
     class Image
     {
-    public:
+        public:
         /**
         *   @brief Default constructor
         */
@@ -24,8 +24,7 @@ namespace cupbr
         *   @param[in] height The image height
         *   @return The image
         */
-        static
-            Image createHostObject(const uint32_t width, const uint32_t height);
+        static Image createHostObject(const uint32_t width, const uint32_t height);
 
         /**
         *   @brief Create a host image with the specified data
@@ -33,8 +32,7 @@ namespace cupbr
         *   @param[in] width The image width
         *   @param[in] height The image height
         */
-        static
-            Image createHostObject(T* data, const uint32_t width, const uint32_t height);
+        static Image createHostObject(T* data, const uint32_t width, const uint32_t height);
 
         /**
         *   @brief Create a device image
@@ -42,8 +40,7 @@ namespace cupbr
         *   @param[in] height The image height
         *   @return The image
         */
-        static
-            Image createDeviceObject(const uint32_t width, const uint32_t height);
+        static Image createDeviceObject(const uint32_t width, const uint32_t height);
 
         /**
         *   @brief Create a device image with the specified data
@@ -51,50 +48,43 @@ namespace cupbr
         *   @param[in] width The image width
         *   @param[in] height The image height
         */
-        static
-            Image createDeviceObject(T* data, const uint32_t width, const uint32_t height);
+        static Image createDeviceObject(T* data, const uint32_t width, const uint32_t height);
 
         /**
         *   @brief Destroys a host image
         *   @param[in] object The object to be destroyed
         */
-        static
-            void destroyHostObject(Image<T>& object);
+        static void destroyHostObject(Image<T>& object);
 
         /**
         *   @brief Destroys a device image
         *   @param[in] object The object to be destroyed
         */
-        static
-            void destroyDeviceObject(Image<T>& object);
+        static void destroyDeviceObject(Image<T>& object);
 
         /**
         *   @brief Copies a host to a host image
         *   @param[in] host_object The target host object
         */
-        void
-            copyHost2HostObject(Image<T>& host_object);
+        void copyHost2HostObject(Image<T>& host_object);
 
         /**
         *   @brief Copies a host to a device image
         *   @param[in] device_object The target device object
         */
-        void
-            copyHost2DeviceObject(Image<T>& device_object);
+        void copyHost2DeviceObject(Image<T>& device_object);
 
         /**
         *   @brief Copies a device to a device image
         *   @param[in] device_object The target device object
         */
-        void
-            copyDevice2DeviceObject(Image<T>& device_object);
+        void copyDevice2DeviceObject(Image<T>& device_object);
 
         /**
         *   @brief Copies a device to a host image
         *   @param[in] host_object The target host object
         */
-        void
-            copyDevice2HostObject(Image<T>& host_object);
+        void copyDevice2HostObject(Image<T>& host_object);
 
         /**
         *   @brief Get the value at the specified index
@@ -102,8 +92,7 @@ namespace cupbr
         *   @return The pixel value
         */
         __host__ __device__
-            T&
-            operator[](unsigned int index);
+        T& operator[](unsigned int index);
 
         /**
         *   @brief Get the value at the specified pixel
@@ -111,42 +100,37 @@ namespace cupbr
         *   @return The pixel value
         */
         __host__ __device__
-            T&
-            operator()(Vector2uint32_t& pixel);
+        T& operator()(Vector2uint32_t& pixel);
 
         /**
         *   @brief Get a raw pointer to the underlying data
         *   @return The data pointer
         */
         __host__ __device__
-            T*
-            data() const;
+        T* data() const;
 
         /**
         *   @brief Get the width of the image
         *   @return The width
         */
         __host__ __device__
-            uint32_t
-            width() const;
+        uint32_t width() const;
 
         /**
         *   @brief Get the height of the image
         *   @return The height
         */
         __host__ __device__
-            uint32_t
-            height() const;
+        uint32_t height() const;
 
         /**
         *   @brief Get the size of the image
         *   @return The size
         */
         __host__ __device__
-            uint32_t
-            size() const;
+        uint32_t size() const;
 
-    private:
+        private:
         uint32_t _width;    /**< The width of the image */
         uint32_t _height;   /**< The height of the image */
         uint32_t _size;     /**< The size of the image */

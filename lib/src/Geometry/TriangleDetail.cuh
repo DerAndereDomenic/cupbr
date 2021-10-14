@@ -7,8 +7,8 @@
 namespace cupbr
 {
     __host__ __device__
-        inline
-        Triangle::Triangle(const Vector3float& vertex1, const Vector3float& vertex2, const Vector3float& vertex3)
+    inline
+    Triangle::Triangle(const Vector3float& vertex1, const Vector3float& vertex2, const Vector3float& vertex3)
         :_vertex1(vertex1),
         _vertex2(vertex2),
         _vertex3(vertex3),
@@ -18,8 +18,8 @@ namespace cupbr
     }
 
     __host__ __device__
-        inline Vector4float
-        Triangle::computeRayIntersection(const Ray& ray)
+    inline Vector4float
+    Triangle::computeRayIntersection(const Ray& ray)
     {
         Vector3float v0v1 = _vertex2 - _vertex1;
         Vector3float v0v2 = _vertex3 - _vertex1;
@@ -47,8 +47,8 @@ namespace cupbr
     }
 
     __host__ __device__
-        inline Vector3float
-        Triangle::getNormal(const Vector3float& x)
+    inline Vector3float
+    Triangle::getNormal(const Vector3float& x)
     {
         return _normal;
     }

@@ -25,8 +25,7 @@ namespace cupbr
         *   @return A ray from the eye position through the corresponding pixel
         */
         __device__
-            Ray
-            launchRay(const uint32_t& tid, const uint32_t& width, const uint32_t& height, const Camera& camera, const bool& jitter = false, uint32_t* seed = nullptr);
+        Ray launchRay(const uint32_t& tid, const uint32_t& width, const uint32_t& height, const Camera& camera, const bool& jitter = false, uint32_t* seed = nullptr);
 
         /**
         *   @brief Maps a kernel thread index to an output ray
@@ -39,8 +38,7 @@ namespace cupbr
         *   @return A ray from the eye position through the corresponding pixel
         */
         __device__
-            Ray
-            launchRay(const Vector2uint32_t& pixel, const uint32_t& width, const uint32_t& height, const Camera& camera, const bool& jitter = false, uint32_t* seed = nullptr);
+        Ray launchRay(const Vector2uint32_t& pixel, const uint32_t& width, const uint32_t& height, const Camera& camera, const bool& jitter = false, uint32_t* seed = nullptr);
 
         /**
         *   @brief Trace a ray through the scene and gather geometry information
@@ -49,8 +47,7 @@ namespace cupbr
         *   @return The local geometry information of the intersection point
         */
         __device__
-            LocalGeometry
-            traceRay(Scene& scene, const Ray& ray);
+        LocalGeometry traceRay(Scene& scene, const Ray& ray);
 
         /**
         *   @brief Trace a shadow ray to a light source
@@ -60,8 +57,7 @@ namespace cupbr
         *   @return True if the light source is visible, false if it is occluded
         */
         __device__
-            bool
-            traceVisibility(Scene& scene, const float& lightDist, const Ray& ray);
+        bool traceVisibility(Scene& scene, const float& lightDist, const Ray& ray);
 
         /**
         *   @brief Convert a direction to UV coordinates of an environment map
@@ -71,8 +67,7 @@ namespace cupbr
         *   @return The pixel of the corresponding direction
         */
         __device__
-            Vector2uint32_t
-            direction2UV(const Vector3float& direction, const uint32_t& width, const uint32_t& height);
+        Vector2uint32_t direction2UV(const Vector3float& direction, const uint32_t& width, const uint32_t& height);
     } //namespace Tracing
 } //namespace cupbr
 
