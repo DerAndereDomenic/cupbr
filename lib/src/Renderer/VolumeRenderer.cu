@@ -245,7 +245,6 @@ namespace cupbr
             {
                 float pdf = expf(-sigma_t * geom.depth);
                 payload->rayweight = payload->rayweight * expf(-sigma_t * geom.depth) / pdf;
-                payload->next_ray_valid = true;
                 payload->ray_start = geom.P;
                 return false;
             }
