@@ -52,3 +52,5 @@ target_compile_definitions(CUPBR PUBLIC _USE_MATH_DEFINES)
 target_compile_definitions(Renderer PUBLIC _USE_MATH_DEFINES)
 
 set_target_properties(Renderer PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}")
+
+string(APPEND CMAKE_CUDA_FLAGS " -use_fast_math")
