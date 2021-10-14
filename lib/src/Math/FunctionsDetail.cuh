@@ -61,7 +61,8 @@ namespace cupbr
     inline Vector3float
     Math::fresnel_schlick(const Vector3float& F0, const float& VdotH)
     {
-        return F0 + (Vector3float(1.0f) - F0) * powf(1.0f - VdotH, 5.0f);
+        float p = (1.0f - VdotH);
+        return F0 + (Vector3float(1.0f) - F0) * p * p * p * p * p; //powf seems to be instable in fast math mode
     }
 
     template<uint32_t N>
