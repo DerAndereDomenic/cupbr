@@ -40,6 +40,15 @@ namespace cupbr
         Vector2<T> normalize(const Vector2<T>& v);
 
         /**
+        *   @brief Compute component-wise exponential function of a vector
+        *   @param[in] v The vector
+        *   @return exp(v) of the vector
+        */
+        template<typename T>
+        __host__ __device__
+        Vector2<T> exp(const Vector2<T>& v);
+
+        /**
         *	@brief Get the norm of a vector
         *	@tparam T The vector data type
         *	@param v The vector
@@ -69,6 +78,15 @@ namespace cupbr
         template<typename T>
         __host__ __device__
         Vector3<T> normalize(const Vector3<T>& v);
+
+        /**
+        *   @brief Compute component-wise exponential function of a vector
+        *   @param[in] v The vector
+        *   @return exp(v) of the vector
+        */
+        template<typename T>
+        __host__ __device__
+        Vector3<T> exp(const Vector3<T>& v);
 
         /**
         *	@brief Computes the cross product between two vectors
@@ -111,6 +129,16 @@ namespace cupbr
         template<typename T>
         __host__ __device__
         Vector4<T> normalize(const Vector4<T>& v);
+
+        /**
+        *   @brief Compute component-wise exponential function of a vector
+        *   @param[in] v The vector
+        *   @return exp(v) of the vector
+        */
+        template<typename T>
+        __host__ __device__
+        Vector4<T> exp(const Vector4<T>& v);
+
     } //namespace Math
 } //namespace cupbr
 

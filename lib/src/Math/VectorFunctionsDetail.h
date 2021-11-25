@@ -29,6 +29,13 @@ namespace cupbr
     }
 
     template<typename T>
+    Vector2<T>
+    Math::exp(const Vector2<T>& v)
+    {
+        return Vector2<T>(expf(v.x), expf(v.y));
+    }
+
+    template<typename T>
     T
     Math::norm(const Vector3<T>& v)
     {
@@ -47,6 +54,13 @@ namespace cupbr
     Math::normalize(const Vector3<T>& v)
     {
         return v / norm(v);
+    }
+
+    template<typename T>
+    Vector3<T>
+    Math::exp(const Vector3<T>& v)
+    {
+        return Vector3<T>(expf(v.x), expf(v.y), expf(v.z));
     }
 
     template<typename T>
@@ -77,6 +91,13 @@ namespace cupbr
     Math::normalize(const Vector4<T>& v)
     {
         return v / norm(v);
+    }
+
+    template<typename T>
+    Vector4<T>
+    Math::exp(const Vector4<T>& v)
+    {
+        return Vector4<T>(expf(v.x), expf(v.y), expf(v.z), expf(v.w));
     }
 
 } //namespace cupbr
