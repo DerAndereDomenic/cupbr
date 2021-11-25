@@ -43,8 +43,18 @@ namespace cupbr
             return Vector2<S>(static_cast<S>(x), static_cast<S>(y));
         }
 
-        T x;	/**< The x coordinate*/
-        T y;	/**< The y coordinate*/
+        union
+        {
+            T x;	/**< The x coordinate*/
+            T r;
+        };
+        
+        union
+        {
+            T y;	/**< The y coordinate*/
+            T g;
+        };
+        
     };
 
     /**
@@ -93,9 +103,24 @@ namespace cupbr
             return Vector3<S>(static_cast<S>(x), static_cast<S>(y), static_cast<S>(z));
         }
 
-        T x;	/**< The x coordinate*/
-        T y;	/**< The y coordinate*/
-        T z;	/**< The z coordinate*/
+        union
+        {
+            T x;	/**< The x coordinate*/
+            T r;
+        };
+        
+        union
+        {
+            T y;	/**< The y coordinate*/
+            T g;
+        };
+        
+        union
+        {
+            T z;	/**< The z coordinate*/
+            T b;
+        };
+        
     };
 
     /**
@@ -145,10 +170,29 @@ namespace cupbr
             return Vector4<S>(static_cast<S>(x), static_cast<S>(y), static_cast<S>(z), static_cast<S>(w));
         }
 
-        T x;	/**< The x coordinate*/
-        T y;	/**< The y coordinate*/
-        T z;	/**< The z coordinate*/
-        T w;	/**< The w coordinate*/
+        union
+        {
+            T x;	/**< The x coordinate*/
+            T r;
+        };
+        
+        union
+        {
+            T y;	/**< The y coordinate*/
+            T g;
+        };
+        
+        union
+        {
+            T z;	/**< The z coordinate*/
+            T b;
+        };
+
+        union
+        {
+            T w;    /**< The w coordinate*/
+            T a;
+        };
     };
 
 } //namespace cupbr
