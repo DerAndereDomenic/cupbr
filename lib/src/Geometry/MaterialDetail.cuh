@@ -63,6 +63,11 @@ namespace cupbr
                 return brdf_ggx(position, inc_dir, out_dir, normal);
             }
             break;
+            case MaterialType::VOLUME:
+            {
+                return 0;
+            }
+            break;
         }
 
         return Vector3float(0);
@@ -93,6 +98,11 @@ namespace cupbr
             case MaterialType::GGX:
             {
                 return sample_ggx(seed, inc_dir, normal);
+            }
+            break;
+            case MaterialType::VOLUME:
+            {
+                return Vector4float(0, 0, 0, 1);
             }
             break;
         }

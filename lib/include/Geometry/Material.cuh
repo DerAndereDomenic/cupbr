@@ -3,6 +3,7 @@
 
 #include <Core/CUDA.cuh>
 #include <Math/Vector.h>
+#include <DataStructure/Volume.h>
 
 namespace cupbr
 {
@@ -16,7 +17,8 @@ namespace cupbr
         PHONG,
         MIRROR,
         GLASS,
-        GGX
+        GGX,
+        VOLUME
     };
 
     /**
@@ -36,6 +38,7 @@ namespace cupbr
         float shininess = 128.0f * 0.4f;                            /**< The object shininess */
         float roughness = 1.0f;                                     /**< The material roughness for ggx */
         float eta = 1.5f;                                           /**< Index of refraction */
+        Volume volume;                                              /**< The volume inside the object */
 
         MaterialType type = MaterialType::LAMBERT;                  /**< The material type */
 
