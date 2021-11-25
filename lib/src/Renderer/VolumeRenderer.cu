@@ -59,7 +59,7 @@ namespace cupbr
             {
                 payload->radiance += (scene.light_count + useEnvironmentMap) *
                     fmaxf(0.0f, Math::dot(normal, lightDir)) *
-                    expf(-(scene.volume.sigma_s.x + scene.volume.sigma_a.x) * d) *
+                    Math::exp(-1.0f*(scene.volume.sigma_s + scene.volume.sigma_a) * d) *
                     geom.material.brdf(geom.P, inc_dir, lightDir, normal) *
                     lightRadiance *
                     payload->rayweight;
@@ -87,24 +87,34 @@ namespace cupbr
             RadiancePayload* payload = ray.payload<RadiancePayload>();
 
             float g = scene.volume.g;
-            float sigma_a = scene.volume.sigma_a.x;
-            float sigma_s = scene.volume.sigma_s.x;
-            float sigma_t = sigma_a + sigma_s;
+            Vector3float sigma_a = scene.volume.sigma_a;
+            Vector3float sigma_s = scene.volume.sigma_s;
+            Vector3float sigma_t = sigma_a + sigma_s;
 
-            float t = -1.0f / sigma_t * logf(Math::rnd(payload->seed));
+            uint32_t channel = static_cast<uint32_t>(Math::rnd(payload->seed) * 3);
+
+            float t = -1.0f / sigma_t[channel] * logf(Math::rnd(payload->seed));
 
             if (t <= geom.depth)
             {
                 Vector3float event_position = ray.origin() + t * ray.direction();
 
-                float scattering_prob = sigma_s / sigma_t;
+                float scattering_prob = sigma_s[channel] / sigma_t[channel];
 
                 if (Math::rnd(payload->seed) < scattering_prob)
                 {
                     //Attenuate ray from its start to the medium event
+
+                    float pdf = 0.0f;
+                    for(uint32_t i = 0; i < 3; ++i)
+                    {
+                        pdf += sigma_t[i] * expf(-1.0f * sigma_t[i] * t);
+                    }
+                    pdf /= 3.0f;
+
                     payload->rayweight = payload->rayweight *
                         sigma_s / scattering_prob *
-                        expf(-sigma_t * t) / (sigma_t * expf(-sigma_t * t));
+                        Math::exp(-1.0f*sigma_t * t) / pdf;
                 }
                 else
                 {
@@ -141,7 +151,7 @@ namespace cupbr
                 {
                     payload->radiance += (scene.light_count + useEnvironmentMap) *
                         Material::henyeyGreensteinPhaseFunction(g, Math::dot(lightDir, inc_dir)) *
-                        expf(-sigma_t * d) *
+                        Math::exp(-1.0f*sigma_t * d) *
                         lightRadiance *
                         payload->rayweight;
                 }
@@ -155,8 +165,16 @@ namespace cupbr
             }
             else
             {
-                float pdf = expf(-sigma_t * geom.depth);
-                payload->rayweight = payload->rayweight * expf(-sigma_t * geom.depth) / pdf;
+                //Vector3float pdf = Math::exp(-1.0f * sigma_t * geom.depth);
+                float pdf = 0.0f;
+
+                for(uint32_t i = 0; i < 3; ++i)
+                {
+                    pdf += expf(-sigma_t[channel] * geom.depth);
+                }
+                pdf /= 3.0f;
+
+                payload->rayweight = payload->rayweight * Math::exp(-1.0f*sigma_t * geom.depth) / pdf;
                 payload->ray_start = geom.P;
                 return false;
             }
