@@ -61,6 +61,25 @@ namespace cupbr
         __host__ __device__
         Vector4float sampleDirection(uint32_t& seed, const Vector3float& inc_dir, const Vector3float& normal);
 
+        /**
+        *   \brief Henyey greenstein phase function
+        *   \param[in] g The scattering parameter
+        *   \param[in] cos_theta The angle between incoming and outgoing direction
+        *   \return The scattering probability
+        */
+        __host__ __device__
+        static float henyeyGreensteinPhaseFunction(const float& g, const float& cos_theta);
+
+        /**
+        *   \brief Sample the henyey greenstein phase function  
+        *   \param[in] g The scattering parameter
+        *   \param[in] forward The forward scattering direction 
+        *   \param[in] seed The seed
+        *   \return A 4D vector with the direction and pdf as 4th component
+        */
+        __host__ __device__
+        static Vector4float sampleHenyeyGreensteinPhaseFunction(const float& g, const Vector3float& forward, uint32_t& seed);
+
         private:
         /**
         *   @brief Compute the lambert brdf
