@@ -59,6 +59,10 @@ namespace cupbr
             {
                 material.type = MaterialType::GGX;
             }
+            else if(strcmp(type, "VOLUME") == 0)
+            {
+                material.type = MaterialType::VOLUME;
+            }
             else
             {
                 std::cerr << "Error while loading material: " << type << " is not a valid material type\n";
@@ -71,6 +75,9 @@ namespace cupbr
             tinyxml2::XMLElement* shininess_string = material_ptr->FirstChildElement("shininess");
             tinyxml2::XMLElement* roughness_string = material_ptr->FirstChildElement("roughness");
             tinyxml2::XMLElement* eta_string = material_ptr->FirstChildElement("eta");
+            tinyxml2::XMLElement* sigma_a_string = material_ptr->FirstChildElement("sigma_a");
+            tinyxml2::XMLElement* sigma_s_string = material_ptr->FirstChildElement("sigma_s");
+            tinyxml2::XMLElement* g_string = material_ptr->FirstChildElement("g");
 
             if (albedo_e_string != NULL)
             {
@@ -100,6 +107,21 @@ namespace cupbr
             if (eta_string != NULL)
             {
                 material.eta = std::stof(eta_string->GetText());
+            }
+
+            if(sigma_s_string != NULL)
+            {
+                material.volume.sigma_s = string2vector(sigma_s_string->GetText());
+            }
+
+            if(sigma_a_string != NULL)
+            {
+                material.volume.sigma_a = string2vector(sigma_a_string->GetText());
+            }
+
+            if(g_string != NULL)
+            {
+                material.volume.g = std::stof(g_string->GetText());
             }
 
             return material;
