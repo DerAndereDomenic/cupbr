@@ -67,6 +67,16 @@ namespace cupbr
     Vector2<T> operator/(const Vector2<T>& lhs, const T& rhs);
 
     /**
+    *   @brief Divide a vector by a vector (component-wise)
+    *   @param[in] lhs The first vector
+    *   @param[in] rhs The second
+    *   @return The vectors divided component wise
+    */
+    template<typename T>
+    __host__ __device__
+    Vector2<T> operator/(const Vector2<T>& lhs, const Vector2<T>& rhs);
+
+    /**
     *   @brief Adds the rhs to the lhs
     *   @param[in] lhs The first vector
     *   @param[in] rhs The second vector
@@ -163,6 +173,16 @@ namespace cupbr
     Vector3<T> operator/(const Vector3<T>& lhs, const T& rhs);
 
     /**
+    *   @brief Divide a vector by a vector (component-wise)
+    *   @param[in] lhs The first vector
+    *   @param[in] rhs The second
+    *   @return The vectors divided component wise
+    */
+    template<typename T>
+    __host__ __device__
+    Vector3<T> operator/(const Vector3<T>& lhs, const Vector3<T>& rhs);
+
+    /**
     *   @brief Adds the rhs to the lhs
     *   @param[in] lhs The first vector
     *   @param[in] rhs The second vector
@@ -257,6 +277,16 @@ namespace cupbr
     template<typename T>
     __host__ __device__
     Vector4<T> operator/(const Vector4<T>& lhs, const T& rhs);
+
+    /**
+    *   @brief Divide a vector by a vector (component-wise)
+    *   @param[in] lhs The first vector
+    *   @param[in] rhs The second
+    *   @return The vectors divided component wise
+    */
+    template<typename T>
+    __host__ __device__
+    Vector4<T> operator/(const Vector4<T>& lhs, const Vector4<T>& rhs);
 
     /**
     *   @brief Adds the rhs to the lhs
