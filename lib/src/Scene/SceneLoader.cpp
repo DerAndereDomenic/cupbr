@@ -307,8 +307,8 @@ namespace cupbr
 
             Volume vol;
 
-            vol.sigma_s = std::stof(sigma_s_string);
-            vol.sigma_a = std::stof(sigma_a_string);
+            vol.sigma_s = detail::string2vector(sigma_s_string);
+            vol.sigma_a = detail::string2vector(sigma_a_string);
             vol.g = std::stof(g_string);
 
             scene.volume = vol;

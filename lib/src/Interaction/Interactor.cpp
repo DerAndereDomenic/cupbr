@@ -307,41 +307,30 @@ namespace cupbr
                 impl->material_update = true;
             }
 
-            Vector3float e = impl->host_material->albedo_e;
-            Vector3float d = impl->host_material->albedo_d;
-            Vector3float s = impl->host_material->albedo_s;
-
-            float emissive[] = { e.x, e.y, e.z };
-            float diffuse[] = { d.x, d.y, d.z };
-            float specular[] = { s.x, s.y, s.z };
-
-            if (ImGui::ColorEdit3("Albedo emissive", emissive))
+            if (ImGui::ColorEdit3("Albedo emissive", reinterpret_cast<float*>(&(impl->host_material->albedo_e))))
             {
-                impl->host_material->albedo_e = Vector3float(emissive[0], emissive[1], emissive[2]);
                 impl->material_update = true;
             }
 
-            if (ImGui::ColorEdit3("Albedo diffuse", diffuse))
+            if (ImGui::ColorEdit3("Albedo diffuse", reinterpret_cast<float*>(&(impl->host_material->albedo_d))))
             {
-                impl->host_material->albedo_d = Vector3float(diffuse[0], diffuse[1], diffuse[2]);
                 impl->material_update = true;
             }
 
-            if (ImGui::ColorEdit3("Albedo specular", specular))
+            if (ImGui::ColorEdit3("Albedo specular", reinterpret_cast<float*>(&(impl->host_material->albedo_s))))
             {
-                impl->host_material->albedo_s = Vector3float(specular[0], specular[1], specular[2]);
                 impl->material_update = true;
             }
 
             ImGui::Separator();
             ImGui::Text("Volume:");
 
-            if (ImGui::SliderFloat("Sigma_a", &(impl->scene->volume.sigma_a), 0.0f, 1.0f))
+            if (ImGui::ColorEdit3("Sigma_a", reinterpret_cast<float*>(&(impl->scene->volume.sigma_a))))
             {
                 impl->material_update = true;
             }
 
-            if (ImGui::SliderFloat("Sigma_s", &(impl->scene->volume.sigma_s), 0.0f, 1.0f))
+            if (ImGui::ColorEdit3("Sigma_s", reinterpret_cast<float*>(&(impl->scene->volume.sigma_s))))
             {
                 impl->material_update = true;
             }

@@ -124,7 +124,7 @@
 </lights>
 
 <volume>
-    <sigma_s>0.4</sigma_s>
-    <sigma_a>1.0</sigma_a>
+    <sigma_s>0.4,0.4,0.4</sigma_s>
+    <sigma_a>1.0,1.0,1.0</sigma_a>
     <g>0</g>
 </volume>
