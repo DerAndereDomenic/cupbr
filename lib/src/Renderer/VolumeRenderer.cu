@@ -16,6 +16,7 @@ namespace cupbr
             Vector3float ray_start;
             Vector3float out_dir;
             bool next_ray_valid;
+            Volume* volume;
         };
 
         __device__ void directIlluminationVolumetric(Scene& scene, Ray& ray, LocalGeometry& geom, Vector3float& inc_dir)
@@ -59,7 +60,7 @@ namespace cupbr
             {
                 payload->radiance += (scene.light_count + useEnvironmentMap) *
                     fmaxf(0.0f, Math::dot(normal, lightDir)) *
-                    Math::exp(-1.0f*(scene.volume.sigma_s + scene.volume.sigma_a) * d) *
+                    Math::exp(-1.0f*(payload->volume->sigma_s + payload->volume->sigma_a) * d) *
                     geom.material.brdf(geom.P, inc_dir, lightDir, normal) *
                     lightRadiance *
                     payload->rayweight;
@@ -87,8 +88,8 @@ namespace cupbr
             RadiancePayload* payload = ray.payload<RadiancePayload>();
 
             float g = scene.volume.g;
-            Vector3float sigma_a = scene.volume.sigma_a;
-            Vector3float sigma_s = scene.volume.sigma_s;
+            Vector3float sigma_a = payload->volume->sigma_a;
+            Vector3float sigma_s = payload->volume->sigma_s;
             Vector3float sigma_t = sigma_a + sigma_s;
 
             uint32_t channel = static_cast<uint32_t>(Math::rnd(payload->seed) * 3);
@@ -199,6 +200,7 @@ namespace cupbr
             Ray ray = Tracing::launchRay(tid, img.width(), img.height(), camera, true, &seed);
             RadiancePayload payload;
             payload.seed = seed;
+            payload.volume = &(scene.volume);
             ray.setPayload(&payload);
 
             uint32_t trace_depth = 0;
