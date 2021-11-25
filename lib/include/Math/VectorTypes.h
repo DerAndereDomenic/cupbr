@@ -43,6 +43,19 @@ namespace cupbr
             return Vector2<S>(static_cast<S>(x), static_cast<S>(y));
         }
 
+        /**
+        *   @brief Get an element of the vector as index
+        *   @param[in] index The index into the vector
+        *   @return The element at the position
+        *   @note: No range checks are done
+        */
+        __host__ __device__
+        inline T
+        operator[](const uint32_t& index)
+        {
+            return reinterpret_cast<T*>(this)[index];
+        }
+
         union
         {
             T x;	/**< The x coordinate*/
@@ -101,6 +114,19 @@ namespace cupbr
         operator Vector3<S>() const
         {
             return Vector3<S>(static_cast<S>(x), static_cast<S>(y), static_cast<S>(z));
+        }
+
+        /**
+        *   @brief Get an element of the vector as index
+        *   @param[in] index The index into the vector
+        *   @return The element at the position
+        *   @note: No range checks are done
+        */
+        __host__ __device__
+        inline T
+        operator[](const uint32_t& index)
+        {
+            return reinterpret_cast<T*>(this)[index];
         }
 
         union
@@ -168,6 +194,19 @@ namespace cupbr
         operator Vector4<S>() const
         {
             return Vector4<S>(static_cast<S>(x), static_cast<S>(y), static_cast<S>(z), static_cast<S>(w));
+        }
+
+        /**
+        *   @brief Get an element of the vector as index
+        *   @param[in] index The index into the vector
+        *   @return The element at the position
+        *   @note: No range checks are done
+        */
+        __host__ __device__
+        inline T
+        operator[](const uint32_t& index)
+        {
+            return reinterpret_cast<T*>(this)[index];
         }
 
         union
