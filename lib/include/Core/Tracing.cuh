@@ -42,12 +42,22 @@ namespace cupbr
 
         /**
         *   @brief Trace a ray through the scene and gather geometry information
-        *   @param[in] scene The scene size
+        *   @param[in] scene The scene
         *   @param[in] ray The ray
         *   @return The local geometry information of the intersection point
         */
         __device__
         LocalGeometry traceRay(Scene& scene, const Ray& ray);
+
+        /**
+        *   @brief Trace ray but only check for intersections of the specified geometry
+        *   @param[in] scene The scene
+        *   @param[in] ray The ray
+        *   @param[in] index The index of the geometry inside the scene
+        *   @return The local geometry information of the intersection point
+        */
+        __device__
+        LocalGeometry traceRay(Scene& scene, const Ray& ray, const uint32_t& index);
 
         /**
         *   @brief Trace a shadow ray to a light source

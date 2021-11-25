@@ -48,96 +48,90 @@ namespace cupbr
     inline LocalGeometry
     Tracing::traceRay(Scene& scene, const Ray& ray)
     {
-        Vector4float intersection(INFINITY);
-
         LocalGeometry geom;
 
         for (uint32_t i = 0; i < scene.scene_size; ++i)
         {
-            Geometry* scene_element = scene[i];
-            switch (scene_element->type)
+            LocalGeometry curr_geom = Tracing::traceRay(scene, ray, i);
+
+            if(curr_geom.depth < geom.depth)
             {
-                case GeometryType::PLANE:
-                {
-                    Plane* plane = static_cast<Plane*>(scene[i]);
-                    Vector4float intersection_plane = plane->computeRayIntersection(ray);
-                    if (intersection_plane.w <= intersection.w)
-                    {
-                        intersection = intersection_plane;
-                        geom.type = GeometryType::PLANE;
-                        geom.P = Vector3float(intersection);
-                        geom.N = plane->getNormal(geom.P);
-                        geom.depth = intersection.w;
-                        geom.material = plane->material;
-                        geom.scene_index = i;
-                    }
-                }
-                break;
-                case GeometryType::SPHERE:
-                {
-                    Sphere* sphere = static_cast<Sphere*>(scene_element);
-                    Vector4float intersection_sphere = sphere->computeRayIntersection(ray);
-                    if (intersection_sphere.w <= intersection.w)
-                    {
-                        intersection = intersection_sphere;
-                        geom.type = GeometryType::SPHERE;
-                        geom.P = Vector3float(intersection);
-                        geom.N = sphere->getNormal(geom.P);
-                        geom.depth = intersection.w;
-                        geom.material = sphere->material;
-                        geom.scene_index = i;
-                    }
-                }
-                break;
-                case GeometryType::QUAD:
-                {
-                    Quad* quad = static_cast<Quad*>(scene[i]);
-                    Vector4float intersection_quad = quad->computeRayIntersection(ray);
-                    if (intersection_quad.w <= intersection.w)
-                    {
-                        intersection = intersection_quad;
-                        geom.type = GeometryType::PLANE;
-                        geom.P = Vector3float(intersection);
-                        geom.N = quad->getNormal(geom.P);
-                        geom.depth = intersection.w;
-                        geom.material = quad->material;
-                        geom.scene_index = i;
-                    }
-                }
-                break;
-                case GeometryType::TRIANGLE:
-                {
-                    Triangle* triangle = static_cast<Triangle*>(scene[i]);
-                    Vector4float intersection_triangle = triangle->computeRayIntersection(ray);
-                    if (intersection_triangle.w <= intersection.w)
-                    {
-                        intersection = intersection_triangle;
-                        geom.type = GeometryType::TRIANGLE;
-                        geom.P = Vector3float(intersection);
-                        geom.N = triangle->getNormal(geom.P);
-                        geom.depth = intersection.w;
-                        geom.material = triangle->material;
-                        geom.scene_index = i;
-                    }
-                }
-                break;
-                case GeometryType::MESH:
-                {
-                    Mesh* mesh = static_cast<Mesh*>(scene[i]);
-                    Vector4float intersection_mesh = mesh->computeRayIntersection(ray);
-                    if (intersection_mesh.w <= intersection.w)
-                    {
-                        intersection = intersection_mesh;
-                        geom.type = GeometryType::MESH;
-                        geom.P = Vector3float(intersection);
-                        geom.N = mesh->getNormal(geom.P);
-                        geom.depth = intersection.w;
-                        geom.material = mesh->material;
-                        geom.scene_index = i;
-                    }
-                }
-                break;
+                geom = curr_geom;
             }
+        }
+
+        return geom;
+    }
+
+    __device__
+    inline LocalGeometry
+    Tracing::traceRay(Scene& scene, const Ray& ray, const uint32_t& index)
+    {
+        LocalGeometry geom;
+
+        Geometry* scene_element = scene[index];
+        switch (scene_element->type)
+        {
+            case GeometryType::PLANE:
+            {
+                Plane* plane = static_cast<Plane*>(scene_element);
+                Vector4float intersection_plane = plane->computeRayIntersection(ray);
+                geom.type = GeometryType::PLANE;
+                geom.P = Vector3float(intersection_plane);
+                geom.N = plane->getNormal(geom.P);
+                geom.depth = intersection_plane.w;
+                geom.material = plane->material;
+                geom.scene_index = index;
+            }
+            break;
+            case GeometryType::SPHERE:
+            {
+                Sphere* sphere = static_cast<Sphere*>(scene_element);
+                Vector4float intersection_sphere = sphere->computeRayIntersection(ray);
+                geom.type = GeometryType::SPHERE;
+                geom.P = Vector3float(intersection_sphere);
+                geom.N = sphere->getNormal(geom.P);
+                geom.depth = intersection_sphere.w;
+                geom.material = sphere->material;
+                geom.scene_index = index;
+            }
+            break;
+            case GeometryType::QUAD:
+            {
+                Quad* quad = static_cast<Quad*>(scene_element);
+                Vector4float intersection_quad = quad->computeRayIntersection(ray);
+                geom.type = GeometryType::PLANE;
+                geom.P = Vector3float(intersection_quad);
+                geom.N = quad->getNormal(geom.P);
+                geom.depth = intersection_quad.w;
+                geom.material = quad->material;
+                geom.scene_index = index;
+            }
+            break;
+            case GeometryType::TRIANGLE:
+            {
+                Triangle* triangle = static_cast<Triangle*>(scene_element);
+                Vector4float intersection_triangle = triangle->computeRayIntersection(ray);
+                geom.type = GeometryType::TRIANGLE;
+                geom.P = Vector3float(intersection_triangle);
+                geom.N = triangle->getNormal(geom.P);
+                geom.depth = intersection_triangle.w;
+                geom.material = triangle->material;
+                geom.scene_index = index;
+            }
+            break;
+            case GeometryType::MESH:
+            {
+                Mesh* mesh = static_cast<Mesh*>(scene_element);
+                Vector4float intersection_mesh = mesh->computeRayIntersection(ray);
+                geom.type = GeometryType::MESH;
+                geom.P = Vector3float(intersection_mesh);
+                geom.N = mesh->getNormal(geom.P);
+                geom.depth = intersection_mesh.w;
+                geom.material = mesh->material;
+                geom.scene_index = index;
+            }
+            break;
         }
 
         return geom;
