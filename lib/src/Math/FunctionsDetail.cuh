@@ -3,6 +3,7 @@
 
 #include <Core/CUDA.cuh>
 #include <cmath>
+#include <algorithm>
 
 namespace cupbr
 {
@@ -17,7 +18,7 @@ namespace cupbr
     T
     Math::clamp(const T& x, const T& mini, const T& maxi)
     {
-        return min(max(x, mini), maxi);
+        return fminf(fmaxf(x, mini), maxi);
     }
 
     __host__ __device__
