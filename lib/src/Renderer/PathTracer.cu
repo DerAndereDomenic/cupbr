@@ -80,8 +80,11 @@ namespace cupbr
             RadiancePayload* payload = ray.payload<RadiancePayload>();
             Vector4float direction_p = geom.material.sampleDirection(payload->seed, inc_dir, geom.N);
             Vector3float direction = Vector3float(direction_p);
-            if (Math::norm(direction) == 0)
+            if (Math::norm(direction) < EPSILON)
+            {
                 return;
+            }
+                
             ray.payload<RadiancePayload>()->rayweight = ray.payload<RadiancePayload>()->rayweight *
                 fabs(Math::dot(direction, geom.N)) *
                 geom.material.brdf(geom.P, inc_dir, direction, geom.N) / direction_p.w;
