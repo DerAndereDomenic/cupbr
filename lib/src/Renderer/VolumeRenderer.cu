@@ -17,6 +17,8 @@ namespace cupbr
             Vector3float out_dir;
             bool next_ray_valid;
             Volume* volume;
+            bool inside_object = false;
+            uint32_t object_index = 0;
         };
 
         __device__ void directIlluminationVolumetric(Scene& scene, Ray& ray, LocalGeometry& geom, Vector3float& inc_dir)
@@ -148,11 +150,28 @@ namespace cupbr
 
                 Ray shadow_ray = Ray(event_position + 0.001f * lightDir, lightDir);
 
+                // If we are inside an object -> First move to border of current object -> then do light sampling
+                Vector3float attenuation = 1.0f;
+                if(payload->inside_object)
+                {
+                    //Trace from light position because intersection inside the geometry dont always work
+                    Vector3float sample_position = event_position + d * lightDir;
+                    Ray light_ray = Ray(sample_position, -1.0f * lightDir);
+                    LocalGeometry g = Tracing::traceRay(scene, light_ray, payload->object_index);
+                    if (g.depth == INFINITY) return true;
+                    shadow_ray.traceNew(g.P + 0.001f * lightDir, lightDir);
+                    float surface_distance = Math::norm(g.P - event_position);
+                    attenuation = Math::exp(-1.0f * sigma_t * surface_distance);
+                    d -= surface_distance;
+                }
+
+                Vector3float scene_sigma_t = scene.volume.sigma_a + scene.volume.sigma_s;
+
                 if (Tracing::traceVisibility(scene, d, shadow_ray))
                 {
                     payload->radiance += (scene.light_count + useEnvironmentMap) *
                         Material::henyeyGreensteinPhaseFunction(g, Math::dot(lightDir, inc_dir)) *
-                        Math::exp(-1.0f*sigma_t * d) *
+                        Math::exp(-1.0f*scene_sigma_t * d) * attenuation *
                         lightRadiance *
                         payload->rayweight;
                 }
@@ -210,7 +229,16 @@ namespace cupbr
             do
             {
                 payload.next_ray_valid = false;
-                LocalGeometry geom = Tracing::traceRay(scene, ray);
+                LocalGeometry geom;
+                    
+                if(!payload.inside_object)
+                {
+                    geom = Tracing::traceRay(scene, ray);
+                }
+                else
+                {
+                    geom = Tracing::traceRay(scene, ray, payload.object_index);
+                }
 
                 Vector3float inc_dir = -1.0f * ray.direction(); //Points away from surface
 
@@ -226,8 +254,28 @@ namespace cupbr
                         break;
                     }
 
-                    directIlluminationVolumetric(scene, ray, geom, inc_dir);
-                    indirectIlluminationVolumetric(ray, geom, inc_dir);
+                    //Handle medium interfaces
+                    if(geom.material.type == MaterialType::VOLUME)
+                    {
+                        payload.ray_start = geom.P + 0.001f * ray.direction();
+                        payload.out_dir = ray.direction();
+                        payload.inside_object = !payload.inside_object;
+                        payload.object_index = geom.scene_index;
+                        payload.next_ray_valid = true;
+                        if(payload.inside_object)
+                        {
+                            payload.volume = &(geom.material.volume);
+                        }
+                        else
+                        {
+                            payload.volume = &(scene.volume);
+                        }
+                    }
+                    else
+                    {
+                        directIlluminationVolumetric(scene, ray, geom, inc_dir);
+                        indirectIlluminationVolumetric(ray, geom, inc_dir);
+                    }
                 }
                 ray.traceNew(payload.ray_start + 0.01f * payload.out_dir, payload.out_dir);
                 if (!payload.next_ray_valid)break;
