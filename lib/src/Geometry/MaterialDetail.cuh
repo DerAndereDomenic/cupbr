@@ -148,10 +148,10 @@ namespace cupbr
         bool outside = NdotV > 0.0f;
         float _eta = outside ? 1.0f / eta : eta;
         Vector3float normal = outside ? n : -1.0f * n;
-        float F0 = outside ? (1.0f - eta) / (1.0f + eta) : (-1.0f + eta) / (1.0f + eta);
+        float F0 = (eta - 1.0f) / (eta + 1.0f);
         F0 *= F0;
 
-        float p_reflect = Math::fresnel_schlick(F0, Math::dot(inc_dir, normal));
+        float p_reflect = Math::fresnel_schlick(F0, fabsf(Math::dot(inc_dir, normal)));
         float xi = Math::rnd(seed);
 
         Vector3float refraction_dir = Math::refract(_eta, inc_dir, normal);
@@ -219,17 +219,14 @@ namespace cupbr
     Material::brdf_mirror(const Vector3float& position, const Vector3float& inc_dir, const Vector3float& out_dir, const Vector3float& normal)
     {
         Vector3float reflected = Math::reflect(inc_dir, normal);
-        return albedo_s * Math::delta(1.0f - Math::dot(out_dir, reflected)) / Math::dot(inc_dir, normal);
+        return albedo_s * Math::delta(1.0f - Math::dot(out_dir, reflected)) / Math::dot(out_dir, normal);
     }
 
     __host__ __device__
     inline Vector3float
     Material::btdf_glass(const Vector3float& position, const Vector3float& inc_dir, const Vector3float& out_dir, const Vector3float& normal)
     {
-        //TODO
-        //Vector3float refracted = Math::refract(eta, inc_dir, normal);
-        //return 1;//albedo_s*Math::delta(1.0f-Math::dot(refracted,out_dir))/Math::dot(inc_dir,normal);
-        if (Math::dot(inc_dir, out_dir) > 0) //Reflected
+        if (Math::dot(inc_dir, normal) * Math::dot(out_dir, normal) > 0) //Reflected
         {
             if (Math::dot(inc_dir, normal) > 0)
             {
@@ -254,6 +251,7 @@ namespace cupbr
                 refracted = Math::refract(eta, inc_dir, -1.0f * normal);
                 n = -1.0f * normal;
             }
+
             return albedo_s * Math::delta(1.0f - Math::dot(refracted, out_dir)) / Math::dot(inc_dir, n);
         }
     }
