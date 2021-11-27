@@ -29,6 +29,7 @@ namespace cupbr
                 material->shininess = geom.material.shininess;
                 material->eta = geom.material.eta;
                 material->roughness = geom.material.roughness;
+                material->volume = geom.material.volume;
                 *(scene_index) = geom.scene_index;
             }
         }
@@ -46,6 +47,7 @@ namespace cupbr
             element->material.shininess = newMaterial->shininess;
             element->material.eta = newMaterial->eta;
             element->material.roughness = newMaterial->roughness;
+            element->material.volume = newMaterial->volume;
         }
     } //namespace detail
 

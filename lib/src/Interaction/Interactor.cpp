@@ -291,6 +291,11 @@ namespace cupbr
                 impl->host_material->type = MaterialType::GGX;
                 impl->material_update = true;
             }
+            else if(ImGui::MenuItem("VOLUME"))
+            {
+                impl->host_material->type = MaterialType::VOLUME;
+                impl->material_update = true;
+            }
 
             if (ImGui::SliderFloat("Shininess", &(impl->host_material->shininess), 0.0f, 128.0f))
             {
@@ -318,6 +323,21 @@ namespace cupbr
             }
 
             if (ImGui::ColorEdit3("Albedo specular", reinterpret_cast<float*>(&(impl->host_material->albedo_s))))
+            {
+                impl->material_update = true;
+            }
+
+            if(ImGui::ColorEdit3("Absorption", reinterpret_cast<float*>(&(impl->host_material->volume.sigma_a))))
+            {
+                impl->material_update = true;
+            }
+
+            if(ImGui::ColorEdit3("Scattering", reinterpret_cast<float*>(&(impl->host_material->volume.sigma_s))))
+            {
+                impl->material_update = true;
+            }
+
+            if(ImGui::SliderFloat("Phase", &(impl->host_material->volume.g), -1.0f, 1.0f))
             {
                 impl->material_update = true;
             }
