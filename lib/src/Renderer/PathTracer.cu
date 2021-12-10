@@ -14,7 +14,7 @@ namespace cupbr
             Vector3float radiance = 0;
             Vector3float rayweight = 1;
             Vector3float out_dir;
-            bool next_ray_valid;
+            bool next_ray_valid = false;
         };
 
         inline __device__
@@ -78,6 +78,8 @@ namespace cupbr
         {
             //Indirect illumination
             RadiancePayload* payload = ray.payload<RadiancePayload>();
+
+
             Vector4float direction_p = geom.material.sampleDirection(payload->seed, inc_dir, geom.N);
             Vector3float direction = Vector3float(direction_p);
             if (Math::norm(direction) < EPSILON)
@@ -85,7 +87,7 @@ namespace cupbr
                 return;
             }
                 
-            ray.payload<RadiancePayload>()->rayweight = ray.payload<RadiancePayload>()->rayweight *
+            payload->rayweight = payload->rayweight *
                 fabs(Math::dot(direction, geom.N)) *
                 geom.material.brdf(geom.P, inc_dir, direction, geom.N) / direction_p.w;
             payload->out_dir = direction;
@@ -134,6 +136,17 @@ namespace cupbr
 
                 emissiveIllumintation(ray, geom);
                 directIllumination(scene, ray, geom, inc_dir);
+
+                // Russian Roulette
+                float alpha = Math::clamp(fmaxf(payload.rayweight.x, fmaxf(payload.rayweight.y, payload.rayweight.z)), 0.0f, 1.0f);
+                if(Math::rnd(payload.seed) > alpha || Math::safeFloatEqual(alpha, 0))
+                {
+                    payload.next_ray_valid = false;
+                    payload.rayweight = 0;
+                    break;
+                }
+                payload.rayweight = payload.rayweight / alpha;
+
                 indirectIllumination(ray, geom, inc_dir);
 
                 ray.traceNew(geom.P + 0.01f * payload.out_dir, payload.out_dir);
