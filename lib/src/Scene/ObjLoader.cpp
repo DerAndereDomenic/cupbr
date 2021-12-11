@@ -56,21 +56,18 @@ namespace cupbr
 
         file.close();
 
-        Triangle** host_triangles = Memory::createHostArray<Triangle*>(static_cast<uint32_t>(indices.size()));
-        Triangle** dev_triangles = Memory::createDeviceArray<Triangle*>(static_cast<uint32_t>(indices.size()));
+        Triangle* host_triangles = Memory::createHostArray<Triangle>(static_cast<uint32_t>(indices.size()));
+        Triangle* dev_triangles = Memory::createDeviceArray<Triangle>(static_cast<uint32_t>(indices.size()));
 
         for (uint32_t i = 0; i < indices.size(); ++i)
         {
             Vector3uint32_t index = indices[i];
-            Triangle host_triangle(vertices[index.x], vertices[index.y], vertices[index.z]);
-            Triangle* triangle = Memory::createDeviceObject<Triangle>();
-            Memory::copyHost2DeviceObject<Triangle>(&host_triangle, triangle);
-            host_triangles[i] = triangle;
+            host_triangles[i] = Triangle(vertices[index.x], vertices[index.y], vertices[index.z]);
         }
 
-        Memory::copyHost2DeviceArray<Triangle*>(static_cast<uint32_t>(indices.size()), host_triangles, dev_triangles);
+        Memory::copyHost2DeviceArray<Triangle>(static_cast<uint32_t>(indices.size()), host_triangles, dev_triangles);
 
-        Memory::destroyHostArray<Triangle*>(host_triangles);
+        Memory::destroyHostArray<Triangle>(host_triangles);
 
         Mesh host_mesh(dev_triangles, static_cast<uint32_t>(indices.size()));
         Mesh* mesh = Memory::createHostObject<Mesh>();

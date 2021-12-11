@@ -409,16 +409,7 @@ namespace cupbr
                     Memory::copyDevice2HostObject<Mesh>(static_cast<Mesh*>(host_scene[i]), &mesh);
                     Memory::destroyDeviceObject<Mesh>(static_cast<Mesh*>(host_scene[i]));
 
-                    Triangle** host_triangles = Memory::createHostArray<Triangle*>(mesh.num_triangles());
-                    Memory::copyDevice2HostArray<Triangle*>(mesh.num_triangles(), mesh.triangles(), host_triangles);
-                    Memory::destroyDeviceArray<Triangle*>(mesh.triangles());
-
-                    for (uint32_t i = 0; i < mesh.num_triangles(); ++i)
-                    {
-                        Memory::destroyDeviceObject<Triangle>(host_triangles[i]);
-                    }
-
-                    Memory::destroyHostArray<Triangle*>(host_triangles);
+                    Memory::destroyDeviceArray<Triangle>(mesh.triangles());
                 }
                 break;
             }

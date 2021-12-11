@@ -23,7 +23,7 @@ namespace cupbr
         *   @param[in] num_triangles The number of triangles
         */
         __host__ __device__
-        Mesh(Triangle** triangle_buffer, const uint32_t& num_triangles);
+        Mesh(Triangle* triangle_buffer, const uint32_t& num_triangles);
 
         //Override
         __host__ __device__
@@ -41,10 +41,10 @@ namespace cupbr
         uint32_t num_triangles();
 
         __host__ __device__
-        Triangle** triangles();
+        Triangle* triangles();
 
         private:
-        Triangle** _triangles;       /**< The plane position */
+        Triangle* _triangles;       /**< The plane position */
         Vector3float _normal;       /**< The plane normal */
         uint32_t _num_triangles;    /**< The number of triangles */
     };
