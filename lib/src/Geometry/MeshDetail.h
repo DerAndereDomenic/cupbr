@@ -8,10 +8,11 @@ namespace cupbr
 {
     __host__ __device__
     inline
-    Mesh::Mesh(Triangle* triangle_buffer, const uint32_t& num_triangles)
+    Mesh::Mesh(Triangle* triangle_buffer, const uint32_t& num_triangles, const Vector3float& minimum, const Vector3float& maximum)
         :_triangles(triangle_buffer),
         _normal(0),
-        _num_triangles(num_triangles)
+        _num_triangles(num_triangles),
+        _aabb(AABB(minimum,maximum))
     {
         type = GeometryType::MESH;
     }
@@ -21,6 +22,10 @@ namespace cupbr
     Mesh::computeRayIntersection(const Ray& ray)
     {
         Vector4float intersection(INFINITY);
+
+        if (!_aabb.hit(ray))
+            return intersection;
+
         Vector3float normal = 0;
         for (uint32_t i = 0; i < _num_triangles; ++i)
         {

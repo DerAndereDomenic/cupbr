@@ -3,6 +3,7 @@
 
 #include <Geometry/Geometry.h>
 #include <Geometry/Triangle.h>
+#include <Geometry/AABB.h>
 
 namespace cupbr
 {
@@ -21,9 +22,11 @@ namespace cupbr
         *   @brief Create a mesh
         *   @param[in] triangle_buffer The triangle buffer
         *   @param[in] num_triangles The number of triangles
+        *   @param[in] minimum The minimum point of the aabb
+        *   @üaram[in] maximum The maximum point of the aabb
         */
         __host__ __device__
-        Mesh(Triangle* triangle_buffer, const uint32_t& num_triangles);
+        Mesh(Triangle* triangle_buffer, const uint32_t& num_triangles, const Vector3float& minimum, const Vector3float& maximum);
 
         //Override
         __host__ __device__
@@ -47,6 +50,7 @@ namespace cupbr
         Triangle* _triangles;       /**< The plane position */
         Vector3float _normal;       /**< The plane normal */
         uint32_t _num_triangles;    /**< The number of triangles */
+        AABB _aabb;                 /**< The axis aligned bounding box for the mesh */
     };
 
 } //namespace cupbr
