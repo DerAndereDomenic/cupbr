@@ -9,10 +9,10 @@ namespace cupbr
     inline
     Sphere::Sphere(const Vector3float& position, const float& radius)
         :_position(position),
-        _radius(radius),
-        _aabb(position - Vector3float(radius), position + Vector3float(radius))
+        _radius(radius)
     {
         type = GeometryType::SPHERE;
+        _aabb = AABB(position - Vector3float(radius), position + Vector3float(radius));
     }
 
     __host__ __device__

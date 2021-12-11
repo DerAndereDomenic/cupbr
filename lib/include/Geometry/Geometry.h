@@ -4,6 +4,7 @@
 #include <Geometry/Geometry.h>
 #include <Geometry/Ray.h>
 #include <Geometry/Material.h>
+#include <Geometry/AABB.h>
 #include <cmath>
 
 namespace cupbr
@@ -51,7 +52,8 @@ namespace cupbr
 
         Material material = {};                         /**< The material of the object */
         GeometryType type = GeometryType::MESH;         /**< The geometry type */
-        private:
+        protected:
+        AABB _aabb;                                     /**< The axis aligned bounding box */
     };
 
     /**

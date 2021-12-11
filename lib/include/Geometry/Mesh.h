@@ -3,7 +3,6 @@
 
 #include <Geometry/Geometry.h>
 #include <Geometry/Triangle.h>
-#include <Geometry/AABB.h>
 
 namespace cupbr
 {
@@ -50,7 +49,6 @@ namespace cupbr
         Triangle* _triangles;       /**< The plane position */
         Vector3float _normal;       /**< The plane normal */
         uint32_t _num_triangles;    /**< The number of triangles */
-        AABB _aabb;                 /**< The axis aligned bounding box for the mesh */
     };
 
 } //namespace cupbr

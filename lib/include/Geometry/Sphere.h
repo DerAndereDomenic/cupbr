@@ -2,7 +2,6 @@
 #define __CUPBR_GEOMETRY_SPHERE_H
 
 #include <Geometry/Geometry.h>
-#include <Geometry/AABB.h>
 
 namespace cupbr
 {
@@ -50,7 +49,6 @@ namespace cupbr
         private:
         Vector3float _position;     /**< 3D world position of the sphere */
         float _radius;              /**< The radius */
-        AABB _aabb;
     };
 } //namespace cupbr
 
