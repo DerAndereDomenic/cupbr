@@ -9,7 +9,8 @@ namespace cupbr
     inline
     Sphere::Sphere(const Vector3float& position, const float& radius)
         :_position(position),
-        _radius(radius)
+        _radius(radius),
+        _aabb(position - Vector3float(radius), position + Vector3float(radius))
     {
         type = GeometryType::SPHERE;
     }
@@ -32,6 +33,9 @@ namespace cupbr
     inline Vector4float
     Sphere::computeRayIntersection(const Ray& ray)
     {
+        if (!_aabb.hit(ray))
+            return INFINITY;
+
         const Vector3float origin = ray.origin();
         const Vector3float direction = ray.direction();
 
