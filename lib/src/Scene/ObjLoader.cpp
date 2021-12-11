@@ -21,6 +21,9 @@ namespace cupbr
         std::vector<Vector3float> vertices;
         std::vector<Vector3uint32_t> indices;
 
+        Vector3float minimum = INFINITY;
+        Vector3float maximum = -INFINITY;
+
         while (std::getline(file, line))
         {
             if (line[0] == 'v' && line[1] == ' ')
@@ -33,8 +36,15 @@ namespace cupbr
                 {
                     result.push_back(std::stof(item));
                 }
+                Vector3float vertex = Vector3float(result[0], result[1], result[2]) + position;
+                vertices.push_back(vertex);
+                maximum.x = vertex.x > maximum.x ? vertex.x : maximum.x;
+                maximum.y = vertex.y > maximum.y ? vertex.y : maximum.y;
+                maximum.z = vertex.z > maximum.z ? vertex.z : maximum.z;
 
-                vertices.push_back(Vector3float(result[0], result[1], result[2]) + position);
+                minimum.x = vertex.x < minimum.x ? vertex.x : minimum.x;
+                minimum.y = vertex.y < minimum.y ? vertex.y : minimum.y;
+                minimum.z = vertex.z < minimum.z ? vertex.z : minimum.z;
             }
             else if (line[0] == 'f' && line[1] == ' ')
             {
@@ -69,7 +79,7 @@ namespace cupbr
 
         Memory::destroyHostArray<Triangle>(host_triangles);
 
-        Mesh host_mesh(dev_triangles, static_cast<uint32_t>(indices.size()));
+        Mesh host_mesh(dev_triangles, static_cast<uint32_t>(indices.size()), minimum, maximum);
         Mesh* mesh = Memory::createHostObject<Mesh>();
         Memory::copyHost2HostObject<Mesh>(&host_mesh, mesh);
 
