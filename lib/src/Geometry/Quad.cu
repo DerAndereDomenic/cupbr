@@ -1,4 +1,4 @@
-#include <Geometry/Quad.cuh>
+#include <Geometry/Quad.h>
 
 namespace cupbr
 {

@@ -1,4 +1,4 @@
-#include <Geometry/Plane.cuh>
+#include <Geometry/Plane.h>
 
 namespace cupbr
 {

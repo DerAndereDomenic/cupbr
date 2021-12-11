@@ -1,6 +1,6 @@
 #include <PostProcessing/PyramidConstructor.h>
-#include <Core/KernelHelper.cuh>
-#include <Math/Functions.cuh>
+#include <Core/KernelHelper.h>
+#include <Math/Functions.h>
 
 namespace cupbr
 {

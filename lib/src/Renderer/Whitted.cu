@@ -1,8 +1,8 @@
-#include <Renderer/Whitted.cuh>
-#include <Core/KernelHelper.cuh>
-#include <Core/Tracing.cuh>
-#include <Geometry/Sphere.cuh>
-#include <Geometry/Plane.cuh>
+#include <Renderer/Whitted.h>
+#include <Core/KernelHelper.h>
+#include <Core/Tracing.h>
+#include <Geometry/Sphere.h>
+#include <Geometry/Plane.h>
 
 namespace cupbr
 {

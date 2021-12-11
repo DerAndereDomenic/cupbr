@@ -1,5 +1,5 @@
-#include <DataStructure/Camera.cuh>
-#include <Math/Functions.cuh>
+#include <DataStructure/Camera.h>
+#include <Math/Functions.h>
 
 namespace cupbr
 {

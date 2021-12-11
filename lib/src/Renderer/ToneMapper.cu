@@ -1,11 +1,11 @@
-#include <Renderer/ToneMapper.cuh>
+#include <Renderer/ToneMapper.h>
 
-#include <DataStructure/Image.cuh>
-#include <DataStructure/RenderBuffer.cuh>
+#include <DataStructure/Image.h>
+#include <DataStructure/RenderBuffer.h>
 #include <memory>
 
-#include <Core/KernelHelper.cuh>
-#include <Math/Functions.cuh>
+#include <Core/KernelHelper.h>
+#include <Math/Functions.h>
 
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include <stb_image_write.h>

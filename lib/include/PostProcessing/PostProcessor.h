@@ -1,7 +1,7 @@
 #ifndef __CUPBR_POSTPTROCESSING_POSTPROCESSOR_H
 #define __CUPBR_POSTPTROCESSING_POSTPROCESSOR_H
 
-#include <DataStructure/Image.cuh>
+#include <DataStructure/Image.h>
 #include <memory>
 
 namespace cupbr

@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include <CUPBR.cuh>
+#include <CUPBR.h>
 
 using namespace cupbr;
 

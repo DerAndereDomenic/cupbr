@@ -1,5 +1,5 @@
-#include <Interaction/MousePicker.cuh>
-#include <Core/Tracing.cuh>
+#include <Interaction/MousePicker.h>
+#include <Core/Tracing.h>
 
 namespace cupbr
 {

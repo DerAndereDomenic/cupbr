@@ -1,4 +1,4 @@
-#include <Core/Memory.cuh>
+#include <Core/Memory.h>
 #include <iostream>
 
 namespace cupbr

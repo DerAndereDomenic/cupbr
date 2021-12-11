@@ -2,7 +2,7 @@
 #define __CUPBR_MATH_VECTORFUNCTIONS_H
 
 #include <Math/VectorTypes_fwd.h>
-#include <Core/CUDA.cuh>
+#include <Core/CUDA.h>
 
 namespace cupbr
 {

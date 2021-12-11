@@ -1,4 +1,4 @@
-#include <Geometry/Triangle.cuh>
+#include <Geometry/Triangle.h>
 
 namespace cupbr
 {

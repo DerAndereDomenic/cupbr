@@ -1,6 +1,6 @@
-#include <Interaction/Interactor.cuh>
-#include <Interaction/MousePicker.cuh>
-#include <Core/Memory.cuh>
+#include <Interaction/Interactor.h>
+#include <Interaction/MousePicker.h>
+#include <Core/Memory.h>
 #include <imgui.h>
 #include <Core/KeyEvent.h>
 #include <Core/MouseEvent.h>

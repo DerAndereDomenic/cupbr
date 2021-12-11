@@ -1,9 +1,9 @@
-#include <Renderer/PBRenderer.cuh>
-#include <Renderer/RayTracer.cuh>
-#include <Renderer/Whitted.cuh>
-#include <Renderer/PathTracer.cuh>
-#include <Renderer/GradientDomain.cuh>
-#include <Renderer/VolumeRenderer.cuh>
+#include <Renderer/PBRenderer.h>
+#include <Renderer/RayTracer.h>
+#include <Renderer/Whitted.h>
+#include <Renderer/PathTracer.h>
+#include <Renderer/GradientDomain.h>
+#include <Renderer/VolumeRenderer.h>
 
 namespace cupbr
 {

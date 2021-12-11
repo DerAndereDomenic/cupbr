@@ -1,9 +1,9 @@
 #include <iostream>
 
-#include <GL/GLRenderer.cuh>
+#include <GL/GLRenderer.h>
 #include <string>
 
-#include <Core/Memory.cuh>
+#include <Core/Memory.h>
 
 namespace cupbr
 {

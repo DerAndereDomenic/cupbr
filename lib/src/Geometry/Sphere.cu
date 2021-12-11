@@ -1,4 +1,4 @@
-#include <Geometry/Sphere.cuh>
+#include <Geometry/Sphere.h>
 
 namespace cupbr
 {

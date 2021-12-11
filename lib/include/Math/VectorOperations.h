@@ -1,7 +1,7 @@
 #ifndef __CUPBR_MATH_VECTOROPERATIONS_H
 #define __CUPBR_MATH_VECTOROPERATIONS_H
 
-#include <Core/CUDA.cuh>
+#include <Core/CUDA.h>
 #include "VectorTypes_fwd.h"
 
 namespace cupbr

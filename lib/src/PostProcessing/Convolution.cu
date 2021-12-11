@@ -1,6 +1,6 @@
-#include <PostProcessing/Convolution.cuh>
-#include <Core/KernelHelper.cuh>
-#include <Core/CUDA.cuh>
+#include <PostProcessing/Convolution.h>
+#include <Core/KernelHelper.h>
+#include <Core/CUDA.h>
 
 namespace cupbr
 {

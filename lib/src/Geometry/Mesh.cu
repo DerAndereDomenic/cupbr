@@ -1,4 +1,4 @@
-#include <Geometry/Mesh.cuh>
+#include <Geometry/Mesh.h>
 
 namespace cupbr
 {

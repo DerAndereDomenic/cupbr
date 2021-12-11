@@ -1,5 +1,5 @@
 #include <PostProcessing/PostProcessor.h>
-#include <PostProcessing/Convolution.cuh>
+#include <PostProcessing/Convolution.h>
 #include <PostProcessing/PyramidConstructor.h>
 
 namespace cupbr

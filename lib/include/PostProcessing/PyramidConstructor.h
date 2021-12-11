@@ -1,7 +1,7 @@
 #ifndef __CUPBR_POSTPROCESSING_PYRAMIDCONSTRUCTOR_H
 #define __CUPBR_POSTPROCESSING_PYRAMIDCONSTRUCTOR_H
 
-#include <DataStructure/Image.cuh>
+#include <DataStructure/Image.h>
 
 namespace cupbr
 {

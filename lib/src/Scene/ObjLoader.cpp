@@ -1,12 +1,12 @@
-#include <Scene/ObjLoader.cuh>
+#include <Scene/ObjLoader.h>
 #include <iostream>
 #include <fstream>
 #include <vector>
 #include <sstream>
 #include <string>
 #include <algorithm>
-#include <Core/Memory.cuh>
-#include <Geometry/Triangle.cuh>
+#include <Core/Memory.h>
+#include <Geometry/Triangle.h>
 
 namespace cupbr
 {
