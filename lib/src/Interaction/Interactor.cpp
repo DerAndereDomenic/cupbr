@@ -43,6 +43,7 @@ namespace cupbr
         bool close = false;
         bool edit_mode = true;
         bool reset_scene = false;
+        bool use_russian_roulette = false;
 
         std::string scene_path;
 
@@ -247,6 +248,8 @@ namespace cupbr
                 impl->method = RenderingMethod::VOLUME;
             }
 
+            ImGui::Checkbox("Russian Roulette", &(impl->use_russian_roulette));
+
             ImGui::Text("Tone Mapping:");
             ImGui::Separator();
             if (ImGui::MenuItem("Reinhard"))
@@ -440,6 +443,12 @@ namespace cupbr
         impl->reset_scene = false;
         file_path = impl->scene_path;
         return should_reset;
+    }
+
+    bool
+    Interactor::useRussianRoulette()
+    {
+        return impl->use_russian_roulette;
     }
 
 } //namespace cupbr

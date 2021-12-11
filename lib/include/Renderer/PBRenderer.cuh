@@ -92,6 +92,12 @@ namespace cupbr
         */
         void reset();
 
+        /**
+        *   @brief If russian roulette should be used
+        *   @param[in] useRussianRoulette If russian roulette should be used
+        */
+        void setRussianRoulette(const bool& useRussianRoulette);
+
         private:
         class Impl;
         std::unique_ptr<Impl> impl;     /**< The implementation pointer */

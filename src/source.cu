@@ -86,6 +86,8 @@ int run(int argc, char* argv[])
             pbrenderer.setMethod(interactor.getRenderingMethod());
         }
 
+        pbrenderer.setRussianRoulette(interactor.useRussianRoulette());
+
         if(interactor.getToneMapping() != mapper.getType())
         {
             mapper.setType(interactor.getToneMapping());

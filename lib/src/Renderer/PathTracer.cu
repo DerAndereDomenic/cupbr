@@ -99,6 +99,7 @@ namespace cupbr
                               const Camera camera,
                               const uint32_t frameIndex,
                               const uint32_t maxTraceDepth,
+                              const bool useRussianRoulette,
                               Image<Vector3float> img)
         {
             const uint32_t tid = ThreadHelper::globalThreadIndex();
@@ -138,14 +139,17 @@ namespace cupbr
                 directIllumination(scene, ray, geom, inc_dir);
 
                 // Russian Roulette
-                float alpha = Math::clamp(fmaxf(payload.rayweight.x, fmaxf(payload.rayweight.y, payload.rayweight.z)), 0.0f, 1.0f);
-                if(Math::rnd(payload.seed) > alpha || Math::safeFloatEqual(alpha, 0))
+                if(useRussianRoulette)
                 {
-                    payload.next_ray_valid = false;
-                    payload.rayweight = 0;
-                    break;
+                    float alpha = Math::clamp(fmaxf(payload.rayweight.x, fmaxf(payload.rayweight.y, payload.rayweight.z)), 0.0f, 1.0f);
+                    if(Math::rnd(payload.seed) > alpha || Math::safeFloatEqual(alpha, 0))
+                    {
+                        payload.next_ray_valid = false;
+                        payload.rayweight = 0;
+                        break;
+                    }
+                    payload.rayweight = payload.rayweight / alpha;
                 }
-                payload.rayweight = payload.rayweight / alpha;
 
                 indirectIllumination(ray, geom, inc_dir);
 
@@ -258,6 +262,7 @@ namespace cupbr
                              const Camera& camera,
                              const uint32_t& frameIndex,
                              const uint32_t& maxTraceDepth,
+                             const bool& useRussianRoulette,
                              Image<Vector3float>* output_img)
     {
         const KernelSizeHelper::KernelSize config = KernelSizeHelper::configure(output_img->size());
@@ -265,6 +270,7 @@ namespace cupbr
                                                                               camera,
                                                                               frameIndex,
                                                                               maxTraceDepth,
+                                                                              useRussianRoulette,
                                                                               *output_img);
         cudaSafeCall(cudaDeviceSynchronize());
     }

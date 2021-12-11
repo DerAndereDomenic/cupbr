@@ -92,6 +92,12 @@ namespace cupbr
         bool usePostProcessing();
 
         /**
+        *   @brief If russian roulette should be used
+        *   @return True if russian roulette is enabled
+        */
+        bool useRussianRoulette();
+
+        /**
         *   @brief Get the quadratic thresholding curve for bloom
         *   @return The vector containing the curve (threshold, knee - threshold, 2*knee, 0.25/knee)
         */
