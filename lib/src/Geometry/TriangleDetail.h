@@ -9,7 +9,8 @@ namespace cupbr
     __host__ __device__
     inline
     Triangle::Triangle(const Vector3float& vertex1, const Vector3float& vertex2, const Vector3float& vertex3)
-        :_vertex1(vertex1),
+        :Geometry(),
+        _vertex1(vertex1),
         _vertex2(vertex2),
         _vertex3(vertex3),
         _normal(Math::normalize(Math::cross(vertex2 - vertex1, vertex3 - vertex1)))

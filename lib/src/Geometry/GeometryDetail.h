@@ -16,6 +16,14 @@ namespace cupbr
     {
         return Vector3float(INFINITY);
     }
+
+    __host__ __device__
+    inline uint32_t
+    Geometry::id() const
+    {
+        return _id;
+    }
+
 } //namespace cupbr
 
 #endif

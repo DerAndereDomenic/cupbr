@@ -8,7 +8,8 @@ namespace cupbr
     __host__ __device__
     inline
     Sphere::Sphere(const Vector3float& position, const float& radius)
-        :_position(position),
+        :Geometry(),
+        _position(position),
         _radius(radius)
     {
         type = GeometryType::SPHERE;

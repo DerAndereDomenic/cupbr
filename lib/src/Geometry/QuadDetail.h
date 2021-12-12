@@ -9,7 +9,8 @@ namespace cupbr
     __host__ __device__
     inline
     Quad::Quad(const Vector3float& position, const Vector3float& normal, const Vector3float& extend1, const Vector3float& extend2)
-        :_position(position),
+        :Geometry(),
+        _position(position),
         _normal(Math::normalize(normal)),
         _extend1(extend1),
         _extend2(extend2)

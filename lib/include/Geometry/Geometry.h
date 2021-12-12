@@ -30,7 +30,7 @@ namespace cupbr
         /**
         *   @brief Default constructor
         */
-        Geometry() = default;
+        Geometry();
 
         /**
         *   @brief Compute the intersection point of geometry and a ray
@@ -50,10 +50,18 @@ namespace cupbr
         __host__ __device__
         Vector3float getNormal(const Vector3float& x);
 
+        /**
+        *   @brief Get the unique geometry id
+        *   @return The id 
+        */ 
+        __host__ __device__
+        uint32_t id() const;
+
         Material material = {};                         /**< The material of the object */
         GeometryType type = GeometryType::MESH;         /**< The geometry type */
         protected:
         AABB _aabb;                                     /**< The axis aligned bounding box */
+        uint32_t _id;                                   /**< The geometry id */
     };
 
     /**

@@ -9,7 +9,8 @@ namespace cupbr
     __host__ __device__
     inline
     Mesh::Mesh(Triangle* triangle_buffer, const uint32_t& num_triangles, const Vector3float& minimum, const Vector3float& maximum)
-        :_triangles(triangle_buffer),
+        :Geometry(),
+        _triangles(triangle_buffer),
         _normal(0),
         _num_triangles(num_triangles)
     {

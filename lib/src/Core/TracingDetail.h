@@ -93,7 +93,7 @@ namespace cupbr
                 geom.N = sphere->getNormal(geom.P);
                 geom.depth = intersection_sphere.w;
                 geom.material = sphere->material;
-                geom.scene_index = index;
+                geom.scene_index = sphere->id();
             }
             break;
             case GeometryType::QUAD:
@@ -105,7 +105,7 @@ namespace cupbr
                 geom.N = quad->getNormal(geom.P);
                 geom.depth = intersection_quad.w;
                 geom.material = quad->material;
-                geom.scene_index = index;
+                geom.scene_index = quad->id();
             }
             break;
             case GeometryType::TRIANGLE:
@@ -117,7 +117,7 @@ namespace cupbr
                 geom.N = triangle->getNormal(geom.P);
                 geom.depth = intersection_triangle.w;
                 geom.material = triangle->material;
-                geom.scene_index = index;
+                geom.scene_index = triangle->id();
             }
             break;
             case GeometryType::MESH:
@@ -129,7 +129,7 @@ namespace cupbr
                 geom.N = mesh->getNormal(geom.P);
                 geom.depth = intersection_mesh.w;
                 geom.material = mesh->material;
-                geom.scene_index = index;
+                geom.scene_index = mesh->id();
             }
             break;
         }
