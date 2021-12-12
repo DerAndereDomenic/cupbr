@@ -13,6 +13,8 @@
 #include <Core/MouseEvent.h>
 #include <Core/WindowEvent.h>
 
+#include <iostream>
+
 namespace cupbr
 {
     static bool s_glfw_initialized = false;
@@ -30,6 +32,10 @@ namespace cupbr
                 s_glfw_initialized = true;
             }
         }
+
+        glfwSetErrorCallback([](int error, const char* message){
+            std::cerr << "Error: " << error << " occured: " << message << std::endl;
+        });
 
         _internal_window = glfwCreateWindow(width, height, title, NULL, NULL);
 
