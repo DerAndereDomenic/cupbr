@@ -23,6 +23,7 @@ namespace cupbr
         *   @param[in] minimum The minimum point
         *   @param[in] maximum The maximum point
         */
+        __host__ __device__
         AABB(const Vector3float& minimum, const Vector3float& maximum);
 
         /**

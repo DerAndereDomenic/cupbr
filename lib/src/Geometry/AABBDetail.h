@@ -6,6 +6,7 @@
 
 namespace cupbr
 {
+    __host__ __device__
     inline
     AABB::AABB(const Vector3float& minimum, const Vector3float& maximum)
         :_minimum(minimum),
