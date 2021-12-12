@@ -152,8 +152,8 @@ namespace cupbr
         scene.scene_size = scene_size;
         scene.light_count = light_count;
 
-        Geometry** host_array = Memory::createHostArray<Geometry*>(scene_size);
-        Light** host_lights = Memory::createHostArray<Light*>(light_count);
+        std::vector<Geometry*> host_geometry;
+        std::vector<Light*> host_lights;
 
         scene.geometry = Memory::createDeviceArray<Geometry*>(scene.scene_size);
         scene.lights = Memory::createDeviceArray<Light*>(scene.light_count);
@@ -173,12 +173,10 @@ namespace cupbr
                 Vector3float normal = detail::string2vector(normal_string);
                 Material mat = detail::loadMaterial(current_geometry->FirstChildElement("material"));
 
-                Plane geom(position, normal);
-                geom.material = mat;
+                Plane* geom = new Plane(position, normal);
+                geom->material = mat;
 
-                Plane* dev_geom = Memory::createDeviceObject<Plane>();
-                Memory::copyHost2DeviceObject<Plane>(&geom, dev_geom);
-                host_array[i] = dev_geom;
+                host_geometry.push_back(geom);
             }
             else if (strcmp(type, "SPHERE") == 0)
             {
@@ -188,11 +186,9 @@ namespace cupbr
                 float radius = std::stof(radius_string);
                 Material mat = detail::loadMaterial(current_geometry->FirstChildElement("material"));
 
-                Sphere geom(position, radius);
-                geom.material = mat;
-                Sphere* dev_geom = Memory::createDeviceObject<Sphere>();
-                Memory::copyHost2DeviceObject<Sphere>(&geom, dev_geom);
-                host_array[i] = dev_geom;
+                Sphere* geom = new Sphere(position, radius);
+                geom->material = mat;
+                host_geometry.push_back(geom);
             }
             else if (strcmp(type, "QUAD") == 0)
             {
@@ -208,12 +204,10 @@ namespace cupbr
 
                 Material mat = detail::loadMaterial(current_geometry->FirstChildElement("material"));
 
-                Quad geom(position, normal, extend1, extend2);
-                geom.material = mat;
+                Quad* geom = new Quad(position, normal, extend1, extend2);
+                geom->material = mat;
 
-                Quad* dev_geom = Memory::createDeviceObject<Quad>();
-                Memory::copyHost2DeviceObject<Quad>(&geom, dev_geom);
-                host_array[i] = dev_geom;
+                host_geometry.push_back(geom);
             }
             else if (strcmp(type, "TRIANGLE") == 0)
             {
@@ -227,12 +221,10 @@ namespace cupbr
 
                 Material mat = detail::loadMaterial(current_geometry->FirstChildElement("material"));
 
-                Triangle geom(vertex1, vertex2, vertex3);
-                geom.material = mat;
+                Triangle* geom = new Triangle(vertex1, vertex2, vertex3);
+                geom->material = mat;
 
-                Triangle* dev_geom = Memory::createDeviceObject<Triangle>();
-                Memory::copyHost2DeviceObject<Triangle>(&geom, dev_geom);
-                host_array[i] = dev_geom;
+                host_geometry.push_back(geom);
             }
             else if (strcmp(type, "MESH") == 0)
             {
@@ -247,11 +239,7 @@ namespace cupbr
 
                 geom->material = mat;
 
-                Mesh* dev_mesh = Memory::createDeviceObject<Mesh>();
-                Memory::copyHost2DeviceObject<Mesh>(geom, dev_mesh);
-                Memory::destroyHostObject<Mesh>(geom);
-
-                host_array[i] = dev_mesh;
+                host_geometry.push_back(geom);
             }
             else
             {
@@ -314,10 +302,9 @@ namespace cupbr
                 light.halfExtend2 = detail::string2vector(extend2_string->GetText());
             }
 
-            Light* dev_light = Memory::createDeviceObject<Light>();
-            Memory::copyHost2DeviceObject<Light>(&light, dev_light);
+            Light* light_ptr = new Light(light);
 
-            host_lights[i] = dev_light;
+            host_lights.push_back(light_ptr);
         }
 
         tinyxml2::XMLElement* volume_head = doc.FirstChildElement("volume");
@@ -360,11 +347,70 @@ namespace cupbr
             Image<Vector3float>::destroyHostObject(buffer);
         }
 
-        Memory::copyHost2DeviceArray<Geometry*>(scene.scene_size, host_array, scene.geometry);
-        Memory::copyHost2DeviceArray<Light*>(scene.light_count, host_lights, scene.lights);
+        //Transfer data to device
+        //TODO: Backend
+        std::vector<Geometry*> dev_geometry;
+        for(uint32_t i = 0; i < host_geometry.size(); ++i)
+        {
+            Geometry* geom = host_geometry[i];
+            switch(geom->type)
+            {
+                case GeometryType::SPHERE:
+                {
+                    Sphere* dev_geom = Memory::createDeviceObject<Sphere>();
+                    Memory::copyHost2DeviceObject<Sphere>(static_cast<Sphere*>(geom), dev_geom);
+                    dev_geometry.push_back(dev_geom);
+                    delete geom;
+                }
+                break;
+                case GeometryType::PLANE:
+                {
+                    Plane* dev_geom = Memory::createDeviceObject<Plane>();
+                    Memory::copyHost2DeviceObject<Plane>(static_cast<Plane*>(geom), dev_geom);
+                    dev_geometry.push_back(dev_geom);
+                    delete geom;
+                }
+                break;
+                case GeometryType::QUAD:
+                {
+                    Quad* dev_geom = Memory::createDeviceObject<Quad>();
+                    Memory::copyHost2DeviceObject<Quad>(static_cast<Quad*>(geom), dev_geom);
+                    dev_geometry.push_back(dev_geom);
+                    delete geom;
+                }
+                break;
+                case GeometryType::TRIANGLE:
+                {
+                    Triangle* dev_geom = Memory::createDeviceObject<Triangle>();
+                    Memory::copyHost2DeviceObject<Triangle>(static_cast<Triangle*>(geom), dev_geom);
+                    dev_geometry.push_back(dev_geom);
+                    delete geom;
+                }
+                break;
+                case GeometryType::MESH:
+                {
+                    Mesh* dev_geom = Memory::createDeviceObject<Mesh>();
+                    Memory::copyHost2DeviceObject<Mesh>(static_cast<Mesh*>(geom), dev_geom);
+                    dev_geometry.push_back(dev_geom);
+                    Memory::destroyHostObject<Mesh>(static_cast<Mesh*>(geom));
+                }
+                break;
+            }
+        }
 
-        Memory::destroyHostArray<Geometry*>(host_array);
-        Memory::destroyHostArray<Light*>(host_lights);
+        Memory::copyHost2DeviceArray(host_geometry.size(), dev_geometry.data(), scene.geometry);
+
+        std::vector<Light*> dev_lights;
+        for(uint32_t i = 0; i < host_lights.size(); ++i)
+        {
+            Light* light = host_lights[i];
+            Light* dev_light = Memory::createDeviceObject<Light>();
+            Memory::copyHost2DeviceObject<Light>(light, dev_light);
+            dev_lights.push_back(dev_light);
+            delete light;
+        }
+
+        Memory::copyHost2DeviceArray(host_lights.size(), dev_lights.data(), scene.lights);
 
         return scene;
     }
