@@ -246,7 +246,7 @@ namespace cupbr
                 std::cerr << "Error while loading scene: " << type << " is not a valid geometry type!" << std::endl;
                 return scene;
             }
-
+            host_geometry.back()->setID(i);
         }
 
         tinyxml2::XMLElement* light_head = doc.FirstChildElement("lights");

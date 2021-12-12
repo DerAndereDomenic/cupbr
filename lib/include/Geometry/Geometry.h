@@ -57,6 +57,12 @@ namespace cupbr
         __host__ __device__
         uint32_t id() const;
 
+        /**
+        *   @brief Set the geometry id
+        *   @param[in] id The new id 
+        */
+        inline void setID(const uint32_t& id){ _id = id; }
+
         Material material = {};                         /**< The material of the object */
         GeometryType type = GeometryType::MESH;         /**< The geometry type */
         protected:
