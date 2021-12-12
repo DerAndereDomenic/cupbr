@@ -22,7 +22,7 @@ namespace cupbr
         *   @param[in] triangle_buffer The triangle buffer
         *   @param[in] num_triangles The number of triangles
         *   @param[in] minimum The minimum point of the aabb
-        *   @üaram[in] maximum The maximum point of the aabb
+        *   @ï¿½aram[in] maximum The maximum point of the aabb
         */
         __host__ __device__
         Mesh(Triangle* triangle_buffer, const uint32_t& num_triangles, const Vector3float& minimum, const Vector3float& maximum);
