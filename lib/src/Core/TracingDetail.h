@@ -48,7 +48,7 @@ namespace cupbr
     inline LocalGeometry
     Tracing::traceRay(Scene& scene, const Ray& ray)
     {
-        LocalGeometry geom;
+        /*LocalGeometry geom;
 
         for (uint32_t i = 0; i < scene.scene_size; ++i)
         {
@@ -60,6 +60,8 @@ namespace cupbr
             }
         }
 
+        return geom;*/
+        LocalGeometry geom = scene.bvh->computeRayIntersection(ray);
         return geom;
     }
 
@@ -102,6 +104,12 @@ namespace cupbr
                 return mesh->computeRayIntersection(ray);
             }
             break;
+            case GeometryType::BVH:
+            {
+                BoundingVolumeHierarchy* bvh = static_cast<BoundingVolumeHierarchy*>(scene_element);
+                return bvh->computeRayIntersection(ray);
+            }
+            break;
         }
 
         return geom;
@@ -111,7 +119,7 @@ namespace cupbr
     inline bool
     Tracing::traceVisibility(Scene& scene, const float& lightDist, const Ray& ray)
     {
-        for (uint32_t i = 0; i < scene.scene_size; ++i)
+        /*for (uint32_t i = 0; i < scene.scene_size; ++i)
         {
             Geometry* scene_element = scene[i];
             switch (scene_element->type)
@@ -168,7 +176,10 @@ namespace cupbr
                 break;
             }
         }
-        return true;
+        return true;*/
+
+        LocalGeometry geom = scene.bvh->computeRayIntersection(ray);
+        return geom.depth > lightDist || geom.depth == INFINITY;
     }
 
     __device__

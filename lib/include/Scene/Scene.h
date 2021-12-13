@@ -5,6 +5,7 @@
 #include <DataStructure/Light.h>
 #include <DataStructure/Image.h>
 #include <DataStructure/Volume.h>
+#include <DataStructure/BoundingVolumeHierarchy.h>
 
 namespace cupbr
 {
@@ -28,6 +29,8 @@ namespace cupbr
         */
         __host__ __device__
         Geometry* operator[](const uint32_t index) const;
+
+        BoundingVolumeHierarchy* bvh;               /**< The Bounding volume hierarchy used for intersection testing */
     };
 } //namespace cupbr
 

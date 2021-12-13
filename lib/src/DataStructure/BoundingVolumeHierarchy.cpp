@@ -43,8 +43,8 @@ namespace cupbr
     
     } //namespace detail
 
-    BoundingVolumeHierarchy::BoundingVolumeHierarchy(std::vector<Geometry*> host_objects,
-                                                     std::vector<Geometry*> dev_objects)
+    BoundingVolumeHierarchy::BoundingVolumeHierarchy(const std::vector<Geometry*>& host_objects,
+                                                     const std::vector<Geometry*>& dev_objects)
     {
         type = GeometryType::BVH;
         uint32_t axis = (rand() / RAND_MAX) % 3;
