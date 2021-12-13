@@ -24,9 +24,6 @@ namespace cupbr
     {
         LocalGeometry geom;
 
-        if (!_aabb.hit(ray))
-            return geom;
-
         Vector3float normal = 0;
         for (uint32_t i = 0; i < _num_triangles; ++i)
         {
@@ -38,6 +35,7 @@ namespace cupbr
         }
         geom.type = GeometryType::MESH;
         geom.material = material;
+        geom.scene_index = _id;
         return geom;
     }
 

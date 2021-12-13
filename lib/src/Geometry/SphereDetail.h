@@ -36,9 +36,6 @@ namespace cupbr
     {
         LocalGeometry geom;
 
-        if (!_aabb.hit(ray))
-            return geom;
-
         const Vector3float origin = ray.origin();
         const Vector3float direction = ray.direction();
 
