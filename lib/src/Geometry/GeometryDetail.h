@@ -17,6 +17,13 @@ namespace cupbr
         return _id;
     }
 
+    __host__ __device__
+    inline AABB
+    Geometry::aabb() const
+    {
+        return _aabb;
+    }
+
 } //namespace cupbr
 
 #endif

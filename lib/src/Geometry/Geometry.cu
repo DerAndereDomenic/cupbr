@@ -4,6 +4,7 @@
 namespace cupbr
 {
     Geometry::Geometry()
+        :_aabb(AABB(-INFINITY, INFINITY))
     {
 
     }

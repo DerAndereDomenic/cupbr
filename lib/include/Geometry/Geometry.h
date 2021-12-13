@@ -18,7 +18,8 @@ namespace cupbr
         PLANE,
         QUAD,
         TRIANGLE,
-        MESH
+        MESH,
+        BVH
     };
 
     /**
@@ -62,6 +63,13 @@ namespace cupbr
         uint32_t id() const;
 
         /**
+        *   @brief Get the aabb
+        *   @return The aabb
+        */
+        __host__ __device__
+        AABB aabb() const;
+
+        /**
         *   @brief Set the geometry id
         *   @param[in] id The new id 
         */
@@ -70,7 +78,7 @@ namespace cupbr
         Material material = {};                         /**< The material of the object */
         GeometryType type = GeometryType::MESH;         /**< The geometry type */
         protected:
-        AABB _aabb;                                     /**< The axis aligned bounding box */
+        AABB _aabb;         /**< The axis aligned bounding box */
         uint32_t _id;                                   /**< The geometry id */
     };
 
