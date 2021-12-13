@@ -360,7 +360,6 @@ namespace cupbr
                     Sphere* dev_geom = Memory::createDeviceObject<Sphere>();
                     Memory::copyHost2DeviceObject<Sphere>(static_cast<Sphere*>(geom), dev_geom);
                     dev_geometry.push_back(dev_geom);
-                    delete geom;
                 }
                 break;
                 case GeometryType::PLANE:
@@ -368,7 +367,6 @@ namespace cupbr
                     Plane* dev_geom = Memory::createDeviceObject<Plane>();
                     Memory::copyHost2DeviceObject<Plane>(static_cast<Plane*>(geom), dev_geom);
                     dev_geometry.push_back(dev_geom);
-                    delete geom;
                 }
                 break;
                 case GeometryType::QUAD:
@@ -376,7 +374,6 @@ namespace cupbr
                     Quad* dev_geom = Memory::createDeviceObject<Quad>();
                     Memory::copyHost2DeviceObject<Quad>(static_cast<Quad*>(geom), dev_geom);
                     dev_geometry.push_back(dev_geom);
-                    delete geom;
                 }
                 break;
                 case GeometryType::TRIANGLE:
@@ -384,7 +381,6 @@ namespace cupbr
                     Triangle* dev_geom = Memory::createDeviceObject<Triangle>();
                     Memory::copyHost2DeviceObject<Triangle>(static_cast<Triangle*>(geom), dev_geom);
                     dev_geometry.push_back(dev_geom);
-                    delete geom;
                 }
                 break;
                 case GeometryType::MESH:
@@ -392,11 +388,14 @@ namespace cupbr
                     Mesh* dev_geom = Memory::createDeviceObject<Mesh>();
                     Memory::copyHost2DeviceObject<Mesh>(static_cast<Mesh*>(geom), dev_geom);
                     dev_geometry.push_back(dev_geom);
-                    Memory::destroyHostObject<Mesh>(static_cast<Mesh*>(geom));
                 }
                 break;
             }
         }
+
+        BoundingVolumeHierarchy bvh(host_geometry, dev_geometry);
+        scene.bvh = Memory::createDeviceObject<BoundingVolumeHierarchy>();
+        Memory::copyHost2DeviceObject<BoundingVolumeHierarchy>(&bvh, scene.bvh);
 
         Memory::copyHost2DeviceArray(host_geometry.size(), dev_geometry.data(), scene.geometry);
 
@@ -408,6 +407,25 @@ namespace cupbr
             Memory::copyHost2DeviceObject<Light>(light, dev_light);
             dev_lights.push_back(dev_light);
             delete light;
+        }
+
+        //Delete temp host objects
+        for(uint32_t i = 0; i < host_geometry.size(); ++i)
+        {
+            Geometry* geom = host_geometry[i];
+            switch(geom->type)
+            {
+                case GeometryType::MESH:
+                {
+                    Memory::destroyHostObject<Mesh>(static_cast<Mesh*>(geom));
+                }
+                break;
+                default:
+                {
+                    delete geom;
+                }
+                break;
+            }
         }
 
         Memory::copyHost2DeviceArray(host_lights.size(), dev_lights.data(), scene.lights);
@@ -471,10 +489,16 @@ namespace cupbr
             Image<Vector3float>::destroyDeviceObject(scene.environment);
         }
 
+        BoundingVolumeHierarchy* host_bvh = Memory::createHostObject<BoundingVolumeHierarchy>();
+        Memory::copyDevice2HostObject<BoundingVolumeHierarchy>(scene.bvh, host_bvh);
+        host_bvh->destroy();
+        Memory::destroyDeviceObject<BoundingVolumeHierarchy>(scene.bvh);
+
         Memory::destroyDeviceArray<Geometry*>(scene.geometry);
         Memory::destroyDeviceArray<Light*>(scene.lights);
         Memory::destroyHostArray<Geometry*>(host_scene);
         Memory::destroyHostArray<Light*>(host_lights);
+        Memory::destroyHostObject<BoundingVolumeHierarchy>(host_bvh);
     }
 
 } //namespace cupbr
