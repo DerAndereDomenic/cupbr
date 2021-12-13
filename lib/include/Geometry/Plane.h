@@ -27,7 +27,7 @@ namespace cupbr
 
         //Override
         __host__ __device__
-        Vector4float computeRayIntersection(const Ray& ray);
+        LocalGeometry computeRayIntersection(const Ray& ray);
 
         //Override
         __host__ __device__

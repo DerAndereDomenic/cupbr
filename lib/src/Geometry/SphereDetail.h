@@ -31,11 +31,13 @@ namespace cupbr
     }
 
     __host__ __device__
-    inline Vector4float
+    inline LocalGeometry
     Sphere::computeRayIntersection(const Ray& ray)
     {
+        LocalGeometry geom;
+
         if (!_aabb.hit(ray))
-            return INFINITY;
+            return geom;
 
         const Vector3float origin = ray.origin();
         const Vector3float direction = ray.direction();
@@ -58,10 +60,18 @@ namespace cupbr
             if (t1 >= 0)
             {
                 float t = t0 < 0 ? t1 : t0;
-                return Vector4float(origin + t * direction, t);
+
+                geom.type = GeometryType::SPHERE;
+                geom.P = origin + t * direction;
+                geom.depth = t;
+                geom.N = Math::normalize(geom.P - _position);
+                geom.material = material;
+                geom.scene_index = _id;
+
+                return geom;
             }
         }
-        return Vector4float(INFINITY);
+        return geom;
     }
 
     __host__ __device__

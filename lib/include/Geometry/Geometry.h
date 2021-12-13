@@ -22,6 +22,19 @@ namespace cupbr
     };
 
     /**
+    *   @brief A struct to model the local surface geometry
+    */
+    struct LocalGeometry
+    {
+        GeometryType type;                  /**< The geometry type */
+        float depth = INFINITY;             /**< The depth */
+        Vector3float P;                     /**< The intersection point in world space */
+        Vector3float N;                     /**< The surface normal */
+        Material material;                  /**< The object material */
+        int32_t scene_index;                /**< The index in the scene representation */
+    };
+
+    /**
     *   @brief Model scene geometry
     */
     class Geometry
@@ -35,11 +48,11 @@ namespace cupbr
         /**
         *   @brief Compute the intersection point of geometry and a ray
         *   @param[in] ray The ray
-        *   @return A 4D vector where the first 3 components return the intersection point in world space and the w component encodes the depth to the camera
-        *   @note If no intersection was found the vector will be INFINITY
+        *   @return The local geometry information
+        *   @note If no intersection was found the depth will be INFINITY
         */
         __host__ __device__
-        Vector4float computeRayIntersection(const Ray& ray);
+        LocalGeometry computeRayIntersection(const Ray& ray);
 
         /**
         *   @brief Get the normal at a specified point
@@ -70,18 +83,6 @@ namespace cupbr
         uint32_t _id;                                   /**< The geometry id */
     };
 
-    /**
-    *   @brief A struct to model the local surface geometry
-    */
-    struct LocalGeometry
-    {
-        GeometryType type;                  /**< The geometry type */
-        float depth = INFINITY;             /**< The depth */
-        Vector3float P;                     /**< The intersection point in world space */
-        Vector3float N;                     /**< The surface normal */
-        Material material;                  /**< The object material */
-        int32_t scene_index;                /**< The index in the scene representation */
-    };
 } //namespace cupbr
 
 #include "../../src/Geometry/GeometryDetail.h"

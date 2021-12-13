@@ -4,10 +4,10 @@
 namespace cupbr
 {
     __host__ __device__
-    inline Vector4float
+    inline LocalGeometry
     Geometry::computeRayIntersection(const Ray& ray)
     {
-        return Vector4float(INFINITY);
+        return LocalGeometry();
     }
 
     __host__ __device__

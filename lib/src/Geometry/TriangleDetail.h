@@ -19,32 +19,41 @@ namespace cupbr
     }
 
     __host__ __device__
-    inline Vector4float
+    inline LocalGeometry
     Triangle::computeRayIntersection(const Ray& ray)
     {
+        LocalGeometry geom;
+
         Vector3float v0v1 = _vertex2 - _vertex1;
         Vector3float v0v2 = _vertex3 - _vertex1;
         Vector3float pvec = Math::cross(ray.direction(), v0v2);
         float det = Math::dot(v0v1, pvec);
 
-        if (Math::safeFloatEqual(det, 0.0f))return Vector4float(INFINITY);
+        if (Math::safeFloatEqual(det, 0.0f))return geom;
 
         float invDet = 1.0f / det;
 
         Vector3float tvec = ray.origin() - _vertex1;
 
         float u = Math::dot(tvec, pvec) * invDet;
-        if (u < 0.0f || u > 1.0f) return Vector4float(INFINITY);
+        if (u < 0.0f || u > 1.0f) return geom;
 
         Vector3float qvec = Math::cross(tvec, v0v1);
         float v = Math::dot(ray.direction(), qvec) * invDet;
-        if (v < 0.0f || u + v > 1.0f) return Vector4float(INFINITY);
+        if (v < 0.0f || u + v > 1.0f) return geom;
 
         float t = Math::dot(v0v2, qvec) * invDet;
 
-        if (t < 0.0f) return Vector4float(INFINITY);
+        if (t < 0.0f) return geom;
 
-        return Vector4float(ray.origin() + t * ray.direction(), t);
+        geom.type = GeometryType::TRIANGLE;
+        geom.P = ray.origin() + t * ray.direction();
+        geom.depth = t;
+        geom.N = _normal;
+        geom.material = material;
+        geom.scene_index = _id;
+
+        return geom;
     }
 
     __host__ __device__

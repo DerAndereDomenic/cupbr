@@ -17,23 +17,32 @@ namespace cupbr
     }
 
     __host__ __device__
-    inline Vector4float
+    inline LocalGeometry
     Plane::computeRayIntersection(const Ray& ray)
     {
+        LocalGeometry geom;
+
         float PdotN = Math::dot(_position, _normal);
         float OdotN = Math::dot(ray.origin(), _normal);
         float DdotN = Math::dot(ray.direction(), _normal);
 
         if (Math::safeFloatEqual(DdotN, 0.0f))
         {
-            return Vector4float(INFINITY);
+            return geom;
         }
 
         float t = (PdotN - OdotN) / DdotN;
 
-        if (t < 0)return Vector4float(INFINITY);
+        if (t < 0)return geom;
 
-        return Vector4float(ray.origin() + t * ray.direction(), t);
+        geom.type = GeometryType::PLANE;
+        geom.P = ray.origin() + t * ray.direction();
+        geom.depth = t;
+        geom.material = material;
+        geom.N = _normal;
+        geom.scene_index = _id;
+
+        return geom;
     }
 
     __host__ __device__

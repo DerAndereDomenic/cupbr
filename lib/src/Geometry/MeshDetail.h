@@ -19,28 +19,26 @@ namespace cupbr
     }
 
     __host__ __device__
-    inline Vector4float
+    inline LocalGeometry
     Mesh::computeRayIntersection(const Ray& ray)
     {
-        Vector4float intersection(INFINITY);
+        LocalGeometry geom;
 
         if (!_aabb.hit(ray))
-            return intersection;
+            return geom;
 
         Vector3float normal = 0;
         for (uint32_t i = 0; i < _num_triangles; ++i)
         {
-            Vector4float intersection_triangle = _triangles[i].computeRayIntersection(ray);
-            if (intersection_triangle.w < intersection.w)
+            LocalGeometry intersection_triangle = _triangles[i].computeRayIntersection(ray);
+            if (intersection_triangle.depth < geom.depth)
             {
-                intersection = intersection_triangle;
-                normal = _triangles[i].getNormal(Vector3float(intersection));
+                geom = intersection_triangle;
             }
         }
-
-        //TODO: HERE IS A RACE CONDITION
-        _normal = Vector3float(normal);
-        return intersection;
+        geom.type = GeometryType::MESH;
+        geom.material = material;
+        return geom;
     }
 
     __host__ __device__

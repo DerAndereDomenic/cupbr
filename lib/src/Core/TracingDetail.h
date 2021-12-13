@@ -75,61 +75,31 @@ namespace cupbr
             case GeometryType::PLANE:
             {
                 Plane* plane = static_cast<Plane*>(scene_element);
-                Vector4float intersection_plane = plane->computeRayIntersection(ray);
-                geom.type = GeometryType::PLANE;
-                geom.P = Vector3float(intersection_plane);
-                geom.N = plane->getNormal(geom.P);
-                geom.depth = intersection_plane.w;
-                geom.material = plane->material;
-                geom.scene_index = index;
+                return plane->computeRayIntersection(ray);
             }
             break;
             case GeometryType::SPHERE:
             {
                 Sphere* sphere = static_cast<Sphere*>(scene_element);
-                Vector4float intersection_sphere = sphere->computeRayIntersection(ray);
-                geom.type = GeometryType::SPHERE;
-                geom.P = Vector3float(intersection_sphere);
-                geom.N = sphere->getNormal(geom.P);
-                geom.depth = intersection_sphere.w;
-                geom.material = sphere->material;
-                geom.scene_index = sphere->id();
+                return sphere->computeRayIntersection(ray);
             }
             break;
             case GeometryType::QUAD:
             {
                 Quad* quad = static_cast<Quad*>(scene_element);
-                Vector4float intersection_quad = quad->computeRayIntersection(ray);
-                geom.type = GeometryType::PLANE;
-                geom.P = Vector3float(intersection_quad);
-                geom.N = quad->getNormal(geom.P);
-                geom.depth = intersection_quad.w;
-                geom.material = quad->material;
-                geom.scene_index = quad->id();
+                return quad->computeRayIntersection(ray);
             }
             break;
             case GeometryType::TRIANGLE:
             {
                 Triangle* triangle = static_cast<Triangle*>(scene_element);
-                Vector4float intersection_triangle = triangle->computeRayIntersection(ray);
-                geom.type = GeometryType::TRIANGLE;
-                geom.P = Vector3float(intersection_triangle);
-                geom.N = triangle->getNormal(geom.P);
-                geom.depth = intersection_triangle.w;
-                geom.material = triangle->material;
-                geom.scene_index = triangle->id();
+                return triangle->computeRayIntersection(ray);
             }
             break;
             case GeometryType::MESH:
             {
                 Mesh* mesh = static_cast<Mesh*>(scene_element);
-                Vector4float intersection_mesh = mesh->computeRayIntersection(ray);
-                geom.type = GeometryType::MESH;
-                geom.P = Vector3float(intersection_mesh);
-                geom.N = mesh->getNormal(geom.P);
-                geom.depth = intersection_mesh.w;
-                geom.material = mesh->material;
-                geom.scene_index = mesh->id();
+                return mesh->computeRayIntersection(ray);
             }
             break;
         }
@@ -149,8 +119,8 @@ namespace cupbr
                 case GeometryType::PLANE:
                 {
                     Plane* plane = static_cast<Plane*>(scene[i]);
-                    Vector4float intersection_plane = plane->computeRayIntersection(ray);
-                    if (intersection_plane.w != INFINITY && intersection_plane.w < lightDist)
+                    LocalGeometry geom = plane->computeRayIntersection(ray);
+                    if (geom.depth != INFINITY && geom.depth < lightDist)
                     {
                         return false;
                     }
@@ -159,8 +129,8 @@ namespace cupbr
                 case GeometryType::SPHERE:
                 {
                     Sphere* sphere = static_cast<Sphere*>(scene_element);
-                    Vector4float intersection_sphere = sphere->computeRayIntersection(ray);
-                    if (intersection_sphere.w != INFINITY && intersection_sphere.w < lightDist)
+                    LocalGeometry geom = sphere->computeRayIntersection(ray);
+                    if (geom.depth != INFINITY && geom.depth < lightDist)
                     {
                         return false;
                     }
@@ -169,8 +139,8 @@ namespace cupbr
                 case GeometryType::QUAD:
                 {
                     Quad* quad = static_cast<Quad*>(scene[i]);
-                    Vector4float intersection_quad = quad->computeRayIntersection(ray);
-                    if (intersection_quad.w != INFINITY && intersection_quad.w < lightDist)
+                    LocalGeometry geom = quad->computeRayIntersection(ray);
+                    if (geom.depth != INFINITY && geom.depth < lightDist)
                     {
                         return false;
                     }
@@ -179,8 +149,8 @@ namespace cupbr
                 case GeometryType::TRIANGLE:
                 {
                     Triangle* triangle = static_cast<Triangle*>(scene[i]);
-                    Vector4float intersection_triangle = triangle->computeRayIntersection(ray);
-                    if (intersection_triangle.w != INFINITY && intersection_triangle.w < lightDist)
+                    LocalGeometry geom = triangle->computeRayIntersection(ray);
+                    if (geom.depth != INFINITY && geom.depth < lightDist)
                     {
                         return false;
                     }
@@ -189,8 +159,8 @@ namespace cupbr
                 case GeometryType::MESH:
                 {
                     Mesh* mesh = static_cast<Mesh*>(scene[i]);
-                    Vector4float intersection_mesh = mesh->computeRayIntersection(ray);
-                    if (intersection_mesh.w != INFINITY && intersection_mesh.w < lightDist)
+                    LocalGeometry geom = mesh->computeRayIntersection(ray);
+                    if (geom.depth != INFINITY && geom.depth < lightDist)
                     {
                         return false;
                     }
