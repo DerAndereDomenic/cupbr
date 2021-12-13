@@ -42,10 +42,6 @@ namespace cupbr
         __host__ __device__
         LocalGeometry computeRayIntersection(const Ray& ray);
 
-        //Override
-        __host__ __device__
-        Vector3float getNormal(const Vector3float& x);
-
         private:
         Vector3float _position;     /**< 3D world position of the sphere */
         float _radius;              /**< The radius */

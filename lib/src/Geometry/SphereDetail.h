@@ -73,13 +73,6 @@ namespace cupbr
         }
         return geom;
     }
-
-    __host__ __device__
-    inline Vector3float
-    Sphere::getNormal(const Vector3float& x)
-    {
-        return Math::normalize(x - _position);
-    }
 } //namespace cupbr
 
 #endif

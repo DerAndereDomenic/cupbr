@@ -55,15 +55,6 @@ namespace cupbr
         LocalGeometry computeRayIntersection(const Ray& ray);
 
         /**
-        *   @brief Get the normal at a specified point
-        *   @param[in] x The position in world space
-        *   @return The corresponding normal
-        *   @note If no normal is found at this point the vector will be INFINITY
-        */
-        __host__ __device__
-        Vector3float getNormal(const Vector3float& x);
-
-        /**
         *   @brief Get the unique geometry id
         *   @return The id 
         */ 

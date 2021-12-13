@@ -55,13 +55,6 @@ namespace cupbr
 
         return geom;
     }
-
-    __host__ __device__
-    inline Vector3float
-    Triangle::getNormal(const Vector3float& x)
-    {
-        return _normal;
-    }
 } //namespace cupbr
 
 #endif

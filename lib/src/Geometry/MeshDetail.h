@@ -42,13 +42,6 @@ namespace cupbr
     }
 
     __host__ __device__
-    inline Vector3float
-    Mesh::getNormal(const Vector3float& x)
-    {
-        return _normal;
-    }
-
-    __host__ __device__
     inline uint32_t
     Mesh::num_triangles()
     {

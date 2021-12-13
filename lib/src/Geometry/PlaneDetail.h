@@ -47,13 +47,6 @@ namespace cupbr
 
     __host__ __device__
     inline Vector3float
-    Plane::getNormal(const Vector3float& x)
-    {
-        return _normal;
-    }
-
-    __host__ __device__
-    inline Vector3float
     Plane::position()
     {
         return _position;

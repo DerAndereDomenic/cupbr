@@ -30,10 +30,6 @@ namespace cupbr
         __host__ __device__
         LocalGeometry computeRayIntersection(const Ray& ray);
 
-        //Override
-        __host__ __device__
-        Vector3float getNormal(const Vector3float& x);
-
         private:
         Vector3float _vertex1;     /**< The first vertex */
         Vector3float _vertex2;     /**< The second vertex */

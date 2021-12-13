@@ -58,13 +58,6 @@ namespace cupbr
 
     __host__ __device__
     inline Vector3float
-    Quad::getNormal(const Vector3float& x)
-    {
-        return _normal;
-    }
-
-    __host__ __device__
-    inline Vector3float
     Quad::position()
     {
         return _position;
