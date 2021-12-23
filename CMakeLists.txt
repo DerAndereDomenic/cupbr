@@ -33,12 +33,15 @@ add_library(imgui STATIC "external/imgui/imgui.cpp"
 
 
 add_executable(Renderer "src/source.cu")
+add_executable(STGenerator "src/SphereTracingGenerator/source.cu")
 
 if(MSVC)
 	target_link_libraries(Renderer glfw OpenGL::GL tinyxml2 glad imgui CUPBR)
+    target_link_libraries(STGenerator glfw OpenGL::GL tinyxml2 glad imgui CUPBR)
 else()
     target_link_libraries(CUPBR -lpthread -lm OpenGL::GL tinyxml2 glad imgui -lstdc++fs)
 	target_link_libraries(Renderer glfw CUPBR)
+    target_link_libraries(STGenerator glfw CUPBR)
 endif()
 include_directories(lib/include 
                     external/glad/include 
@@ -50,7 +53,9 @@ include_directories(lib/include
 
 target_compile_definitions(CUPBR PUBLIC _USE_MATH_DEFINES)
 target_compile_definitions(Renderer PUBLIC _USE_MATH_DEFINES)
+target_compile_definitions(STGenerator PUBLIC _USE_MATH_DEFINES)
 
 set_target_properties(Renderer PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}")
+set_target_properties(STGenerator PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}")
 
 string(APPEND CMAKE_CUDA_FLAGS " -use_fast_math")
