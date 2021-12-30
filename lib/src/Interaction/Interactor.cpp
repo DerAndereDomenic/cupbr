@@ -330,17 +330,17 @@ namespace cupbr
                 impl->material_update = true;
             }
 
-            if(ImGui::ColorEdit3("Absorption", reinterpret_cast<float*>(&(impl->host_material->volume.sigma_a))))
+            if(ImGui::InputFloat3("Absorption", reinterpret_cast<float*>(&(impl->host_material->volume.sigma_a))))
             {
                 impl->material_update = true;
             }
 
-            if(ImGui::ColorEdit3("Scattering", reinterpret_cast<float*>(&(impl->host_material->volume.sigma_s))))
+            if(ImGui::InputFloat3("Scattering", reinterpret_cast<float*>(&(impl->host_material->volume.sigma_s))))
             {
                 impl->material_update = true;
             }
 
-            if(ImGui::SliderFloat("Phase", &(impl->host_material->volume.g), -1.0f, 1.0f))
+            if(ImGui::InputFloat3("Phase", &(impl->host_material->volume.g)))
             {
                 impl->material_update = true;
             }
@@ -348,17 +348,17 @@ namespace cupbr
             ImGui::Separator();
             ImGui::Text("Volume:");
 
-            if (ImGui::ColorEdit3("Sigma_a", reinterpret_cast<float*>(&(impl->scene->volume.sigma_a))))
+            if (ImGui::InputFloat3("Sigma_a", reinterpret_cast<float*>(&(impl->scene->volume.sigma_a))))
             {
                 impl->material_update = true;
             }
 
-            if (ImGui::ColorEdit3("Sigma_s", reinterpret_cast<float*>(&(impl->scene->volume.sigma_s))))
+            if (ImGui::InputFloat3("Sigma_s", reinterpret_cast<float*>(&(impl->scene->volume.sigma_s))))
             {
                 impl->material_update = true;
             }
 
-            if (ImGui::SliderFloat("g", &(impl->scene->volume.g), -1.0f, 1.0f))
+            if (ImGui::InputFloat3("g", &(impl->scene->volume.g)))
             {
                 impl->material_update = true;
             }
