@@ -96,9 +96,12 @@ namespace cupbr
 
             uint32_t channel = static_cast<uint32_t>(Math::rnd(payload->seed) * 3);
 
+            if (Math::safeFloatEqual(sigma_t[channel], 0.0f))
+                return false;
+
             float t = -1.0f / sigma_t[channel] * logf(Math::rnd(payload->seed));
 
-            if (t <= geom.depth)
+            if (t < geom.depth)
             {
                 Vector3float event_position = ray.origin() + t * ray.direction();
 
