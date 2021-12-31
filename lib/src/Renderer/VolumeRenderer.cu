@@ -89,7 +89,7 @@ namespace cupbr
         {
             RadiancePayload* payload = ray.payload<RadiancePayload>();
 
-            float g = scene.volume.g;
+            float g = payload->volume->g;
             Vector3float sigma_a = payload->volume->sigma_a;
             Vector3float sigma_s = payload->volume->sigma_s;
             Vector3float sigma_t = sigma_a + sigma_s;
@@ -99,7 +99,7 @@ namespace cupbr
             if (Math::safeFloatEqual(sigma_t[channel], 0.0f))
                 return false;
 
-            float t = -1.0f / sigma_t[channel] * logf(Math::rnd(payload->seed));
+            float t =  - logf(1.0f - Math::rnd(payload->seed)) / sigma_t[channel];
 
             if (t < geom.depth)
             {
@@ -169,11 +169,12 @@ namespace cupbr
                 }
 
                 Vector3float scene_sigma_t = scene.volume.sigma_a + scene.volume.sigma_s;
+                float scene_g = scene.volume.g;
 
                 if (Tracing::traceVisibility(scene, d, shadow_ray))
                 {
                     payload->radiance += (scene.light_count + useEnvironmentMap) *
-                        Material::henyeyGreensteinPhaseFunction(g, Math::dot(lightDir, inc_dir)) *
+                        Material::henyeyGreensteinPhaseFunction(scene_g, Math::dot(lightDir, inc_dir)) *
                         Math::exp(-1.0f*scene_sigma_t * d) * attenuation *
                         lightRadiance *
                         payload->rayweight;
@@ -208,6 +209,7 @@ namespace cupbr
                       const Camera camera,
                       const uint32_t frameIndex,
                       const uint32_t maxTraceDepth,
+                      const bool useRussianRoulette,
                       Image<Vector3float> img)
         {
             const uint32_t tid = ThreadHelper::globalThreadIndex();
@@ -260,25 +262,32 @@ namespace cupbr
                     //Handle medium interfaces
                     if(geom.material.type == MaterialType::VOLUME)
                     {
-                        payload.ray_start = geom.P + 0.001f * ray.direction();
-                        payload.out_dir = ray.direction();
-                        payload.inside_object = !payload.inside_object;
+                        payload.out_dir = geom.material.sampleDirection(payload.seed, inc_dir, geom.N);
+                        payload.ray_start = geom.P + 0.001f * payload.out_dir;
+                        bool reflect = Math::dot(inc_dir, geom.N) * Math::dot(payload.out_dir, geom.N) > 0;
+                        payload.inside_object = reflect ? payload.inside_object : !payload.inside_object;
                         payload.object_index = geom.scene_index;
                         payload.next_ray_valid = true;
-                        if(payload.inside_object)
-                        {
-                            payload.volume = &(geom.material.volume);
-                        }
-                        else
-                        {
-                            payload.volume = &(scene.volume);
-                        }
+                        payload.volume = payload.inside_object ? &(geom.material.volume) : &(scene.volume);
                     }
                     else
                     {
                         directIlluminationVolumetric(scene, ray, geom, inc_dir);
                         indirectIlluminationVolumetric(ray, geom, inc_dir);
                     }
+
+                    if(useRussianRoulette)
+                    {
+                        float alpha = Math::clamp(fmaxf(payload.rayweight.x, fmaxf(payload.rayweight.y, payload.rayweight.z)), 0.0f, 1.0f);
+                        if(Math::rnd(payload.seed) > alpha || Math::safeFloatEqual(alpha, 0))
+                        {
+                            payload.next_ray_valid = false;
+                            payload.rayweight = 0;
+                            break;
+                        }
+                        payload.rayweight = payload.rayweight / alpha;
+                    }
+                    
                 }
                 ray.traceNew(payload.ray_start + 0.01f * payload.out_dir, payload.out_dir);
                 if (!payload.next_ray_valid)break;
@@ -300,6 +309,7 @@ namespace cupbr
                                const Camera& camera,
                                const uint32_t& frameIndex,
                                const uint32_t& maxTraceDepth,
+                               const bool& useRussianRoulette,
                                Image<Vector3float>* output_img)
     {
         const KernelSizeHelper::KernelSize config = KernelSizeHelper::configure(output_img->size());
@@ -307,6 +317,7 @@ namespace cupbr
                                                                       camera,
                                                                       frameIndex,
                                                                       maxTraceDepth,
+                                                                      useRussianRoulette,
                                                                       *output_img);
         cudaSafeCall(cudaDeviceSynchronize());
     }
