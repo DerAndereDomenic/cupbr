@@ -340,7 +340,7 @@ namespace cupbr
                 impl->material_update = true;
             }
 
-            if(ImGui::InputFloat3("Phase", &(impl->host_material->volume.g)))
+            if(ImGui::InputFloat("Phase", &(impl->host_material->volume.g)))
             {
                 impl->material_update = true;
             }
@@ -358,7 +358,7 @@ namespace cupbr
                 impl->material_update = true;
             }
 
-            if (ImGui::InputFloat3("g", &(impl->scene->volume.g)))
+            if (ImGui::InputFloat("g", &(impl->scene->volume.g)))
             {
                 impl->material_update = true;
             }
