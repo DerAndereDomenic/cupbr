@@ -62,7 +62,7 @@ namespace cupbr
             {
                 payload->radiance += (scene.light_count + useEnvironmentMap) *
                     fmaxf(0.0f, Math::dot(normal, lightDir)) *
-                    Math::exp(-1.0f*(payload->volume->sigma_s + payload->volume->sigma_a) * d) *
+                    Math::exp(-1.0f*(payload->volume->sigma_s + payload->volume->sigma_a) * fminf(d, 100000000.0f)) *
                     geom.material.brdf(geom.P, inc_dir, lightDir, normal) *
                     lightRadiance *
                     payload->rayweight;
@@ -175,7 +175,7 @@ namespace cupbr
                 {
                     payload->radiance += (scene.light_count + useEnvironmentMap) *
                         Material::henyeyGreensteinPhaseFunction(scene_g, Math::dot(lightDir, inc_dir)) *
-                        Math::exp(-1.0f*scene_sigma_t * d) * attenuation *
+                        Math::exp(-1.0f*scene_sigma_t * fminf(d, 100000000.0f)) * attenuation *
                         lightRadiance *
                         payload->rayweight;
                 }
@@ -194,7 +194,7 @@ namespace cupbr
 
                 for(uint32_t i = 0; i < 3; ++i)
                 {
-                    pdf += expf(-sigma_t[channel] * geom.depth);
+                    pdf += expf(-sigma_t[i] * geom.depth);
                 }
                 pdf /= 3.0f;
 
