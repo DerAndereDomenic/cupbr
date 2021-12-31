@@ -345,6 +345,11 @@ namespace cupbr
                 impl->material_update = true;
             }
 
+            if(ImGui::Checkbox("Glass Interface", reinterpret_cast<bool*>(&(impl->host_material->volume.interface))))
+            {
+                impl->material_update = true;
+            }
+
             ImGui::Separator();
             ImGui::Text("Volume:");
 

@@ -78,6 +78,7 @@ namespace cupbr
             tinyxml2::XMLElement* sigma_a_string = material_ptr->FirstChildElement("sigma_a");
             tinyxml2::XMLElement* sigma_s_string = material_ptr->FirstChildElement("sigma_s");
             tinyxml2::XMLElement* g_string = material_ptr->FirstChildElement("g");
+            tinyxml2::XMLElement* interface_string = material_ptr->FirstChildElement("interface");
 
             if (albedo_e_string != NULL)
             {
@@ -122,6 +123,14 @@ namespace cupbr
             if(g_string != NULL)
             {
                 material.volume.g = std::stof(g_string->GetText());
+            }
+
+            if(interface_string != NULL)
+            {
+                if(strcmp(interface_string->GetText(), "GLASS") == 0)
+                {
+                    material.volume.interface = Interface::GLASS;
+                }
             }
 
             return material;
