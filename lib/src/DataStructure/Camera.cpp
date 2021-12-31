@@ -14,25 +14,34 @@ namespace cupbr
     Camera::processInput(GLFWwindow* window, const float& delta_time)
     {
         _moved = false;
+        float speed = 4.0f;
         //Keyboard
+        if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+        {
+            speed *= 4;
+        }
+        if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
+        {
+            speed /= 4;
+        }
         if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
         {
-            _position += 4.0f * _xAxis * delta_time;
+            _position += speed * _xAxis * delta_time;
             _moved = true;
         }
         if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
         {
-            _position -= 4.0f * _xAxis * delta_time;
+            _position -= speed * _xAxis * delta_time;
             _moved = true;
         }
         if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
         {
-            _position -= 4.0f * _zAxis * delta_time;
+            _position -= speed * _zAxis * delta_time;
             _moved = true;
         }
         if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
         {
-            _position += 4.0f * _zAxis * delta_time;
+            _position += speed * _zAxis * delta_time;
             _moved = true;
         }
 
