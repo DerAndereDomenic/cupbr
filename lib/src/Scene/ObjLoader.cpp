@@ -11,7 +11,7 @@
 namespace cupbr
 {
     Mesh*
-    ObjLoader::loadObj(const char* path, const Vector3float& position)
+    ObjLoader::loadObj(const char* path, const Vector3float& position, const Vector3float& scale)
     {
         std::ifstream file;
         file.open(path);
@@ -36,7 +36,7 @@ namespace cupbr
                 {
                     result.push_back(std::stof(item));
                 }
-                Vector3float vertex = Vector3float(result[0], result[1], result[2]) + position;
+                Vector3float vertex = Vector3float(scale.x * result[0], scale.y * result[1], scale.z * result[2]) + position;
                 vertices.push_back(vertex);
                 maximum.x = vertex.x > maximum.x ? vertex.x : maximum.x;
                 maximum.y = vertex.y > maximum.y ? vertex.y : maximum.y;
