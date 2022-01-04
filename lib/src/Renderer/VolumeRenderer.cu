@@ -104,12 +104,12 @@ namespace cupbr
             if (t < geom.depth)
             {
                 Vector3float event_position = ray.origin() + t * ray.direction();
-
                 float scattering_prob = sigma_s[channel] / sigma_t[channel];
 
                 if (Math::rnd(payload->seed) < scattering_prob)
                 {
                     //Attenuate ray from its start to the medium event
+                    //For monochrome sigma this is 1 but it may change for mulit channel scattering
 
                     float pdf = 0.0f;
                     for(uint32_t i = 0; i < 3; ++i)
@@ -151,21 +151,27 @@ namespace cupbr
                     lightRadiance = scene.environment(pixel) / sample.w;
                 }
 
-                Ray shadow_ray = Ray(event_position + 0.001f * lightDir, lightDir);
+                Ray shadow_ray;
 
                 // If we are inside an object -> First move to border of current object -> then do light sampling
+                //TODO: This is still not optimal for some scenarios because of numerical issues (?)
                 Vector3float attenuation = 1.0f;
                 if(payload->inside_object)
                 {
-                    //Trace from light position because intersection inside the geometry dont always work
-                    Vector3float sample_position = event_position + d * lightDir;
-                    Ray light_ray = Ray(sample_position, -1.0f * lightDir);
-                    LocalGeometry g = Tracing::traceRay(scene, light_ray, payload->object_index);
-                    if (g.depth == INFINITY) return true;
-                    shadow_ray.traceNew(g.P + 0.001f * lightDir, lightDir);
-                    float surface_distance = Math::norm(g.P - event_position);
-                    attenuation = Math::exp(-1.0f * sigma_t * surface_distance);
-                    d -= surface_distance;
+                    shadow_ray = Ray(event_position, lightDir);
+                    LocalGeometry ge = Tracing::traceRay(scene, shadow_ray, payload->object_index);
+                    if (ge.depth == INFINITY) 
+                    {
+                        ge.depth = 0;
+                        ge.P = event_position;
+                    }
+                    attenuation = Math::exp(-1.0f * sigma_t * ge.depth);
+                    shadow_ray.traceNew(ge.P + 0.001f * lightDir, lightDir);
+                    d -= ge.depth;
+                }
+                else
+                {
+                    shadow_ray = Ray(event_position + 0.001f * lightDir, lightDir);
                 }
 
                 Vector3float scene_sigma_t = scene.volume.sigma_a + scene.volume.sigma_s;
@@ -173,23 +179,24 @@ namespace cupbr
 
                 if (Tracing::traceVisibility(scene, d, shadow_ray))
                 {
-                    payload->radiance += (scene.light_count + useEnvironmentMap) *
-                        Material::henyeyGreensteinPhaseFunction(scene_g, Math::dot(lightDir, inc_dir)) *
+                    payload->radiance += (float)(scene.light_count + useEnvironmentMap) *
                         Math::exp(-1.0f*scene_sigma_t * fminf(d, 100000000.0f)) * attenuation *
                         lightRadiance *
                         payload->rayweight;
+                    //Phase/pdf = 1
                 }
 
                 //Indirect Illumination
-                payload->out_dir = Vector3float(sampleHenyeyGreensteinPhaseFunction(g, inc_dir, payload->seed));
+                Vector4float sample_hg = sampleHenyeyGreensteinPhaseFunction(g, inc_dir, payload->seed);
+                payload->out_dir = Vector3float(sample_hg);
                 payload->ray_start = event_position;
+                //Phase/pdf = 1
 
                 payload->next_ray_valid = true;
                 return true;
             }
             else
             {
-                //Vector3float pdf = Math::exp(-1.0f * sigma_t * geom.depth);
                 float pdf = 0.0f;
 
                 for(uint32_t i = 0; i < 3; ++i)
@@ -246,24 +253,24 @@ namespace cupbr
                 }
 
                 Vector3float inc_dir = -1.0f * ray.direction(); //Points away from surface
+                if (geom.depth == INFINITY)
+                {
+                    if (scene.useEnvironmentMap)
+                    {
+                        Vector2uint32_t pixel = Tracing::direction2UV(ray.direction(), scene.environment.width(), scene.environment.height());
+                        payload.radiance += payload.rayweight * scene.environment(pixel);
+                    }
+                    break;
+                }
 
                 if (!handleMediumInteraction(scene, ray, geom, inc_dir))
                 {
-                    if (geom.depth == INFINITY)
-                    {
-                        if (scene.useEnvironmentMap)
-                        {
-                            Vector2uint32_t pixel = Tracing::direction2UV(ray.direction(), scene.environment.width(), scene.environment.height());
-                            payload.radiance += payload.rayweight * scene.environment(pixel);
-                        }
-                        break;
-                    }
 
                     //Handle medium interfaces
                     if(geom.material.type == MaterialType::VOLUME)
                     {
                         payload.out_dir = geom.material.sampleDirection(payload.seed, inc_dir, geom.N);
-                        payload.ray_start = geom.P + 0.001f * payload.out_dir;
+                        payload.ray_start = geom.P;
                         bool reflect = Math::dot(inc_dir, geom.N) * Math::dot(payload.out_dir, geom.N) > 0;
                         payload.inside_object = reflect ? payload.inside_object : !payload.inside_object;
                         payload.object_index = geom.scene_index;
@@ -289,7 +296,7 @@ namespace cupbr
                     }
                     
                 }
-                ray.traceNew(payload.ray_start + 0.01f * payload.out_dir, payload.out_dir);
+                ray.traceNew(payload.ray_start + 0.001f * payload.out_dir, payload.out_dir);
                 if (!payload.next_ray_valid)break;
                 ++trace_depth;
             } while (trace_depth < maxTraceDepth);
