@@ -21,6 +21,7 @@ namespace cupbr
                            const Camera& camera,
                            const uint32_t& frameIndex,
                            const uint32_t& maxTraceDepth,
+                           const bool& useRussianRoulette,
                            Image<Vector3float>* output_img);
     } //namepsace PBRendering
 } //namespace cupbr

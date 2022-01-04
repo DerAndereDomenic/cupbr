@@ -78,6 +78,7 @@ namespace cupbr
             tinyxml2::XMLElement* sigma_a_string = material_ptr->FirstChildElement("sigma_a");
             tinyxml2::XMLElement* sigma_s_string = material_ptr->FirstChildElement("sigma_s");
             tinyxml2::XMLElement* g_string = material_ptr->FirstChildElement("g");
+            tinyxml2::XMLElement* interface_string = material_ptr->FirstChildElement("interface");
 
             if (albedo_e_string != NULL)
             {
@@ -122,6 +123,14 @@ namespace cupbr
             if(g_string != NULL)
             {
                 material.volume.g = std::stof(g_string->GetText());
+            }
+
+            if(interface_string != NULL)
+            {
+                if(strcmp(interface_string->GetText(), "GLASS") == 0)
+                {
+                    material.volume.interface = Interface::GLASS;
+                }
             }
 
             return material;
@@ -229,11 +238,22 @@ namespace cupbr
             else if (strcmp(type, "MESH") == 0)
             {
                 const char* path_string = current_geometry->FirstChildElement("path")->GetText();
-                const char* position_string = current_geometry->FirstChildElement("position")->GetText();
+                Vector3float position = 0;
+                Vector3float scale = 1;
+                tinyxml2::XMLElement* position_string = current_geometry->FirstChildElement("position");
+                tinyxml2::XMLElement* scale_string = current_geometry->FirstChildElement("scale");
 
-                Vector3float position = detail::string2vector(position_string);
+                if(position_string != NULL)
+                {
+                    position = detail::string2vector(position_string->GetText());
+                }
 
-                Mesh* geom = ObjLoader::loadObj(path_string, position);
+                if(scale_string != NULL)
+                {
+                    scale = detail::string2vector(scale_string->GetText());
+                }
+
+                Mesh* geom = ObjLoader::loadObj(path_string, position, scale);
 
                 Material mat = detail::loadMaterial(current_geometry->FirstChildElement("material"));
 

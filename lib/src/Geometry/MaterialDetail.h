@@ -102,7 +102,7 @@ namespace cupbr
             break;
             case MaterialType::VOLUME:
             {
-                return Vector4float(0, 0, 0, 1);
+                return volume.interface == Interface::GLASS ? sample_glass(seed, inc_dir, normal) : Vector4float(-1.0f * inc_dir, 1);
             }
             break;
         }

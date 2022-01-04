@@ -221,6 +221,7 @@ namespace cupbr
                                            *camera,
                                            impl->frameIndex,
                                            impl->maxTraceDepth,
+                                           impl->useRussianRoulette,
                                            &impl->hdr_image);
                 ++impl->frameIndex;
             }
