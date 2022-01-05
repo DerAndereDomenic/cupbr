@@ -5,7 +5,7 @@
 
 using namespace cupbr;
 
-struct MediumSettings
+/*struct MediumSettings
 {
     float sigma;
     float phi;
@@ -239,6 +239,156 @@ int run()
     cudaSafeCall(cudaSetDevice(0));
 
     generateDatasetForTrainingCVAE();
+
+    return 0;
+}
+
+int main()
+{
+    int exit = run();
+    return exit;
+}*/
+
+struct PathSummary
+{
+    Vector3float inc_dir;
+    uint32_t num_scattering;
+};
+
+__device__ Vector3float sampleHenyeyGreensteinPhase(const float& g, const Vector3float& forward, uint32_t& seed)
+{
+    float u1 = Math::rnd(seed);
+    float u2 = Math::rnd(seed);
+
+    float g2 = g * g;
+    float d = (1.0f - g2) / (1.0f - g + 2.0f * g * u1);
+    float cos_theta = Math::clamp(0.5f / g * (1.0f + g2 - d * d), -1.0f, 1.0f);
+
+    float sin_theta = sqrtf(fmaxf(0.0f, 1.0f - cos_theta * cos_theta));
+    float phi = 2.0f * 3.14159f * u2;
+
+    float x = sin_theta * cosf(phi);
+    float y = sin_theta * sinf(phi);
+    float z = cos_theta;
+
+    Vector3float result = Math::normalize(Math::toLocalFrame(forward, Vector3float(x, y, z)));
+
+    return result;
+}
+
+__device__ Vector3float sampleHemisphereUniform(uint32_t& seed, const Vector3float& N)
+{
+    float z = Math::rnd(seed) * 2.0f - 1.0f;
+    float phi = Math::rnd(seed) * 2.0f * M_PI;
+
+    float r = sqrtf(fmaxf(0.0f, 1.0f - z * z));
+    float x = r * cosf(phi);
+    float y = r * sinf(phi);
+
+    Vector3float result(x, y, z);
+
+    return Math::dot(result, N) < 0 ? -1.0f * result : result;
+}
+
+__global__ void generateSamples(const uint32_t num_samples, Sphere sphere, PathSummary* buffer)
+{
+    const uint32_t tid = ThreadHelper::globalThreadIndex();
+
+    if(tid >= num_samples)
+    {
+        return;
+    }
+
+    uint32_t seed = Math::tea<4>(tid, 1);
+
+    Vector3float start_pos = Vector3float(0.99, 0, 0); // Just inside the sphere
+    Vector3float direction = sampleHemisphereUniform(seed, Vector3float(1, 0, 0));
+    Ray ray(start_pos, direction);
+    PathSummary summary = { direction, 0 };
+
+    //Volume
+    float sigma_s = 10.0f;
+    float sigma_a = 0.0f;
+    float sigma_t = sigma_s + sigma_a;
+    float g = 0.9f;
+
+    Vector3float path[100];
+    path[0] = start_pos;
+
+    while(true)
+    {
+        Vector3float inc_dir = -1.0f * ray.direction();
+
+        Vector3float new_direction = sampleHenyeyGreensteinPhase(g, inc_dir, seed);
+        ray.traceNew(start_pos + 0.001f * new_direction, new_direction);
+
+        LocalGeometry geom = sphere.computeRayIntersection(ray);
+
+        if (geom.depth == INFINITY)
+        {
+            //printf("%f %f %f\n", start_pos.x, start_pos.y, start_pos.z);
+            break;
+        }
+
+        float t = -logf(1.0f - Math::rnd(seed)) / sigma_t;
+
+        if (t >= geom.depth)
+        {
+            //printf("sample\n");
+            break;
+        }
+
+        ++summary.num_scattering;
+        start_pos = start_pos + t * ray.direction();
+        //path[summary.num_scattering] = start_pos;
+    }
+
+    //for(int i = 0; i < summary.num_scattering + 1; ++i)
+    //{
+    //    printf("%f %f %f\n", path[i].x, path[i].y, path[i].z);
+    //}
+
+    buffer[tid] = summary;
+}
+
+void generateDataSet()
+{
+    const uint32_t N = 1 << 20;
+    printf("Generating %i samples...\n", N);
+
+    Sphere sphere(Vector3float(0, 0, 0), 1);
+    
+    PathSummary* buffer = Memory::createDeviceArray<PathSummary>(N);
+
+    KernelSizeHelper::KernelSize config = KernelSizeHelper::configure(N);
+    generateSamples << <config.blocks, config.threads >> > (N, sphere, buffer);
+    cudaSafeCall(cudaDeviceSynchronize());
+
+    PathSummary* host_buffer = Memory::createHostArray<PathSummary>(N);
+    Memory::copyDevice2HostArray<PathSummary>(N, buffer, host_buffer);
+    Memory::destroyDeviceArray<PathSummary>(buffer);
+
+    std::ofstream file;
+    file.open("ScattersDataSet.ds");
+
+    for(uint32_t i = 0; i < N; ++i)
+    {
+        file << host_buffer[i].inc_dir.x << ", " <<
+                host_buffer[i].inc_dir.y << ", " <<
+                host_buffer[i].inc_dir.z << ", " <<
+                host_buffer[i].num_scattering << "\n";
+    }
+
+    file.close();
+
+    Memory::destroyHostArray<PathSummary>(host_buffer);
+}
+
+int run()
+{
+    cudaSafeCall(cudaSetDevice(0));
+
+    generateDataSet();
 
     return 0;
 }
