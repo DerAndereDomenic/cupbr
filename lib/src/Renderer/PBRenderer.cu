@@ -265,4 +265,10 @@ namespace cupbr
         impl->useRussianRoulette = useRussianRoulette;
     }
 
+    void 
+    PBRenderer::setMaxTraceDepth(const uint32_t& trace_depth)
+    {
+        impl->maxTraceDepth = trace_depth;
+    }
+
 } //namespace cupbr

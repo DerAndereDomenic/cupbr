@@ -98,6 +98,12 @@ namespace cupbr
         */
         void setRussianRoulette(const bool& useRussianRoulette);
 
+        /**
+        *   @brief Set the maximum trace depth
+        *   @param[in] trace_depth The maximum trace depth
+        */
+        void setMaxTraceDepth(const uint32_t& trace_depth);
+
         private:
         class Impl;
         std::unique_ptr<Impl> impl;     /**< The implementation pointer */
