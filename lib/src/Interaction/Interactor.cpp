@@ -54,6 +54,8 @@ namespace cupbr
         float threshold = 1.0f;
 
         Vector4float threshold_curve;
+
+        int32_t trace_depth;
     };
 
     Interactor::Impl::Impl()
@@ -104,6 +106,7 @@ namespace cupbr
     Interactor::registerRenderer(PBRenderer* renderer)
     {
         impl->renderer = renderer;
+        impl->trace_depth = renderer->getMaxTraceDepth();
     }
 
     void 
@@ -257,6 +260,12 @@ namespace cupbr
             {
                 if (impl->renderer)
                     impl->renderer->setMethod(RenderingMethod::VOLUME);
+            }
+
+            if(ImGui::SliderInt("Trace Depth", &(impl->trace_depth), 1, 50))
+            {
+                impl->renderer->setMaxTraceDepth(impl->trace_depth);
+                impl->material_update = true;
             }
 
             if(ImGui::Checkbox("Russian Roulette", &(impl->use_russian_roulette)))

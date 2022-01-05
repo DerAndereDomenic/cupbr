@@ -104,6 +104,12 @@ namespace cupbr
         */
         void setMaxTraceDepth(const uint32_t& trace_depth);
 
+        /**
+        *   @brief Get the maximum trace depth
+        *   @return The maximum trace depth
+        */
+        uint32_t getMaxTraceDepth();
+
         private:
         class Impl;
         std::unique_ptr<Impl> impl;     /**< The implementation pointer */

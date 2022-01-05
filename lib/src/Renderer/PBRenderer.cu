@@ -271,4 +271,10 @@ namespace cupbr
         impl->maxTraceDepth = trace_depth;
     }
 
+    uint32_t 
+    PBRenderer::getMaxTraceDepth()
+    {
+        return impl->maxTraceDepth;
+    }
+
 } //namespace cupbr
