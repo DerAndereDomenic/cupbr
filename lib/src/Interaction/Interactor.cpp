@@ -19,25 +19,22 @@ namespace cupbr
 
         ~Impl();
 
-        Window* window;
+        Window* window = nullptr;
         int32_t width; // Width of the framebuffer without menu
         int32_t height;
         int32_t menu_width;
 
-        Scene* scene;
-        Camera* camera;
+        Scene* scene = nullptr;
+        Camera* camera = nullptr;
+        PBRenderer* renderer = nullptr;
+        ToneMapper* mapper = nullptr;
+        PostProcessor* post_processor = nullptr;
 
         Material* device_material;
         Material* host_material;
         int32_t* scene_index;
 
-        RenderingMethod method = RenderingMethod::PATHTRACER;
-        ToneMappingType tonemapping = ToneMappingType::REINHARD;
-
         //Helper
-        bool window_registered = false;
-        bool camera_registered = false;
-        bool scene_registered = false;
         bool material_update = false;
         bool post_processing = false;
         bool close = false;
@@ -77,10 +74,9 @@ namespace cupbr
 
     Interactor::~Interactor() = default;
 
-    Interactor::Interactor(const RenderingMethod& method)
+    Interactor::Interactor()
     {
         impl = std::make_unique<Impl>();
-        impl->method = method;
     }
 
     void
@@ -90,24 +86,36 @@ namespace cupbr
         impl->width = window->width() - menu_width;
         impl->height = window->height();
         impl->menu_width = menu_width;
-
-        impl->window_registered = true;
     }
 
     void
     Interactor::registerScene(Scene* scene)
     {
         impl->scene = scene;
-
-        impl->scene_registered = true;
     }
 
     void
     Interactor::registerCamera(Camera* camera)
     {
         impl->camera = camera;
+    }
 
-        impl->camera_registered = true;
+    void 
+    Interactor::registerRenderer(PBRenderer* renderer)
+    {
+        impl->renderer = renderer;
+    }
+
+    void 
+    Interactor::registerToneMapper(ToneMapper* mapper)
+    {
+        impl->mapper = mapper;
+    }
+
+    void 
+    Interactor::registerPostProcessor(PostProcessor* post_processor)
+    {
+        impl->post_processor = post_processor;
     }
 
     bool
@@ -178,19 +186,19 @@ namespace cupbr
     void
     Interactor::handleInteraction()
     {
-        if (!impl->window_registered)
+        if (!impl->window)
         {
             std::cerr << "[Interactor] ERROR: No window registered! Call registerWindow()" << std::endl;
             return;
         }
 
-        if (!impl->camera_registered)
+        if (!impl->camera)
         {
             std::cerr << "[Interactor] ERROR: No camera registered! Call registerCamera()" << std::endl;
             return;
         }
 
-        if (!impl->scene_registered)
+        if (!impl->scene)
         {
             std::cerr << "[Interactor] ERROR: No scene registered! Call registerScene()" << std::endl;
             return;
@@ -237,32 +245,43 @@ namespace cupbr
             ImGui::Separator();
             if (ImGui::MenuItem("Path Tracing"))
             {
-                impl->method = RenderingMethod::PATHTRACER;
+                if (impl->renderer)
+                    impl->renderer->setMethod(RenderingMethod::PATHTRACER);
             }
             else if (ImGui::MenuItem("Ray Tracing"))
             {
-                impl->method = RenderingMethod::RAYTRACER;
+                if (impl->renderer)
+                    impl->renderer->setMethod(RenderingMethod::RAYTRACER);
             }
             else if (ImGui::MenuItem("Volume Rendering"))
             {
-                impl->method = RenderingMethod::VOLUME;
+                if (impl->renderer)
+                    impl->renderer->setMethod(RenderingMethod::VOLUME);
             }
 
-            ImGui::Checkbox("Russian Roulette", &(impl->use_russian_roulette));
+            if(ImGui::Checkbox("Russian Roulette", &(impl->use_russian_roulette)))
+            {
+                impl->renderer->setRussianRoulette(impl->use_russian_roulette);
+            }
 
             ImGui::Text("Tone Mapping:");
             ImGui::Separator();
             if (ImGui::MenuItem("Reinhard"))
             {
-                impl->tonemapping = ToneMappingType::REINHARD;
+                if (impl->mapper)
+                    impl->mapper->setType(ToneMappingType::REINHARD);
             }
             else if (ImGui::MenuItem("Gamma"))
             {
-                impl->tonemapping = ToneMappingType::GAMMA;
+                if (impl->mapper)
+                    impl->mapper->setType(ToneMappingType::GAMMA);
             }
 
 
-            ImGui::SliderFloat("Exposure", &(impl->exposure), 0.01f, 10.0f);
+            if(ImGui::SliderFloat("Exposure", &(impl->exposure), 0.01f, 10.0f))
+            {
+                impl->mapper->setExposure(impl->exposure);
+            }
 
             ImGui::Separator();
 
@@ -371,7 +390,18 @@ namespace cupbr
             ImGui::Separator();
             ImGui::Text("PostProcessing");
 
-            ImGui::Checkbox("Bloom", &(impl->post_processing));
+            if(ImGui::Checkbox("Bloom", &(impl->post_processing)))
+            {
+                if(impl->post_processing)
+                {
+                    impl->mapper->registerImage(impl->post_processor->getPostProcessBuffer());
+                }
+                else
+                {
+                    impl->mapper->registerImage(impl->renderer->getOutputImage());
+                }
+            }
+            
 
             if (ImGui::SliderFloat("Threshold", &(impl->threshold), 0.0f, 2.0f))
             {
@@ -389,38 +419,9 @@ namespace cupbr
             {
                 Memory::copyHost2DeviceObject(impl->host_material, impl->device_material);
                 Interaction::updateMaterial(*(impl->scene), impl->scene_index, impl->device_material);
+                impl->renderer->setMethod(impl->renderer->getMethod());
             }
         }
-    }
-
-    bool
-    Interactor::updated()
-    {
-        return impl->material_update;
-    }
-
-    ToneMappingType
-    Interactor::getToneMapping()
-    {
-        return impl->tonemapping;
-    }
-
-    RenderingMethod
-    Interactor::getRenderingMethod()
-    {
-        return impl->method;
-    }
-
-    float
-    Interactor::getExposure()
-    {
-        return impl->exposure;
-    }
-
-    bool
-    Interactor::usePostProcessing()
-    {
-        return impl->post_processing;
     }
 
     void
@@ -441,6 +442,12 @@ namespace cupbr
         return impl->close;
     }
 
+    bool 
+    Interactor::usePostProcessing()
+    {
+        return impl->post_processing;
+    }
+
     bool
     Interactor::resetScene(std::string& file_path)
     {
@@ -448,12 +455,6 @@ namespace cupbr
         impl->reset_scene = false;
         file_path = impl->scene_path;
         return should_reset;
-    }
-
-    bool
-    Interactor::useRussianRoulette()
-    {
-        return impl->use_russian_roulette;
     }
 
 } //namespace cupbr
