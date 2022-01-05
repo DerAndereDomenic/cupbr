@@ -51,13 +51,15 @@ namespace cupbr
             float t0 = q;
             float t1 = c / q;
 
-            t0 = fminf(t0, t1);
-            t1 = fmaxf(t0, t1);
+            float min = fminf(t0, t1);
+            float max = fmaxf(t0, t1);
+            t0 = min;
+            t1 = max;
 
-            if (t1 >= 0)
+            float t = t0 < 0 ? t1 : t0;
+
+            if (t >= 0)
             {
-                float t = t0 < 0 ? t1 : t0;
-
                 geom.type = GeometryType::SPHERE;
                 geom.P = origin + t * direction;
                 geom.depth = t;
