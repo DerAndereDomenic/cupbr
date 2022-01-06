@@ -252,6 +252,7 @@ int main()
 struct PathSummary
 {
     Vector3float inc_dir;
+    Vector3float out_pos;
     uint32_t num_scattering;
 };
 
@@ -302,15 +303,15 @@ __global__ void generateSamples(const uint32_t num_samples, Sphere sphere, PathS
     uint32_t seed = Math::tea<4>(tid, 1);
 
     Vector3float start_pos = Vector3float(0.99, 0, 0); // Just inside the sphere
-    Vector3float direction = sampleHemisphereUniform(seed, Vector3float(1, 0, 0));
+    Vector3float direction = sampleHemisphereUniform(seed, Vector3float(-1, 0, 0));
     Ray ray(start_pos, direction);
     PathSummary summary = { direction, 0 };
 
     //Volume
-    float sigma_s = 10.0f;
+    float sigma_s = 3.0f;
     float sigma_a = 0.0f;
     float sigma_t = sigma_s + sigma_a;
-    float g = 0.9f;
+    float g = -0.6f;
 
     Vector3float path[100];
     path[0] = start_pos;
@@ -326,7 +327,7 @@ __global__ void generateSamples(const uint32_t num_samples, Sphere sphere, PathS
 
         if (geom.depth == INFINITY)
         {
-            //printf("%f %f %f\n", start_pos.x, start_pos.y, start_pos.z);
+            summary.out_pos = start_pos;
             break;
         }
 
@@ -335,6 +336,7 @@ __global__ void generateSamples(const uint32_t num_samples, Sphere sphere, PathS
         if (t >= geom.depth)
         {
             //printf("sample\n");
+            summary.out_pos = geom.P;
             break;
         }
 
@@ -369,14 +371,17 @@ void generateDataSet()
     Memory::destroyDeviceArray<PathSummary>(buffer);
 
     std::ofstream file;
-    file.open("ScattersDataSet.ds");
+    file.open("ScattersDataSetPositions.ds");
 
     for(uint32_t i = 0; i < N; ++i)
     {
         file << host_buffer[i].inc_dir.x << ", " <<
                 host_buffer[i].inc_dir.y << ", " <<
                 host_buffer[i].inc_dir.z << ", " <<
-                host_buffer[i].num_scattering << "\n";
+                host_buffer[i].num_scattering << ", " <<
+                host_buffer[i].out_pos.x << ", " <<
+                host_buffer[i].out_pos.y << ", " <<
+                host_buffer[i].out_pos.z << "\n";
     }
 
     file.close();
