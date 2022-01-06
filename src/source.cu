@@ -29,16 +29,19 @@ int run(int argc, char* argv[])
     postprocessor.registerImage(pbrenderer.getOutputImage());
 
     ToneMapper mapper(ToneMappingType::REINHARD);
-    mapper.registerImage(postprocessor.getPostProcessBuffer());
+    mapper.registerImage(pbrenderer.getOutputImage());
 
     Window window("CUPBR", width + menu_width, height);
 
     GLRenderer renderer(width, height);
     Camera camera(width,height);
-    Interactor interactor(pbrenderer.getMethod());
+    Interactor interactor;
     interactor.registerWindow(&window, menu_width);
     interactor.registerCamera(&camera);
     interactor.registerScene(&scene);
+    interactor.registerRenderer(&pbrenderer);
+    interactor.registerToneMapper(&mapper);
+    interactor.registerPostProcessor(&postprocessor);
 
     window.setEventCallback(std::bind(&Interactor::onEvent, &interactor, std::placeholders::_1));
 
@@ -63,35 +66,7 @@ int run(int argc, char* argv[])
             scene = SceneLoader::loadFromFile(scene_path);
             camera = Camera(width, height);
             pbrenderer.reset();
-        }
-
-        if(post_proc != interactor.usePostProcessing())
-        {
-            if(interactor.usePostProcessing())
-            {
-                mapper.registerImage(postprocessor.getPostProcessBuffer());
-            }
-            else
-            {
-                mapper.registerImage(pbrenderer.getOutputImage());
-            }
-            post_proc = interactor.usePostProcessing();
-        }
-        
-
-        mapper.setExposure(interactor.getExposure());
-
-        if(interactor.getRenderingMethod() != pbrenderer.getMethod() || interactor.updated())
-        {
-            pbrenderer.setMethod(interactor.getRenderingMethod());
-        }
-
-        pbrenderer.setRussianRoulette(interactor.useRussianRoulette());
-
-        if(interactor.getToneMapping() != mapper.getType())
-        {
-            mapper.setType(interactor.getToneMapping());
-        }
+        } 
         
         /* Render here */
         glClear(GL_COLOR_BUFFER_BIT);

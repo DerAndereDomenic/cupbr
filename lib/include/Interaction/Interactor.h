@@ -10,6 +10,7 @@
 #include <Scene/Scene.h>
 #include <Renderer/PBRenderer.h>
 #include <Renderer/ToneMapper.h>
+#include <PostProcessing/PostProcessor.h>
 
 namespace cupbr
 {
@@ -20,10 +21,9 @@ namespace cupbr
     {
         public:
         /**
-        *   @brief Cosntructor
-        *   @param[in] method The rendering method
+        *   @brief Constructor
         */
-        Interactor(const RenderingMethod& method);
+        Interactor();
 
         /**
         *   @brief Default destructor
@@ -50,6 +50,24 @@ namespace cupbr
         void registerCamera(Camera* camera);
 
         /**
+        *   @brief Register a renderer
+        *   @param[in] renderer The renderer
+        */
+        void registerRenderer(PBRenderer* renderer);
+
+        /**
+        *   @brief Register a tone mapper
+        *   @param[in] mapper The tone mapper
+        */
+        void registerToneMapper(ToneMapper* mapper);
+
+        /**
+        *   @brief Register post processor
+        *   @param[in] post_processor The post processor
+        */
+        void registerPostProcessor(PostProcessor* post_processor);
+
+        /**
         *   @brief The function called on event
         *   @param[in] event The event to handle
         *   @return True if the event was handled
@@ -62,40 +80,10 @@ namespace cupbr
         void handleInteraction();
 
         /**
-        *   @brief If the interaction updated the scene
-        *   @return True if a scene element changed
-        */
-        bool updated();
-
-        /**
-        *   @brief Get the tone mapping type
-        *   @return The tone mapping type
-        */
-        ToneMappingType getToneMapping();
-
-        /**
-        *   @brief Get the rendering method
-        *   @return The rendering method
-        */
-        RenderingMethod getRenderingMethod();
-
-        /**
-        *   @brief Get the exposure level set by the user
-        *   @return The exposure time
-        */
-        float getExposure();
-
-        /**
         *   @brief If post processing should be used
-        *   @return True if bloom should be activated
+        *   @return True if post processing is enabled
         */
         bool usePostProcessing();
-
-        /**
-        *   @brief If russian roulette should be used
-        *   @return True if russian roulette is enabled
-        */
-        bool useRussianRoulette();
 
         /**
         *   @brief Get the quadratic thresholding curve for bloom
