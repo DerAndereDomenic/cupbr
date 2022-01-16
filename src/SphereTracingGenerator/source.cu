@@ -6,7 +6,7 @@
 
 using namespace cupbr;
 
-/*struct MediumSettings
+struct MediumSettings
 {
     float sigma;
     float phi;
@@ -248,9 +248,9 @@ int main()
 {
     int exit = run();
     return exit;
-}*/
+}
 
-struct PathSummary
+/*struct PathSummary
 {
     Vector3float inc_dir;
     Vector3float out_pos;
@@ -403,4 +403,4 @@ int main()
 {
     int exit = run();
     return exit;
-}
+}*/
