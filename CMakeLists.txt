@@ -16,6 +16,8 @@ add_subdirectory(external/glfw)
 set(BUILD_TESTING OFF)
 add_subdirectory(external/tinyxml2)
 
+add_subdirectory(external/cunet)
+
 file (GLOB_RECURSE cupbr_files LIST_DIRECTORIES false "lib/**.c*"
                                                       "lib/**.h*")
 
@@ -36,12 +38,12 @@ add_executable(Renderer "src/source.cu")
 add_executable(STGenerator "src/SphereTracingGenerator/source.cu")
 
 if(MSVC)
-	target_link_libraries(Renderer glfw OpenGL::GL tinyxml2 glad imgui CUPBR)
-    target_link_libraries(STGenerator glfw OpenGL::GL tinyxml2 glad imgui CUPBR)
+	target_link_libraries(Renderer glfw OpenGL::GL tinyxml2 glad imgui CUPBR CUNET)
+    target_link_libraries(STGenerator glfw OpenGL::GL tinyxml2 glad imgui CUPBR CUNET)
 else()
-    target_link_libraries(CUPBR -lpthread -lm OpenGL::GL tinyxml2 glad imgui -lstdc++fs)
-	target_link_libraries(Renderer glfw CUPBR)
-    target_link_libraries(STGenerator glfw CUPBR)
+    target_link_libraries(CUPBR -lpthread -lm OpenGL::GL tinyxml2 glad imgui -lstdc++fs CUNET)
+	target_link_libraries(Renderer glfw CUPBR CUNET)
+    target_link_libraries(STGenerator glfw CUPBR CUNET)
 endif()
 include_directories(lib/include 
                     external/glad/include 
@@ -49,6 +51,7 @@ include_directories(lib/include
                     external/stb
                     external/imgui
                     external/tinyxml2
+		    external/cunet/lib/include
                     ${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES})
 
 target_compile_definitions(CUPBR PUBLIC _USE_MATH_DEFINES)

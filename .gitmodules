@@ -7,3 +7,6 @@
 [submodule "external/tinyxml2"]
 	path = external/tinyxml2
 	url = https://github.com/leethomason/tinyxml2.git
+[submodule "external/cunet"]
+	path = external/cunet
+	url = git@github.com:DerAndereDomenic/cunet.git

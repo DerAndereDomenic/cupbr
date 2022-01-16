@@ -2,6 +2,7 @@
 #include <fstream>
 
 #include <CUPBR.h>
+#include <CUNET.h>
 
 using namespace cupbr;
 
@@ -364,7 +365,7 @@ void generateDataSet()
 
     KernelSizeHelper::KernelSize config = KernelSizeHelper::configure(N);
     generateSamples << <config.blocks, config.threads >> > (N, sphere, buffer);
-    cudaSafeCall(cudaDeviceSynchronize());
+    ::cudaSafeCall(cudaDeviceSynchronize());
 
     PathSummary* host_buffer = Memory::createHostArray<PathSummary>(N);
     Memory::copyDevice2HostArray<PathSummary>(N, buffer, host_buffer);
