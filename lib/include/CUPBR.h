@@ -48,6 +48,11 @@
 #include <Math/VectorTypes.h>
 #include <Math/VectorFunctions.h>
 #include <Math/VectorOperations.h>
+#include <Math/MatrixTypes_fwd.h>
+#include <Math/Matrix.h>
+#include <Math/MatrixTypes.h>
+#include <Math/MatrixFunctions.h>
+#include <Math/MatrixOperations.h>
 
 /// ------- PostProcessing ---------
 
