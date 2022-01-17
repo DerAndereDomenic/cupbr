@@ -226,6 +226,21 @@ namespace cupbr
                 ++impl->frameIndex;
             }
             break;
+            case RenderingMethod::SPHERE_TRACING:
+            {
+                if (camera->moved())
+                {
+                    impl->frameIndex = 0;
+                }
+                PBRendering::volumetracing(*(impl->scene),
+                                           *camera,
+                                           impl->frameIndex,
+                                           impl->maxTraceDepth,
+                                           impl->useRussianRoulette,
+                                           &impl->hdr_image);
+                ++impl->frameIndex;
+            }
+            break;
         }
     }
 

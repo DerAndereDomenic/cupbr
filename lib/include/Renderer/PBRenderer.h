@@ -18,7 +18,8 @@ namespace cupbr
         PATHTRACER,
         METROPOLIS,
         GRADIENTDOMAIN,
-        VOLUME
+        VOLUME,
+        SPHERE_TRACING
     };
 
     /**

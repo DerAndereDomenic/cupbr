@@ -261,6 +261,11 @@ namespace cupbr
                 if (impl->renderer)
                     impl->renderer->setMethod(RenderingMethod::VOLUME);
             }
+            else if(ImGui::MenuItem("Sphere Tracing"))
+            {
+                if (impl->renderer)
+                    impl->renderer->setMethod(RenderingMethod::SPHERE_TRACING);
+            }
 
             if(ImGui::SliderInt("Trace Depth", &(impl->trace_depth), 1, 50))
             {
