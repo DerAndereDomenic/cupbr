@@ -4,6 +4,7 @@
 #include <Renderer/PathTracer.h>
 #include <Renderer/GradientDomain.h>
 #include <Renderer/VolumeRenderer.h>
+#include <Renderer/SphereTracer.h>
 
 namespace cupbr
 {
@@ -232,7 +233,7 @@ namespace cupbr
                 {
                     impl->frameIndex = 0;
                 }
-                PBRendering::volumetracing(*(impl->scene),
+                PBRendering::spheretracing(*(impl->scene),
                                            *camera,
                                            impl->frameIndex,
                                            impl->maxTraceDepth,
