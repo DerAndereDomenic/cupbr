@@ -55,10 +55,9 @@ namespace cupbr
             float codedDensity = density;
             
             Vector2float lenLatent = Math::sampleStdNormal2D(payload->seed);
-            cunet::Tensor<float> lenInput;
-            float leninp[4] = { codedDensity, g, lenLatent.x, lenLatent.y };
-            lenInput.setData<4>(leninp);
-            cunet::Tensor<float> lenOutput = lenGen(lenInput); //TODO: This doesn't work because of race conditions
+            float lenInput[4] = { codedDensity, g, lenLatent.x, lenLatent.y };
+            float lenOutput[2];
+            lenGen(lenInput, lenOutput); //TODO: This doesn't work because of race conditions
 
             float logN = fmaxf(0.0f, lenOutput[0] + Math::sampleStdNormal1D(payload->seed) * expf(Math::clamp(lenOutput[1],-16.0f,16.0f)));
             float n = roundf(expf(logN) + 0.49);
@@ -73,10 +72,9 @@ namespace cupbr
 
             Vector4float pathLatent14 = Math::sampleStdNormal4D(payload->seed);
             float pathLatent5 = Math::sampleStdNormal1D(payload->seed);
-            cunet::Tensor<float> pathInput;
-            float pathinp[8] = { codedDensity, g, logN, pathLatent14.x, pathLatent14.y, pathLatent14.z, pathLatent14.w, pathLatent5 };
-            pathInput.setData<8>(pathinp);
-            cunet::Tensor<float> pathOutput = pathGen(pathInput);
+            float pathInput[8] = { codedDensity, g, logN, pathLatent14.x, pathLatent14.y, pathLatent14.z, pathLatent14.w, pathLatent5 };
+            float pathOutput[6];
+            pathGen(pathInput, pathOutput);
             
             Vector3float sampling = Math::sampleStdNormal3D(payload->seed);
             Vector3float pathMu = Vector3float(pathOutput[0], pathOutput[1], pathOutput[2]);
@@ -100,7 +98,7 @@ namespace cupbr
 
             Vector4float scatLatent14 = Math::sampleStdNormal4D(payload->seed);
             float scatLatent5 = Math::sampleStdNormal1D(payload->seed);
-            float scatinp[12] =
+            float scatInput[12] =
             {
                 codedDensity,
                 g,
@@ -115,9 +113,8 @@ namespace cupbr
                 scatLatent14.w,
                 scatLatent5
             };
-            cunet::Tensor<float> scatInput;
-            scatInput.setData<12>(scatinp);
-            cunet::Tensor<float> scatOutput = scatGen(scatInput);
+            float scatOutput[12];
+            scatGen(scatInput, scatOutput);
 
             if(n >= 2)
             {

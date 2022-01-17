@@ -27,16 +27,22 @@ namespace cunet
         }
 
         __device__
-        Tensor<float>& operator()(Tensor<float>& x)
+        void operator()(float* input, float* output)
         {
-            x = linear2(x);
-            x = softplus3(x);
-            x = linear4(x);
-            x = softplus5(x);
-            x = linear6(x);
-            x = softplus7(x);
-            x = linear8(x);
-            return x;
+            float temp_output0[8];
+            linear2(input, temp_output0);
+            float temp_output1[8];
+            softplus3(temp_output0, temp_output1, 8);
+            float temp_output2[8];
+            linear4(temp_output1, temp_output2);
+            float temp_output3[8];
+            softplus5(temp_output2, temp_output3, 8);
+            float temp_output4[8];
+            linear6(temp_output3, temp_output4);
+            float temp_output5[8];
+            softplus7(temp_output4, temp_output5, 8);
+            float temp_output6[2];
+            linear8(temp_output5, output);
         }
 
         private:
