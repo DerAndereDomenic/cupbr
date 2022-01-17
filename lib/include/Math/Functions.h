@@ -97,6 +97,38 @@ namespace cupbr
         float rnd(uint32_t& prev);
 
         /**
+        *   @brief Sample the standard normal distribution
+        *   @param[in] seed The seed
+        *   @return A standard normal distributed number
+        */
+        __host__ __device__
+        float sampleStdNormal1D(uint32_t& seed);
+
+        /**
+        *   @brief Sample the 2D standard normal distribution
+        *   @param[in] seed The seed
+        *   @return Two standard normal distributed numbers
+        */
+        __host__ __device__
+        Vector2float sampleStdNormal2D(uint32_t& seed);
+
+        /**
+        *   @brief Sample the 3D standard normal distribution
+        *   @param[in] seed The seed
+        *   @return Three standard normal distributed numbers
+        */
+        __host__ __device__
+        Vector3float sampleStdNormal3D(uint32_t& seed);
+
+        /**
+        *   @brief Sample the 4D standard normal distribution
+        *   @param[in] seed The seed
+        *   @return Four standard normal distributed numbers
+        */
+        __host__ __device__ 
+        Vector4float sampleStdNormal4D(uint32_t& seed);
+
+        /**
         *   @brief Convert a direction into a local coordinate frame
         *   @param[in] N The surface normal
         *   @param[in] direction The direction to convert

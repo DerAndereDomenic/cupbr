@@ -7,6 +7,32 @@
 
 namespace cupbr
 {
+    namespace detail
+    {
+        __host__ __device__
+        inline Vector2float BM_2(uint32_t& seed)
+        {
+            float u1 = 1.0f - Math::rnd(seed);
+            float u2 = 1.0f - Math::rnd(seed);
+            float r = sqrtf(-2.0f * logf(fmaxf(1e-5f, u1)));
+            float t = 2.0f * static_cast<float>(M_PI) * u2;
+            return r * Vector2float(cosf(t), sinf(t));
+        }
+
+        __host__ __device__
+        inline Vector4float BM_4(uint32_t& seed)
+        {
+            Vector2float u1 = Vector2float(1.0f - Math::rnd(seed), 1.0f - Math::rnd(seed)); //uniform(0,1] random doubles
+	        Vector2float u2 = Vector2float(1.0f - Math::rnd(seed), 1.0f - Math::rnd(seed));
+
+            Vector2float r;
+            r.x = sqrtf(-2.0f * logf(fmaxf(1e-5f, u1.x)));
+            r.y = sqrtf(-2.0f * logf(fmaxf(1e-5f, u1.y)));
+	        Vector2float t = 2.0f * static_cast<float>(M_PI) * u2;
+            return Vector4float(r.x * cosf(t.x), r.x * sinf(t.x), r.y * cosf(t.y), r.y * sinf(t.y));
+        }
+    }
+
     __host__ __device__
     inline bool
     Math::safeFloatEqual(const float& lhs, const float& rhs, const float& eps)
@@ -95,6 +121,34 @@ namespace cupbr
         prev = (LCG_A * prev + LCG_C);
 
         return ((float)(prev & 0x00FFFFFF) / (float)0x01000000);
+    }
+
+    __host__ __device__
+    inline float 
+    Math::sampleStdNormal1D(uint32_t& seed)
+    {
+        return detail::BM_2(seed).x;
+    }
+
+    __host__ __device__
+    inline Vector2float 
+    Math::sampleStdNormal2D(uint32_t& seed)
+    {
+        return detail::BM_2(seed);
+    }
+
+    __host__ __device__
+    inline Vector3float 
+    Math::sampleStdNormal3D(uint32_t& seed)
+    {
+        return detail::BM_4(seed);
+    }
+
+    __host__ __device__ 
+    inline Vector4float 
+    Math::sampleStdNormal4D(uint32_t& seed)
+    {
+        return detail::BM_4(seed);
     }
 
     __host__ __device__
