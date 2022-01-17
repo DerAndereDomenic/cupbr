@@ -3,6 +3,7 @@
 #include <Core/Tracing.h>
 #include <Geometry/Sphere.h>
 #include <Geometry/Plane.h>
+#include <Math/Matrix.h>
 
 namespace cupbr
 {
@@ -20,6 +21,125 @@ namespace cupbr
             bool inside_object = false;
             uint32_t object_index = 0;
         };
+
+        __device__ bool generateFullVariablesWithModel(Ray& ray,
+                                                       cunet::LenGen& lenGen,
+                                                       cunet::PathGen& pathGen,
+                                                       cunet::ScatGen& scatGen,
+                                                       const float& g, 
+                                                       const float& phi,
+                                                       const Vector3float& win,
+                                                       const float& density,
+                                                       Vector3float& x,
+                                                       Vector3float& w,
+                                                       Vector3float& X,
+                                                       Vector3float& W,
+                                                       float& factor)
+        {
+            RadiancePayload* payload = ray.payload<RadiancePayload>();
+
+            x = 0;
+            w = win;
+            X = x;
+            W = w;
+            factor = 1;
+
+            Vector3float temp = fabsf(win.x) >= 0.9999 ? Vector3float(0, 0, 1) : Vector3float(1, 0, 0);
+            Vector3float winY = Math::normalize(Math::cross(temp, win));
+            Vector3float winX = Math::cross(win, winY);
+            float rAlpha = Math::rnd(payload->seed) * 2 * static_cast<float>(M_PI);
+            Matrix3x3float local(winX, winY, win);
+            Matrix3x3float rot(Vector3float(cosf(rAlpha), sinf(rAlpha), 0), Vector3float(-sinf(rAlpha), cosf(rAlpha), 0), Vector3float(0, 0, 1));
+            Matrix3x3float R = rot * local;
+
+            float codedDensity = density;
+            
+            Vector2float lenLatent = Math::sampleStdNormal2D(payload->seed);
+            cunet::Tensor<float> lenInput;
+            float leninp[4] = { codedDensity, g, lenLatent.x, lenLatent.y };
+            lenInput.setData<4>(leninp);
+            cunet::Tensor<float> lenOutput = lenGen(lenInput); //TODO: This doesn't work because of race conditions
+
+            float logN = fmaxf(0.0f, lenOutput[0] + Math::sampleStdNormal1D(payload->seed) * expf(Math::clamp(lenOutput[1],-16.0f,16.0f)));
+            float n = roundf(expf(logN) + 0.49);
+            logN = logf(n);
+
+            float prob = 1.0f;
+            for (uint32_t i = 0; i < n; ++i)    //pow breaks with cuda fast math
+                prob *= phi;
+
+            if (Math::rnd(payload->seed) >= prob)
+                return false;
+
+            Vector4float pathLatent14 = Math::sampleStdNormal4D(payload->seed);
+            float pathLatent5 = Math::sampleStdNormal1D(payload->seed);
+            cunet::Tensor<float> pathInput;
+            float pathinp[8] = { codedDensity, g, logN, pathLatent14.x, pathLatent14.y, pathLatent14.z, pathLatent14.w, pathLatent5 };
+            pathInput.setData<8>(pathinp);
+            cunet::Tensor<float> pathOutput = pathGen(pathInput);
+            
+            Vector3float sampling = Math::sampleStdNormal3D(payload->seed);
+            Vector3float pathMu = Vector3float(pathOutput[0], pathOutput[1], pathOutput[2]);
+            Vector3float pathLogVar = Vector3float(
+                Math::clamp(pathOutput[3], -16.0f, 16.0f), Math::clamp(pathOutput[4], -16.0f, 16.0f), Math::clamp(pathOutput[5], -16.0f, 16.0f));
+            Vector3float pathOut = pathMu + Math::exp(pathLogVar * 0.5f) * sampling;
+            pathOut.x = Math::clamp(pathOut.x, -0.9999f, 0.9999f);
+            pathOut.y = Math::clamp(pathOut.y, -0.9999f, 0.9999f);
+            pathOut.z = Math::clamp(pathOut.z, -0.9999f, 0.9999f);
+            float cosTheta = pathOut.x;
+            float wt = n >= 2 ? pathOut.y : 0.0f;
+            float wb = n >= 3 ? pathOut.z : 0.0f;
+            x = Vector3float(0, sqrtf(1 - cosTheta * cosTheta), cosTheta);
+            Vector3float N = x;
+            Vector3float B = Vector3float(1, 0, 0);
+            Vector3float T = Math::cross(x, B);
+
+            w = Math::normalize(N * sqrtf(fmaxf(0.0f, 1.0f - wt * wt - wb * wb)) + T * wt + B * wb);
+            x = R * x;
+            w = R * w;
+
+            Vector4float scatLatent14 = Math::sampleStdNormal4D(payload->seed);
+            float scatLatent5 = Math::sampleStdNormal1D(payload->seed);
+            float scatinp[12] =
+            {
+                codedDensity,
+                g,
+                pow(1.0 - phi, 1.0 / 6.0),
+                logN,
+                cosTheta,
+                wt,
+                wb,
+                scatLatent14.x,
+                scatLatent14.y,
+                scatLatent14.z,
+                scatLatent14.w,
+                scatLatent5
+            };
+            cunet::Tensor<float> scatInput;
+            scatInput.setData<12>(scatinp);
+            cunet::Tensor<float> scatOutput = scatGen(scatInput);
+
+            if(n >= 2)
+            {
+                Vector3float sample1 = Math::sampleStdNormal3D(payload->seed);
+                Vector3float sample2 = Math::sampleStdNormal3D(payload->seed);
+                X = Vector3float(scatOutput[0] + Math::sampleStdNormal1D(payload->seed) * expf(Math::clamp(scatOutput[6], -16.0f, 16.0f)),
+                                 scatOutput[1] + Math::sampleStdNormal1D(payload->seed) * expf(Math::clamp(scatOutput[7], -16.0f, 16.0f)),
+                                 scatOutput[2] + Math::sampleStdNormal1D(payload->seed) * expf(Math::clamp(scatOutput[8], -16.0f, 16.0f)));
+                X /= fmaxf(1.0f, Math::norm(X));
+                W = Vector3float(scatOutput[3] + Math::sampleStdNormal1D(payload->seed) * expf(Math::clamp(scatOutput[9], -16.0f, 16.0f)),
+                                 scatOutput[4] + Math::sampleStdNormal1D(payload->seed) * expf(Math::clamp(scatOutput[10], -16.0f, 16.0f)),
+                                 scatOutput[5] + Math::sampleStdNormal1D(payload->seed) * expf(Math::clamp(scatOutput[11], -16.0f, 16.0f)));
+
+                X = R * X;
+                W = R * W;
+
+                float accum = phi >= 0.99999 ? n : phi * (1.0f - prob) / (1.0f - phi);
+                factor = accum / prob;
+            }
+
+            return true;
+        }
 
         __device__ void directIlluminationST(Scene& scene, Ray& ray, LocalGeometry& geom, Vector3float& inc_dir)
         {
@@ -106,94 +226,110 @@ namespace cupbr
                 Vector3float event_position = ray.origin() + t * ray.direction();
                 float scattering_prob = sigma_s[channel] / sigma_t[channel];
 
-                if (Math::rnd(payload->seed) < scattering_prob)
-                {
-                    //Attenuate ray from its start to the medium event
-                    //For monochrome sigma this is 1 but it may change for mulit channel scattering
+                bool usePT = true;
 
-                    float pdf = 0.0f;
-                    for(uint32_t i = 0; i < 3; ++i)
+                if(usePT)
+                {
+                    if (Math::rnd(payload->seed) < scattering_prob)
                     {
-                        pdf += sigma_t[i] * expf(-1.0f * sigma_t[i] * t);
-                    }
-                    pdf /= 3.0f;
+                        //Attenuate ray from its start to the medium event
+                        //For monochrome sigma this is 1 but it may change for mulit channel scattering
 
-                    payload->rayweight = payload->rayweight *
-                        sigma_s / scattering_prob *
-                        Math::exp(-1.0f*sigma_t * t) / pdf;
-                }
-                else
-                {
-                    payload->rayweight = 0;
-                    payload->next_ray_valid = false;
+                        float pdf = 0.0f;
+                        for(uint32_t i = 0; i < 3; ++i)
+                        {
+                            pdf += sigma_t[i] * expf(-1.0f * sigma_t[i] * t);
+                        }
+                        pdf /= 3.0f;
+
+                        payload->rayweight = payload->rayweight *
+                            sigma_s / scattering_prob *
+                            Math::exp(-1.0f*sigma_t * t) / pdf;
+                    }
+                    else
+                    {
+                        payload->rayweight = 0;
+                        payload->next_ray_valid = false;
+                        return true;
+                    }
+
+                    //Direct illumination
+                    uint32_t useEnvironmentMap = scene.useEnvironmentMap ? 1 : 0;
+                    uint32_t light_sample = static_cast<uint32_t>(Math::rnd(payload->seed) * (scene.light_count + useEnvironmentMap));
+
+                    Light light;
+                    Vector3float lightDir, lightRadiance;
+                    float d;
+                    if (light_sample != scene.light_count)
+                    {
+                        light = *(scene.lights[light_sample]);
+
+                        lightRadiance = light.sample(payload->seed, event_position, lightDir, d);
+                    }
+                    else // Use environment map
+                    {
+                        Vector4float sample = geom.material.sampleDirection(payload->seed, inc_dir, geom.N);
+                        lightDir = Vector3float(sample);
+                        d = INFINITY; //TODO: Better way to do this
+                        Vector2uint32_t pixel = Tracing::direction2UV(lightDir, scene.environment.width(), scene.environment.height());
+                        lightRadiance = scene.environment(pixel) / sample.w;
+                    }
+
+                    Ray shadow_ray;
+
+                    // If we are inside an object -> First move to border of current object -> then do light sampling
+                    //TODO: This is still not optimal for some scenarios because of numerical issues (?)
+                    Vector3float attenuation = 1.0f;
+                    if(payload->inside_object)
+                    {
+                        shadow_ray = Ray(event_position, lightDir);
+                        LocalGeometry ge = Tracing::traceRay(scene, shadow_ray, payload->object_index);
+                        if (ge.depth == INFINITY) 
+                        {
+                            ge.depth = 0;
+                            ge.P = event_position;
+                        }
+                        attenuation = Math::exp(-1.0f * sigma_t * ge.depth);
+                        shadow_ray.traceNew(ge.P + 0.001f * lightDir, lightDir);
+                        d -= ge.depth;
+                    }
+                    else
+                    {
+                        shadow_ray = Ray(event_position + 0.001f * lightDir, lightDir);
+                    }
+
+                    Vector3float scene_sigma_t = scene.volume.sigma_a + scene.volume.sigma_s;
+                    float scene_g = scene.volume.g;
+
+                    if (Tracing::traceVisibility(scene, d, shadow_ray))
+                    {
+                        payload->radiance += (float)(scene.light_count + useEnvironmentMap) *
+                            Math::exp(-1.0f*scene_sigma_t * fminf(d, 100000000.0f)) * attenuation *
+                            lightRadiance *
+                            payload->rayweight;
+                        //Phase/pdf = 1
+                    }
+
+                    //Indirect Illumination
+                    Vector4float sample_hg = sampleHenyeyGreensteinPhaseFunction(g, inc_dir, payload->seed);
+                    payload->out_dir = Vector3float(sample_hg);
+                    payload->ray_start = event_position;
+                    //Phase/pdf = 1
+
+                    payload->next_ray_valid = true;
                     return true;
                 }
-
-                //Direct illumination
-                uint32_t useEnvironmentMap = scene.useEnvironmentMap ? 1 : 0;
-                uint32_t light_sample = static_cast<uint32_t>(Math::rnd(payload->seed) * (scene.light_count + useEnvironmentMap));
-
-                Light light;
-                Vector3float lightDir, lightRadiance;
-                float d;
-                if (light_sample != scene.light_count)
-                {
-                    light = *(scene.lights[light_sample]);
-
-                    lightRadiance = light.sample(payload->seed, event_position, lightDir, d);
-                }
-                else // Use environment map
-                {
-                    Vector4float sample = geom.material.sampleDirection(payload->seed, inc_dir, geom.N);
-                    lightDir = Vector3float(sample);
-                    d = INFINITY; //TODO: Better way to do this
-                    Vector2uint32_t pixel = Tracing::direction2UV(lightDir, scene.environment.width(), scene.environment.height());
-                    lightRadiance = scene.environment(pixel) / sample.w;
-                }
-
-                Ray shadow_ray;
-
-                // If we are inside an object -> First move to border of current object -> then do light sampling
-                //TODO: This is still not optimal for some scenarios because of numerical issues (?)
-                Vector3float attenuation = 1.0f;
-                if(payload->inside_object)
-                {
-                    shadow_ray = Ray(event_position, lightDir);
-                    LocalGeometry ge = Tracing::traceRay(scene, shadow_ray, payload->object_index);
-                    if (ge.depth == INFINITY) 
-                    {
-                        ge.depth = 0;
-                        ge.P = event_position;
-                    }
-                    attenuation = Math::exp(-1.0f * sigma_t * ge.depth);
-                    shadow_ray.traceNew(ge.P + 0.001f * lightDir, lightDir);
-                    d -= ge.depth;
-                }
                 else
                 {
-                    shadow_ray = Ray(event_position + 0.001f * lightDir, lightDir);
+                    //SPHERE TRACING
+                    //TODO: This is hard coded for now to test on the simple sphere scene
+                    Sphere* sphere = static_cast<Sphere*>(scene[0]);
+                    float r = sphere->radius() - Math::norm(event_position - sphere->position());
+                    float er = payload->volume->sigma_a[channel] * r;
+
+
                 }
-
-                Vector3float scene_sigma_t = scene.volume.sigma_a + scene.volume.sigma_s;
-                float scene_g = scene.volume.g;
-
-                if (Tracing::traceVisibility(scene, d, shadow_ray))
-                {
-                    payload->radiance += (float)(scene.light_count + useEnvironmentMap) *
-                        Math::exp(-1.0f*scene_sigma_t * fminf(d, 100000000.0f)) * attenuation *
-                        lightRadiance *
-                        payload->rayweight;
-                    //Phase/pdf = 1
-                }
-
-                //Indirect Illumination
-                Vector4float sample_hg = sampleHenyeyGreensteinPhaseFunction(g, inc_dir, payload->seed);
-                payload->out_dir = Vector3float(sample_hg);
-                payload->ray_start = event_position;
-                //Phase/pdf = 1
-
-                payload->next_ray_valid = true;
-                return true;
+                
             }
             else
             {
@@ -217,6 +353,9 @@ namespace cupbr
                       const uint32_t frameIndex,
                       const uint32_t maxTraceDepth,
                       const bool useRussianRoulette,
+                      cunet::LenGen lenGen,
+                      cunet::PathGen pathGen,
+                      cunet::ScatGen scatGen,
                       Image<Vector3float> img)
         {
             const uint32_t tid = ThreadHelper::globalThreadIndex();
@@ -317,6 +456,9 @@ namespace cupbr
                                const uint32_t& frameIndex,
                                const uint32_t& maxTraceDepth,
                                const bool& useRussianRoulette,
+                               cunet::LenGen& lenGen,
+                               cunet::PathGen& pathGen,
+                               cunet::ScatGen& scatGen,
                                Image<Vector3float>* output_img)
     {
         const KernelSizeHelper::KernelSize config = KernelSizeHelper::configure(output_img->size());
@@ -325,6 +467,9 @@ namespace cupbr
                                                                       frameIndex,
                                                                       maxTraceDepth,
                                                                       useRussianRoulette,
+                                                                      lenGen,
+                                                                      pathGen,
+                                                                      scatGen,
                                                                       *output_img);
         cudaSafeCall(cudaDeviceSynchronize());
     }

@@ -4,6 +4,9 @@
 #include <Scene/Scene.h>
 #include <DataStructure/Image.h>
 #include <DataStructure/Camera.h>
+#include <Models/PathGen.h>
+#include <Models/LenGen.h>
+#include <Models/ScatGen.h>
 
 namespace cupbr
 {
@@ -22,6 +25,9 @@ namespace cupbr
                            const uint32_t& frameIndex,
                            const uint32_t& maxTraceDepth,
                            const bool& useRussianRoulette,
+                           cunet::LenGen& lenGen,
+                           cunet::PathGen& pathGen,
+                           cunet::ScatGen& scatGen,
                            Image<Vector3float>* output_img);
     } //namepsace PBRendering
 } //namespace cupbr

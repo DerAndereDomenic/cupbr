@@ -5,6 +5,9 @@
 #include <Renderer/GradientDomain.h>
 #include <Renderer/VolumeRenderer.h>
 #include <Renderer/SphereTracer.h>
+#include <Models/LenGen.h>
+#include <Models/PathGen.h>
+#include <Models/ScatGen.h>
 
 namespace cupbr
 {
@@ -50,6 +53,11 @@ namespace cupbr
         bool outputSizeSet;
         bool sceneRegistered;
         bool useRussianRoulette;
+
+        //Sphere Tracing networks
+        cunet::LenGen lenGen;
+        cunet::PathGen pathGen;
+        cunet::ScatGen scatGen;
     };
 
     PBRenderer::Impl::Impl()
@@ -238,6 +246,9 @@ namespace cupbr
                                            impl->frameIndex,
                                            impl->maxTraceDepth,
                                            impl->useRussianRoulette,
+                                           impl->lenGen,
+                                           impl->pathGen,
+                                           impl->scatGen,
                                            &impl->hdr_image);
                 ++impl->frameIndex;
             }
