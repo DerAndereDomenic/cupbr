@@ -120,13 +120,13 @@ namespace cupbr
             {
                 Vector3float sample1 = Math::sampleStdNormal3D(payload->seed);
                 Vector3float sample2 = Math::sampleStdNormal3D(payload->seed);
-                X = Vector3float(scatOutput[0] + Math::sampleStdNormal1D(payload->seed) * expf(Math::clamp(scatOutput[6], -16.0f, 16.0f)),
-                                 scatOutput[1] + Math::sampleStdNormal1D(payload->seed) * expf(Math::clamp(scatOutput[7], -16.0f, 16.0f)),
-                                 scatOutput[2] + Math::sampleStdNormal1D(payload->seed) * expf(Math::clamp(scatOutput[8], -16.0f, 16.0f)));
+                X = Vector3float(scatOutput[0] + sample1.x * expf(Math::clamp(scatOutput[6], -16.0f, 16.0f)),
+                                 scatOutput[1] + sample1.y * expf(Math::clamp(scatOutput[7], -16.0f, 16.0f)),
+                                 scatOutput[2] + sample1.z * expf(Math::clamp(scatOutput[8], -16.0f, 16.0f)));
                 X /= fmaxf(1.0f, Math::norm(X));
-                W = Vector3float(scatOutput[3] + Math::sampleStdNormal1D(payload->seed) * expf(Math::clamp(scatOutput[9], -16.0f, 16.0f)),
-                                 scatOutput[4] + Math::sampleStdNormal1D(payload->seed) * expf(Math::clamp(scatOutput[10], -16.0f, 16.0f)),
-                                 scatOutput[5] + Math::sampleStdNormal1D(payload->seed) * expf(Math::clamp(scatOutput[11], -16.0f, 16.0f)));
+                W = Vector3float(scatOutput[3] + sample2.x * expf(Math::clamp(scatOutput[9], -16.0f, 16.0f)),
+                                 scatOutput[4] + sample2.y * expf(Math::clamp(scatOutput[10], -16.0f, 16.0f)),
+                                 scatOutput[5] + sample2.z * expf(Math::clamp(scatOutput[11], -16.0f, 16.0f)));
 
                 X = R * X;
                 W = R * W;
@@ -399,7 +399,7 @@ namespace cupbr
                     payload->ray_start = event_position + _x * r;
                     //Phase/pdf = 1
 
-
+                    payload->next_ray_valid = true;
                     return true;
                 }
                 
