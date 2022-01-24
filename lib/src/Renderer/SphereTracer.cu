@@ -50,7 +50,7 @@ namespace cupbr
             float rAlpha = Math::rnd(payload->seed) * 2 * static_cast<float>(M_PI);
             Matrix3x3float local(winX, winY, win);
             Matrix3x3float rot(Vector3float(cosf(rAlpha), sinf(rAlpha), 0), Vector3float(-sinf(rAlpha), cosf(rAlpha), 0), Vector3float(0, 0, 1));
-            Matrix3x3float R = rot * local;
+            Matrix3x3float R = local * rot;
 
             float codedDensity = density;
             
@@ -202,7 +202,7 @@ namespace cupbr
             payload->next_ray_valid = true;
         }
 
-        __device__ bool handleMediumInteractionST(Scene& scene, Ray& ray, LocalGeometry& geom, Vector3float& inc_dir)
+        __device__ bool handleMediumInteractionST(cunet::LenGen& lenGen, cunet::PathGen& pathGen, cunet::ScatGen& scatGen, Scene& scene, Ray& ray, LocalGeometry& geom, Vector3float& inc_dir)
         {
             RadiancePayload* payload = ray.payload<RadiancePayload>();
 
@@ -223,7 +223,7 @@ namespace cupbr
                 Vector3float event_position = ray.origin() + t * ray.direction();
                 float scattering_prob = sigma_s[channel] / sigma_t[channel];
 
-                bool usePT = true;
+                bool usePT = false;// Math::rnd(payload->seed) < 0.5f;
 
                 if(usePT)
                 {
@@ -322,9 +322,85 @@ namespace cupbr
                     //TODO: This is hard coded for now to test on the simple sphere scene
                     Sphere* sphere = static_cast<Sphere*>(scene[0]);
                     float r = sphere->radius() - Math::norm(event_position - sphere->position());
-                    float er = payload->volume->sigma_a[channel] * r;
+                    float er = sigma_t[channel] * r;
+
+                    Vector3float _x, _w, _X, _W;
+                    float factor;
+
+                    bool absorption = !generateFullVariablesWithModel(ray,
+                                                                      lenGen,
+                                                                      pathGen,
+                                                                      scatGen,
+                                                                      payload->volume->g,
+                                                                      scattering_prob,
+                                                                      inc_dir,
+                                                                      er,
+                                                                      _x, _w, _X, _W, factor);
+
+                    Vector3float xs = event_position + _X * r;
+
+                    //Direct illumination
+                    uint32_t useEnvironmentMap = scene.useEnvironmentMap ? 1 : 0;
+                    uint32_t light_sample = static_cast<uint32_t>(Math::rnd(payload->seed) * (scene.light_count + useEnvironmentMap));
+
+                    Light light;
+                    Vector3float lightDir, lightRadiance;
+                    float d;
+                    if (light_sample != scene.light_count)
+                    {
+                        light = *(scene.lights[light_sample]);
+
+                        lightRadiance = light.sample(payload->seed, xs, lightDir, d);
+                    }
+                    else // Use environment map
+                    {
+                        Vector4float sample = geom.material.sampleDirection(payload->seed, inc_dir, geom.N);
+                        lightDir = Vector3float(sample);
+                        d = INFINITY; //TODO: Better way to do this
+                        Vector2uint32_t pixel = Tracing::direction2UV(lightDir, scene.environment.width(), scene.environment.height());
+                        lightRadiance = scene.environment(pixel) / sample.w;
+                    }
+
+                    Ray shadow_ray;
+
+                    // If we are inside an object -> First move to border of current object -> then do light sampling
+                    //TODO: This is still not optimal for some scenarios because of numerical issues (?)
+                    Vector3float attenuation = 1.0f;
+                    if(payload->inside_object)
+                    {
+                        shadow_ray = Ray(xs, lightDir);
+                        LocalGeometry ge = Tracing::traceRay(scene, shadow_ray, payload->object_index);
+                        if (ge.depth == INFINITY) 
+                        {
+                            ge.depth = 0;
+                            ge.P = xs;
+                        }
+                        attenuation = Math::exp(-1.0f * sigma_t * ge.depth);
+                        shadow_ray.traceNew(ge.P + 0.001f * lightDir, lightDir);
+                        d -= ge.depth;
+                    }
+                    else
+                    {
+                        shadow_ray = Ray(event_position + 0.001f * lightDir, lightDir);
+                    }
+
+                    if (Tracing::traceVisibility(scene, d, shadow_ray))
+                    {
+                        payload->radiance += (float)(scene.light_count + useEnvironmentMap) *
+                            attenuation *
+                            lightRadiance *
+                            payload->rayweight * factor;
+                        //Phase/pdf = 1
+                    }
+
+                    //Indirect Illumination
+                    //Vector4float sample_hg = sampleHenyeyGreensteinPhaseFunction(g, inc_dir, payload->seed);
+                    payload->out_dir = Vector3float(_w);
+                    payload->ray_start = event_position + _x * r;
+                    //Phase/pdf = 1
 
 
+                    return true;
                 }
                 
             }
@@ -399,7 +475,7 @@ namespace cupbr
                     break;
                 }
 
-                if (!handleMediumInteractionST(scene, ray, geom, inc_dir))
+                if (!handleMediumInteractionST(lenGen, pathGen, scatGen, scene, ray, geom, inc_dir))
                 {
 
                     //Handle medium interfaces
