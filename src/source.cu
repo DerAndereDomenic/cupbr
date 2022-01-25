@@ -14,14 +14,14 @@ int run(int argc, char* argv[])
     
     if(argc == 1)
     {
-        scene = SceneLoader::loadFromFile("res/Scenes/CornellBoxSphereAreaLight.xml");
+        scene = SceneLoader::loadFromFile("res/Scenes/CVAETest.xml");
     }
     else if(argc == 2)
     {
         scene = SceneLoader::loadFromFile(argv[1]);
     }
 
-    PBRenderer pbrenderer(RenderingMethod::PATHTRACER);
+    PBRenderer pbrenderer(RenderingMethod::SPHERE_TRACING);
     pbrenderer.setOutputSize(width, height);
     pbrenderer.registerScene(&scene);
 
