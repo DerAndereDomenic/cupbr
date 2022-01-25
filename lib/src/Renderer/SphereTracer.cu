@@ -308,7 +308,7 @@ namespace cupbr
                     }
 
                     //Indirect Illumination
-                    Vector4float sample_hg = sampleHenyeyGreensteinPhaseFunction(g, inc_dir, payload->seed);
+                    Vector4float sample_hg = sampleHenyeyGreensteinPhaseFunction(g, -1.0f*inc_dir, payload->seed);
                     payload->out_dir = Vector3float(sample_hg);
                     payload->ray_start = event_position;
                     //Phase/pdf = 1
@@ -331,14 +331,25 @@ namespace cupbr
                                                                       lenGen,
                                                                       pathGen,
                                                                       scatGen,
-                                                                      payload->volume->g,
+                                                                      -payload->volume->g,
                                                                       scattering_prob,
                                                                       inc_dir,
                                                                       er,
                                                                       _x, _w, _X, _W, factor);
 
                     Vector3float xs = event_position + _X * r;
-
+                    
+                    float pdf = 0.0f;
+                    for(uint32_t i = 0; i < 3; ++i)
+                    {
+                        pdf += sigma_t[i] * expf(-1.0f * sigma_t[i] * r);
+                    }
+                    pdf /= 3.0f;
+                    
+                    payload->rayweight = payload->rayweight *
+                            sigma_s / scattering_prob *
+                            Math::exp(-1.0f*sigma_t * r) / pdf;
+                            
                     //Direct illumination
                     uint32_t useEnvironmentMap = scene.useEnvironmentMap ? 1 : 0;
                     uint32_t light_sample = static_cast<uint32_t>(Math::rnd(payload->seed) * (scene.light_count + useEnvironmentMap));
