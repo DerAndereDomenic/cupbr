@@ -165,7 +165,7 @@ namespace cupbr
                         ge.depth = 0;
                         ge.P = event_position;
                     }
-                    attenuation = Math::exp(-1.0f * sigma_t * ge.depth);
+                    attenuation = Math::exp(-1.0f * sigma_t * ge.depth) * Material::henyeyGreensteinPhaseFunction(g, -Math::dot(inc_dir,lightDir));
                     shadow_ray.traceNew(ge.P + 0.001f * lightDir, lightDir);
                     d -= ge.depth;
                 }
@@ -265,7 +265,6 @@ namespace cupbr
 
                 if (!handleMediumInteraction(scene, ray, geom, inc_dir))
                 {
-
                     //Handle medium interfaces
                     if(geom.material.type == MaterialType::VOLUME)
                     {
