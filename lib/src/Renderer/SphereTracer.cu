@@ -61,6 +61,7 @@ namespace cupbr
 
             float logN = fmaxf(0.0f, lenOutput[0] + Math::sampleStdNormal1D(payload->seed) * expf(Math::clamp(lenOutput[1],-16.0f,16.0f)));
             float n = roundf(expf(logN) + 0.49);
+            n = fminf(n, 100.0f);
             logN = logf(n);
 
             float prob = 1.0f;
@@ -124,9 +125,9 @@ namespace cupbr
                                  scatOutput[1] + sample1.y * expf(Math::clamp(scatOutput[7], -16.0f, 16.0f)),
                                  scatOutput[2] + sample1.z * expf(Math::clamp(scatOutput[8], -16.0f, 16.0f)));
                 X /= fmaxf(1.0f, Math::norm(X));
-                W = Vector3float(scatOutput[3] + sample2.x * expf(Math::clamp(scatOutput[9], -16.0f, 16.0f)),
-                                 scatOutput[4] + sample2.y * expf(Math::clamp(scatOutput[10], -16.0f, 16.0f)),
-                                 scatOutput[5] + sample2.z * expf(Math::clamp(scatOutput[11], -16.0f, 16.0f)));
+                W = Math::normalize(Vector3float(scatOutput[3] + sample2.x * expf(Math::clamp(scatOutput[9], -16.0f, 16.0f)),
+                                                 scatOutput[4] + sample2.y * expf(Math::clamp(scatOutput[10], -16.0f, 16.0f)),
+                                                 scatOutput[5] + sample2.z * expf(Math::clamp(scatOutput[11], -16.0f, 16.0f))));
 
                 X = R * X;
                 W = R * W;
@@ -286,7 +287,7 @@ namespace cupbr
                             ge.depth = 0;
                             ge.P = event_position;
                         }
-                        attenuation = Math::exp(-1.0f * sigma_t * ge.depth);
+                        attenuation = Math::exp(-1.0f * sigma_t * ge.depth) * Material::henyeyGreensteinPhaseFunction(g, -Math::dot(inc_dir, lightDir));
                         shadow_ray.traceNew(ge.P + 0.001f * lightDir, lightDir);
                         d -= ge.depth;
                     }
@@ -331,7 +332,7 @@ namespace cupbr
                                                                       lenGen,
                                                                       pathGen,
                                                                       scatGen,
-                                                                      -payload->volume->g,
+                                                                      payload->volume->g,
                                                                       scattering_prob,
                                                                       inc_dir,
                                                                       er,
@@ -386,7 +387,9 @@ namespace cupbr
                             ge.depth = 0;
                             ge.P = xs;
                         }
-                        attenuation = Math::exp(-1.0f * sigma_t * ge.depth);
+                        attenuation = Math::exp(-1.0f * sigma_t * ge.depth) * Material::henyeyGreensteinPhaseFunction(payload->volume->g, -Math::dot(_W,lightDir));
+                        //if (isnan(Math::norm(attenuation)))
+                        //    printf("%f %f %f\n", _W.x, _W.y, _W.z);
                         shadow_ray.traceNew(ge.P + 0.001f * lightDir, lightDir);
                         d -= ge.depth;
                     }
