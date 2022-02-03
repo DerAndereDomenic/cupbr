@@ -142,7 +142,7 @@ __device__ PathSummary getVPTSampleInSphere(MediumSettings& settings, uint32_t& 
             x += w * d;
             return {N, x, w, X, W};
         }
-        x += w * d;
+        x += w * t;
     }
 }
 
@@ -164,10 +164,12 @@ __global__ void generateSamples(const uint32_t N, FileLine* output)
     Vector3float xAxis = fabsf(r.x.z) > 0.999 ? Vector3float(1,0,0) : Math::normalize(Math::cross(r.x, Vector3float(0,0,1)));
     Vector3float yAxis = Math::cross(zAxis, xAxis);
 
-    Vector3float normx = r.x.x * xAxis + r.x.y * yAxis + r.x.z * zAxis;
-    Vector3float normw = r.w.x * xAxis + r.w.y * yAxis + r.w.z * zAxis;
-    Vector3float normX = r.X.x * xAxis + r.X.y * yAxis + r.X.z * zAxis;
-    Vector3float normW = r.W.x * xAxis + r.W.y * yAxis + r.W.z * zAxis;
+    Matrix3x3float R = Math::transpose(Matrix3x3float(xAxis, yAxis, zAxis));
+
+    Vector3float normx = R * r.x;
+    Vector3float normw = R * r.w;
+    Vector3float normX = R * r.X;
+    Vector3float normW = R * r.W;
     
     Vector3float B(1,0,0);
     Vector3float T = Math::cross(normx, B);
@@ -195,7 +197,7 @@ __global__ void generateSamples(const uint32_t N, FileLine* output)
 
 void generateDatasetForTrainingCVAE()
 {
-    const uint32_t N = 1 << 22;
+    const uint32_t N = 1 << 10;
     printf("Generatirng %i samples\n", N);
 
     FileLine* dev_output = Memory::createDeviceArray<FileLine>(N);
@@ -254,6 +256,7 @@ int main()
 {
     Vector3float inc_dir;
     Vector3float out_pos;
+    Vector3float out_dir;
     uint32_t num_scattering;
 };
 
@@ -304,24 +307,22 @@ __global__ void generateSamples(const uint32_t num_samples, Sphere sphere, PathS
     uint32_t seed = Math::tea<4>(tid, 1);
 
     Vector3float start_pos = Vector3float(0.99, 0, 0); // Just inside the sphere
-    Vector3float direction = sampleHemisphereUniform(seed, Vector3float(-1, 0, 0));
+    Vector3float direction = Vector3float(-1, 0, 0);// sampleHemisphereUniform(seed, Vector3float(-1, 0, 0));
     Ray ray(start_pos, direction);
-    PathSummary summary = { direction, 0 };
+    PathSummary summary = { direction, 0, 0 };
 
     //Volume
     float sigma_s = 3.0f;
     float sigma_a = 0.0f;
     float sigma_t = sigma_s + sigma_a;
-    float g = -0.6f;
+    float g = 0.6f;
 
     Vector3float path[100];
     path[0] = start_pos;
 
     while(true)
     {
-        Vector3float inc_dir = -1.0f * ray.direction();
-
-        Vector3float new_direction = sampleHenyeyGreensteinPhase(g, inc_dir, seed);
+        Vector3float new_direction = sampleHenyeyGreensteinPhase(g, ray.direction(), seed);
         ray.traceNew(start_pos + 0.001f * new_direction, new_direction);
 
         LocalGeometry geom = sphere.computeRayIntersection(ray);
@@ -329,6 +330,7 @@ __global__ void generateSamples(const uint32_t num_samples, Sphere sphere, PathS
         if (geom.depth == INFINITY)
         {
             summary.out_pos = start_pos;
+            summary.out_dir = new_direction;
             break;
         }
 
@@ -338,6 +340,7 @@ __global__ void generateSamples(const uint32_t num_samples, Sphere sphere, PathS
         {
             //printf("sample\n");
             summary.out_pos = geom.P;
+            summary.out_dir = new_direction;
             break;
         }
 
@@ -382,7 +385,10 @@ void generateDataSet()
                 host_buffer[i].num_scattering << ", " <<
                 host_buffer[i].out_pos.x << ", " <<
                 host_buffer[i].out_pos.y << ", " <<
-                host_buffer[i].out_pos.z << "\n";
+                host_buffer[i].out_pos.z << ", " <<
+                host_buffer[i].out_dir.x << ", " <<
+                host_buffer[i].out_dir.y << ", " <<
+                host_buffer[i].out_dir.z << "\n";
     }
 
     file.close();
