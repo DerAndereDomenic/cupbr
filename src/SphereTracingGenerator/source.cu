@@ -8,6 +8,12 @@
 
 using namespace cupbr;
 
+#define BINS_BETA_O 50
+#define BINS_BETA_I 360
+#define BINS_GAMMA_I 180
+#define BINS_THETA_I 180
+#define BINS_PHI_I 180
+
 /*struct MediumSettings
 {
     float sigma;
@@ -497,11 +503,182 @@ void generateDataSet()
     Memory::destroyDeviceArray<PathSummary>(buffer);
 }
 
+__global__ void gsdf_kernel(const Sphere sphere, const uint32_t N, float* histogram_x, float* histogram_w)
+{
+    const uint32_t tid = ThreadHelper::globalThreadIndex();
+    
+    if(tid >= N)
+    {
+        return;
+    }
+
+    uint32_t seed = Math::tea<4>(tid, 0);
+
+    Vector3float start_pos = sampleSphereUniform(seed);
+    Vector3float inc_pos = start_pos;
+    Vector3float normal = Math::normalize(start_pos - sphere.position());
+    Vector3float direction = -1.0f * sampleHemisphereUniform(seed, start_pos); // Points towards surface
+    Vector3float inc_dir = direction;
+    Ray ray(start_pos + 0.001f * direction, direction);
+
+    //Volume
+    float sigma_s = 3.0f;
+    float sigma_a = 0.0f;
+    float sigma_t = sigma_s + sigma_a;
+    float g = 0.6f;
+
+    Vector3float out_position;
+    Vector3float out_direction;
+
+    while(true)
+    {
+        ray.traceNew(start_pos + 0.001f * direction, direction);
+
+        float d = distanceToBoundary(ray.origin(), ray.direction());
+
+        if (d == INFINITY)
+        {
+            out_position = ray.origin();
+            out_direction = ray.direction();
+            break;
+        }
+
+        float t = -logf(1.0f - Math::rnd(seed)) / sigma_t;
+
+        if (t >= d)
+        {
+            out_position = ray.origin() + d * ray.direction();
+            out_direction = ray.direction();
+            break;
+        }
+
+        start_pos = ray.origin() + t * ray.direction();
+        direction = sampleHenyeyGreensteinPhase(g, ray.direction(), seed);
+    }
+
+    //Calculate histogram values
+    float cos_beta_o = -Math::dot(normal, inc_dir); // in [0,1] because beta_o in [0,pi/2]
+
+    //Calculate reference coordinate system
+    Vector3float lZ = inc_dir;
+    float t = Math::dot(lZ, sphere.position()) - Math::dot(lZ, inc_pos);
+    Vector3float lX = Math::normalize(inc_pos + t * lZ);
+    Vector3float lY = Math::cross(lZ, lX);
+
+    Matrix3x3float local2global(lX, lY, lZ);
+    Matrix3x3float global2local = Math::transpose(local2global);
+
+    Vector3float out_pos_local = global2local * out_position;
+    Vector3float out_dir_local = global2local * out_direction;
+
+    float cos_beta_i = out_dir_local.z;                         // in [-1, 1] because beta_i in [0, pi]
+    float gamma_i = atan2f(out_dir_local.y, out_dir_local.x);   // in [-pi, pi]
+
+    float cos_theta_i = out_pos_local.z;                        // in [-1, 1] because theta_i in [0, pi]
+    float phi_i = atan2f(out_pos_local.y, out_pos_local.x);     // in [-pi, pi]
+
+    // Calculate bins
+    float pif = static_cast<float>(M_PI);
+    int32_t bin_beta_o = static_cast<int32_t>(Math::clamp(cos_beta_o, 0.0f, 0.9999f) * BINS_BETA_O);
+    int32_t bin_beta_i = static_cast<int32_t>(Math::clamp((cos_beta_i + 1.0f) / 2.0f, 0.0f, 0.9999f) * BINS_BETA_I);
+    int32_t bin_gamma_i = static_cast<int32_t>(Math::clamp((gamma_i + pif) / (2.0f * pif), 0.0f, 0.9999f) * BINS_GAMMA_I);
+    int32_t bin_theta_i = static_cast<int32_t>(Math::clamp((cos_theta_i + 1.0f) / 2.0f, 0.0f, 0.9999f) * BINS_THETA_I);
+    int32_t bin_phi_i = static_cast<int32_t>(Math::clamp((phi_i + pif) / (2.0f * pif), 0.0f, 0.9999f) * BINS_PHI_I);
+
+    int32_t index_position = bin_beta_o + BINS_BETA_O * bin_theta_i + BINS_BETA_O * BINS_THETA_I * bin_phi_i;
+    int32_t index_direction = bin_beta_o + BINS_BETA_O * bin_beta_i + BINS_BETA_O * BINS_BETA_I * bin_gamma_i;
+
+    ++histogram_x[index_position];
+    ++histogram_w[index_direction];
+}
+
+void generateGSDF()
+{
+    const uint32_t N = 1 << 22;
+    printf("Generating %i samples...\n", N);
+
+    float* histogram_x = Memory::createDeviceArray<float>(BINS_BETA_O * BINS_PHI_I * BINS_THETA_I);
+    float* histogram_w = Memory::createDeviceArray<float>(BINS_BETA_O * BINS_BETA_I * BINS_GAMMA_I);
+
+    Sphere sphere(Vector3float(0), 1);
+
+    KernelSizeHelper::KernelSize config = KernelSizeHelper::configure(N);
+    gsdf_kernel << <config.blocks, config.threads >> > (sphere, N, histogram_x, histogram_w);
+    ::cudaSafeCall(cudaDeviceSynchronize());
+
+    float* pdf_x = Memory::createHostArray<float>(BINS_BETA_O * BINS_PHI_I * BINS_THETA_I);
+    float* pdf_w = Memory::createHostArray<float>(BINS_BETA_O * BINS_BETA_I * BINS_GAMMA_I);
+    Memory::copyDevice2HostArray<float>(BINS_BETA_O * BINS_PHI_I * BINS_THETA_I, histogram_x, pdf_x);
+    Memory::copyDevice2HostArray<float>(BINS_BETA_O * BINS_BETA_I * BINS_GAMMA_I, histogram_w, pdf_w);
+
+    printf("Normalize position...\n");
+
+    for(uint32_t bin_beta_o = 0; bin_beta_o < BINS_BETA_O; ++bin_beta_o)
+    {
+        float normalization = 0.0f;
+        for(uint32_t bin_theta_i = 0; bin_theta_i < BINS_THETA_I; ++bin_theta_i)
+        {
+            for(uint32_t bin_phi_i = 0; bin_phi_i < BINS_PHI_I; ++bin_phi_i)
+            {
+                normalization += pdf_x[bin_beta_o + BINS_BETA_O * bin_theta_i + BINS_BETA_O * BINS_THETA_I * bin_phi_i];
+            }
+        }
+
+        for(uint32_t bin_theta_i = 0; bin_theta_i < BINS_THETA_I; ++bin_theta_i)
+        {
+            for(uint32_t bin_phi_i = 0; bin_phi_i < BINS_PHI_I; ++bin_phi_i)
+            {
+                pdf_x[bin_beta_o + BINS_BETA_O * bin_theta_i + BINS_BETA_O * BINS_THETA_I * bin_phi_i] /= normalization;
+            }
+        }
+    }
+
+    printf("Normalize direction...\n");
+
+    for(uint32_t bin_beta_o = 0; bin_beta_o < BINS_BETA_O; ++bin_beta_o)
+    {
+        float normalization = 0.0f;
+        for(uint32_t bin_beta_i = 0; bin_beta_i < BINS_BETA_I; ++bin_beta_i)
+        {
+            for(uint32_t bin_gamma_i = 0; bin_gamma_i < BINS_GAMMA_I; ++bin_gamma_i)
+            {
+                normalization += pdf_w[bin_beta_o + BINS_BETA_O * bin_beta_i + BINS_BETA_O * BINS_BETA_I * bin_gamma_i];
+            }
+        }
+
+        for(uint32_t bin_beta_i = 0; bin_beta_i < BINS_BETA_I; ++bin_beta_i)
+        {
+            for(uint32_t bin_gamma_i = 0; bin_gamma_i < BINS_GAMMA_I; ++bin_gamma_i)
+            {
+                pdf_w[bin_beta_o + BINS_BETA_O * bin_beta_i + BINS_BETA_O * BINS_BETA_I * bin_gamma_i] /= normalization;
+            }
+        }
+    }
+
+    printf("Writing to file...\n");
+    std::ofstream pdf_x_file("pdf_x.gsdf", std::ios::out | std::ios::binary);
+    pdf_x_file.write((char*)pdf_x, sizeof(float) * BINS_BETA_O * BINS_PHI_I * BINS_THETA_I);
+    pdf_x_file.close();
+
+    std::ofstream pdf_w_file("pdf_w.gsdf", std::ios::out | std::ios::binary);
+    pdf_w_file.write((char*)pdf_w, sizeof(float) * BINS_BETA_O * BINS_GAMMA_I * BINS_BETA_I);
+    pdf_w_file.close();
+
+    printf("Done!\n");
+
+    Memory::destroyHostArray<float>(pdf_x);
+    Memory::destroyHostArray<float>(pdf_w);
+    Memory::destroyDeviceArray<float>(histogram_w);
+    Memory::destroyDeviceArray<float>(histogram_x);
+}
+
 int run()
 {
     cudaSafeCall(cudaSetDevice(0));
 
-    generateDataSet();
+    //generateDataSet();
+
+    generateGSDF();
 
     return 0;
 }
