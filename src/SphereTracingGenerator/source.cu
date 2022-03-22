@@ -363,7 +363,7 @@ __device__ Vector3float sampleHenyeyGreensteinPhase(const float& g, const Vector
     return result;
 }
 
-__device__ Vector3float sampleHemisphereUniform(uint32_t& seed, const Vector3float& N)
+__host__ __device__ Vector3float sampleHemisphereUniform(uint32_t& seed, const Vector3float& N)
 {
     float z = Math::rnd(seed) * 2.0f - 1.0f;
     float phi = Math::rnd(seed) * 2.0f * M_PI;
@@ -377,7 +377,7 @@ __device__ Vector3float sampleHemisphereUniform(uint32_t& seed, const Vector3flo
     return Math::dot(result, N) < 0 ? -1.0f * result : result;
 }
 
-__device__ Vector3float sampleSphereUniform(uint32_t& seed)
+__host__ __device__ Vector3float sampleSphereUniform(uint32_t& seed)
 {
     Vector3float result = sampleHemisphereUniform(seed, Vector3float(1, 0, 0));
     return Math::rnd(seed) < 0.5 ? result : -1.0f * result;
@@ -919,16 +919,318 @@ void generateTestHistograms()
     Memory::destroyDeviceArray<float>(histogram_w);
 }
 
+struct FeatureVector
+{
+    float g;
+    float effective_albedo;
+    float coefficients[20];
+    Vector3float out_pos;
+};
+
+inline __host__ __device__ float MAD(const float& albedo_p, const float& albedo_eff, const float& g)
+{
+    return 0.25f * g + 0.25f * albedo_p + albedo_eff;
+}
+
+__global__ void mc_kernel(const uint32_t N, const MediumSettings med, PathSummary* out_points)
+{
+    const uint32_t tid = ThreadHelper::globalThreadIndex();
+    
+    if(tid >= N)
+    {
+        return;
+    }
+
+    uint32_t seed = Math::tea<4>(tid, 0);
+
+    Vector3float start_pos = sampleSphereUniform(seed);
+    Vector3float inc_pos = start_pos;
+    Vector3float direction = -1.0f * sampleHemisphereUniform(seed, start_pos); // Points towards surface
+    Vector3float inc_dir = direction;
+    Ray ray(start_pos + 0.001f * direction, direction);
+
+    //Volume
+    //float effective_albedo = Math::rnd(seed);
+    float single_scatter_albedo = med.phi;   //no absorption for now (1.0f - expf(-8.0f * effective_albedo)) / (1.0f - expf(-8.0f));
+    float g = med.g;                            //Fixed g for now Math::rnd(seed);
+    float sigma_t = med.sigma;
+
+    Vector3float out_position;
+
+    while(true)
+    {
+        ray.traceNew(start_pos + 0.001f * direction, direction);
+
+        float d = distanceToBoundary(ray.origin(), ray.direction());
+
+        if (d == INFINITY)
+        {
+            out_position = ray.origin();
+            break;
+        }
+
+        float t = -logf(1.0f - Math::rnd(seed)) / sigma_t;
+
+        if (t >= d)
+        {
+            out_position = ray.origin() + d * ray.direction();
+            break;
+        }
+
+        start_pos = ray.origin() + t * ray.direction();
+        direction = sampleHenyeyGreensteinPhase(g, ray.direction(), seed);
+    }
+
+    out_points[tid].out_pos = out_position;
+    out_points[tid].inc_pos = inc_pos;
+    out_points[tid].inc_dir = inc_dir;
+}
+
+__device__ void addSample(float A[20][20], float n[20], Vector3float& bi, Vector3float& normal, const float& weight)
+{
+    float x = bi.x;
+    float y = bi.y;
+    float z = bi.z;
+
+    float Pi[20] = {1.0, x, y, z, x*x, x*y, x*z, y*y, y*z, z*z, x*x*x, x*x*y, x*x*z, x*y*y, x*y*z, x*z*z, y*y*y, y*y*z, y*z*z, z*z*z};
+    float grad_Pi[20][20] =
+    {
+        {0, 1, 0, 0, 2 * x, y, z, 0, 0, 0, 3 * x * x, 2 * x * y, 2 * x * z, y * y, y * z, z * z, 0, 0, 0, 0},
+        {0, 0, 1, 0, 0, x, 0, 2 * y, z, 0, 0, x * x, 0, x * 2 * y, x * z, 0, 3 * y * y, 2 * y * z, z * z, 0},
+        {0, 0, 0, 1, 0, 0, x, 0, y, 2 * z, 0, 0, x * x, 0, x * y, x * 2 * z, 0, y * y, y * 2 * z, 3 * z * z}
+    };
+    
+    for(uint32_t i = 0; i < 20; ++i)
+    {
+        for(uint32_t j = 0; j < 20; ++j)
+        {
+            A[i][j] += weight * Pi[i] * Pi[j];
+        }
+    }
+
+    for(uint32_t k = 0; k < 3; ++k)
+    {
+        for(uint32_t i = 0; i < 20; ++i)
+        {
+            n[i] += weight * grad_Pi[k][i] * normal[k];
+            for(uint32_t j = 0; j < 20; ++j)
+            {
+                A[i][j] += weight * grad_Pi[k][i] * grad_Pi[k][j];
+            }
+        }
+    }
+
+}
+
+__device__ void solve(float A[20][20], float n[20], float x[20])
+{
+    for(uint32_t i = 0; i < 20; ++i)
+    {
+        //Search max element
+        float maxEl = fabsf(A[i][i]);
+        uint32_t maxRow = i;
+        for(uint32_t k = i+1;k < 20; ++k)
+        {
+            if(fabsf(A[k][i]) > maxEl)
+            {
+                maxEl = fabsf(A[k][i]);
+                maxRow = k;
+            }
+        }
+            
+        /*if(Math::safeFloatEqual(maxEl, 0))
+        {
+            *solved = false;
+            return;
+        }*/
+            
+        //Swap row
+        for(uint32_t k = i; k < 20; ++k)
+        {
+            float tmp = A[maxRow][k];
+            A[maxRow][k] = A[i][k];
+            A[i][k] = tmp;
+        }
+        
+        //Swap in solution vector
+        float tmp = n[maxRow];
+        n[maxRow] = n[i];
+        n[i] = tmp;
+            
+        //Make zeros
+        for(uint32_t k = i+1; k < 20; ++k)
+        {
+            float c = -A[k][i]/A[i][i];
+            for(uint32_t j = i; j < 20; ++j)
+            {
+                A[k][j] = i == j ? 0.0f : A[k][j] + c * A[i][j];
+            }
+            
+            n[k] += c * n[i];
+        }
+    }
+        
+    //Backsubstitution
+    for(int i = 20-1; i >= 0; --i)
+    {
+        x[i] = n[i]/A[i][i];
+        for(int k = i-1; k>=0; --k)
+        {
+            n[k] -= A[k][i]*x[i];
+        }
+    }
+}
+
+__global__ void feature_kernel(const uint32_t N, 
+                               const uint32_t m, 
+                               const float sigma_n,
+                               const Vector3float* samples, 
+                               const PathSummary* summary, 
+                               FeatureVector* features)
+{
+    const uint32_t tid = ThreadHelper::globalThreadIndex();
+
+    if(tid >= N)
+    {
+        return;
+    }
+
+
+    float mu = 0.0001f;
+
+    float A[20][20] = { 0, };
+    float n[20] = { 0, };
+
+    float cosa = -summary[tid].inc_dir.z;
+    float sina = sqrtf(fmaxf(0.0f, 1.0f - cosa * cosa));
+    float mcosa = 1.0f - cosa;
+
+    Vector3float n_ = Math::normalize(Vector3float(-summary[tid].inc_dir.y, summary[tid].inc_dir.x, 0.0f));
+
+    Vector3float col1 = Vector3float(
+        n_.x*n_.x*mcosa + cosa,
+        n_.y*n_.x*mcosa + n_.z*sina,
+        n_.z*n_.x*mcosa - n_.y*sina
+    );
+
+    Vector3float col2 = Vector3float(
+        n_.x*n_.y*mcosa - n_.z*sina,
+        n_.y*n_.y*mcosa + cosa,
+        n_.z*n_.y*mcosa + n_.x*sina
+    );
+
+    Vector3float col3 = Vector3float(
+        n_.x*n_.z*mcosa + n_.y*sina,
+        n_.y*n_.z*mcosa - n_.x*sina,
+        n_.z*n_.z*mcosa + cosa
+    );
+
+    //TODO Soon™
+    Matrix3x3float R(col1, col2, col3);
+    if(Math::safeFloatEqual(summary[tid].inc_dir.z, 1.0f, 1e-8))
+    {
+        printf("Identity\n");
+        R = Matrix3x3float(Vector3float(1, 0, 0), Vector3float(0, 1, 0), Vector3float(0, 0, 1));
+    }
+
+    printf("%f %f %f\n", summary[tid].inc_pos.x, summary[tid].inc_pos.y, summary[tid].inc_pos.z);
+    printf("%f %f %f\n%f %f %f\n%f %f %f\n", R(0, 0), R(0, 1), R(0, 2), R(1, 0), R(1, 1), R(1, 2), R(2, 0), R(2, 1), R(2, 2));
+
+    features[tid].out_pos = R*(summary[tid].out_pos - summary[tid].inc_pos)/sigma_n;
+    features[tid].g = 0.6f;
+    features[tid].effective_albedo = 1.0f;
+
+    printf("%f\n", sigma_n);
+
+    for(uint32_t i = 0; i < m; ++i)
+    {
+        Vector3float bi = R * (samples[i] - summary[tid].inc_pos)/sigma_n;
+        Vector3float normal = R * samples[i];
+        float weight = expf(-Math::dot(bi, bi) / 2.0f);
+
+        addSample(A, n, bi, normal, weight);
+    }
+
+
+    //Regularization
+    for(uint32_t i = 0; i < 20; ++i)
+    {
+        A[i][i] += sqrtf(mu);
+    }
+
+    solve(A, n, features[tid].coefficients);
+}
+
+void generatePolyDataset()
+{
+    const uint32_t N = 1;// << 24;
+
+    printf("Generating %u samples...\n", N);
+
+    MediumSettings med;
+    med.g = 0.6f;
+    med.phi = 1.0f;
+    med.sigma = 3.0f;
+
+    float sigma_t_reduced = (1.0f - med.g) * med.sigma;
+
+    float sigma_n = 2.0f * MAD(med.phi, med.phi, med.g)/sigma_t_reduced;
+    uint32_t m = std::max(1024u, static_cast<uint32_t>(2.0f * static_cast<float>(M_PI) / (sigma_n * sigma_n)));
+
+    Vector3float* h_sample_points = Memory::createHostArray<Vector3float>(m);
+    Vector3float* d_sample_points = Memory::createDeviceArray<Vector3float>(m);
+    PathSummary* d_summary = Memory::createDeviceArray<PathSummary>(N);
+    FeatureVector* d_features = Memory::createDeviceArray<FeatureVector>(N);
+    FeatureVector* h_features = Memory::createHostArray<FeatureVector>(N);
+
+    uint32_t seed = Math::tea<4>(434234, 48558641523);
+    for(uint32_t i = 0; i < m; ++i)
+    {
+        h_sample_points[i] = sampleSphereUniform(seed);
+    }
+
+    Memory::copyHost2DeviceArray<Vector3float>(m, h_sample_points, d_sample_points);
+    Memory::destroyHostArray<Vector3float>(h_sample_points);
+
+    printf("Compute feature vectors...\n");
+    KernelSizeHelper::KernelSize config = KernelSizeHelper::configure(N);
+    mc_kernel << <config.blocks, config.threads >> > (N, med, d_summary);
+    cudaSafeCall(cudaDeviceSynchronize());
+
+    feature_kernel << <config.blocks, config.threads >> > (N,
+                                                           m,
+                                                           sigma_n,
+                                                           d_sample_points,
+                                                           d_summary,
+                                                           d_features);
+    cudaSafeCall(cudaDeviceSynchronize());
+
+    Memory::copyDevice2HostArray<FeatureVector>(N, d_features, h_features);
+    Memory::destroyDeviceArray<FeatureVector>(d_features);
+
+    printf("Writing to file...\n");
+
+    std::ofstream descriptor_file("Descriptors.ds", std::ios::out | std::ios::binary);
+    descriptor_file.write((char*)h_features, sizeof(FeatureVector) * N);
+    descriptor_file.close();
+
+    Memory::destroyHostArray<FeatureVector>(h_features);
+    Memory::destroyDeviceArray<Vector3float>(d_sample_points);
+    Memory::destroyDeviceArray<PathSummary>(d_summary);
+}
+
 
 int run()
 {
     cudaSafeCall(cudaSetDevice(0));
 
-    generateDataSet();
+    //generateDataSet();
 
     //generateGSDF();
 
     //generateTestHistograms();
+
+    generatePolyDataset();
 
     return 0;
 }
