@@ -1133,14 +1133,9 @@ __global__ void feature_kernel(const uint32_t N,
         R = Matrix3x3float(Vector3float(1, 0, 0), Vector3float(0, 1, 0), Vector3float(0, 0, 1));
     }
 
-    printf("%f %f %f\n", summary[tid].inc_pos.x, summary[tid].inc_pos.y, summary[tid].inc_pos.z);
-    printf("%f %f %f\n%f %f %f\n%f %f %f\n", R(0, 0), R(0, 1), R(0, 2), R(1, 0), R(1, 1), R(1, 2), R(2, 0), R(2, 1), R(2, 2));
-
     features[tid].out_pos = R*(summary[tid].out_pos - summary[tid].inc_pos)/sigma_n;
     features[tid].g = 0.6f;
     features[tid].effective_albedo = 1.0f;
-
-    printf("%f\n", sigma_n);
 
     for(uint32_t i = 0; i < m; ++i)
     {
@@ -1159,11 +1154,12 @@ __global__ void feature_kernel(const uint32_t N,
     }
 
     solve(A, n, features[tid].coefficients);
+
 }
 
 void generatePolyDataset()
 {
-    const uint32_t N = 1;// << 24;
+    const uint32_t N = 1 << 24;
 
     printf("Generating %u samples...\n", N);
 
