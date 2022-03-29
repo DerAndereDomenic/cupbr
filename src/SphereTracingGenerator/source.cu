@@ -943,6 +943,7 @@ __global__ void mc_kernel(const uint32_t N, const MediumSettings med, PathSummar
 
     uint32_t seed = Math::tea<4>(tid, 0);
 
+simulation_start:
     Vector3float start_pos = sampleSphereUniform(seed);
     Vector3float inc_pos = start_pos;
     Vector3float direction = -1.0f * sampleHemisphereUniform(seed, start_pos); // Points towards surface
@@ -956,6 +957,8 @@ __global__ void mc_kernel(const uint32_t N, const MediumSettings med, PathSummar
     float sigma_t = med.sigma;
 
     Vector3float out_position;
+
+    float num_scatters = 0;
 
     while(true)
     {
@@ -973,9 +976,13 @@ __global__ void mc_kernel(const uint32_t N, const MediumSettings med, PathSummar
 
         if (t >= d)
         {
+            if (num_scatters == 0)
+                goto simulation_start;
             out_position = ray.origin() + d * ray.direction();
             break;
         }
+
+        ++num_scatters;
 
         start_pos = ray.origin() + t * ray.direction();
         direction = sampleHenyeyGreensteinPhase(g, ray.direction(), seed);
@@ -1192,7 +1199,6 @@ void generatePolyDataset()
     KernelSizeHelper::KernelSize config = KernelSizeHelper::configure(N);
     mc_kernel << <config.blocks, config.threads >> > (N, med, d_summary);
     cudaSafeCall(cudaDeviceSynchronize());
-
     feature_kernel << <config.blocks, config.threads >> > (N,
                                                            m,
                                                            sigma_n,
