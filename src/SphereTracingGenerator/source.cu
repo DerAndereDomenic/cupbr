@@ -1029,9 +1029,41 @@ __device__ void addSample(float A[20][20], float n[20], Vector3float& bi, Vector
 
 }
 
-__device__ void solve(float A[20][20], float n[20], float x[20])
+template<uint32_t size>
+__device__ void solve(float A[size][size], float n[size], float x[size])
 {
-    for(uint32_t i = 0; i < 20; ++i)
+    for(uint32_t i = 0; i < size; ++i)
+    {
+        float pivot = sqrtf(A[i][i]);
+        for(uint32_t j = i; j < size; ++j)
+        {
+            A[i][j] = A[i][j] / pivot;
+        }
+
+        n[i] = n[i] / pivot;
+
+        for(uint32_t j = i+1;j < size; ++j)
+        {
+            float scale = A[j][i] / A[i][i];
+            for(uint32_t k = i; k < size; ++k)
+            {
+                A[j][k] = A[j][k] - scale * A[i][k];
+            }
+
+            n[j] = n[j] - scale * n[i];
+        }
+    }
+
+    for(int32_t i = size - 1; i >= 0; --i)
+    {
+        x[i] = n[i]/A[i][i];
+        for(uint32_t j = 0; j < i; ++j)
+        {
+            n[j] = n[j] - A[j][i] * x[i];
+        }
+    }
+
+    /*for(uint32_t i = 0; i < 20; ++i)
     {
         //Search max element
         float maxEl = fabsf(A[i][i]);
@@ -1049,7 +1081,7 @@ __device__ void solve(float A[20][20], float n[20], float x[20])
         {
             *solved = false;
             return;
-        }*/
+        }
             
         //Swap row
         for(uint32_t k = i; k < 20; ++k)
@@ -1085,7 +1117,7 @@ __device__ void solve(float A[20][20], float n[20], float x[20])
         {
             n[k] -= A[k][i]*x[i];
         }
-    }
+    }*/
 }
 
 __global__ void feature_kernel(const uint32_t N, 
