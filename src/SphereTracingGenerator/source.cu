@@ -4,6 +4,8 @@
 #include <CUPBR.h>
 #include <CUNET.h>
 
+#include <chrono>
+
 #include <Models/LenGen.h>
 
 using namespace cupbr;
@@ -316,6 +318,7 @@ struct PathSummary
     Vector3float out_pos;
     Vector3float out_dir;
     uint32_t num_scattering;
+    MediumSettings med;
 };
 
 struct DataPoint
@@ -923,7 +926,7 @@ struct FeatureVector
 {
     float g;
     float effective_albedo;
-    float coefficients[20];
+    float coefficients[20] = { 0, };
     Vector3float out_pos;
 };
 
@@ -932,7 +935,7 @@ inline __host__ __device__ float MAD(const float& albedo_p, const float& albedo_
     return 0.25f * g + 0.25f * albedo_p + albedo_eff;
 }
 
-__global__ void mc_kernel(const uint32_t N, const MediumSettings med, PathSummary* out_points)
+__global__ void mc_kernel(const uint32_t N, PathSummary* out_points)
 {
     const uint32_t tid = ThreadHelper::globalThreadIndex();
     
@@ -943,18 +946,24 @@ __global__ void mc_kernel(const uint32_t N, const MediumSettings med, PathSummar
 
     uint32_t seed = Math::tea<4>(tid, 0);
 
+    //Volume
+    //float effective_albedo = Math::rnd(seed);
+    MediumSettings med;
+    med.phi = 1.0f;
+    med.g = Math::rnd(seed) * 0.95f;
+    float densityRnd = Math::rnd(seed);
+    med.sigma = fmaxf(0.1f, densityRnd * densityRnd * densityRnd * 50.0f);
+
+    float single_scatter_albedo = med.phi;   //no absorption for now (1.0f - expf(-8.0f * effective_albedo)) / (1.0f - expf(-8.0f));
+    float g = med.g;                            //Fixed g for now Math::rnd(seed);
+    float sigma_t = med.sigma;
+
 simulation_start:
     Vector3float start_pos = sampleSphereUniform(seed);
     Vector3float inc_pos = start_pos;
     Vector3float direction = -1.0f * sampleHemisphereUniform(seed, start_pos); // Points towards surface
     Vector3float inc_dir = direction;
     Ray ray(start_pos + 0.001f * direction, direction);
-
-    //Volume
-    //float effective_albedo = Math::rnd(seed);
-    float single_scatter_albedo = med.phi;   //no absorption for now (1.0f - expf(-8.0f * effective_albedo)) / (1.0f - expf(-8.0f));
-    float g = med.g;                            //Fixed g for now Math::rnd(seed);
-    float sigma_t = med.sigma;
 
     Vector3float out_position;
 
@@ -991,15 +1000,16 @@ simulation_start:
     out_points[tid].out_pos = out_position;
     out_points[tid].inc_pos = inc_pos;
     out_points[tid].inc_dir = inc_dir;
+    out_points[tid].med = med;
 }
 
-__device__ void addSample(float A[20][20], float n[20], Vector3float& bi, Vector3float& normal, const float& weight)
+inline __host__ __device__ void addSample(float A[20][20], float n[20], Vector3float& bi, Vector3float& normal, const float& weight)
 {
     float x = bi.x;
     float y = bi.y;
     float z = bi.z;
 
-    float Pi[20] = {1.0, x, y, z, x*x, x*y, x*z, y*y, y*z, z*z, x*x*x, x*x*y, x*x*z, x*y*y, x*y*z, x*z*z, y*y*y, y*y*z, y*z*z, z*z*z};
+    float Pi[20] = {0.0, x, y, z, x*x, x*y, x*z, y*y, y*z, z*z, x*x*x, x*x*y, x*x*z, x*y*y, x*y*z, x*z*z, y*y*y, y*y*z, y*z*z, z*z*z};
     float grad_Pi[20][20] =
     {
         {0, 1, 0, 0, 2 * x, y, z, 0, 0, 0, 3 * x * x, 2 * x * y, 2 * x * z, y * y, y * z, z * z, 0, 0, 0, 0},
@@ -1030,7 +1040,7 @@ __device__ void addSample(float A[20][20], float n[20], Vector3float& bi, Vector
 }
 
 template<uint32_t size>
-__device__ void solve(float A[size][size], float n[size], float x[size])
+__host__ __device__ void solve(float A[size][size], float n[size], float x[size])
 {
     for(uint32_t i = 0; i < size; ++i)
     {
@@ -1120,9 +1130,43 @@ __device__ void solve(float A[size][size], float n[size], float x[size])
     }*/
 }
 
+inline __device__
+void rotate(Matrix3x3float& R, const float* c, float* res)
+{
+    const float r11 = R(0, 0);
+    const float r21 = R(1, 0);
+    const float r31 = R(2, 0);
+
+    const float r12 = R(0, 1);
+    const float r22 = R(1, 1);
+    const float r32 = R(2, 1);
+
+    const float r13 = R(0, 2);
+    const float r23 = R(1, 2);
+    const float r33 = R(2, 2);
+
+    res[10] = c[10]*r11*r11*r11 + c[11]*r11*r11*r21 + c[12]*r11*r11*r31 + c[13]*r11*r21*r21 + c[14]*r11*r21*r31 + c[15]*r11*r31*r31 + c[16]*r21*r21*r21 + c[17]*r21*r21*r31 + c[18]*r21*r31*r31 + c[19]*r31*r31*r31;
+    res[11] = 3*c[10]*r11*r11*r12 + c[11]*r11*r11*r22 + 2*c[11]*r11*r12*r21 + c[12]*r11*r11*r32 + 2*c[12]*r11*r12*r31 + 2*c[13]*r11*r21*r22 + c[13]*r12*r21*r21 + c[14]*r11*r21*r32 + c[14]*r11*r22*r31 + c[14]*r12*r21*r31 + 2*c[15]*r11*r31*r32 + c[15]*r12*r31*r31 + 3*c[16]*r21*r21*r22 + c[17]*r21*r21*r32 + 2*c[17]*r21*r22*r31 + 2*c[18]*r21*r31*r32 + c[18]*r22*r31*r31 + 3*c[19]*r31*r31*r32;
+    res[12] = 3*c[10]*r11*r11*r13 + c[11]*r11*r11*r23 + 2*c[11]*r11*r13*r21 + c[12]*r11*r11*r33 + 2*c[12]*r11*r13*r31 + 2*c[13]*r11*r21*r23 + c[13]*r13*r21*r21 + c[14]*r11*r21*r33 + c[14]*r11*r23*r31 + c[14]*r13*r21*r31 + 2*c[15]*r11*r31*r33 + c[15]*r13*r31*r31 + 3*c[16]*r21*r21*r23 + c[17]*r21*r21*r33 + 2*c[17]*r21*r23*r31 + 2*c[18]*r21*r31*r33 + c[18]*r23*r31*r31 + 3*c[19]*r31*r31*r33;
+    res[13] = 3*c[10]*r11*r12*r12 + 2*c[11]*r11*r12*r22 + c[11]*r12*r12*r21 + 2*c[12]*r11*r12*r32 + c[12]*r12*r12*r31 + c[13]*r11*r22*r22 + 2*c[13]*r12*r21*r22 + c[14]*r11*r22*r32 + c[14]*r12*r21*r32 + c[14]*r12*r22*r31 + c[15]*r11*r32*r32 + 2*c[15]*r12*r31*r32 + 3*c[16]*r21*r22*r22 + 2*c[17]*r21*r22*r32 + c[17]*r22*r22*r31 + c[18]*r21*r32*r32 + 2*c[18]*r22*r31*r32 + 3*c[19]*r31*r32*r32;
+    res[14] = 6*c[10]*r11*r12*r13 + 2*c[11]*r11*r12*r23 + 2*c[11]*r11*r13*r22 + 2*c[11]*r12*r13*r21 + 2*c[12]*r11*r12*r33 + 2*c[12]*r11*r13*r32 + 2*c[12]*r12*r13*r31 + 2*c[13]*r11*r22*r23 + 2*c[13]*r12*r21*r23 + 2*c[13]*r13*r21*r22 + c[14]*r11*r22*r33 + c[14]*r11*r23*r32 + c[14]*r12*r21*r33 + c[14]*r12*r23*r31 + c[14]*r13*r21*r32 + c[14]*r13*r22*r31 + 2*c[15]*r11*r32*r33 + 2*c[15]*r12*r31*r33 + 2*c[15]*r13*r31*r32 + 6*c[16]*r21*r22*r23 + 2*c[17]*r21*r22*r33 + 2*c[17]*r21*r23*r32 + 2*c[17]*r22*r23*r31 + 2*c[18]*r21*r32*r33 + 2*c[18]*r22*r31*r33 + 2*c[18]*r23*r31*r32 + 6*c[19]*r31*r32*r33;
+    res[15] = 3*c[10]*r11*r13*r13 + 2*c[11]*r11*r13*r23 + c[11]*r13*r13*r21 + 2*c[12]*r11*r13*r33 + c[12]*r13*r13*r31 + c[13]*r11*r23*r23 + 2*c[13]*r13*r21*r23 + c[14]*r11*r23*r33 + c[14]*r13*r21*r33 + c[14]*r13*r23*r31 + c[15]*r11*r33*r33 + 2*c[15]*r13*r31*r33 + 3*c[16]*r21*r23*r23 + 2*c[17]*r21*r23*r33 + c[17]*r23*r23*r31 + c[18]*r21*r33*r33 + 2*c[18]*r23*r31*r33 + 3*c[19]*r31*r33*r33;
+    res[16] = c[10]*r12*r12*r12 + c[11]*r12*r12*r22 + c[12]*r12*r12*r32 + c[13]*r12*r22*r22 + c[14]*r12*r22*r32 + c[15]*r12*r32*r32 + c[16]*r22*r22*r22 + c[17]*r22*r22*r32 + c[18]*r22*r32*r32 + c[19]*r32*r32*r32;
+    res[17] = 3*c[10]*r12*r12*r13 + c[11]*r12*r12*r23 + 2*c[11]*r12*r13*r22 + c[12]*r12*r12*r33 + 2*c[12]*r12*r13*r32 + 2*c[13]*r12*r22*r23 + c[13]*r13*r22*r22 + c[14]*r12*r22*r33 + c[14]*r12*r23*r32 + c[14]*r13*r22*r32 + 2*c[15]*r12*r32*r33 + c[15]*r13*r32*r32 + 3*c[16]*r22*r22*r23 + c[17]*r22*r22*r33 + 2*c[17]*r22*r23*r32 + 2*c[18]*r22*r32*r33 + c[18]*r23*r32*r32 + 3*c[19]*r32*r32*r33;
+    res[18] = 3*c[10]*r12*r13*r13 + 2*c[11]*r12*r13*r23 + c[11]*r13*r13*r22 + 2*c[12]*r12*r13*r33 + c[12]*r13*r13*r32 + c[13]*r12*r23*r23 + 2*c[13]*r13*r22*r23 + c[14]*r12*r23*r33 + c[14]*r13*r22*r33 + c[14]*r13*r23*r32 + c[15]*r12*r33*r33 + 2*c[15]*r13*r32*r33 + 3*c[16]*r22*r23*r23 + 2*c[17]*r22*r23*r33 + c[17]*r23*r23*r32 + c[18]*r22*r33*r33 + 2*c[18]*r23*r32*r33 + 3*c[19]*r32*r33*r33;
+    res[19] = c[10]*r13*r13*r13 + c[11]*r13*r13*r23 + c[12]*r13*r13*r33 + c[13]*r13*r23*r23 + c[14]*r13*r23*r33 + c[15]*r13*r33*r33 + c[16]*r23*r23*r23 + c[17]*r23*r23*r33 + c[18]*r23*r33*r33 + c[19]*r33*r33*r33;
+    res[4] = c[4]*r11*r11 + c[5]*r11*r21 + c[6]*r11*r31 + c[7]*r21*r21 + c[8]*r21*r31 + c[9]*r31*r31;
+    res[5] = 2*c[4]*r11*r12 + c[5]*r11*r22 + c[5]*r12*r21 + c[6]*r11*r32 + c[6]*r12*r31 + 2*c[7]*r21*r22 + c[8]*r21*r32 + c[8]*r22*r31 + 2*c[9]*r31*r32;
+    res[6] = 2*c[4]*r11*r13 + c[5]*r11*r23 + c[5]*r13*r21 + c[6]*r11*r33 + c[6]*r13*r31 + 2*c[7]*r21*r23 + c[8]*r21*r33 + c[8]*r23*r31 + 2*c[9]*r31*r33;
+    res[7] = c[4]*r12*r12 + c[5]*r12*r22 + c[6]*r12*r32 + c[7]*r22*r22 + c[8]*r22*r32 + c[9]*r32*r32;
+    res[8] = 2*c[4]*r12*r13 + c[5]*r12*r23 + c[5]*r13*r22 + c[6]*r12*r33 + c[6]*r13*r32 + 2*c[7]*r22*r23 + c[8]*r22*r33 + c[8]*r23*r32 + 2*c[9]*r32*r33;
+    res[9] = c[4]*r13*r13 + c[5]*r13*r23 + c[6]*r13*r33 + c[7]*r23*r23 + c[8]*r23*r33 + c[9]*r33*r33;
+    res[1] = c[1]*r11 + c[2]*r21 + c[3]*r31;
+    res[2] = c[1]*r12 + c[2]*r22 + c[3]*r32;
+    res[3] = c[1]*r13 + c[2]*r23 + c[3]*r33;
+}
+
 __global__ void feature_kernel(const uint32_t N, 
-                               const uint32_t m, 
-                               const float sigma_n,
                                const Vector3float* samples, 
                                const PathSummary* summary, 
                                FeatureVector* features)
@@ -1143,6 +1187,8 @@ __global__ void feature_kernel(const uint32_t N,
     float cosa = -summary[tid].inc_dir.z;
     float sina = sqrtf(fmaxf(0.0f, 1.0f - cosa * cosa));
     float mcosa = 1.0f - cosa;
+
+    MediumSettings med = summary[tid].med;
 
     Vector3float n_ = Math::normalize(Vector3float(-summary[tid].inc_dir.y, summary[tid].inc_dir.x, 0.0f));
 
@@ -1172,14 +1218,21 @@ __global__ void feature_kernel(const uint32_t N,
         R = Matrix3x3float(Vector3float(1, 0, 0), Vector3float(0, 1, 0), Vector3float(0, 0, 1));
     }
 
+    float sigma_n = 2.0f * MAD(1.0f, 1.0f, med.g) / ((1.0f - med.g) * med.sigma);
+
+    if (tid == 17 || tid == 49)
+        printf("%i: %f %f %f\n", tid, med.g, med.sigma, sigma_n);
+
     features[tid].out_pos = R*(summary[tid].out_pos - summary[tid].inc_pos)/sigma_n;
-    features[tid].g = 0.6f;
+    features[tid].g = med.g;
     features[tid].effective_albedo = 1.0f;
 
+    uint32_t m = static_cast<int32_t>(2.0f * 2.0f * M_PI / (sigma_n * sigma_n));
+    m = Math::clamp(m, 1024u, 16384u);
     for(uint32_t i = 0; i < m; ++i)
     {
-        Vector3float bi = R * (samples[i] - summary[tid].inc_pos)/sigma_n;
-        Vector3float normal = R * samples[i];
+        Vector3float bi = (samples[i] - summary[tid].inc_pos)/sigma_n;
+        Vector3float normal = samples[i];
         float weight = expf(-Math::dot(bi, bi) / 2.0f);
 
         addSample(A, n, bi, normal, weight);
@@ -1192,7 +1245,9 @@ __global__ void feature_kernel(const uint32_t N,
         A[i][i] += sqrtf(mu);
     }
 
-    solve(A, n, features[tid].coefficients);
+    float coefficients_world_space[20] = { 0, };
+    solve(A, n, coefficients_world_space);
+    rotate(Math::transpose(R), coefficients_world_space, features[tid].coefficients);
 
 }
 
@@ -1202,15 +1257,7 @@ void generatePolyDataset()
 
     printf("Generating %u samples...\n", N);
 
-    MediumSettings med;
-    med.g = 0.6f;
-    med.phi = 1.0f;
-    med.sigma = 3.0f;
-
-    float sigma_t_reduced = (1.0f - med.g) * med.sigma;
-
-    float sigma_n = 2.0f * MAD(med.phi, med.phi, med.g)/sigma_t_reduced;
-    uint32_t m = std::max(1024u, static_cast<uint32_t>(2.0f * static_cast<float>(M_PI) / (sigma_n * sigma_n)));
+    uint32_t m = 16384u;// std::max(1024u, static_cast<uint32_t>(2.0f * static_cast<float>(M_PI) / (sigma_n * sigma_n)));
 
     Vector3float* h_sample_points = Memory::createHostArray<Vector3float>(m);
     Vector3float* d_sample_points = Memory::createDeviceArray<Vector3float>(m);
@@ -1224,16 +1271,40 @@ void generatePolyDataset()
         h_sample_points[i] = sampleSphereUniform(seed);
     }
 
+    /*auto begin = std::chrono::high_resolution_clock::now();
+    float A[20][20] = { 0, };
+    float n[20] = { 0, };
+
+    for(uint32_t i = 0; i < m; ++i)
+    {
+        float r = Math::norm(h_sample_points[i]);
+        addSample(A, n, h_sample_points[i], h_sample_points[i], expf(-r*r/2.0f));
+    }
+
+    for(uint32_t i = 0; i < 20; ++i)
+    {
+        A[i][i] += sqrtf(0.0001f);
+    }
+    auto end = std::chrono::high_resolution_clock::now();
+
+    std::cout << std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() << std::endl;
+
+    begin = std::chrono::high_resolution_clock::now();
+    float x[20];
+    solve<20>(A, n, x);
+    end = std::chrono::high_resolution_clock::now();
+    std::cout << std::chrono::duration_cast<std::chrono::microseconds>(end - begin).count() << std::endl;*/
+
     Memory::copyHost2DeviceArray<Vector3float>(m, h_sample_points, d_sample_points);
     Memory::destroyHostArray<Vector3float>(h_sample_points);
 
-    printf("Compute feature vectors...\n");
+    printf("Monte Carlo...\n");
     KernelSizeHelper::KernelSize config = KernelSizeHelper::configure(N);
-    mc_kernel << <config.blocks, config.threads >> > (N, med, d_summary);
+    mc_kernel << <config.blocks, config.threads >> > (N, d_summary);
     cudaSafeCall(cudaDeviceSynchronize());
+
+    printf("Feature extraction...\n");
     feature_kernel << <config.blocks, config.threads >> > (N,
-                                                           m,
-                                                           sigma_n,
                                                            d_sample_points,
                                                            d_summary,
                                                            d_features);
