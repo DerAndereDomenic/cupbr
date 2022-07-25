@@ -9,19 +9,6 @@
 namespace cupbr
 {
     /**
-    *   @brief The different rendering methods
-    */
-    enum class RenderingMethod
-    {
-        RAYTRACER,
-        WHITTED,
-        PATHTRACER,
-        METROPOLIS,
-        GRADIENTDOMAIN,
-        VOLUME
-    };
-
-    /**
     *   @brief A class to model the physically based renderer
     */
     class PBRenderer
@@ -31,7 +18,7 @@ namespace cupbr
         *   @brief Create the renderer
         *   @param[in] method The rendering method (default = RAYTRACER)
         */
-        PBRenderer(const RenderingMethod& method = RenderingMethod::RAYTRACER);
+        PBRenderer();
 
         /**
         *   @brief Destructor
@@ -52,12 +39,6 @@ namespace cupbr
         void registerScene(Scene* scene);
 
         /**
-        *   @brief Set the rendering method
-        *   @param[in] method The new method
-        */
-        void setMethod(const RenderingMethod& method);
-
-        /**
         *   @brief Render the scene
         *   @param[in] camera The camera
         */
@@ -68,24 +49,6 @@ namespace cupbr
         *   @return The HDR image produced by the renderer
         */
         Image<Vector3float>* getOutputImage();
-
-        /**
-        *   @brief The estimate of x gradients
-        *   @return The x gradient image
-        */
-        Image<Vector3float>* getGradientX();
-
-        /**
-        *   @brief The estimate of y gradients
-        *   @return The y gradient image
-        */
-        Image<Vector3float>* getGradientY();
-
-        /**
-        *   @brief Get the currently selected rendering method
-        *   @return The rendering method
-        */
-        RenderingMethod getMethod();
 
         /**
         *   @brief Reset the current render

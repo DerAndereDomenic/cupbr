@@ -56,13 +56,9 @@
 
 /// ------- Renderer ---------
 
-#include <Renderer/GradientDomain.h>
-#include <Renderer/PathTracer.h>
 #include <Renderer/PBRenderer.h>
-#include <Renderer/RayTracer.h>
 #include <Renderer/ToneMapper.h>
 #include <Renderer/VolumeRenderer.h>
-#include <Renderer/Whitted.h>
 
 /// ------- Scene ---------
 

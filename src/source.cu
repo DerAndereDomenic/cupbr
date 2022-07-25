@@ -21,7 +21,7 @@ int run(int argc, char* argv[])
         scene = SceneLoader::loadFromFile(argv[1]);
     }
 
-    PBRenderer pbrenderer(RenderingMethod::PATHTRACER);
+    PBRenderer pbrenderer;
     pbrenderer.setOutputSize(width, height);
     pbrenderer.registerScene(&scene);
 

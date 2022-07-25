@@ -237,24 +237,6 @@ namespace cupbr
                 ImGui::EndMenuBar();
             }
 
-            ImGui::Text("Renderer:");
-            ImGui::Separator();
-            if (ImGui::MenuItem("Path Tracing"))
-            {
-                if (impl->renderer)
-                    impl->renderer->setMethod(RenderingMethod::PATHTRACER);
-            }
-            else if (ImGui::MenuItem("Ray Tracing"))
-            {
-                if (impl->renderer)
-                    impl->renderer->setMethod(RenderingMethod::RAYTRACER);
-            }
-            else if (ImGui::MenuItem("Volume Rendering"))
-            {
-                if (impl->renderer)
-                    impl->renderer->setMethod(RenderingMethod::VOLUME);
-            }
-
             if(ImGui::SliderInt("Trace Depth", &(impl->trace_depth), 1, 50))
             {
                 impl->renderer->setMaxTraceDepth(impl->trace_depth);
@@ -395,7 +377,7 @@ namespace cupbr
             {
                 Memory::copyHost2DeviceObject(impl->host_material, impl->device_material);
                 Interaction::updateMaterial(*(impl->scene), impl->scene_index, impl->device_material);
-                impl->renderer->setMethod(impl->renderer->getMethod());
+                impl->renderer->reset();
             }
         }
     }
