@@ -31,7 +31,7 @@ namespace cupbr
         float depth = INFINITY;             /**< The depth */
         Vector3float P;                     /**< The intersection point in world space */
         Vector3float N;                     /**< The surface normal */
-        Material material;                  /**< The object material */
+        Material* material;                 /**< The object material */
         int32_t scene_index;                /**< The index in the scene representation */
     };
 
@@ -75,7 +75,7 @@ namespace cupbr
         */
         inline void setID(const uint32_t& id){ _id = id; }
 
-        Material material = {};                         /**< The material of the object */
+        Material* material = nullptr;                   /**< The material of the object */
         GeometryType type = GeometryType::MESH;         /**< The geometry type */
         protected:
         AABB _aabb;         /**< The axis aligned bounding box */

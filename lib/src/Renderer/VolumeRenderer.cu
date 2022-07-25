@@ -29,7 +29,7 @@ namespace cupbr
             Vector3float normal = geom.N;
 
             //Don't shade back facing geometry
-            if (geom.material.type != MaterialType::GLASS && Math::dot(normal, inc_dir) <= 0.0f)
+            if (geom.material->type != MaterialType::GLASS && Math::dot(normal, inc_dir) <= 0.0f)
             {
                 payload->rayweight = 0;
                 return;
@@ -49,7 +49,7 @@ namespace cupbr
             }
             else // Use environment map
             {
-                Vector4float sample = geom.material.sampleDirection(payload->seed, inc_dir, geom.N);
+                Vector4float sample = geom.material->sampleDirection(payload->seed, inc_dir, geom.N);
                 lightDir = Vector3float(sample);
                 d = INFINITY; //TODO: Better way to do this
                 Vector2uint32_t pixel = Tracing::direction2UV(lightDir, scene.environment.width(), scene.environment.height());
@@ -63,7 +63,7 @@ namespace cupbr
                 payload->radiance += (scene.light_count + useEnvironmentMap) *
                     fmaxf(0.0f, Math::dot(normal, lightDir)) *
                     Math::exp(-1.0f*(payload->volume->sigma_s + payload->volume->sigma_a) * fminf(d, 100000000.0f)) *
-                    geom.material.brdf(geom.P, inc_dir, lightDir, normal) *
+                    geom.material->brdf(geom.P, inc_dir, lightDir, normal) *
                     lightRadiance *
                     payload->rayweight;
             }
@@ -73,13 +73,13 @@ namespace cupbr
         {
             //Indirect illumination
             RadiancePayload* payload = ray.payload<RadiancePayload>();
-            Vector4float direction_p = geom.material.sampleDirection(payload->seed, inc_dir, geom.N);
+            Vector4float direction_p = geom.material->sampleDirection(payload->seed, inc_dir, geom.N);
             Vector3float direction = Vector3float(direction_p);
             if (Math::norm(direction) == 0)
                 return;
             ray.payload<RadiancePayload>()->rayweight = ray.payload<RadiancePayload>()->rayweight *
                 fabs(Math::dot(direction, geom.N)) *
-                geom.material.brdf(geom.P, inc_dir, direction, geom.N) / direction_p.w;
+                geom.material->brdf(geom.P, inc_dir, direction, geom.N) / direction_p.w;
             payload->out_dir = direction;
             payload->ray_start = geom.P;
             payload->next_ray_valid = true;
@@ -144,7 +144,7 @@ namespace cupbr
                 }
                 else // Use environment map
                 {
-                    Vector4float sample = geom.material.sampleDirection(payload->seed, inc_dir, geom.N);
+                    Vector4float sample = geom.material->sampleDirection(payload->seed, inc_dir, geom.N);
                     lightDir = Vector3float(sample);
                     d = INFINITY; //TODO: Better way to do this
                     Vector2uint32_t pixel = Tracing::direction2UV(lightDir, scene.environment.width(), scene.environment.height());
@@ -266,15 +266,15 @@ namespace cupbr
                 if (!handleMediumInteraction(scene, ray, geom, inc_dir))
                 {
                     //Handle medium interfaces
-                    if(geom.material.type == MaterialType::VOLUME)
+                    if(geom.material->type == MaterialType::VOLUME)
                     {
-                        payload.out_dir = geom.material.sampleDirection(payload.seed, inc_dir, geom.N);
+                        payload.out_dir = geom.material->sampleDirection(payload.seed, inc_dir, geom.N);
                         payload.ray_start = geom.P;
                         bool reflect = Math::dot(inc_dir, geom.N) * Math::dot(payload.out_dir, geom.N) > 0;
                         payload.inside_object = reflect ? payload.inside_object : !payload.inside_object;
                         payload.object_index = geom.scene_index;
                         payload.next_ray_valid = true;
-                        payload.volume = payload.inside_object ? &(geom.material.volume) : &(scene.volume);
+                        payload.volume = payload.inside_object ? &(geom.material->volume) : &(scene.volume);
                     }
                     else
                     {

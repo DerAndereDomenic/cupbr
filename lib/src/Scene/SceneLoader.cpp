@@ -32,36 +32,36 @@ namespace cupbr
             return Vector3float(result[0], result[1], result[2]);
         }
 
-        Material
+        Material*
         loadMaterial(tinyxml2::XMLElement* material_ptr)
         {
-            Material material;
+            Material* material = Memory::createHostObject<Material>();
 
             const char* type = material_ptr->FirstChildElement("type")->GetText();
 
             if (strcmp(type, "LAMBERT") == 0)
             {
-                material.type = MaterialType::LAMBERT;
+                material->type = MaterialType::LAMBERT;
             }
             else if (strcmp(type, "PHONG") == 0)
             {
-                material.type = MaterialType::PHONG;
+                material->type = MaterialType::PHONG;
             }
             else if (strcmp(type, "MIRROR") == 0)
             {
-                material.type = MaterialType::MIRROR;
+                material->type = MaterialType::MIRROR;
             }
             else if (strcmp(type, "GLASS") == 0)
             {
-                material.type = MaterialType::GLASS;
+                material->type = MaterialType::GLASS;
             }
             else if (strcmp(type, "GGX") == 0)
             {
-                material.type = MaterialType::GGX;
+                material->type = MaterialType::GGX;
             }
             else if(strcmp(type, "VOLUME") == 0)
             {
-                material.type = MaterialType::VOLUME;
+                material->type = MaterialType::VOLUME;
             }
             else
             {
@@ -82,58 +82,62 @@ namespace cupbr
 
             if (albedo_e_string != NULL)
             {
-                material.albedo_e = string2vector(albedo_e_string->GetText());
+                material->albedo_e = string2vector(albedo_e_string->GetText());
             }
 
             if (albedo_d_string != NULL)
             {
-                material.albedo_d = string2vector(albedo_d_string->GetText());
+                material->albedo_d = string2vector(albedo_d_string->GetText());
             }
 
             if (albedo_s_string != NULL)
             {
-                material.albedo_s = string2vector(albedo_s_string->GetText());
+                material->albedo_s = string2vector(albedo_s_string->GetText());
             }
 
             if (shininess_string != NULL)
             {
-                material.shininess = std::stof(shininess_string->GetText());
+                material->shininess = std::stof(shininess_string->GetText());
             }
 
             if (roughness_string != NULL)
             {
-                material.roughness = std::max(1e-4f, std::stof(roughness_string->GetText()));
+                material->roughness = std::max(1e-4f, std::stof(roughness_string->GetText()));
             }
 
             if (eta_string != NULL)
             {
-                material.eta = std::stof(eta_string->GetText());
+                material->eta = std::stof(eta_string->GetText());
             }
 
             if(sigma_s_string != NULL)
             {
-                material.volume.sigma_s = string2vector(sigma_s_string->GetText());
+                material->volume.sigma_s = string2vector(sigma_s_string->GetText());
             }
 
             if(sigma_a_string != NULL)
             {
-                material.volume.sigma_a = string2vector(sigma_a_string->GetText());
+                material->volume.sigma_a = string2vector(sigma_a_string->GetText());
             }
 
             if(g_string != NULL)
             {
-                material.volume.g = std::stof(g_string->GetText());
+                material->volume.g = std::stof(g_string->GetText());
             }
 
             if(interface_string != NULL)
             {
                 if(strcmp(interface_string->GetText(), "GLASS") == 0)
                 {
-                    material.volume.interface = Interface::GLASS;
+                    material->volume.interface = Interface::GLASS;
                 }
             }
 
-            return material;
+            Material* dev_material = Memory::createDeviceObject<Material>();
+            Memory::copyHost2DeviceObject(material, dev_material);
+            Memory::destroyHostObject<Material>(material);
+
+            return dev_material;
         }
     } //namespace detail
 
@@ -180,7 +184,7 @@ namespace cupbr
                 const char* normal_string = current_geometry->FirstChildElement("normal")->GetText();
                 Vector3float position = detail::string2vector(position_string);
                 Vector3float normal = detail::string2vector(normal_string);
-                Material mat = detail::loadMaterial(current_geometry->FirstChildElement("material"));
+                Material* mat = detail::loadMaterial(current_geometry->FirstChildElement("material"));
 
                 Plane* geom = new Plane(position, normal);
                 geom->material = mat;
@@ -193,7 +197,7 @@ namespace cupbr
                 const char* radius_string = current_geometry->FirstChildElement("radius")->GetText();
                 Vector3float position = detail::string2vector(position_string);
                 float radius = std::stof(radius_string);
-                Material mat = detail::loadMaterial(current_geometry->FirstChildElement("material"));
+                Material* mat = detail::loadMaterial(current_geometry->FirstChildElement("material"));
 
                 Sphere* geom = new Sphere(position, radius);
                 geom->material = mat;
@@ -211,7 +215,7 @@ namespace cupbr
                 Vector3float extend1 = detail::string2vector(extend1_string);
                 Vector3float extend2 = detail::string2vector(extend2_string);
 
-                Material mat = detail::loadMaterial(current_geometry->FirstChildElement("material"));
+                Material* mat = detail::loadMaterial(current_geometry->FirstChildElement("material"));
 
                 Quad* geom = new Quad(position, normal, extend1, extend2);
                 geom->material = mat;
@@ -228,7 +232,7 @@ namespace cupbr
                 Vector3float vertex2 = detail::string2vector(vertex2_string);
                 Vector3float vertex3 = detail::string2vector(vertex3_string);
 
-                Material mat = detail::loadMaterial(current_geometry->FirstChildElement("material"));
+                Material* mat = detail::loadMaterial(current_geometry->FirstChildElement("material"));
 
                 Triangle* geom = new Triangle(vertex1, vertex2, vertex3);
                 geom->material = mat;
@@ -255,7 +259,7 @@ namespace cupbr
 
                 Mesh* geom = ObjLoader::loadObj(path_string, position, scale);
 
-                Material mat = detail::loadMaterial(current_geometry->FirstChildElement("material"));
+                Material* mat = detail::loadMaterial(current_geometry->FirstChildElement("material"));
 
                 geom->material = mat;
 
@@ -465,6 +469,7 @@ namespace cupbr
         {
             Geometry geom;
             Memory::copyDevice2HostObject(host_scene[i], &geom);
+            Memory::destroyDeviceObject(geom.material);
             switch (geom.type)
             {
                 case GeometryType::PLANE:
