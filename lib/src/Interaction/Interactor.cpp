@@ -28,7 +28,6 @@ namespace cupbr
         Camera* camera = nullptr;
         PBRenderer* renderer = nullptr;
         ToneMapper* mapper = nullptr;
-        PostProcessor* post_processor = nullptr;
 
         Material* device_material;
         Material* host_material;
@@ -113,12 +112,6 @@ namespace cupbr
     Interactor::registerToneMapper(ToneMapper* mapper)
     {
         impl->mapper = mapper;
-    }
-
-    void 
-    Interactor::registerPostProcessor(PostProcessor* post_processor)
-    {
-        impl->post_processor = post_processor;
     }
 
     bool
@@ -394,32 +387,6 @@ namespace cupbr
             if (ImGui::InputFloat("g", &(impl->scene->volume.g)))
             {
                 impl->material_update = true;
-            }
-
-            ImGui::Separator();
-            ImGui::Text("PostProcessing");
-
-            if(ImGui::Checkbox("Bloom", &(impl->post_processing)))
-            {
-                if(impl->post_processing)
-                {
-                    impl->mapper->registerImage(impl->post_processor->getPostProcessBuffer());
-                }
-                else
-                {
-                    impl->mapper->registerImage(impl->renderer->getOutputImage());
-                }
-            }
-            
-
-            if (ImGui::SliderFloat("Threshold", &(impl->threshold), 0.0f, 2.0f))
-            {
-                impl->compute_threshold();
-            }
-
-            if (ImGui::SliderFloat("Knee", &(impl->knee), 0.0f, 1.0f))
-            {
-                impl->compute_threshold();
             }
 
             ImGui::End();

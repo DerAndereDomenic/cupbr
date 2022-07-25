@@ -10,7 +10,6 @@
 #include <Scene/Scene.h>
 #include <Renderer/PBRenderer.h>
 #include <Renderer/ToneMapper.h>
-#include <PostProcessing/PostProcessor.h>
 
 namespace cupbr
 {
@@ -60,12 +59,6 @@ namespace cupbr
         *   @param[in] mapper The tone mapper
         */
         void registerToneMapper(ToneMapper* mapper);
-
-        /**
-        *   @brief Register post processor
-        *   @param[in] post_processor The post processor
-        */
-        void registerPostProcessor(PostProcessor* post_processor);
 
         /**
         *   @brief The function called on event

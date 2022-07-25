@@ -54,12 +54,6 @@
 #include <Math/MatrixFunctions.h>
 #include <Math/MatrixOperations.h>
 
-/// ------- PostProcessing ---------
-
-#include <PostProcessing/Convolution.h>
-#include <PostProcessing/PostProcessor.h>
-#include <PostProcessing/PyramidConstructor.h>
-
 /// ------- Renderer ---------
 
 #include <Renderer/GradientDomain.h>

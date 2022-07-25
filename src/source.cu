@@ -25,9 +25,6 @@ int run(int argc, char* argv[])
     pbrenderer.setOutputSize(width, height);
     pbrenderer.registerScene(&scene);
 
-    PostProcessor postprocessor;
-    postprocessor.registerImage(pbrenderer.getOutputImage());
-
     ToneMapper mapper(ToneMappingType::REINHARD);
     mapper.registerImage(pbrenderer.getOutputImage());
 
@@ -41,7 +38,6 @@ int run(int argc, char* argv[])
     interactor.registerScene(&scene);
     interactor.registerRenderer(&pbrenderer);
     interactor.registerToneMapper(&mapper);
-    interactor.registerPostProcessor(&postprocessor);
 
     window.setEventCallback(std::bind(&Interactor::onEvent, &interactor, std::placeholders::_1));
 
@@ -72,9 +68,6 @@ int run(int argc, char* argv[])
         glClear(GL_COLOR_BUFFER_BIT);
 
         pbrenderer.render(&camera);
-
-        if(interactor.usePostProcessing())
-            postprocessor.bloom(interactor.getThreshold());
 
         mapper.toneMap();
         renderer.renderTexture(mapper.getRenderBuffer());
