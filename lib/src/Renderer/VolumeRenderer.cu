@@ -187,7 +187,7 @@ namespace cupbr
                 }
 
                 //Indirect Illumination
-                Vector4float sample_hg = sampleHenyeyGreensteinPhaseFunction(g, inc_dir, payload->seed);
+                Vector4float sample_hg = sampleHenyeyGreensteinPhaseFunction(g, -1.0f * inc_dir, payload->seed);
                 payload->out_dir = Vector3float(sample_hg);
                 payload->ray_start = event_position;
                 //Phase/pdf = 1
