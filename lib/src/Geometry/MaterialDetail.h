@@ -287,7 +287,7 @@ namespace cupbr
 
     __host__ __device__ 
     inline Vector4float 
-    sampleHenyeyGreensteinPhaseFunction(const float& g_, const Vector3float& forward, uint32_t& seed)
+    Material::sampleHenyeyGreensteinPhaseFunction(const float& g_, const Vector3float& forward, uint32_t& seed)
     {
         float g = g_ < 0.0f ? fminf(-1e-3, g_) : fmaxf(1e-3, g_);
 
