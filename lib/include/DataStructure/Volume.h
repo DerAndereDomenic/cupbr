@@ -14,8 +14,8 @@ namespace cupbr
     */
     struct Volume
     {
-        Vector3float sigma_s = 1.0f;                        /**< The scattering coefficient */
-        Vector3float sigma_a = 1.0f;                        /**< The absorbtion coefficient */
+        Vector3float sigma_s = 0.0f;                        /**< The scattering coefficient */
+        Vector3float sigma_a = 0.0f;                        /**< The absorbtion coefficient */
         float g = 0.0f;                                     /**< The phase function parameter */
         Interface interface = Interface::NONE;              /**< The volume interface */
     };
