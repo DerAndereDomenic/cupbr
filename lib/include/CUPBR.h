@@ -15,6 +15,7 @@
 #include <Core/Event.h>
 #include <Core/KeyEvent.h>
 #include <Core/MouseEvent.h>
+#include <Core/Properties.h>
 
 /// ------- DATASTRUCTURE ---------
 
