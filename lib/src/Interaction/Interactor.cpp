@@ -6,9 +6,7 @@
 #include <Core/MouseEvent.h>
 #include <Core/WindowEvent.h>
 
-//#include <filesystem>
-#define _SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING
-#include <experimental/filesystem>
+#include <filesystem>
 
 namespace cupbr
 {
@@ -218,7 +216,7 @@ namespace cupbr
                 {
                     std::string path = "res/Scenes";
                     std::vector<std::string> paths;
-                    for (auto entry : std::experimental::filesystem::directory_iterator(path))
+                    for (auto entry : std::filesystem::directory_iterator(path))
                     {
                         paths.push_back(entry.path().string());
                     }
