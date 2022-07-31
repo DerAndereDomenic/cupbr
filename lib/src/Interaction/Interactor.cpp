@@ -267,7 +267,7 @@ namespace cupbr
 
             ImGui::Separator();
 
-            ImGui::Text("Material:");
+            /*ImGui::Text("Material:");
             ImGui::Separator();
             ImGui::Text("Type:");
             if (ImGui::MenuItem("LAMBERT"))
@@ -369,7 +369,7 @@ namespace cupbr
                 impl->material_update = true;
             }
 
-            ImGui::End();
+            ImGui::End();*/
 
             if (impl->material_update)
             {
