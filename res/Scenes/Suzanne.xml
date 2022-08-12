@@ -11,8 +11,8 @@
         <path>res/Meshes/suzanne_blender.obj</path>
         <material>
             <type>GGX</type>
-            <albedo_s>1,0.8,0.9</albedo_s>
-            <roughness>0.1</roughness>
+            <albedo_s type="vec3">1,0.8,0.9</albedo_s>
+            <roughness type="float">0.1</roughness>
         </material>
     </geometry1>
 </geometry>

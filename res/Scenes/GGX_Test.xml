@@ -10,8 +10,8 @@
         <radius>0.9</radius>
         <material>
             <type>GGX</type>
-            <albedo_s>1,1,1</albedo_s>
-            <roughness>0.001</roughness>
+            <albedo_s type="vec3">1,1,1</albedo_s>
+            <roughness type="float">0.001</roughness>
         </material>
     </geometry1>
 	<geometry2>
@@ -20,8 +20,8 @@
         <radius>0.9</radius>
         <material>
             <type>GGX</type>
-            <albedo_s>1,1,1</albedo_s>
-            <roughness>0.1</roughness>
+            <albedo_s type="vec3">1,1,1</albedo_s>
+            <roughness type="float">0.1</roughness>
         </material>
     </geometry2>
 	<geometry3>
@@ -30,8 +30,8 @@
         <radius>0.9</radius>
         <material>
             <type>GGX</type>
-            <albedo_s>1,1,1</albedo_s>
-            <roughness>0.2</roughness>
+            <albedo_s type="vec3">1,1,1</albedo_s>
+            <roughness type="float">0.2</roughness>
         </material>
     </geometry3>
 	<geometry4>
@@ -40,8 +40,8 @@
         <radius>0.9</radius>
         <material>
             <type>GGX</type>
-            <albedo_s>1,1,1</albedo_s>
-            <roughness>0.3</roughness>
+            <albedo_s type="vec3">1,1,1</albedo_s>
+            <roughness type="float">0.3</roughness>
         </material>
     </geometry4>
 	<geometry5>
@@ -50,8 +50,8 @@
         <radius>0.9</radius>
         <material>
             <type>GGX</type>
-            <albedo_s>1,1,1</albedo_s>
-            <roughness>0.4</roughness>
+            <albedo_s type="vec3">1,1,1</albedo_s>
+            <roughness type="float">0.4</roughness>
         </material>
     </geometry5>
 	<geometry6>
@@ -60,8 +60,8 @@
         <radius>0.9</radius>
         <material>
             <type>GGX</type>
-            <albedo_s>1,1,1</albedo_s>
-            <roughness>0.5</roughness>
+            <albedo_s type="vec3">1,1,1</albedo_s>
+            <roughness type="float">0.5</roughness>
         </material>
     </geometry6>
 	<geometry7>
@@ -70,8 +70,8 @@
         <radius>0.9</radius>
         <material>
             <type>GGX</type>
-            <albedo_s>1,1,1</albedo_s>
-            <roughness>0.6</roughness>
+            <albedo_s type="vec3">1,1,1</albedo_s>
+            <roughness type="float">0.6</roughness>
         </material>
     </geometry7>
 	<geometry8>
@@ -80,8 +80,8 @@
         <radius>0.9</radius>
         <material>
             <type>GGX</type>
-            <albedo_s>1,1,1</albedo_s>
-            <roughness>0.7</roughness>
+            <albedo_s type="vec3">1,1,1</albedo_s>
+            <roughness type="float">0.7</roughness>
         </material>
     </geometry8>
 	<geometry9>
@@ -90,8 +90,8 @@
         <radius>0.9</radius>
         <material>
             <type>GGX</type>
-            <albedo_s>1,1,1</albedo_s>
-            <roughness>0.8</roughness>
+            <albedo_s type="vec3">1,1,1</albedo_s>
+            <roughness type="float">0.8</roughness>
         </material>
     </geometry9>
 	<geometry10>
@@ -100,8 +100,8 @@
         <radius>0.9</radius>
         <material>
             <type>GGX</type>
-            <albedo_s>1,1,1</albedo_s>
-            <roughness>0.9</roughness>
+            <albedo_s type="vec3">1,1,1</albedo_s>
+            <roughness type="float">0.9</roughness>
         </material>
     </geometry10>
 	<geometry11>
@@ -110,8 +110,8 @@
         <radius>0.9</radius>
         <material>
             <type>GGX</type>
-            <albedo_s>1,1,1</albedo_s>
-            <roughness>1</roughness>
+            <albedo_s type="vec3">1,1,1</albedo_s>
+            <roughness type="float">1</roughness>
         </material>
     </geometry11>
 </geometry>

@@ -10,8 +10,8 @@
         <radius>1</radius>
         <material>
             <type>GLASS</type>
-            <albedo_s>1,1,1</albedo_s>
-            <eta>1.5</eta>
+            <albedo_s type="vec3">1,1,1</albedo_s>
+            <eta type="float">1.5</eta>
         </material>
     </geometry1>
 </geometry>
