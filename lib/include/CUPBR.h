@@ -8,6 +8,7 @@
 
 /// ------- CORE ---------
 
+#include <Core/Platform.h>
 #include <Core/CUDA.h>
 #include <Core/KernelHelper.h>
 #include <Core/Memory.h>
