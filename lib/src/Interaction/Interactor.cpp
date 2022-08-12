@@ -367,9 +367,9 @@ namespace cupbr
             if (ImGui::InputFloat("g", &(impl->scene->volume.g)))
             {
                 impl->material_update = true;
-            }
+            }*/
 
-            ImGui::End();*/
+            ImGui::End();
 
             if (impl->material_update)
             {

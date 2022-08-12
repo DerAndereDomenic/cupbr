@@ -20,7 +20,7 @@ namespace cupbr
 
             LocalGeometry geom = Tracing::traceRay(scene, ray);
 
-            if (geom.depth != INFINITY)
+            /*if (geom.depth != INFINITY)
             {
                 material->type = geom.material->type;
                 material->albedo_e = geom.material->albedo_e;
@@ -31,7 +31,7 @@ namespace cupbr
                 material->roughness = geom.material->roughness;
                 material->volume = geom.material->volume;
                 *(scene_index) = geom.scene_index;
-            }
+            }*/
         }
 
         __global__ void
@@ -39,7 +39,7 @@ namespace cupbr
                               int32_t* scene_index,
                               Material* newMaterial)
         {
-            Geometry* element = scene[*scene_index];
+            /*Geometry* element = scene[*scene_index];
             element->material->type = newMaterial->type;
             element->material->albedo_e = newMaterial->albedo_e;
             element->material->albedo_d = newMaterial->albedo_d;
@@ -47,7 +47,7 @@ namespace cupbr
             element->material->shininess = newMaterial->shininess;
             element->material->eta = newMaterial->eta;
             element->material->roughness = newMaterial->roughness;
-            element->material->volume = newMaterial->volume;
+            element->material->volume = newMaterial->volume;*/
         }
     } //namespace detail
 
