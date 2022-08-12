@@ -7,8 +7,9 @@
 #include <Core/CUDA.h>
 
 #ifdef CUPBR_WINDOWS
-#include <Windows.h>
-#undef interface
+class HINSTANCE__;
+typedef HINSTANCE__* HINSTANCE;
+typedef HINSTANCE HMODULE;
 #endif
 
 namespace cupbr
@@ -45,7 +46,7 @@ namespace cupbr
         Plugin* _instance = nullptr;
 
         #ifdef CUPBR_WINDOWS
-        HMODULE _handle;
+        HMODULE* _handle;
         #endif
     };
 

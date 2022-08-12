@@ -5,6 +5,7 @@
 #include <Math/Vector.h>
 #include <DataStructure/Volume.h>
 #include <Core/Properties.h>
+#include <Core/Plugin.h>
 
 namespace cupbr
 {
@@ -25,7 +26,7 @@ namespace cupbr
     /**
     *   @brief A class to model different materials
     */
-    class Material
+    class Material : public Plugin
     {
         public:
 

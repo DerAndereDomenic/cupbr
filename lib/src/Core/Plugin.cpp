@@ -1,5 +1,9 @@
 #include <Core/Plugin.h>
 
+#ifdef CUPBR_WINDOWS
+#include <Windows.h>
+#endif
+
 namespace cupbr
 {
     
@@ -7,16 +11,17 @@ namespace cupbr
     {
         #ifdef CUPBR_WINDOWS
 
-        _handle = LoadLibrary((name + ".dll").c_str());
-        if(_handle == NULL)
+        _handle = (HMODULE*)malloc(sizeof(HMODULE));
+        *_handle = LoadLibrary((name + ".dll").c_str());
+        if(*_handle == NULL)
         {
             std::cerr << "Error, could not find plugin " << name << std::endl;
             return;
         }
 
-        _load = (Plugin * (*)(const Properties & properties))GetProcAddress(_handle, "load");
-        _get_name = (char* (*)())GetProcAddress(_handle, "name");
-        _get_version = (char* (*)())GetProcAddress(_handle, "version");
+        _load = (Plugin * (*)(const Properties & properties))GetProcAddress(*_handle, "load");
+        _get_name = (char* (*)())GetProcAddress(*_handle, "name");
+        _get_version = (char* (*)())GetProcAddress(*_handle, "version");
 
         std::cout << "Loaded plugin: " << get_name() << "; Version: " << get_version() << std::endl;
 
@@ -25,7 +30,7 @@ namespace cupbr
 
     PluginInstance::~PluginInstance()
     {
-        //TODO
+        free(_handle);
     }
 
     Plugin* 
