@@ -10,6 +10,12 @@
 #include <vector>
 #include <sstream>
 
+#include <Geometry/MaterialLambert.h>
+#include <Geometry/MaterialGGX.h>
+#include <Geometry/MaterialGlass.h>
+#include <Geometry/MaterialMirror.h>
+#include <Geometry/MaterialPhong.h>
+
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 
@@ -17,6 +23,14 @@ namespace cupbr
 {
     namespace detail
     {
+        template<typename T>
+        __global__ void fix_vtable(T* object)
+        {
+            T temp(*object);
+            //memcpy(object, &temp, sizeof(T));
+            new (object) T(temp);
+        }
+
         Vector3float
         string2vector(const char* str)
         {
@@ -30,46 +44,73 @@ namespace cupbr
             }
 
             return Vector3float(result[0], result[1], result[2]);
-        }
-
+        }                                                                                                             
+                                                                                                                        
         Material*
         loadMaterial(tinyxml2::XMLElement* material_ptr)
         {
-            Material* material = Memory::createHostObject<Material>();
-
             const char* type = material_ptr->FirstChildElement("type")->GetText();
+
+            //Load material properties
+
+            Properties properties;
 
             if (strcmp(type, "LAMBERT") == 0)
             {
-                material->type = MaterialType::LAMBERT;
+                properties.setProperty("Type", static_cast<int>(MaterialType::LAMBERT));
             }
             else if (strcmp(type, "PHONG") == 0)
             {
-                material->type = MaterialType::PHONG;
+                properties.setProperty("Type", static_cast<int>(MaterialType::PHONG));
             }
             else if (strcmp(type, "MIRROR") == 0)
             {
-                material->type = MaterialType::MIRROR;
+                properties.setProperty("Type", static_cast<int>(MaterialType::MIRROR));
             }
             else if (strcmp(type, "GLASS") == 0)
             {
-                material->type = MaterialType::GLASS;
+                properties.setProperty("Type", static_cast<int>(MaterialType::GLASS));
             }
             else if (strcmp(type, "GGX") == 0)
             {
-                material->type = MaterialType::GGX;
+                properties.setProperty("Type", static_cast<int>(MaterialType::GGX));
             }
             else if(strcmp(type, "VOLUME") == 0)
             {
-                material->type = MaterialType::VOLUME;
+                properties.setProperty("Type", static_cast<int>(MaterialType::VOLUME));
             }
             else
             {
                 std::cerr << "Error while loading material: " << type << " is not a valid material type\n";
             }
 
-            //Load material properties
-            tinyxml2::XMLElement* albedo_e_string = material_ptr->FirstChildElement("albedo_e");
+            auto current_element = material_ptr->FirstChild();
+            while(current_element != nullptr)
+            {
+                if(strcmp(current_element->Value(), "type") != 0)
+                {
+                    auto current_node = material_ptr->FirstChildElement(current_element->Value());
+
+                    auto attribute = current_node->FirstAttribute()->Value();
+                    if(strcmp(attribute, "vec3") == 0)
+                    {
+                        properties.setProperty(current_element->Value(), string2vector(current_node->GetText()));
+                    }
+                    else if(strcmp(attribute, "float") == 0)
+                    {
+                        properties.setProperty(current_element->Value(), std::stof(current_node->GetText()));
+                    }
+                    else
+                    {
+                        //TODO:
+                        std::cerr << "Datatype not implemented: " << attribute << std::endl;
+                    }
+                }
+
+                current_element = current_element->NextSibling();
+            }
+
+            /*tinyxml2::XMLElement* albedo_e_string = material_ptr->FirstChildElement("albedo_e");
             tinyxml2::XMLElement* albedo_d_string = material_ptr->FirstChildElement("albedo_d");
             tinyxml2::XMLElement* albedo_s_string = material_ptr->FirstChildElement("albedo_s");
             tinyxml2::XMLElement* shininess_string = material_ptr->FirstChildElement("shininess");
@@ -131,14 +172,73 @@ namespace cupbr
                 {
                     material->volume.interface = Interface::GLASS;
                 }
+            }*/
+
+            if(properties.getProperty("Type", -1) == static_cast<int>(MaterialType::LAMBERT))
+            {
+                MaterialLambert host_material(properties);
+                MaterialLambert* material = Memory::createDeviceObject<MaterialLambert>();
+                Memory::copyHost2DeviceObject(&host_material, material);
+
+                fix_vtable << <1, 1 >> > (material);
+                cudaSafeCall(cudaDeviceSynchronize());
+
+                return material;
+            }
+            else if(properties.getProperty("Type", -1) == static_cast<int>(MaterialType::PHONG))
+            {
+                MaterialPhong host_material(properties);
+                MaterialPhong* material = Memory::createDeviceObject<MaterialPhong>();
+                Memory::copyHost2DeviceObject(&host_material, material);
+
+                fix_vtable << <1, 1 >> > (material);
+                cudaSafeCall(cudaDeviceSynchronize());
+
+                return material;
+            }
+            else if(properties.getProperty("Type", -1) == static_cast<int>(MaterialType::GGX))
+            {
+                MaterialGGX host_material(properties);
+                MaterialGGX* material = Memory::createDeviceObject<MaterialGGX>();
+                Memory::copyHost2DeviceObject(&host_material, material);
+
+                fix_vtable << <1, 1 >> > (material);
+                cudaSafeCall(cudaDeviceSynchronize());
+
+                return material;
+            }
+            else if(properties.getProperty("Type", -1) == static_cast<int>(MaterialType::GLASS))
+            {
+                MaterialGlass host_material(properties);
+                MaterialGlass* material = Memory::createDeviceObject<MaterialGlass>();
+                Memory::copyHost2DeviceObject(&host_material, material);
+
+                fix_vtable << <1, 1 >> > (material);
+                cudaSafeCall(cudaDeviceSynchronize());
+
+                return material;
+            }
+            else if(properties.getProperty("Type", -1) == static_cast<int>(MaterialType::MIRROR))
+            {
+                MaterialMirror host_material(properties);
+                MaterialMirror* material = Memory::createDeviceObject<MaterialMirror>();
+                Memory::copyHost2DeviceObject(&host_material, material);
+
+                fix_vtable << <1, 1 >> > (material);
+                cudaSafeCall(cudaDeviceSynchronize());
+
+                return material;
             }
 
             Material* dev_material = Memory::createDeviceObject<Material>();
-            Memory::copyHost2DeviceObject(material, dev_material);
-            Memory::destroyHostObject<Material>(material);
+            fix_vtable << <1, 1 >> > (dev_material);
+            cudaSafeCall(cudaDeviceSynchronize());
+            //Memory::copyHost2DeviceObject(material, dev_material);
+            //Memory::destroyHostObject<Material>(material);
 
             return dev_material;
         }
+
     } //namespace detail
 
     Scene
