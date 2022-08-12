@@ -11,6 +11,7 @@
 #include <Core/Platform.h>
 #include <Core/CUPBRAPI.h>
 #include <Core/CUDA.h>
+#include <Core/Plugin.h>
 #include <Core/KernelHelper.h>
 #include <Core/Memory.h>
 #include <Core/Tracing.h>
