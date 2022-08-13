@@ -43,8 +43,6 @@ namespace cupbr
         char* (*_get_name)();
         char* (*_get_version)();
 
-        Plugin* _instance = nullptr;
-
         #ifdef CUPBR_WINDOWS
         HMODULE* _handle;
         #endif

@@ -36,9 +36,7 @@ namespace cupbr
     Plugin* 
     PluginInstance::load(const Properties& properties)
     {
-        if (!_instance)
-            _instance = _load(properties);
-        return _instance;
+        return _load(properties);
     }
 
     std::string 
