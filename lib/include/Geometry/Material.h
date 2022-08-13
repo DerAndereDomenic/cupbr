@@ -15,12 +15,8 @@ namespace cupbr
     */
     enum class MaterialType
     {
-        LAMBERT,
-        PHONG,
-        MIRROR,
-        GLASS,
-        GGX,
-        VOLUME
+        OPAQUE,
+        REFRACTIVE
     };
 
     /**
@@ -38,7 +34,7 @@ namespace cupbr
         */
         Material(const Properties& properties) {}
 
-        MaterialType type = MaterialType::LAMBERT;                  /**< The material type */
+        MaterialType type = MaterialType::OPAQUE;                  /**< The material type */
         Volume volume;
 
         /**

@@ -9,7 +9,7 @@ namespace cupbr
 
         MaterialMirror(const Properties& properties)
         {
-            type = MaterialType::MIRROR;
+            type = MaterialType::OPAQUE;
             albedo_e = properties.getProperty("albedo_e", Vector3float(0));
             albedo_s = properties.getProperty("albedo_s", Vector3float(0));
         }

@@ -29,7 +29,7 @@ namespace cupbr
             Vector3float normal = geom.N;
 
             //Don't shade back facing geometry
-            if (geom.material->type != MaterialType::GLASS && Math::dot(normal, inc_dir) <= 0.0f)
+            if (geom.material->type != MaterialType::REFRACTIVE && Math::dot(normal, inc_dir) <= 0.0f)
             {
                 payload->rayweight = 0;
                 return;
@@ -266,7 +266,7 @@ namespace cupbr
                 if (!handleMediumInteraction(scene, ray, geom, inc_dir))
                 {
                     //Handle medium interfaces
-                    if(geom.material->type == MaterialType::VOLUME)
+                    if(geom.material->type == MaterialType::REFRACTIVE)
                     {
                         payload.out_dir = geom.material->sampleDirection(payload.seed, inc_dir, geom.N);
                         payload.ray_start = geom.P;

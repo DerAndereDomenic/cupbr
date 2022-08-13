@@ -9,7 +9,7 @@
         <position>0,0,0</position>
         <normal>0,1,0</normal>
         <material>
-            <type>LAMBERT</type>
+            <name>LAMBERT</name>
             <albedo_d type="vec3">1,0,1</albedo_d>
         </material>
     </geometry1>
@@ -18,7 +18,7 @@
         <position>0,1,0</position>
         <radius>1</radius>
         <material>
-            <type>PHONG</type>
+            <name>PHONG</name>
             <albedo_d type="vec3">0,1,1</albedo_d>
             <albedo_s type="vec3">1,1,1</albedo_s>
             <shininess type="float">51.2</shininess>
@@ -29,7 +29,7 @@
         <position>2,3,1</position>
         <radius>0.5</radius>
         <material>
-            <type>GLASS</type>
+            <name>GLASS</name>
             <albedo_s type="vec3">1,1,1</albedo_s>
             <eta type="float">1.5</eta>
         </material>
@@ -39,7 +39,7 @@
         <position>2,3,1</position>
         <radius>0.3</radius>
         <material>
-            <type>GLASS</type>
+            <name>GLASS</name>
             <albedo_s type="vec3">1,1,1</albedo_s>
             <eta type="float">1.5</eta>
         </material>
@@ -50,7 +50,7 @@
         <vertex2>1,1,3</vertex2>
         <vertex3>0,3,3</vertex3>
         <material>
-            <type>PHONG</type>
+            <name>PHONG</name>
             <albedo_d type="vec3">0.2,0.8,0.1</albedo_d>
             <albedo_s type="vec3">0.2,0.8,0.1</albedo_s>
         </material>
@@ -60,7 +60,7 @@
         <position>5,5,5</position>
         <path>res/Meshes/box.obj</path>
         <material>
-            <type>LAMBERT</type>
+            <name>LAMBERT</name>
             <albedo_d type="vec3">0.9,0.8,0.1</albedo_d>
         </material>
     </geometry6>

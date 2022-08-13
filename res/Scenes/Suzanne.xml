@@ -10,7 +10,7 @@
         <scale>10,10,10</scale>
         <path>res/Meshes/suzanne_blender.obj</path>
         <material>
-            <type>GGX</type>
+            <name>GGX</name>
             <albedo_s type="vec3">1,0.8,0.9</albedo_s>
             <roughness type="float">0.1</roughness>
         </material>

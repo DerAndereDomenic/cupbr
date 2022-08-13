@@ -11,7 +11,7 @@
         <extend1>1,0,0</extend1>
         <extend2>0,0,1</extend2>
         <material>
-            <type>LAMBERT</type>
+            <name>LAMBERT</name>
         </material>
     </geometry1>
     <geometry2>
@@ -21,7 +21,7 @@
         <extend1>0.25,0,0</extend1>
         <extend2>0,0,1</extend2>
         <material>
-            <type>LAMBERT</type>
+            <name>LAMBERT</name>
         </material>
     </geometry2>
     <geometry3>
@@ -31,7 +31,7 @@
         <extend1>0,0,1</extend1>
         <extend2>0,1,0</extend2>
         <material>
-            <type>LAMBERT</type>
+            <name>LAMBERT</name>
             <albedo_d type="vec3">0,1,0</albedo_d>
         </material>
     </geometry3>
@@ -42,7 +42,7 @@
         <extend1>0,1,0</extend1>
         <extend2>0,0,1</extend2>
         <material>
-            <type>LAMBERT</type>
+            <name>LAMBERT</name>
             <albedo_d type="vec3">1,0,0</albedo_d>
         </material>
     </geometry4>
@@ -53,7 +53,7 @@
         <extend1>1,0,0</extend1>
         <extend2>0,1,0</extend2>
         <material>
-            <type>LAMBERT</type>
+            <name>LAMBERT</name>
         </material>
     </geometry5>
     <geometry6>
@@ -61,7 +61,7 @@
         <position>-0.65,-0.75,2.65</position>
         <radius>0.25</radius>
         <material>
-            <type>PHONG</type>
+            <name>PHONG</name>
             <albedo_d type="vec3">0,0,1</albedo_d>
             <albedo_s type="vec3">1,1,1</albedo_s>
         </material>
@@ -71,7 +71,7 @@
         <position>0.65,-0.75,2.65</position>
         <radius>0.25</radius>
         <material>
-            <type>MIRROR</type>
+            <name>MIRROR</name>
             <albedo_s type="vec3">1,1,1</albedo_s>
         </material>
     </geometry7>
@@ -80,7 +80,7 @@
         <position>0,-0.75,1.25</position>
         <radius>0.25</radius>
         <material>
-            <type>GLASS</type>
+            <name>GLASS</name>
             <albedo_s type="vec3">1,1,1</albedo_s>
         </material>
     </geometry8>
@@ -89,7 +89,7 @@
         <position>0,0.0,2</position>
         <radius>0.25</radius>
         <material>
-            <type>LAMBERT</type>
+            <name>LAMBERT</name>
             <albedo_d type="vec3">1,1,1</albedo_d>
         </material>
     </geometry9>
@@ -100,7 +100,7 @@
         <extend1>0.25,0,0</extend1>
         <extend2>0,0,1</extend2>
         <material>
-            <type>LAMBERT</type>
+            <name>LAMBERT</name>
         </material>
     </geometry10>
     <geometry11>
@@ -110,7 +110,7 @@
         <extend1>0.25,0,0</extend1>
         <extend2>0,0,1</extend2>
         <material>
-            <type>LAMBERT</type>
+            <name>LAMBERT</name>
         </material>
     </geometry11>
 </geometry>

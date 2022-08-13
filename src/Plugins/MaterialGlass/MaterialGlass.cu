@@ -19,7 +19,7 @@ namespace cupbr
 
         MaterialGlass(const Properties& properties)
         {
-            type = MaterialType::GLASS;
+            type = MaterialType::REFRACTIVE;
             albedo_e = properties.getProperty("albedo_e", Vector3float(0));
             albedo_d = properties.getProperty("albedo_d", Vector3float(1));
             albedo_s = properties.getProperty("albedo_s", Vector3float(0));

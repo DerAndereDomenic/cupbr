@@ -9,7 +9,7 @@ namespace cupbr
 
         MaterialLambert(const Properties& properties)
         {
-            type = MaterialType::LAMBERT;
+            type = MaterialType::OPAQUE;
             albedo_d = properties.getProperty("albedo_d", Vector3float(1));
         }
 

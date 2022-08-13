@@ -9,7 +9,7 @@
         <position>0,0,0</position>
         <radius>0.9</radius>
         <material>
-            <type>LAMBERT</type>
+            <name>LAMBERT</name>
             <albedo_d type="vec3">1,0,0</albedo_d>
         </material>
     </geometry1>
@@ -18,7 +18,7 @@
         <position>2,0,0</position>
         <radius>0.9</radius>
         <material>
-            <type>PHONG</type>
+            <name>PHONG</name>
             <albedo_d type="vec3">1,1,1</albedo_d>
             <albedo_s type="vec3">1,1,1</albedo_s>
             <shininess type="float">51</shininess>
@@ -29,7 +29,7 @@
         <position>-2,0,0</position>
         <radius>0.9</radius>
         <material>
-            <type>MIRROR</type>
+            <name>MIRROR</name>
             <albedo_s type="vec3">1,1,1</albedo_s>
         </material>
     </geometry3>
@@ -38,7 +38,7 @@
         <position>4,0,0</position>
         <radius>0.9</radius>
         <material>
-            <type>GLASS</type>
+            <name>GLASS</name>
             <albedo_s type="vec3">1,1,1</albedo_s>
             <eta type="float">1.5</eta>
         </material>
@@ -50,7 +50,7 @@
         <extend1>4,0,0</extend1>
         <extend2>0,0,2</extend2>
         <material>
-            <type>LAMBERT</type>
+            <name>LAMBERT</name>
             <albedo_d type="vec3">0.2,0.8,1</albedo_d>
         </material>
     </geometry5>

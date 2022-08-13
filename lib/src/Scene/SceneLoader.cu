@@ -45,45 +45,16 @@ namespace cupbr
         Material*
         loadMaterial(tinyxml2::XMLElement* material_ptr)
         {
-            const char* type = material_ptr->FirstChildElement("type")->GetText();
+            const char* type = material_ptr->FirstChildElement("name")->GetText();
 
             //Load material properties
 
             Properties properties;
 
-            if (strcmp(type, "LAMBERT") == 0)
-            {
-                properties.setProperty("Type", static_cast<int>(MaterialType::LAMBERT));
-            }
-            else if (strcmp(type, "PHONG") == 0)
-            {
-                properties.setProperty("Type", static_cast<int>(MaterialType::PHONG));
-            }
-            else if (strcmp(type, "MIRROR") == 0)
-            {
-                properties.setProperty("Type", static_cast<int>(MaterialType::MIRROR));
-            }
-            else if (strcmp(type, "GLASS") == 0)
-            {
-                properties.setProperty("Type", static_cast<int>(MaterialType::GLASS));
-            }
-            else if (strcmp(type, "GGX") == 0)
-            {
-                properties.setProperty("Type", static_cast<int>(MaterialType::GGX));
-            }
-            else if(strcmp(type, "VOLUME") == 0)
-            {
-                properties.setProperty("Type", static_cast<int>(MaterialType::VOLUME));
-            }
-            else
-            {
-                std::cerr << "Error while loading material: " << type << " is not a valid material type\n";
-            }
-
             auto current_element = material_ptr->FirstChild();
             while(current_element != nullptr)
             {
-                if(strcmp(current_element->Value(), "type") != 0)
+                if(strcmp(current_element->Value(), "name") != 0)
                 {
                     auto current_node = material_ptr->FirstChildElement(current_element->Value());
 
