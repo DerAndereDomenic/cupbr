@@ -10,11 +10,7 @@
 #include <vector>
 #include <sstream>
 
-#include <Geometry/MaterialLambert.h>
-#include <Geometry/MaterialGGX.h>
-#include <Geometry/MaterialGlass.h>
-#include <Geometry/MaterialMirror.h>
-#include <Geometry/MaterialPhong.h>
+#include <Core/Plugin.h>
 
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
@@ -110,133 +106,9 @@ namespace cupbr
                 current_element = current_element->NextSibling();
             }
 
-            /*tinyxml2::XMLElement* albedo_e_string = material_ptr->FirstChildElement("albedo_e");
-            tinyxml2::XMLElement* albedo_d_string = material_ptr->FirstChildElement("albedo_d");
-            tinyxml2::XMLElement* albedo_s_string = material_ptr->FirstChildElement("albedo_s");
-            tinyxml2::XMLElement* shininess_string = material_ptr->FirstChildElement("shininess");
-            tinyxml2::XMLElement* roughness_string = material_ptr->FirstChildElement("roughness");
-            tinyxml2::XMLElement* eta_string = material_ptr->FirstChildElement("eta");
-            tinyxml2::XMLElement* sigma_a_string = material_ptr->FirstChildElement("sigma_a");
-            tinyxml2::XMLElement* sigma_s_string = material_ptr->FirstChildElement("sigma_s");
-            tinyxml2::XMLElement* g_string = material_ptr->FirstChildElement("g");
-            tinyxml2::XMLElement* interface_string = material_ptr->FirstChildElement("interface");
-
-            if (albedo_e_string != NULL)
-            {
-                material->albedo_e = string2vector(albedo_e_string->GetText());
-            }
-
-            if (albedo_d_string != NULL)
-            {
-                material->albedo_d = string2vector(albedo_d_string->GetText());
-            }
-
-            if (albedo_s_string != NULL)
-            {
-                material->albedo_s = string2vector(albedo_s_string->GetText());
-            }
-
-            if (shininess_string != NULL)
-            {
-                material->shininess = std::stof(shininess_string->GetText());
-            }
-
-            if (roughness_string != NULL)
-            {
-                material->roughness = std::max(1e-4f, std::stof(roughness_string->GetText()));
-            }
-
-            if (eta_string != NULL)
-            {
-                material->eta = std::stof(eta_string->GetText());
-            }
-
-            if(sigma_s_string != NULL)
-            {
-                material->volume.sigma_s = string2vector(sigma_s_string->GetText());
-            }
-
-            if(sigma_a_string != NULL)
-            {
-                material->volume.sigma_a = string2vector(sigma_a_string->GetText());
-            }
-
-            if(g_string != NULL)
-            {
-                material->volume.g = std::stof(g_string->GetText());
-            }
-
-            if(interface_string != NULL)
-            {
-                if(strcmp(interface_string->GetText(), "GLASS") == 0)
-                {
-                    material->volume.interface = Interface::GLASS;
-                }
-            }*/
-
-            if(properties.getProperty("Type", -1) == static_cast<int>(MaterialType::LAMBERT))
-            {
-                MaterialLambert host_material(properties);
-                MaterialLambert* material = Memory::createDeviceObject<MaterialLambert>();
-                Memory::copyHost2DeviceObject(&host_material, material);
-
-                fix_vtable << <1, 1 >> > (material);
-                cudaSafeCall(cudaDeviceSynchronize());
-
-                return material;
-            }
-            else if(properties.getProperty("Type", -1) == static_cast<int>(MaterialType::PHONG))
-            {
-                MaterialPhong host_material(properties);
-                MaterialPhong* material = Memory::createDeviceObject<MaterialPhong>();
-                Memory::copyHost2DeviceObject(&host_material, material);
-
-                fix_vtable << <1, 1 >> > (material);
-                cudaSafeCall(cudaDeviceSynchronize());
-
-                return material;
-            }
-            else if(properties.getProperty("Type", -1) == static_cast<int>(MaterialType::GGX))
-            {
-                MaterialGGX host_material(properties);
-                MaterialGGX* material = Memory::createDeviceObject<MaterialGGX>();
-                Memory::copyHost2DeviceObject(&host_material, material);
-
-                fix_vtable << <1, 1 >> > (material);
-                cudaSafeCall(cudaDeviceSynchronize());
-
-                return material;
-            }
-            else if(properties.getProperty("Type", -1) == static_cast<int>(MaterialType::GLASS))
-            {
-                MaterialGlass host_material(properties);
-                MaterialGlass* material = Memory::createDeviceObject<MaterialGlass>();
-                Memory::copyHost2DeviceObject(&host_material, material);
-
-                fix_vtable << <1, 1 >> > (material);
-                cudaSafeCall(cudaDeviceSynchronize());
-
-                return material;
-            }
-            else if(properties.getProperty("Type", -1) == static_cast<int>(MaterialType::MIRROR))
-            {
-                MaterialMirror host_material(properties);
-                MaterialMirror* material = Memory::createDeviceObject<MaterialMirror>();
-                Memory::copyHost2DeviceObject(&host_material, material);
-
-                fix_vtable << <1, 1 >> > (material);
-                cudaSafeCall(cudaDeviceSynchronize());
-
-                return material;
-            }
-
-            Material* dev_material = Memory::createDeviceObject<Material>();
-            fix_vtable << <1, 1 >> > (dev_material);
-            cudaSafeCall(cudaDeviceSynchronize());
-            //Memory::copyHost2DeviceObject(material, dev_material);
-            //Memory::destroyHostObject<Material>(material);
-
-            return dev_material;
+            std::shared_ptr<PluginInstance> instance = PluginManager::getPlugin(std::string(type));
+            Material* material = reinterpret_cast<Material*>(instance->load(properties));
+            return material;
         }
 
     } //namespace detail
@@ -569,7 +441,8 @@ namespace cupbr
         {
             Geometry geom;
             Memory::copyDevice2HostObject(host_scene[i], &geom);
-            Memory::destroyDeviceObject(geom.material);
+            //Don't use memory API because materials are obtained by plugin
+            cudaFree(geom.material);
             switch (geom.type)
             {
                 case GeometryType::PLANE:

@@ -10,6 +10,13 @@ int run(int argc, char* argv[])
 
     cudaSafeCall(cudaSetDevice(0));
 
+    //TODO: Find Plugin automatically
+    PluginManager::loadPlugin("MaterialLambert");
+    PluginManager::loadPlugin("MaterialGGX");
+    PluginManager::loadPlugin("MaterialPhong");
+    PluginManager::loadPlugin("MaterialMirror");
+    PluginManager::loadPlugin("MaterialGlass");
+
     Scene scene;
     
     if(argc == 1)
