@@ -32,6 +32,8 @@ add_library(imgui STATIC "external/imgui/imgui.cpp"
                          "external/imgui/backends/imgui_impl_glfw.cpp"
                          "external/imgui/backends/imgui_impl_opengl3.cpp")
 
+add_subdirectory(src/Plugins)
+
 
 add_executable(Renderer "src/source.cu")
 
@@ -51,6 +53,9 @@ include_directories(lib/include
 
 target_compile_definitions(CUPBR PUBLIC _USE_MATH_DEFINES)
 target_compile_definitions(Renderer PUBLIC _USE_MATH_DEFINES)
+
+set_target_properties(CUPBR PROPERTIES CUDA_ARCHITECTURES "72")
+set_target_properties(Renderer PROPERTIES CUDA_ARCHITECTURES "72")
 
 set_target_properties(Renderer PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}")
 
