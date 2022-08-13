@@ -1,0 +1,5 @@
+file(GLOB subdirs RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "${CMAKE_CURRENT_SOURCE_DIR}/*/CMakeLists.txt")
+foreach(subdircmakelists ${subdirs})
+    get_filename_component(subdir ${subdircmakelists} DIRECTORY)
+    add_subdirectory(${subdir})
+endforeach()
