@@ -50,35 +50,46 @@ namespace cupbr
         #endif
     };
 
-    #define DEFINE_PLUGIN(classType, pluginName, pluginVersion)                         \
-    template<typename T>                                                                \
-    __global__ void fix_vtable(T* object)                                               \
-    {                                                                                   \
-        T temp(*object);                                                                \
-        new (object) T(temp);                                                           \
-    }                                                                                   \
-                                                                                        \
-    extern "C"                                                                          \
-    {                                                                                   \
-        CUPBR_EXPORT Plugin* load(const Properties& properties)                         \
-        {                                                                               \
-            classType host_object(properties);                                          \
-            classType* plugin = Memory::createDeviceObject<classType>();                \
-            Memory::copyHost2DeviceObject<classType>(&host_object, plugin);             \
-            fix_vtable << <1, 1 >> > (plugin);                                          \
-            cudaSafeCall(cudaDeviceSynchronize());                                      \
-            return plugin;                                                              \
-        }                                                                               \
-                                                                                        \
-        CUPBR_EXPORT const char* name()                                                 \
-        {                                                                               \
-            return pluginName;                                                          \
-        }                                                                               \
-                                                                                        \
-        CUPBR_EXPORT const char* version()                                              \
-        {                                                                               \
-            return pluginVersion;                                                       \
-        }                                                                               \
+    #define DEFINE_PLUGIN(classType, pluginName, pluginVersion)                                                                     \
+    __global__ void fix_vtable(classType** plugin, classType* dummy_plugin)                                                          \
+    {                                                                                                                               \
+        *plugin = new classType(*dummy_plugin);                                                                                      \
+    }                                                                                                                               \
+                                                                                                                                    \
+    extern "C"                                                                                                                      \
+    {                                                                                                                               \
+        CUPBR_EXPORT Plugin* load(const Properties& properties)                                                                     \
+        {                                                                                                                           \
+            classType host_object(properties);                                                                                      \
+            classType* dummy_plugin;                                                                                                \
+            classType** plugin_holder;                                                                                              \
+                                                                                                                                    \
+            cudaMalloc((void**)&plugin_holder, sizeof(classType**));                                                                \
+            cudaMalloc((void**)&dummy_plugin, sizeof(classType));                                                                   \
+            cudaMemcpy((void*)dummy_plugin, (void*)&host_object, sizeof(classType), cudaMemcpyHostToDevice);                        \
+                                                                                                                                    \
+            fix_vtable << <1, 1 >> > (plugin_holder, dummy_plugin);                                                                 \
+            cudaSafeCall(cudaDeviceSynchronize());                                                                                  \
+                                                                                                                                    \
+            classType** host_plugin_dummy = new classType*;                                                                         \
+            cudaMemcpy((void*)host_plugin_dummy, (void*)plugin_holder, sizeof(classType**), cudaMemcpyDeviceToHost);                \
+            classType* plugin = *host_plugin_dummy;                                                                                 \
+                                                                                                                                    \
+            delete host_plugin_dummy;                                                                                               \
+            cudaFree(plugin_holder);                                                                                                \
+            cudaFree(dummy_plugin);                                                                                                 \
+            return plugin;                                                                                                          \
+        }                                                                                                                           \
+                                                                                                                                    \
+        CUPBR_EXPORT const char* name()                                                                                             \
+        {                                                                                                                           \
+            return pluginName;                                                                                                      \
+        }                                                                                                                           \
+                                                                                                                                    \
+        CUPBR_EXPORT const char* version()                                                                                          \
+        {                                                                                                                           \
+            return pluginVersion;                                                                                                   \
+        }                                                                                                                           \
     }
 
 } //namespace cupbr
