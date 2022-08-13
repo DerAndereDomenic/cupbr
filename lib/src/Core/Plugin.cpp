@@ -6,6 +6,7 @@
 
 namespace cupbr
 {
+    PluginManager* PluginManager::_instance = new PluginManager;
     
     PluginInstance::PluginInstance(const std::string& name)
     {
@@ -30,6 +31,7 @@ namespace cupbr
 
     PluginInstance::~PluginInstance()
     {
+        //TODO: Free dll
         free(_handle);
     }
 
@@ -49,6 +51,32 @@ namespace cupbr
     PluginInstance::get_version() const
     {
         return std::string(_get_version());
+    }
+
+    void 
+    PluginManager::loadPluginImpl(const std::string& name)
+    {
+        std::shared_ptr<PluginInstance> plugin = std::make_shared<PluginInstance>(name);
+        _plugins.insert(std::make_pair(plugin->get_name(), plugin));
+    }
+
+    std::shared_ptr<PluginInstance> 
+    PluginManager::getPluginImpl(const std::string& name)
+    {
+        return _plugins[name];
+    }
+
+    void 
+    PluginManager::unloadPluginImpl(const std::string& name)
+    {
+        _plugins.erase(name);
+    }
+
+    void 
+    PluginManager::destroyImpl()
+    {
+        _plugins.clear();
+        delete _instance;
     }
 
 } //namespace cupbr

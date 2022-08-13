@@ -5,6 +5,8 @@
 #include <Core/Properties.h>
 #include <Core/Memory.h>
 #include <Core/CUDA.h>
+#include <unordered_map>
+#include <memory>
 
 #ifdef CUPBR_WINDOWS
 class HINSTANCE__;
@@ -48,6 +50,27 @@ namespace cupbr
         #endif
     };
 
+    class PluginManager
+    {
+        public:
+        inline static void loadPlugin(const std::string& name) { _instance->loadPluginImpl(name); }
+
+        inline static std::shared_ptr<PluginInstance> getPlugin(const std::string& name) { return _instance->getPluginImpl(name); }
+
+        inline static void unloadPlugin(const std::string& name) { _instance->unloadPluginImpl(name); }
+
+        inline static void destroy() { _instance->destroyImpl(); }
+
+        private:
+        static PluginManager* _instance;
+        std::unordered_map<std::string, std::shared_ptr<PluginInstance>> _plugins;
+
+        void loadPluginImpl(const std::string& name);
+        std::shared_ptr<PluginInstance> getPluginImpl(const std::string& name);
+        void unloadPluginImpl(const std::string& name);
+        void destroyImpl();
+    };
+
     #define DEFINE_PLUGIN(classType, pluginName, pluginVersion)                                                                     \
     __global__ void fix_vtable(classType** plugin, classType* dummy_plugin)                                                          \
     {                                                                                                                               \
@@ -77,6 +100,11 @@ namespace cupbr
             cudaFree(plugin_holder);                                                                                                \
             cudaFree(dummy_plugin);                                                                                                 \
             return plugin;                                                                                                          \
+        }                                                                                                                           \
+                                                                                                                                    \
+        CUPBR_EXPORT void destroy(Plugin* plugin)                                                                                   \
+        {                                                                                                                           \
+            cudaFree(plugin);                                                                                                       \
         }                                                                                                                           \
                                                                                                                                     \
         CUPBR_EXPORT const char* name()                                                                                             \
