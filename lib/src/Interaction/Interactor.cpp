@@ -264,7 +264,7 @@ namespace cupbr
 
             ImGui::Text("Material:");
 
-            Properties properties = impl->scene->properties[impl->scene_index];
+            Properties& properties = impl->scene->properties[impl->scene_index];
 
             for(auto it = properties.begin(); it != properties.end(); ++it)
             {
@@ -275,12 +275,20 @@ namespace cupbr
                 else if(std::holds_alternative<float>(it->second))
                 {
                     float val = std::get<float>(it->second);
-                    ImGui::InputFloat((it->first).c_str(), &val);
+                    if(ImGui::InputFloat((it->first).c_str(), &val))
+                    {
+                        impl->material_update = true;
+                        properties.setProperty(it->first, val);
+                    }
                 }
                 else if(std::holds_alternative<Vector3float>(it->second))
                 {
                     float* val = reinterpret_cast<float*>(&std::get<Vector3float>(it->second));
-                    ImGui::ColorEdit3((it->first).c_str(), val);
+                    if(ImGui::ColorEdit3((it->first).c_str(), val))
+                    {
+                        impl->material_update = true;
+                        properties.setProperty(it->first, Vector3float(val[0], val[1], val[2]));
+                    }
                 }
             }
 
