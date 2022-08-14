@@ -43,13 +43,14 @@ namespace cupbr
         }                                                                                                             
                                                                                                                         
         Material*
-        loadMaterial(tinyxml2::XMLElement* material_ptr)
+        loadMaterial(tinyxml2::XMLElement* material_ptr, Scene* scene)
         {
             const char* type = material_ptr->FirstChildElement("name")->GetText();
 
             //Load material properties
 
             Properties properties;
+            properties.setProperty("name", std::string(type));
 
             auto current_element = material_ptr->FirstChild();
             while(current_element != nullptr)
@@ -76,6 +77,8 @@ namespace cupbr
 
                 current_element = current_element->NextSibling();
             }
+
+            scene->properties.push_back(properties);
 
             std::shared_ptr<PluginInstance> instance = PluginManager::getPlugin(std::string(type));
             Material* material = reinterpret_cast<Material*>(instance->load(properties));
@@ -127,7 +130,7 @@ namespace cupbr
                 const char* normal_string = current_geometry->FirstChildElement("normal")->GetText();
                 Vector3float position = detail::string2vector(position_string);
                 Vector3float normal = detail::string2vector(normal_string);
-                Material* mat = detail::loadMaterial(current_geometry->FirstChildElement("material"));
+                Material* mat = detail::loadMaterial(current_geometry->FirstChildElement("material"), &scene);
 
                 Plane* geom = new Plane(position, normal);
                 geom->material = mat;
@@ -140,7 +143,7 @@ namespace cupbr
                 const char* radius_string = current_geometry->FirstChildElement("radius")->GetText();
                 Vector3float position = detail::string2vector(position_string);
                 float radius = std::stof(radius_string);
-                Material* mat = detail::loadMaterial(current_geometry->FirstChildElement("material"));
+                Material* mat = detail::loadMaterial(current_geometry->FirstChildElement("material"), &scene);
 
                 Sphere* geom = new Sphere(position, radius);
                 geom->material = mat;
@@ -158,7 +161,7 @@ namespace cupbr
                 Vector3float extend1 = detail::string2vector(extend1_string);
                 Vector3float extend2 = detail::string2vector(extend2_string);
 
-                Material* mat = detail::loadMaterial(current_geometry->FirstChildElement("material"));
+                Material* mat = detail::loadMaterial(current_geometry->FirstChildElement("material"), &scene);
 
                 Quad* geom = new Quad(position, normal, extend1, extend2);
                 geom->material = mat;
@@ -175,7 +178,7 @@ namespace cupbr
                 Vector3float vertex2 = detail::string2vector(vertex2_string);
                 Vector3float vertex3 = detail::string2vector(vertex3_string);
 
-                Material* mat = detail::loadMaterial(current_geometry->FirstChildElement("material"));
+                Material* mat = detail::loadMaterial(current_geometry->FirstChildElement("material"), &scene);
 
                 Triangle* geom = new Triangle(vertex1, vertex2, vertex3);
                 geom->material = mat;
@@ -202,7 +205,7 @@ namespace cupbr
 
                 Mesh* geom = ObjLoader::loadObj(path_string, position, scale);
 
-                Material* mat = detail::loadMaterial(current_geometry->FirstChildElement("material"));
+                Material* mat = detail::loadMaterial(current_geometry->FirstChildElement("material"), &scene);
 
                 geom->material = mat;
 

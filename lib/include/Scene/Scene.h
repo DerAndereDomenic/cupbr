@@ -22,6 +22,8 @@ namespace cupbr
         Image<Vector3float> environment = {};       /**< The Environment map */
         Volume volume = {};                         /**< The volume inside the scene */
 
+        std::vector<Properties> properties;         /**< Host vector of properties for materials */
+
         /**
         *   @brief Get a scene element
         *   @param[in] index The index
