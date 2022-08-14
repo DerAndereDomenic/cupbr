@@ -12,6 +12,7 @@
 class HINSTANCE__;
 typedef HINSTANCE__* HINSTANCE;
 typedef HINSTANCE HMODULE;
+#define CUPBR_PLUGIN_FILE_ENDING ".dll"
 #endif
 
 #ifdef CUPBR_DEBUG

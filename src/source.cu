@@ -2,6 +2,8 @@
 
 #include <CUPBR.h>
 
+#include <filesystem>
+
 using namespace cupbr;
 
 int run(int argc, char* argv[])
@@ -10,12 +12,19 @@ int run(int argc, char* argv[])
 
     cudaSafeCall(cudaSetDevice(0));
 
-    //TODO: Find Plugin automatically
-    PluginManager::loadPlugin("MaterialLambert");
-    PluginManager::loadPlugin("MaterialGGX");
-    PluginManager::loadPlugin("MaterialPhong");
-    PluginManager::loadPlugin("MaterialMirror");
-    PluginManager::loadPlugin("MaterialGlass");
+    std::vector<std::filesystem::path> paths;
+    for (auto entry : std::filesystem::directory_iterator(CUPBR_PLUGIN_PATH))
+    {
+        paths.push_back(entry.path());
+    }
+
+    for (auto s : paths)
+    {
+        if(s.filename().extension().string() == CUPBR_PLUGIN_FILE_ENDING)
+        {
+            PluginManager::loadPlugin(s.filename().stem().string());
+        }
+    }
 
     Scene scene;
     
