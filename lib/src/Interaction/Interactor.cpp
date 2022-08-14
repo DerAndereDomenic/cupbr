@@ -27,9 +27,8 @@ namespace cupbr
         PBRenderer* renderer = nullptr;
         ToneMapper* mapper = nullptr;
 
-        Material* device_material;
-        Material* host_material;
-        int32_t* scene_index;
+        int32_t* dev_scene_index;
+        int32_t scene_index = 0;
 
         //Helper
         bool material_update = false;
@@ -57,18 +56,14 @@ namespace cupbr
 
     Interactor::Impl::Impl()
     {
-        device_material = Memory::createDeviceObject<Material>();
-        host_material = Memory::createHostObject<Material>();
-        scene_index = Memory::createDeviceObject<int32_t>();
+        dev_scene_index = Memory::createDeviceObject<int32_t>();
 
         compute_threshold();
     }
 
     Interactor::Impl::~Impl()
     {
-        Memory::destroyDeviceObject<Material>(device_material);
-        Memory::destroyHostArray<Material>(host_material);
-        Memory::destroyDeviceObject<int32_t>(scene_index);
+        Memory::destroyDeviceObject<int32_t>(dev_scene_index);
     }
 
     Interactor::~Interactor() = default;
@@ -131,10 +126,10 @@ namespace cupbr
                                        impl->height,
                                        *(impl->scene),
                                        *(impl->camera),
-                                       impl->device_material,
-                                       impl->scene_index);
+                                       impl->dev_scene_index);
 
-                Memory::copyDevice2HostObject(impl->device_material, impl->host_material);
+                Memory::copyDevice2HostObject<int32_t>(impl->dev_scene_index, &(impl->scene_index));
+
                 return true;
             }
         }
@@ -267,6 +262,28 @@ namespace cupbr
 
             ImGui::Separator();
 
+            ImGui::Text("Material:");
+
+            Properties properties = impl->scene->properties[impl->scene_index];
+
+            for(auto it = properties.begin(); it != properties.end(); ++it)
+            {
+                if(std::holds_alternative<std::string>(it->second))
+                {
+                    ImGui::Text(std::get<std::string>(it->second).c_str());
+                }
+                else if(std::holds_alternative<float>(it->second))
+                {
+                    float val = std::get<float>(it->second);
+                    ImGui::InputFloat((it->first).c_str(), &val);
+                }
+                else if(std::holds_alternative<Vector3float>(it->second))
+                {
+                    float* val = reinterpret_cast<float*>(&std::get<Vector3float>(it->second));
+                    ImGui::ColorEdit3((it->first).c_str(), val);
+                }
+            }
+
             /*ImGui::Text("Material:");
             ImGui::Separator();
             ImGui::Text("Type:");
@@ -373,8 +390,8 @@ namespace cupbr
 
             if (impl->material_update)
             {
-                Memory::copyHost2DeviceObject(impl->host_material, impl->device_material);
-                Interaction::updateMaterial(*(impl->scene), impl->scene_index, impl->device_material);
+                //Memory::copyHost2DeviceObject(impl->host_material, impl->device_material);
+                //Interaction::updateMaterial(*(impl->scene), impl->scene_index, impl->device_material);
                 impl->renderer->reset();
             }
         }

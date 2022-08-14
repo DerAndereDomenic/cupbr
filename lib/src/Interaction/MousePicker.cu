@@ -12,26 +12,13 @@ namespace cupbr
                          const uint32_t height,
                          Scene scene,
                          const Camera camera,
-                         Material* material,
                          int32_t* scene_index)
         {
             const Vector2uint32_t pixel(x, y);
             Ray ray = Tracing::launchRay(pixel, width, height, camera);
 
             LocalGeometry geom = Tracing::traceRay(scene, ray);
-
-            /*if (geom.depth != INFINITY)
-            {
-                material->type = geom.material->type;
-                material->albedo_e = geom.material->albedo_e;
-                material->albedo_d = geom.material->albedo_d;
-                material->albedo_s = geom.material->albedo_s;
-                material->shininess = geom.material->shininess;
-                material->eta = geom.material->eta;
-                material->roughness = geom.material->roughness;
-                material->volume = geom.material->volume;
-                *(scene_index) = geom.scene_index;
-            }*/
+            *(scene_index) = geom.scene_index;
         }
 
         __global__ void
@@ -58,7 +45,6 @@ namespace cupbr
                            const uint32_t& height,
                            Scene& scene,
                            Camera& camera,
-                           Material* outMaterial,
                            int32_t* outSceneIndex)
     {
         detail::pickMouse_kernel << <1, 1 >> > (x,
@@ -67,7 +53,6 @@ namespace cupbr
                                                 height,
                                                 scene,
                                                 camera,
-                                                outMaterial,
                                                 outSceneIndex);
         cudaSafeCall(cudaDeviceSynchronize());
     }

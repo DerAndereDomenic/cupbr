@@ -18,7 +18,6 @@ namespace cupbr
         *   @param[in] height The window height
         *   @param[in] scene The Scene
         *   @param[in] camera The camera
-        *   @param[out] outMaterial The material found at the selected pixel
         *   @param[out] sceneIndex The scene index of the hit object
         */
         void pickMouse(const uint32_t& x,
@@ -27,7 +26,6 @@ namespace cupbr
                        const uint32_t& height,
                        Scene& scene,
                        Camera& camera,
-                       Material* outMaterial,
                        int32_t* sceneIndex);
 
         /**
