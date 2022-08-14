@@ -61,6 +61,10 @@ namespace cupbr
 
         inline static void destroy() { _instance->destroyImpl(); }
 
+        inline static std::unordered_map<std::string, std::shared_ptr<PluginInstance>>::iterator begin() { return _instance->_plugins.begin(); }
+
+        inline static std::unordered_map<std::string, std::shared_ptr<PluginInstance>>::iterator end() { return _instance->_plugins.end(); }
+
         private:
         static PluginManager* _instance;
         std::unordered_map<std::string, std::shared_ptr<PluginInstance>> _plugins;
