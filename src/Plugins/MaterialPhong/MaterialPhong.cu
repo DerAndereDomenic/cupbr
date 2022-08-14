@@ -7,13 +7,13 @@ namespace cupbr
     {
         public:
 
-        MaterialPhong(const Properties& properties)
+        MaterialPhong(Properties* properties)
         {
             type = MaterialType::OPAQUE;
-            albedo_e = properties.getProperty("albedo_e", Vector3float(0));
-            albedo_d = properties.getProperty("albedo_d", Vector3float(1));
-            albedo_s = properties.getProperty("albedo_s", Vector3float(0));
-            shininess = properties.getProperty("shininess", 128.0f * 0.4f);
+            albedo_e = properties->getProperty("albedo_e", Vector3float(0));
+            albedo_d = properties->getProperty("albedo_d", Vector3float(1));
+            albedo_s = properties->getProperty("albedo_s", Vector3float(0));
+            shininess = properties->getProperty("shininess", 128.0f * 0.4f);
         }
 
         __host__ __device__

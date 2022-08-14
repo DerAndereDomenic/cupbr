@@ -32,7 +32,7 @@ namespace cupbr
         *   @brief Default constructor
         *   @param properties The input properties
         */
-        Material(const Properties& properties) {}
+        Material(Properties& properties) {}
 
         MaterialType type = MaterialType::OPAQUE;                  /**< The material type */
         Volume volume;

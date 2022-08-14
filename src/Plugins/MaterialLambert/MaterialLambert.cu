@@ -7,10 +7,10 @@ namespace cupbr
     {
         public:
 
-        MaterialLambert(const Properties& properties)
+        MaterialLambert(Properties* properties)
         {
             type = MaterialType::OPAQUE;
-            albedo_d = properties.getProperty("albedo_d", Vector3float(1));
+            albedo_d = properties->getProperty("albedo_d", Vector3float(1));
         }
 
         __host__ __device__

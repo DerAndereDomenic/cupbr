@@ -78,10 +78,10 @@ namespace cupbr
                 current_element = current_element->NextSibling();
             }
 
-            scene->properties.push_back(properties);
 
             std::shared_ptr<PluginInstance> instance = PluginManager::getPlugin(std::string(type));
-            Material* material = reinterpret_cast<Material*>(instance->load(properties));
+            Material* material = reinterpret_cast<Material*>(instance->load(&properties));
+            scene->properties.push_back(properties);
             return material;
         }
 

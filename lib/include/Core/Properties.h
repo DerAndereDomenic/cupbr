@@ -56,14 +56,14 @@ namespace cupbr
         std::optional<T> getProperty(const std::string& name) const;
 
         /**
-        *   @brief Get the property or a default value
+        *   @brief Get the property or a default value. Also adds the default value to property if it doesn't exist
         *   @tparam T The type of the property
         *   @param name The name of the property
         *   @param default_value The default value
         *   @return The value of the property
         */
         template<typename T>
-        T getProperty(const std::string& name, const T& default_value) const;
+        T getProperty(const std::string& name, const T& default_value);
 
         //Iterators:
         inline std::unordered_map<std::string, Value>::iterator begin() { return _values.begin(); }

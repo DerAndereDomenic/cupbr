@@ -34,14 +34,14 @@ namespace cupbr
 
         ~PluginInstance();
 
-        Plugin* load(const Properties& properties);
+        Plugin* load(Properties* properties);
 
         std::string get_name() const;
 
         std::string get_version() const;
 
         private:
-        Plugin* (*_load)(const Properties& properties);
+        Plugin* (*_load)(Properties* properties);
         char* (*_get_name)();
         char* (*_get_version)();
 
@@ -79,7 +79,7 @@ namespace cupbr
                                                                                                                                     \
     extern "C"                                                                                                                      \
     {                                                                                                                               \
-        CUPBR_EXPORT Plugin* load(const Properties& properties)                                                                     \
+        CUPBR_EXPORT Plugin* load(Properties* properties)                                                                           \
         {                                                                                                                           \
             classType host_object(properties);                                                                                      \
             classType* dummy_plugin;                                                                                                \

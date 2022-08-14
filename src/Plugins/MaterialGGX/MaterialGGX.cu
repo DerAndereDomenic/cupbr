@@ -33,13 +33,13 @@ namespace cupbr
     {
         public:
 
-        MaterialGGX(const Properties& properties)
+        MaterialGGX(Properties* properties)
         {
             type = MaterialType::OPAQUE;
-            albedo_e = properties.getProperty("albedo_e", Vector3float(0));
-            albedo_d = properties.getProperty("albedo_d", Vector3float(1));
-            albedo_s = properties.getProperty("albedo_s", Vector3float(0));
-            roughness = properties.getProperty("roughness", 1.0f);
+            albedo_e = properties->getProperty("albedo_e", Vector3float(0));
+            albedo_d = properties->getProperty("albedo_d", Vector3float(1));
+            albedo_s = properties->getProperty("albedo_s", Vector3float(0));
+            roughness = properties->getProperty("roughness", 1.0f);
         }
 
         __host__ __device__

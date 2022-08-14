@@ -36,9 +36,16 @@ namespace cupbr
     
     template<typename T>
     T 
-    Properties::getProperty(const std::string& name, const T& default_value) const
+    Properties::getProperty(const std::string& name, const T& default_value)
     {
-        return getProperty<T>(name).value_or(default_value);
+        std::optional<T> opt = getProperty<T>(name);
+        if(!opt.has_value())
+        {
+            _values.insert(std::make_pair(name, default_value));
+            return default_value;
+        }
+
+        return opt.value();
     }
 
 } //namespace cupbr

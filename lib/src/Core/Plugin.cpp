@@ -20,7 +20,7 @@ namespace cupbr
             return;
         }
 
-        _load = (Plugin * (*)(const Properties & properties))GetProcAddress(*_handle, "load");
+        _load = (Plugin * (*)(Properties* properties))GetProcAddress(*_handle, "load");
         _get_name = (char* (*)())GetProcAddress(*_handle, "name");
         _get_version = (char* (*)())GetProcAddress(*_handle, "version");
 
@@ -36,7 +36,7 @@ namespace cupbr
     }
 
     Plugin* 
-    PluginInstance::load(const Properties& properties)
+    PluginInstance::load(Properties* properties)
     {
         return _load(properties);
     }

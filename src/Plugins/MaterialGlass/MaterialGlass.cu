@@ -17,13 +17,13 @@ namespace cupbr
     {
         public:
 
-        MaterialGlass(const Properties& properties)
+        MaterialGlass(Properties* properties)
         {
             type = MaterialType::REFRACTIVE;
-            albedo_e = properties.getProperty("albedo_e", Vector3float(0));
-            albedo_d = properties.getProperty("albedo_d", Vector3float(1));
-            albedo_s = properties.getProperty("albedo_s", Vector3float(0));
-            eta = properties.getProperty("eta", 1.5f);
+            albedo_e = properties->getProperty("albedo_e", Vector3float(0));
+            albedo_d = properties->getProperty("albedo_d", Vector3float(1));
+            albedo_s = properties->getProperty("albedo_s", Vector3float(0));
+            eta = properties->getProperty("eta", 1.5f);
         }
 
         __host__ __device__
