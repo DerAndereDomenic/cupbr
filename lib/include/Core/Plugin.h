@@ -9,7 +9,7 @@
 #include <memory>
 
 #ifdef CUPBR_WINDOWS
-class HINSTANCE__;
+struct HINSTANCE__;
 typedef HINSTANCE__* HINSTANCE;
 typedef HINSTANCE HMODULE;
 #define CUPBR_PLUGIN_FILE_ENDING ".dll"

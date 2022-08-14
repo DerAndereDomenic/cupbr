@@ -175,7 +175,6 @@ namespace cupbr
                 }
 
                 Vector3float scene_sigma_t = scene.volume.sigma_a + scene.volume.sigma_s;
-                float scene_g = scene.volume.g;
 
                 if (Tracing::traceVisibility(scene, d, shadow_ray))
                 {

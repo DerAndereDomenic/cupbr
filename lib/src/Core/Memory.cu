@@ -8,7 +8,7 @@ namespace cupbr
     void
     Memory::printStatisticsImpl()
     {
-        printf("Host:   %i/%i (%i)\n", Memory::allocated_host, Memory::deallocated_host, Memory::allocated_host - Memory::deallocated_host);
-        printf("Device: %i/%i (%i)\n", Memory::allocated_device, Memory::deallocated_device, Memory::allocated_device - Memory::deallocated_device);
+        std::cout << "Host:   " << Memory::allocated_host << "/" << Memory::deallocated_host <<" ("<< Memory::allocated_host - Memory::deallocated_host << ")"  << std::endl;
+        std::cout << "Device: " << Memory::allocated_device << "/" << Memory::deallocated_device <<" ("<< Memory::allocated_device - Memory::deallocated_device << ")"  << std::endl;
     }
 } //namespace cupbr

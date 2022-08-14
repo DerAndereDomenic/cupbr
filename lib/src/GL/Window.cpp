@@ -166,7 +166,7 @@ namespace cupbr
     void
     Window::spinOnce()
     {
-        double current_time = glfwGetTime();
+        float current_time = static_cast<float>(glfwGetTime());
         _delta_time = current_time - _last_time;
         _last_time = current_time;
         glfwSwapBuffers(_internal_window);

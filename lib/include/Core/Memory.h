@@ -28,7 +28,7 @@ namespace cupbr
         *   @return A pointer to the array
         */
         template<typename T>
-        static T* createHostArray(const uint32_t& size) { return instance->createHostArrayImpl<T>(size); }
+        static T* createHostArray(const size_t& size) { return instance->createHostArrayImpl<T>(size); }
 
         /**
         *   @brief Create an object allocated on the GPU (Device)
@@ -45,7 +45,7 @@ namespace cupbr
         *   @return A pointer to the array
         */
         template<typename T>
-        static T* createDeviceArray(const uint32_t& size) { return instance->createDeviceArrayImpl<T>(size); }
+        static T* createDeviceArray(const size_t& size) { return instance->createDeviceArrayImpl<T>(size); }
 
         /**
         *   @brief Destroy an object allocated on the CPU (Host)
@@ -96,7 +96,7 @@ namespace cupbr
         *   @param[in] host_array2 The target array
         */
         template<typename T>
-        static void copyHost2HostArray(const uint32_t& size, T* host_array1, T* host_array2) { instance->copyHost2HostArrayImpl<T>(size, host_array1, host_array2); }
+        static void copyHost2HostArray(const size_t& size, T* host_array1, T* host_array2) { instance->copyHost2HostArrayImpl<T>(size, host_array1, host_array2); }
 
         /**
         *   @brief Copies a host object to a device object
@@ -115,7 +115,7 @@ namespace cupbr
         *   @param[in] device_array The target array
         */
         template<typename T>
-        static void copyHost2DeviceArray(const uint32_t& size, T* host_array, T* device_array) { instance->copyHost2DeviceArrayImpl<T>(size, host_array, device_array); }
+        static void copyHost2DeviceArray(const size_t& size, T* host_array, T* device_array) { instance->copyHost2DeviceArrayImpl<T>(size, host_array, device_array); }
 
         /**
         *   @brief Copies a device object to a host object
@@ -134,7 +134,7 @@ namespace cupbr
         *   @param[in] host_array The target array
         */
         template<typename T>
-        static void copyDevice2HostArray(const uint32_t& size, T* device_array, T* host_array) { instance->copyDevice2HostArrayImpl<T>(size, device_array, host_array); }
+        static void copyDevice2HostArray(const size_t& size, T* device_array, T* host_array) { instance->copyDevice2HostArrayImpl<T>(size, device_array, host_array); }
 
         /**
         *   @brief Copies a device object to a device object
@@ -153,7 +153,7 @@ namespace cupbr
         *   @param[in] device_array2 The target array
         */
         template<typename T>
-        static void copyDevice2DeviceArray(const uint32_t& size, T* device_array1, T* device_array2) { instance->copyDevice2DeviceArrayImpl<T>(size, device_array1, device_array2); }
+        static void copyDevice2DeviceArray(const size_t& size, T* device_array1, T* device_array2) { instance->copyDevice2DeviceArrayImpl<T>(size, device_array1, device_array2); }
 
         /**
         *   @brief Prints the statistic of the allocator
@@ -165,13 +165,13 @@ namespace cupbr
         T* createHostObjectImpl();
 
         template<typename T>
-        T* createHostArrayImpl(const uint32_t& size);
+        T* createHostArrayImpl(const size_t& size);
 
         template<typename T>
         T* createDeviceObjectImpl();
 
         template<typename T>
-        T* createDeviceArrayImpl(const uint32_t& size);
+        T* createDeviceArrayImpl(const size_t& size);
 
         template<typename T>
         void destroyHostObjectImpl(T* object);
@@ -189,35 +189,35 @@ namespace cupbr
         void copyHost2HostObjectImpl(T* host_object1, T* host_object2);
 
         template<typename T>
-        void copyHost2HostArrayImpl(const uint32_t& size, T* host_array1, T* host_array2);
+        void copyHost2HostArrayImpl(const size_t& size, T* host_array1, T* host_array2);
 
         template<typename T>
         void copyHost2DeviceObjectImpl(T* host_object, T* device_object);
 
         template<typename T>
-        void copyHost2DeviceArrayImpl(const uint32_t& size, T* host_array, T* device_array);
+        void copyHost2DeviceArrayImpl(const size_t& size, T* host_array, T* device_array);
 
         template<typename T>
         void copyDevice2HostObjectImpl(T* device_object, T* host_object);
 
         template<typename T>
-        void copyDevice2HostArrayImpl(const uint32_t& size, T* device_array, T* host_array);
+        void copyDevice2HostArrayImpl(const size_t& size, T* device_array, T* host_array);
 
         template<typename T>
         void copyDevice2DeviceObjectImpl(T* device_object1, T* device_object2);
 
         template<typename T>
-        void copyDevice2DeviceArrayImpl(const uint32_t& size, T* device_array1, T* device_array2);
+        void copyDevice2DeviceArrayImpl(const size_t& size, T* device_array1, T* device_array2);
 
         void printStatisticsImpl();
 
         Memory() = default;                     /**< Private default constructor */
         static Memory* instance;                /**< The singleton instance */
 
-        uint32_t allocated_host = 0;            /**< The number of allocated host objects */
-        uint32_t allocated_device = 0;          /**< The number of allocated device objects */
-        uint32_t deallocated_host = 0;          /**< The number of destroyed host objects */
-        uint32_t deallocated_device = 0;        /**< The number of destroyed device objects */
+        size_t allocated_host = 0;            /**< The number of allocated host objects */
+        size_t allocated_device = 0;          /**< The number of allocated device objects */
+        size_t deallocated_host = 0;          /**< The number of destroyed host objects */
+        size_t deallocated_device = 0;        /**< The number of destroyed device objects */
     };
 
 } //namespace cupbr

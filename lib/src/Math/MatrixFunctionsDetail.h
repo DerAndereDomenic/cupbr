@@ -19,7 +19,7 @@ namespace cupbr
             TRANSPOSE(1, 0);
             TRANSPOSE(1, 1);
 
-            #undef TRANSPOSE;
+            #undef TRANSPOSE
 
             return result;
         }
@@ -67,7 +67,7 @@ namespace cupbr
             TRANSPOSE(2, 1);
             TRANSPOSE(2, 2);
 
-            #undef TRANSPOSE;
+            #undef TRANSPOSE
 
             return result;
         }
@@ -131,7 +131,7 @@ namespace cupbr
             TRANSPOSE(3, 2);
             TRANSPOSE(3, 3);
 
-            #undef TRANSPOSE;
+            #undef TRANSPOSE
 
             return result;
         }

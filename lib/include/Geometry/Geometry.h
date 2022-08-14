@@ -44,7 +44,9 @@ namespace cupbr
         /**
         *   @brief Default constructor
         */
-        Geometry();
+        __host__ __device__
+        Geometry::Geometry()
+        :_aabb(AABB(-INFINITY, INFINITY)){}
 
         /**
         *   @brief Compute the intersection point of geometry and a ray

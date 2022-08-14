@@ -203,8 +203,8 @@ namespace cupbr
         bool dummy = true;
         if (impl->edit_mode)
         {
-            ImGui::SetNextWindowPos(ImVec2(impl->width, 0));
-            ImGui::SetNextWindowSize(ImVec2(impl->menu_width, impl->height));
+            ImGui::SetNextWindowPos(ImVec2(static_cast<float>(impl->width), 0.0f));
+            ImGui::SetNextWindowSize(ImVec2(static_cast<float>(impl->menu_width), static_cast<float>(impl->height)));
             ImGui::Begin("Render settings", &dummy, ImGuiWindowFlags_MenuBar);
 
             if (ImGui::BeginMenuBar())

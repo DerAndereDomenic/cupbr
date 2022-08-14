@@ -59,8 +59,6 @@ int run(int argc, char* argv[])
 
     uint32_t frame_counter = 0;
 
-    bool post_proc = true;
-
     glViewport(0,0, width, height);
 
     std::string scene_path;

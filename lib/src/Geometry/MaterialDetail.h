@@ -11,7 +11,7 @@ namespace cupbr
     Material::henyeyGreensteinPhaseFunction(const float& g, const float& cos_theta)
     {
         if (fabsf(g) < 1e-3f)
-            return 0.25 / static_cast<float>(M_PI);
+            return 0.25f / static_cast<float>(M_PI);
 
         float g2 = g * g;
         float area = 4.0f * 3.14159f;
@@ -22,7 +22,7 @@ namespace cupbr
     inline Vector4float 
     Material::sampleHenyeyGreensteinPhaseFunction(const float& g_, const Vector3float& forward, uint32_t& seed)
     {
-        float g = g_ < 0.0f ? fminf(-1e-3, g_) : fmaxf(1e-3, g_);
+        float g = g_ < 0.0f ? fminf(-1e-3f, g_) : fmaxf(1e-3f, g_);
 
         float u1 = Math::rnd(seed);
         float u2 = Math::rnd(seed);

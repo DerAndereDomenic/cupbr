@@ -13,7 +13,7 @@ namespace cupbr
 
     template<typename T>
     T*
-    Memory::createHostArrayImpl(const uint32_t& size)
+    Memory::createHostArrayImpl(const size_t& size)
     {
         ++Memory::allocated_host;
         return new T[size];
@@ -31,7 +31,7 @@ namespace cupbr
 
     template<typename T>
     T*
-    Memory::createDeviceArrayImpl(const uint32_t& size)
+    Memory::createDeviceArrayImpl(const size_t& size)
     {
         T* device_object;
         cudaSafeCall(cudaMalloc((void**)&device_object, size * sizeof(T)));
@@ -80,7 +80,7 @@ namespace cupbr
 
     template<typename T>
     void
-    Memory::copyHost2HostArrayImpl(const uint32_t& size, T* host_array1, T* host_array2)
+    Memory::copyHost2HostArrayImpl(const size_t& size, T* host_array1, T* host_array2)
     {
         cudaSafeCall(cudaMemcpy(host_array2, host_array1, size * sizeof(T), cudaMemcpyHostToHost));
     }
@@ -94,7 +94,7 @@ namespace cupbr
 
     template<typename T>
     void
-    Memory::copyHost2DeviceArrayImpl(const uint32_t& size, T* host_array, T* device_array)
+    Memory::copyHost2DeviceArrayImpl(const size_t& size, T* host_array, T* device_array)
     {
         cudaSafeCall(cudaMemcpy(device_array, host_array, size * sizeof(T), cudaMemcpyHostToDevice));
     }
@@ -108,7 +108,7 @@ namespace cupbr
 
     template<typename T>
     void
-    Memory::copyDevice2HostArrayImpl(const uint32_t& size, T* device_array, T* host_array)
+    Memory::copyDevice2HostArrayImpl(const size_t& size, T* device_array, T* host_array)
     {
         cudaSafeCall(cudaMemcpy(host_array, device_array, size * sizeof(T), cudaMemcpyDeviceToHost));
     }
@@ -122,7 +122,7 @@ namespace cupbr
 
     template<typename T>
     void
-    Memory::copyDevice2DeviceArrayImpl(const uint32_t& size, T* device_array1, T* device_array2)
+    Memory::copyDevice2DeviceArrayImpl(const size_t& size, T* device_array1, T* device_array2)
     {
         cudaSafeCall(cudaMemcpy(device_array2, device_array1, size * sizeof(T), cudaMemcpyDeviceToDevice));
     }
