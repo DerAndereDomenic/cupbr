@@ -268,6 +268,20 @@ namespace cupbr
 
             Properties& properties = impl->scene->properties[impl->scene_index];
 
+            if (ImGui::BeginMenu("Material Name"))
+            {
+                for(auto it = PluginManager::begin(); it != PluginManager::end(); ++it)
+                {
+                    if (ImGui::MenuItem((it->first).c_str()))
+                    {
+                        properties.reset();
+                        properties.setProperty("name", it->first);
+                        impl->material_update = true;
+                    }
+                }
+                ImGui::EndMenu();
+            }
+
             for(auto it = properties.begin(); it != properties.end(); ++it)
             {
                 if(std::holds_alternative<std::string>(it->second))

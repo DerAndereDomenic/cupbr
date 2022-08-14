@@ -411,7 +411,7 @@ namespace cupbr
 
         for(uint32_t i = 0; i < scene->scene_size; ++i)
         {
-            Properties properties = scene->properties[i];
+            Properties& properties = scene->properties[i];
             std::string name = properties.getProperty<std::string>("name").value();
             std::shared_ptr<PluginInstance> instance = PluginManager::getPlugin(name);
             //From dll -> don't use memory API
