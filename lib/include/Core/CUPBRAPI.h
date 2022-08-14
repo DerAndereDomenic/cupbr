@@ -6,6 +6,9 @@
 #ifdef CUPBR_WINDOWS
 #define CUPBR_EXPORT __declspec(dllexport)
 #define CUPBR_IMPORT __declspec(dllimport)
+#ifndef NDEBUG
+#define CUPBR_DEBUG
+#endif
 #elif CUPBR_LINUX
 #error "Not implemented"
 #elif CUPBR_APPLE

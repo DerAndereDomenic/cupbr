@@ -14,6 +14,12 @@ typedef HINSTANCE__* HINSTANCE;
 typedef HINSTANCE HMODULE;
 #endif
 
+#ifdef CUPBR_DEBUG
+#define CUPBR_PLUGIN_PATH "bin/Debug"
+#else
+#define CUPBR_PLUGIN_PATH "bin/Release"
+#endif
+
 namespace cupbr
 {
     /**
