@@ -403,6 +403,31 @@ namespace cupbr
         return scene;
     }
 
+    void 
+    SceneLoader::reinitializeScene(Scene* scene)
+    {
+        Geometry** host_scene = Memory::createHostArray<Geometry*>(scene->scene_size);
+        Memory::copyDevice2HostArray(scene->scene_size, scene->geometry, host_scene);
+
+        for(uint32_t i = 0; i < scene->scene_size; ++i)
+        {
+            Properties properties = scene->properties[i];
+            std::string name = properties.getProperty<std::string>("name").value();
+            std::shared_ptr<PluginInstance> instance = PluginManager::getPlugin(name);
+            //From dll -> don't use memory API
+
+            Geometry geom;
+            Memory::copyDevice2HostObject(host_scene[i], &geom);
+
+            cudaFree(geom.material);
+            geom.material = reinterpret_cast<Material*>(instance->load(&properties));
+
+            Memory::copyHost2DeviceObject(&geom, host_scene[i]);
+        }
+
+        Memory::destroyHostArray<Geometry*>(host_scene);
+    }
+
     void
     SceneLoader::destroyScene(Scene& scene)
     {

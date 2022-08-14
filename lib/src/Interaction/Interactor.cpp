@@ -6,6 +6,8 @@
 #include <Core/MouseEvent.h>
 #include <Core/WindowEvent.h>
 
+#include <Scene/SceneLoader.h>
+
 #include <filesystem>
 
 namespace cupbr
@@ -400,6 +402,7 @@ namespace cupbr
             {
                 //Memory::copyHost2DeviceObject(impl->host_material, impl->device_material);
                 //Interaction::updateMaterial(*(impl->scene), impl->scene_index, impl->device_material);
+                SceneLoader::reinitializeScene(impl->scene);
                 impl->renderer->reset();
             }
         }
