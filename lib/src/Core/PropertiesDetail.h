@@ -48,6 +48,12 @@ namespace cupbr
         return opt.value();
     }
 
+    inline void
+    Properties::reset()
+    {
+        _values.clear();
+    }
+
 } //namespace cupbr
 
 #endif
