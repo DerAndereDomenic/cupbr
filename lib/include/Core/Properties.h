@@ -4,7 +4,7 @@
 #include <string>
 #include <optional>
 #include <variant>
-#include <Math/VectorTypes_fwd.h>
+#include <Math/Vector.h>
 #include <unordered_map>
 
 namespace cupbr
@@ -14,6 +14,7 @@ namespace cupbr
     */
     class Properties
     {
+        using Value = std::variant<bool, int, float, Vector3float, std::string>;
         public:
 
         /**
@@ -64,8 +65,16 @@ namespace cupbr
         template<typename T>
         T getProperty(const std::string& name, const T& default_value) const;
 
+        //Iterators:
+        inline std::unordered_map<std::string, Value>::iterator begin() { return _values.begin(); }
+
+        inline std::unordered_map<std::string, Value>::const_iterator begin() const { return _values.begin(); }
+
+        inline std::unordered_map<std::string, Value>::iterator end() { return _values.end(); }
+
+        inline std::unordered_map<std::string, Value>::const_iterator end() const { return _values.end(); }
+
         private:
-        using Value = std::variant<bool, int, float, Vector3float, std::string>;
         std::unordered_map<std::string, Value> _values;
     };
 
