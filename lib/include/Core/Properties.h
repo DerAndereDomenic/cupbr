@@ -65,6 +65,11 @@ namespace cupbr
         template<typename T>
         T getProperty(const std::string& name, const T& default_value);
 
+        /**
+        *   @brief Remove all properties
+        */
+        void reset();
+
         //Iterators:
         inline std::unordered_map<std::string, Value>::iterator begin() { return _values.begin(); }
 
