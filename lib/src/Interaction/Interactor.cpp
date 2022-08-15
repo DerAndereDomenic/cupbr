@@ -233,6 +233,17 @@ namespace cupbr
                 ImGui::EndMenuBar();
             }
 
+            ImGui::Text("Renderer");
+
+            for(auto it = PluginManager::begin(); it != PluginManager::end(); ++it)
+            {
+                if (it->second->get_super_name() == "RenderMethod" && ImGui::Button((it->first).c_str()))
+                {
+                    impl->material_update = true;
+                    impl->renderer->changeRenderMethod(it->first);
+                }
+            }
+
             if(ImGui::SliderInt("Trace Depth", &(impl->trace_depth), 1, 50))
             {
                 impl->renderer->setMaxTraceDepth(impl->trace_depth);
