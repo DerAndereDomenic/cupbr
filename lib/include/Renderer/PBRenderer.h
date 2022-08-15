@@ -73,6 +73,12 @@ namespace cupbr
         */
         uint32_t getMaxTraceDepth();
 
+        /**
+        *   @brief Change the RenderMethod used
+        *   @param[in] name The name of the method
+        */
+        void changeRenderMethod(const std::string& name);
+
         private:
         class Impl;
         std::unique_ptr<Impl> impl;     /**< The implementation pointer */

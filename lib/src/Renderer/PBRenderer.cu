@@ -138,4 +138,11 @@ namespace cupbr
         return impl->maxTraceDepth;
     }
 
+    void 
+    PBRenderer::changeRenderMethod(const std::string& name)
+    {
+        delete impl->renderer;
+        impl->renderer = reinterpret_cast<RenderMethod*>(PluginManager::getPlugin(name)->createHostObject(nullptr));
+    }
+
 } //namespace cupbr
