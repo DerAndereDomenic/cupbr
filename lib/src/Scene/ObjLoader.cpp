@@ -58,7 +58,7 @@ namespace cupbr
                 {
                     result.push_back(std::stof(item));
                 }
-                Vector3float normal = Math::normalize(Vector3float(scale.x * result[0], scale.y * result[1], scale.z * result[2]));
+                Vector3float normal = Math::normalize(Vector3float(result[0], result[1], result[2]));
                 normals.push_back(normal);
             }
             else if (line[0] == 'f' && line[1] == ' ')

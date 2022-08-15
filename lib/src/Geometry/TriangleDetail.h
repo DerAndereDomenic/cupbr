@@ -16,8 +16,8 @@ namespace cupbr
         _vertex2(vertex2),
         _vertex3(vertex3),
         _normal1(Math::normalize(Math::cross(vertex2 - vertex1, vertex3 - vertex1))),
-        _normal2(0),
-        _normal3(0)
+        _normal2(Math::normalize(Math::cross(vertex2 - vertex1, vertex3 - vertex1))),
+        _normal3(Math::normalize(Math::cross(vertex2 - vertex1, vertex3 - vertex1)))
     {
         type = GeometryType::TRIANGLE;
     }
@@ -69,10 +69,12 @@ namespace cupbr
 
         if (t < 0.0f) return geom;
 
+        float w = 1.0f - u - v;
+
         geom.type = GeometryType::TRIANGLE;
         geom.P = ray.origin() + t * ray.direction();
         geom.depth = t;
-        geom.N = _normal1;
+        geom.N = Math::normalize(w * _normal1 + u * _normal2 + v * _normal3);
         geom.material = material;
         geom.scene_index = _id;
 
