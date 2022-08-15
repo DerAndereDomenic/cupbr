@@ -31,7 +31,9 @@ namespace cupbr
 
     PluginInstance::~PluginInstance()
     {
-        //TODO: Free dll
+        #ifdef CUPBR_WINDOWS
+        FreeLibrary(*_handle);
+        #endif
         free(_handle);
     }
 
