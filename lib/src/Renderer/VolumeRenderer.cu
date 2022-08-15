@@ -310,12 +310,12 @@ namespace cupbr
     } //namespace detail
 
     void
-    PBRendering::volumetracing(Scene& scene,
-                               const Camera& camera,
-                               const uint32_t& frameIndex,
-                               const uint32_t& maxTraceDepth,
-                               const bool& useRussianRoulette,
-                               Image<Vector3float>* output_img)
+    VolumeRenderer::render(Scene& scene,
+                           const Camera& camera,
+                           const uint32_t& frameIndex,
+                           const uint32_t& maxTraceDepth,
+                           const bool& useRussianRoulette,
+                           Image<Vector3float>* output_img)
     {
         const KernelSizeHelper::KernelSize config = KernelSizeHelper::configure(output_img->size());
         detail::volume_kernel << <config.blocks, config.threads >> > (scene,

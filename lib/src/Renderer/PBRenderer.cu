@@ -33,6 +33,8 @@ namespace cupbr
         uint32_t frameIndex;
         uint32_t maxTraceDepth;
 
+        VolumeRenderer renderer;
+
         bool outputSizeSet;
         bool sceneRegistered;
         bool useRussianRoulette;
@@ -96,12 +98,12 @@ namespace cupbr
         {
             impl->frameIndex = 0;
         }
-        PBRendering::volumetracing(*(impl->scene),
-                                   *camera,
-                                   impl->frameIndex,
-                                   impl->maxTraceDepth,
-                                   impl->useRussianRoulette,
-                                   &impl->hdr_image);
+        impl->renderer.render(*(impl->scene),
+                              *camera,
+                              impl->frameIndex,
+                              impl->maxTraceDepth,
+                              impl->useRussianRoulette,
+                              &impl->hdr_image);
         ++impl->frameIndex;
     }
 

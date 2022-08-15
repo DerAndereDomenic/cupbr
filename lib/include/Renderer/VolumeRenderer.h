@@ -1,14 +1,17 @@
 #ifndef __CUPBR_RENDERER_VOLUMERENDERER_H
 #define __CUPBR_RENDERER_VOLUMERENDERER_H
 
-#include <Scene/Scene.h>
-#include <DataStructure/Image.h>
-#include <DataStructure/Camera.h>
+#include <Renderer/RenderMethod.h>
 
 namespace cupbr
 {
-    namespace PBRendering
+    class VolumeRenderer : public RenderMethod
     {
+        public:
+        VolumeRenderer() = default;
+
+        VolumeRenderer(Properties* properties) {}
+
         /**
         *   @brief An implementation of a volume renderer (prototype)
         *   @param[in] scene The scene to render
@@ -17,13 +20,13 @@ namespace cupbr
         *   @param[in] maxTraceDepth The maximum number of recursive rays
         *   @param[out] output_img The rendered HDR image
         */
-        void volumetracing(Scene& scene,
-                           const Camera& camera,
-                           const uint32_t& frameIndex,
-                           const uint32_t& maxTraceDepth,
-                           const bool& useRussianRoulette,
-                           Image<Vector3float>* output_img);
-    } //namepsace PBRendering
+        virtual void render(Scene& scene,
+                            const Camera& camera,
+                            const uint32_t& frameIndex,
+                            const uint32_t& maxTraceDepth,
+                            const bool& useRussianRoulette,
+                            Image<Vector3float>* output_img);
+    };
 } //namespace cupbr
 
 #endif
