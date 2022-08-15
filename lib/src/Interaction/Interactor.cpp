@@ -275,7 +275,7 @@ namespace cupbr
                 {
                     for (auto it = PluginManager::begin(); it != PluginManager::end(); ++it)
                     {
-                        if (ImGui::MenuItem((it->first).c_str()))
+                        if (it->second->get_super_name() == "Material" && ImGui::MenuItem((it->first).c_str()))
                         {
                             properties.reset();
                             properties.setProperty("name", it->first);

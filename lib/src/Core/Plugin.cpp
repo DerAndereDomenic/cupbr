@@ -24,6 +24,7 @@ namespace cupbr
         _createHostObject = (Plugin * (*)(Properties* properties))GetProcAddress(*_handle, "createHostObject");
         _get_name = (char* (*)())GetProcAddress(*_handle, "name");
         _get_version = (char* (*)())GetProcAddress(*_handle, "version");
+        _get_super_name = (char* (*)())GetProcAddress(*_handle, "superName");
 
         std::cout << "Loaded plugin: " << get_name() << "; Version: " << get_version() << std::endl;
 
