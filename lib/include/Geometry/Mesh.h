@@ -43,7 +43,6 @@ namespace cupbr
 
         private:
         Triangle* _triangles;       /**< The plane position */
-        Vector3float _normal;       /**< The plane normal */
         uint32_t _num_triangles;    /**< The number of triangles */
     };
 

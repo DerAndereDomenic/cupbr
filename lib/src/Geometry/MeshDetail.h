@@ -11,7 +11,6 @@ namespace cupbr
     Mesh::Mesh(Triangle* triangle_buffer, const uint32_t& num_triangles, const Vector3float& minimum, const Vector3float& maximum)
         :Geometry(),
         _triangles(triangle_buffer),
-        _normal(0),
         _num_triangles(num_triangles)
     {
         type = GeometryType::MESH;
@@ -24,7 +23,6 @@ namespace cupbr
     {
         LocalGeometry geom;
 
-        Vector3float normal = 0;
         for (uint32_t i = 0; i < _num_triangles; ++i)
         {
             LocalGeometry intersection_triangle = _triangles[i].computeRayIntersection(ray);

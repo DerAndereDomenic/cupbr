@@ -8,12 +8,35 @@ namespace cupbr
 {
     __host__ __device__
     inline
-    Triangle::Triangle(const Vector3float& vertex1, const Vector3float& vertex2, const Vector3float& vertex3)
+    Triangle::Triangle(const Vector3float& vertex1,
+                       const Vector3float& vertex2,
+                       const Vector3float& vertex3)
         :Geometry(),
         _vertex1(vertex1),
         _vertex2(vertex2),
         _vertex3(vertex3),
-        _normal(Math::normalize(Math::cross(vertex2 - vertex1, vertex3 - vertex1)))
+        _normal1(Math::normalize(Math::cross(vertex2 - vertex1, vertex3 - vertex1))),
+        _normal2(0),
+        _normal3(0)
+    {
+        type = GeometryType::TRIANGLE;
+    }
+
+    __host__ __device__
+    inline
+    Triangle::Triangle(const Vector3float& vertex1,
+                       const Vector3float& vertex2,
+                       const Vector3float& vertex3,
+                       const Vector3float& normal1,
+                       const Vector3float& normal2,
+                       const Vector3float& normal3)
+        :Geometry(),
+        _vertex1(vertex1),
+        _vertex2(vertex2),
+        _vertex3(vertex3),
+        _normal1(normal1),
+        _normal2(normal2),
+        _normal3(normal3)
     {
         type = GeometryType::TRIANGLE;
     }
@@ -49,7 +72,7 @@ namespace cupbr
         geom.type = GeometryType::TRIANGLE;
         geom.P = ray.origin() + t * ray.direction();
         geom.depth = t;
-        geom.N = _normal;
+        geom.N = _normal1;
         geom.material = material;
         geom.scene_index = _id;
 

@@ -24,8 +24,28 @@ namespace cupbr
         *   @note The normal will get normalized
         */
         __host__ __device__
-        Triangle(const Vector3float& vertex1, const Vector3float& vertex2, const Vector3float& vertex3);
+        Triangle(const Vector3float& vertex1,
+                 const Vector3float& vertex2,
+                 const Vector3float& vertex3);
 
+        /**
+        *   @brief Create a Triangle
+        *   @param[in] vertex1 The first vertex
+        *   @param[in] vertex2 The second vertex
+        *   @param[in] vertex3 The third vertex
+        *   @param[in] normal1 The first normal
+        *   @param[in] normal2 The second normal
+        *   @param[in] normal3 The third normal
+        *   @note The normal will get normalized
+        */
+        __host__ __device__
+        Triangle(const Vector3float& vertex1,
+                 const Vector3float& vertex2,
+                 const Vector3float& vertex3,
+                 const Vector3float& normal1,
+                 const Vector3float& normal2,
+                 const Vector3float& normal3);
+        
         //Override
         __host__ __device__
         LocalGeometry computeRayIntersection(const Ray& ray);
@@ -34,7 +54,9 @@ namespace cupbr
         Vector3float _vertex1;     /**< The first vertex */
         Vector3float _vertex2;     /**< The second vertex */
         Vector3float _vertex3;     /**< The third vertex */
-        Vector3float _normal;      /**< The normal */
+        Vector3float _normal1;     /**< The first normal */
+        Vector3float _normal2;     /**< The second normal */
+        Vector3float _normal3;     /**< The third normal */
     };
 
 } //namespace cupbr
