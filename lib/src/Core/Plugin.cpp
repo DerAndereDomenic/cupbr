@@ -20,7 +20,8 @@ namespace cupbr
             return;
         }
 
-        _load = (Plugin * (*)(Properties* properties))GetProcAddress(*_handle, "load");
+        _createDeviceObject = (Plugin * (*)(Properties* properties))GetProcAddress(*_handle, "createDeviceObject");
+        _createHostObject = (Plugin * (*)(Properties* properties))GetProcAddress(*_handle, "createHostObject");
         _get_name = (char* (*)())GetProcAddress(*_handle, "name");
         _get_version = (char* (*)())GetProcAddress(*_handle, "version");
 
@@ -38,9 +39,15 @@ namespace cupbr
     }
 
     Plugin* 
-    PluginInstance::load(Properties* properties)
+    PluginInstance::createDeviceObject(Properties* properties)
     {
-        return _load(properties);
+        return _createDeviceObject(properties);
+    }
+
+    Plugin* 
+    PluginInstance::createHostObject(Properties* properties)
+    {
+        return _createHostObject(properties);
     }
 
     std::string 

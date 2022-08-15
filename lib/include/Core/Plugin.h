@@ -58,12 +58,20 @@ namespace cupbr
         ~PluginInstance();
 
         /**
-        *   @brief Load an object associated with this plugin instance
+        *   @brief Load an object associated with this plugin instance on the device
         *   Creates a new object that is implemented inside the plugin  (for example the Material class)
         *   @param[in] properties Properties needed for creating the object
         *   @return Device pointer of the plugin instance
         */
-        Plugin* load(Properties* properties);
+        Plugin* createDeviceObject(Properties* properties);
+
+        /**
+        *   @brief Load an object associated with this plugin instance on the host
+        *   Creates a new object that is implemented inside the plugin  (for example the Material class)
+        *   @param[in] properties Properties needed for creating the object
+        *   @return Host pointer of the plugin instance
+        */
+        Plugin* createHostObject(Properties* properties);
 
         /**
         *   @brief Get the name of the plugin
@@ -78,12 +86,13 @@ namespace cupbr
         std::string get_version() const;
 
         private:
-        Plugin* (*_load)(Properties* properties);       /**< Function pointer for loading an instance */
-        char* (*_get_name)();                           /**< Function pointer for the name */
-        char* (*_get_version)();                        /**< Function pointer for the version */
+        Plugin* (*_createDeviceObject)(Properties* properties);         /**< Function pointer for loading an instance */
+        Plugin* (*_createHostObject)(Properties* properties);           /**< Function pointer for loading an instance */
+        char* (*_get_name)();                                           /**< Function pointer for the name */
+        char* (*_get_version)();                                        /**< Function pointer for the version */
 
         #ifdef CUPBR_WINDOWS
-        HMODULE* _handle;                               /**< The library handle for windows */
+        HMODULE* _handle;                                               /**< The library handle for windows */
         #endif
     };
 
@@ -145,7 +154,7 @@ namespace cupbr
                                                                                                                                     \
     extern "C"                                                                                                                      \
     {                                                                                                                               \
-        CUPBR_EXPORT Plugin* load(Properties* properties)                                                                           \
+        CUPBR_EXPORT Plugin* createDeviceObject(Properties* properties)                                                             \
         {                                                                                                                           \
             classType host_object(properties);                                                                                      \
             classType* dummy_plugin;                                                                                                \
@@ -166,6 +175,11 @@ namespace cupbr
             cudaFree(plugin_holder);                                                                                                \
             cudaFree(dummy_plugin);                                                                                                 \
             return plugin;                                                                                                          \
+        }                                                                                                                           \
+                                                                                                                                    \
+        CUPBR_EXPORT Plugin* createHostObject(Properties* properties)                                                               \
+        {                                                                                                                           \
+            return new classType(properties);                                                                                       \
         }                                                                                                                           \
                                                                                                                                     \
         CUPBR_EXPORT void destroy(Plugin* plugin)                                                                                   \

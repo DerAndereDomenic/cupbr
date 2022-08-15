@@ -80,7 +80,7 @@ namespace cupbr
 
 
             std::shared_ptr<PluginInstance> instance = PluginManager::getPlugin(std::string(type));
-            Material* material = reinterpret_cast<Material*>(instance->load(&properties));
+            Material* material = reinterpret_cast<Material*>(instance->createDeviceObject(&properties));
             scene->properties.push_back(properties);
             return material;
         }
@@ -420,7 +420,7 @@ namespace cupbr
             Memory::copyDevice2HostObject(host_scene[i], &geom);
 
             cudaFree(geom.material);
-            geom.material = reinterpret_cast<Material*>(instance->load(&properties));
+            geom.material = reinterpret_cast<Material*>(instance->createDeviceObject(&properties));
 
             Memory::copyHost2DeviceObject(&geom, host_scene[i]);
         }
