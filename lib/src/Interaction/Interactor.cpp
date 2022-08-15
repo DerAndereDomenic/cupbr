@@ -224,6 +224,7 @@ namespace cupbr
                         {
                             impl->reset_scene = true;
                             impl->scene_path = s;
+                            impl->scene_index = 0;
                         }
                     }
 
@@ -312,114 +313,10 @@ namespace cupbr
                 }
             }
 
-            /*ImGui::Text("Material:");
-            ImGui::Separator();
-            ImGui::Text("Type:");
-            if (ImGui::MenuItem("LAMBERT"))
-            {
-                impl->host_material->type = MaterialType::LAMBERT;
-                impl->material_update = true;
-            }
-            else if (ImGui::MenuItem("PHONG"))
-            {
-                impl->host_material->type = MaterialType::PHONG;
-                impl->material_update = true;
-            }
-            else if (ImGui::MenuItem("GLASS"))
-            {
-                impl->host_material->type = MaterialType::GLASS;
-                impl->material_update = true;
-            }
-            else if (ImGui::MenuItem("MIRROR"))
-            {
-                impl->host_material->type = MaterialType::MIRROR;
-                impl->material_update = true;
-            }
-            else if (ImGui::MenuItem("GGX"))
-            {
-                impl->host_material->type = MaterialType::GGX;
-                impl->material_update = true;
-            }
-            else if(ImGui::MenuItem("VOLUME"))
-            {
-                impl->host_material->type = MaterialType::VOLUME;
-                impl->material_update = true;
-            }
-
-            if (ImGui::SliderFloat("Shininess", &(impl->host_material->shininess), 0.0f, 128.0f))
-            {
-                impl->material_update = true;
-            }
-
-            if (ImGui::SliderFloat("Roughness", &(impl->host_material->roughness), 1e-3f, 1.0f))
-            {
-                impl->material_update = true;
-            }
-
-            if (ImGui::SliderFloat("Eta", &(impl->host_material->eta), 0.0f, 5.0f))
-            {
-                impl->material_update = true;
-            }
-
-            if (ImGui::ColorEdit3("Albedo emissive", reinterpret_cast<float*>(&(impl->host_material->albedo_e))))
-            {
-                impl->material_update = true;
-            }
-
-            if (ImGui::ColorEdit3("Albedo diffuse", reinterpret_cast<float*>(&(impl->host_material->albedo_d))))
-            {
-                impl->material_update = true;
-            }
-
-            if (ImGui::ColorEdit3("Albedo specular", reinterpret_cast<float*>(&(impl->host_material->albedo_s))))
-            {
-                impl->material_update = true;
-            }
-
-            if(ImGui::InputFloat3("Absorption", reinterpret_cast<float*>(&(impl->host_material->volume.sigma_a))))
-            {
-                impl->material_update = true;
-            }
-
-            if(ImGui::InputFloat3("Scattering", reinterpret_cast<float*>(&(impl->host_material->volume.sigma_s))))
-            {
-                impl->material_update = true;
-            }
-
-            if(ImGui::InputFloat("Phase", &(impl->host_material->volume.g)))
-            {
-                impl->material_update = true;
-            }
-
-            if(ImGui::Checkbox("Glass Interface", reinterpret_cast<bool*>(&(impl->host_material->volume.interface))))
-            {
-                impl->material_update = true;
-            }
-
-            ImGui::Separator();
-            ImGui::Text("Volume:");
-
-            if (ImGui::InputFloat3("Sigma_a", reinterpret_cast<float*>(&(impl->scene->volume.sigma_a))))
-            {
-                impl->material_update = true;
-            }
-
-            if (ImGui::InputFloat3("Sigma_s", reinterpret_cast<float*>(&(impl->scene->volume.sigma_s))))
-            {
-                impl->material_update = true;
-            }
-
-            if (ImGui::InputFloat("g", &(impl->scene->volume.g)))
-            {
-                impl->material_update = true;
-            }*/
-
             ImGui::End();
 
             if (impl->material_update)
             {
-                //Memory::copyHost2DeviceObject(impl->host_material, impl->device_material);
-                //Interaction::updateMaterial(*(impl->scene), impl->scene_index, impl->device_material);
                 SceneLoader::reinitializeScene(impl->scene);
                 impl->renderer->reset();
             }
