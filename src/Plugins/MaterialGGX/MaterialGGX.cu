@@ -97,6 +97,6 @@ namespace cupbr
         float roughness;
     };
 
-    DEFINE_PLUGIN(MaterialGGX, "GGX", "1.0")
+    DEFINE_PLUGIN(MaterialGGX, "GGX", "1.0", Material)
 
 }

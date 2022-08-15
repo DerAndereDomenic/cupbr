@@ -95,6 +95,6 @@ namespace cupbr
         float eta;
     };
 
-    DEFINE_PLUGIN(MaterialGlass, "GLASS", "1.0")
+    DEFINE_PLUGIN(MaterialGlass, "GLASS", "1.0", Material)
 
 }

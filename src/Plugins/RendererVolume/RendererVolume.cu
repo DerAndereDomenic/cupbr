@@ -334,6 +334,6 @@ namespace cupbr
         }
     };
 
-    DEFINE_PLUGIN(RendererVolume, "VolumeRenderer", "1.0")
+    DEFINE_PLUGIN(RendererVolume, "VolumeRenderer", "1.0", RenderMethod)
 
 }

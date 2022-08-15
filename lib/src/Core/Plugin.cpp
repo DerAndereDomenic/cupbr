@@ -62,6 +62,12 @@ namespace cupbr
         return std::string(_get_version());
     }
 
+    std::string
+    PluginInstance::get_super_name() const
+    {
+        return std::string(_get_super_name());
+    }
+
     void 
     PluginManager::loadPluginImpl(const std::string& name)
     {

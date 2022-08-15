@@ -36,6 +36,6 @@ namespace cupbr
         Vector3float albedo_s;
     };
 
-    DEFINE_PLUGIN(MaterialMirror, "MIRROR", "1.0")
+    DEFINE_PLUGIN(MaterialMirror, "MIRROR", "1.0", Material)
 
 }

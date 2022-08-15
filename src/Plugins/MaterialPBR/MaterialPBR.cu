@@ -156,6 +156,6 @@ namespace cupbr
         float roughness;
     };
 
-    DEFINE_PLUGIN(MaterialPBR, "PBR", "1.0")
+    DEFINE_PLUGIN(MaterialPBR, "PBR", "1.0", Material)
 
 }

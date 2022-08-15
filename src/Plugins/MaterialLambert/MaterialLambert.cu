@@ -45,6 +45,6 @@ namespace cupbr
         Vector3float albedo_d;
     };
 
-    DEFINE_PLUGIN(MaterialLambert, "LAMBERT", "1.0")
+    DEFINE_PLUGIN(MaterialLambert, "LAMBERT", "1.0", Material)
 
 }

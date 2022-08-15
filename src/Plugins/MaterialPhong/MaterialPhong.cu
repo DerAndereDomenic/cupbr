@@ -52,6 +52,6 @@ namespace cupbr
         float shininess;
     };
 
-    DEFINE_PLUGIN(MaterialPhong, "PHONG", "1.0")
+    DEFINE_PLUGIN(MaterialPhong, "PHONG", "1.0", Material)
 
 }

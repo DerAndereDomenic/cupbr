@@ -85,11 +85,18 @@ namespace cupbr
         */
         std::string get_version() const;
 
+        /**
+        *   @brief Get the name of the super class
+        *   @return The name
+        */
+        std::string get_super_name() const;
+
         private:
         Plugin* (*_createDeviceObject)(Properties* properties);         /**< Function pointer for loading an instance */
         Plugin* (*_createHostObject)(Properties* properties);           /**< Function pointer for loading an instance */
         char* (*_get_name)();                                           /**< Function pointer for the name */
         char* (*_get_version)();                                        /**< Function pointer for the version */
+        char* (*_get_super_name)();                                     /**< Function pointer for name of super class */
 
         #ifdef CUPBR_WINDOWS
         HMODULE* _handle;                                               /**< The library handle for windows */
@@ -146,7 +153,7 @@ namespace cupbr
     *   Creates functions for loading, destroying and retreiving names.
     *   Currently we only load device pointer that create consistent vtables for device inheritance
     */
-    #define DEFINE_PLUGIN(classType, pluginName, pluginVersion)                                                                     \
+    #define DEFINE_PLUGIN(classType, pluginName, pluginVersion, superClass)                                                         \
     __global__ void fix_vtable(classType** plugin, classType* dummy_plugin)                                                         \
     {                                                                                                                               \
         *plugin = new classType(*dummy_plugin);                                                                                     \
@@ -195,6 +202,11 @@ namespace cupbr
         CUPBR_EXPORT const char* version()                                                                                          \
         {                                                                                                                           \
             return pluginVersion;                                                                                                   \
+        }                                                                                                                           \
+                                                                                                                                    \
+        CUPBR_EXPORT const char* superName()                                                                                        \
+        {                                                                                                                           \
+            return #superClass;                                                                                                     \
         }                                                                                                                           \
     }
 
