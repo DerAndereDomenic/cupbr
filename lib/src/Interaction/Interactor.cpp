@@ -235,13 +235,21 @@ namespace cupbr
 
             ImGui::Text("Renderer");
 
-            for(auto it = PluginManager::begin(); it != PluginManager::end(); ++it)
+            if (ImGui::BeginMenuBar())
             {
-                if (it->second->get_super_name() == "RenderMethod" && ImGui::Button((it->first).c_str()))
+                if (ImGui::BeginMenu("Renderer"))
                 {
-                    impl->material_update = true;
-                    impl->renderer->changeRenderMethod(it->first);
+                    for(auto it = PluginManager::begin(); it != PluginManager::end(); ++it)
+                    {
+                        if (it->second->get_super_name() == "RenderMethod" && ImGui::MenuItem((it->first).c_str()))
+                        {
+                            impl->material_update = true;
+                            impl->renderer->changeRenderMethod(it->first);
+                        }
+                    }
+                    ImGui::EndMenu();
                 }
+                ImGui::EndMenuBar();
             }
 
             if(ImGui::SliderInt("Trace Depth", &(impl->trace_depth), 1, 50))
