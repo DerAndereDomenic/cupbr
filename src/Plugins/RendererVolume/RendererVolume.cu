@@ -1,11 +1,8 @@
-#include <Renderer/VolumeRenderer.h>
-#include <Core/KernelHelper.h>
-#include <Core/Tracing.h>
-#include <Geometry/Sphere.h>
-#include <Geometry/Plane.h>
+#include <CUPBR.h>
 
 namespace cupbr
 {
+
     namespace detail
     {
         struct RadiancePayload
@@ -308,23 +305,35 @@ namespace cupbr
             img[tid] = ray.payload<RadiancePayload>()->radiance;
         }
     } //namespace detail
-
-    void
-    VolumeRenderer::render(Scene& scene,
-                           const Camera& camera,
-                           const uint32_t& frameIndex,
-                           const uint32_t& maxTraceDepth,
-                           const bool& useRussianRoulette,
-                           Image<Vector3float>* output_img)
+    
+    class RendererVolume : public RenderMethod
     {
-        const KernelSizeHelper::KernelSize config = KernelSizeHelper::configure(output_img->size());
-        detail::volume_kernel << <config.blocks, config.threads >> > (scene,
-                                                                      camera,
-                                                                      frameIndex,
-                                                                      maxTraceDepth,
-                                                                      useRussianRoulette,
-                                                                      *output_img);
-        cudaSafeCall(cudaDeviceSynchronize());
-    }
+        public:
 
-} //namespace cupbr
+        RendererVolume(Properties* properties)
+        {
+
+        }
+
+        virtual void 
+        RendererVolume::render(Scene& scene,
+                               const Camera& camera,
+                               const uint32_t& frameIndex,
+                               const uint32_t& maxTraceDepth,
+                               const bool& useRussianRoulette,
+                               Image<Vector3float>* output_img) 
+        {
+            const KernelSizeHelper::KernelSize config = KernelSizeHelper::configure(output_img->size());
+            detail::volume_kernel << <config.blocks, config.threads >> > (scene,
+                                                                          camera,
+                                                                          frameIndex,
+                                                                          maxTraceDepth,
+                                                                          useRussianRoulette,
+                                                                          *output_img);
+            cudaSafeCall(cudaDeviceSynchronize());
+        }
+    };
+
+    DEFINE_PLUGIN(RendererVolume, "VolumeRenderer", "1.0")
+
+}

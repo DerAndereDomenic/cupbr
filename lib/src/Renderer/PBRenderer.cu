@@ -1,5 +1,5 @@
 #include <Renderer/PBRenderer.h>
-#include <Renderer/VolumeRenderer.h>
+#include <Renderer/RenderMethod.h>
 
 namespace cupbr
 {
@@ -33,7 +33,7 @@ namespace cupbr
         uint32_t frameIndex;
         uint32_t maxTraceDepth;
 
-        VolumeRenderer renderer;
+        RenderMethod* renderer;
 
         bool outputSizeSet;
         bool sceneRegistered;
@@ -46,6 +46,7 @@ namespace cupbr
         sceneRegistered = false;
         frameIndex = 0;
         maxTraceDepth = 5;
+        renderer = reinterpret_cast<RenderMethod*>(PluginManager::getPlugin("VolumeRenderer")->createHostObject(nullptr));
     }
 
     PBRenderer::Impl::~Impl()
@@ -98,7 +99,7 @@ namespace cupbr
         {
             impl->frameIndex = 0;
         }
-        impl->renderer.render(*(impl->scene),
+        impl->renderer->render(*(impl->scene),
                               *camera,
                               impl->frameIndex,
                               impl->maxTraceDepth,
