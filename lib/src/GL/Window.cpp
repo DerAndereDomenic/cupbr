@@ -201,4 +201,12 @@ namespace cupbr
         return Vector2float(static_cast<float>(xpos), static_cast<float>(ypos));
     }
 
+    void 
+    Window::setEditMode(const bool edit_mode)
+    {
+        edit_mode ? 
+            glfwSetInputMode(_internal_window, GLFW_CURSOR, GLFW_CURSOR_NORMAL) :
+            glfwSetInputMode(_internal_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    }
+
 } //namespace cupbr

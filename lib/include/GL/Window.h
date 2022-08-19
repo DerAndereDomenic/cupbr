@@ -57,6 +57,12 @@ namespace cupbr
         Vector2float getMousePosition() const;
 
         /**
+        *   @brief Change between view and edit mode
+        *   @param[in] edit_mode If edit mode is enabled or not
+        */
+        void setEditMode(const bool edit_mode);
+
+        /**
         *   @brief Set the event callback
         *   @param[in] callback The callback function called on events
         */
