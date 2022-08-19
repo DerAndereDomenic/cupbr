@@ -47,10 +47,10 @@ namespace cupbr
         MaterialGGX::brdf(const Vector3float& position, const Vector3float& inc_dir, const Vector3float& out_dir, const Vector3float& normal)
         {
             Vector3float H = Math::normalize(inc_dir + out_dir);
-            float NdotH = Math::dot(normal, H);
-            float LdotH = Math::dot(out_dir, H);
-            float NdotL = Math::dot(normal, out_dir);
-            float NdotV = Math::dot(normal, inc_dir);
+            float NdotH = fmaxf(0.0f, Math::dot(normal, H));
+            float LdotH = fmaxf(0.0f, Math::dot(out_dir, H));
+            float NdotL = fmaxf(0.0f, Math::dot(normal, out_dir));
+            float NdotV = fmaxf(0.0f, Math::dot(normal, inc_dir));
 
             float ndf = detail::D_GGX(NdotH, roughness);
 

@@ -60,8 +60,8 @@ namespace cupbr
             Vector3float H = Math::toLocalFrame(normal, Vector3float(x, y, z));
             Vector3float L = Math::reflect(inc_dir, H);
 
-            float LdotH = Math::dot(inc_dir, H);
-            float NdotH = Math::dot(normal, H);
+            float LdotH = fmaxf(0.0f, Math::dot(inc_dir, H));
+            float NdotH = fmaxf(0.0f, Math::dot(normal, H));
 
             if (Math::dot(normal, L) <= 0.0f)
             {
@@ -97,11 +97,13 @@ namespace cupbr
             Vector3float diffuse_brdf = albedo_d / static_cast<float>(M_PI);
 
             Vector3float H = Math::normalize(inc_dir + out_dir);
-            float NdotH = Math::dot(normal, H);
-            float LdotH = Math::dot(out_dir, H);
+            float NdotH = fmaxf(0.0f, Math::dot(normal, H));
+            float LdotH = fmaxf(0.0f, Math::dot(out_dir, H));
+            float NdotV = fmaxf(0.0f, Math::dot(normal, inc_dir));
+            float NdotL = fmaxf(0.0f, Math::dot(normal, out_dir));
             float ndf = detail::D_GGX(NdotH, roughness);
 
-            float vis = detail::V_SmithJointGGX(Math::dot(normal, out_dir), Math::dot(normal, inc_dir), roughness);
+            float vis = detail::V_SmithJointGGX(NdotL, NdotV, roughness);
             Vector3float specular_brdf = ndf * vis * Math::fresnel_schlick(albedo_s, LdotH);
 
             return diffuse_brdf + specular_brdf;
@@ -138,9 +140,10 @@ namespace cupbr
                 return Vector4float(0,0,0,1);;
 
             Vector3float H = Math::normalize(inc_dir + direction);
-            float NdotH = Math::dot(normal, H);
-            float LdotH = Math::dot(direction, H);
-            float diffuse_pdf = fmaxf(0.0f, Math::dot(normal, direction)) / static_cast<float>(M_PI);
+            float NdotH = fmaxf(0.0f, Math::dot(normal, H));
+            float LdotH = fmaxf(0.0f, Math::dot(direction, H));
+            float NdotV = fmaxf(0.0f, Math::dot(normal, direction));
+            float diffuse_pdf = NdotV / static_cast<float>(M_PI);
             float specular_pdf = detail::D_GGX(NdotH, roughness) * NdotH / fabsf(4.0f * LdotH);;
 
             // P(ray) = P(ray | diffuse) * P(diffuse) + P(ray | specular) * P(specular)

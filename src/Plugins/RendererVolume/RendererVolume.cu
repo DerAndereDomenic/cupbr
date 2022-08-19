@@ -28,7 +28,7 @@ namespace cupbr
             //Don't shade back facing geometry
             if (geom.material->type != MaterialType::REFRACTIVE && Math::dot(normal, inc_dir) <= 0.0f)
             {
-                payload->rayweight = 0;
+                //payload->rayweight = 0;
                 return;
             }
 
@@ -68,8 +68,18 @@ namespace cupbr
 
         __device__ void indirectIlluminationVolumetric(Ray& ray, LocalGeometry& geom, Vector3float& inc_dir)
         {
-            //Indirect illumination
             RadiancePayload* payload = ray.payload<RadiancePayload>();
+
+            //Kind of back-face culling to handle back facing shading normals
+            if (geom.material->type != MaterialType::REFRACTIVE && Math::dot(geom.N, inc_dir) <= 0.0f)
+            {
+                payload->ray_start = geom.P;
+                payload->out_dir = -1.0f * inc_dir;
+                payload->next_ray_valid = true;
+                return;
+            }
+
+            //Indirect illumination
             Vector4float direction_p = geom.material->sampleDirection(payload->seed, inc_dir, geom.N);
             Vector3float direction = Vector3float(direction_p);
             if (Math::norm(direction) == 0)
