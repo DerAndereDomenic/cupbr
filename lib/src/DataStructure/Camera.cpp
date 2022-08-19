@@ -84,9 +84,7 @@ namespace cupbr
                            sin(_pitch),
                            sin(_yaw) * cos(_pitch));
 
-        _zAxis = front;
-        _xAxis = _aspect_ratio * Math::normalize(Vector3float(_zAxis.z, 0, -_zAxis.x));
-        _yAxis = Math::cross(_zAxis, _xAxis) / _aspect_ratio;
+        lookAt(_position + front);
     }
 
     void
@@ -97,4 +95,14 @@ namespace cupbr
         _lastY = mouse_pos.y;
         _moved = false;
     }
+
+    void 
+    Camera::lookAt(const Vector3float& target)
+    {
+        Vector3float direction = Math::normalize(target - _position);
+        _zAxis = direction;
+        _xAxis = _aspect_ratio * Math::normalize(Vector3float(_zAxis.z, 0, -_zAxis.x));
+        _yAxis = Math::cross(_zAxis, _xAxis) / _aspect_ratio;
+    }
+
 } //namespace cupbr

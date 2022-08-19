@@ -68,6 +68,12 @@ namespace cupbr
         void stop(Window* window);
 
         /**
+        *   @brief Rotate camera such that it looks towards the target
+        *   @param[in] target The target position
+        */
+        void lookAt(const Vector3float& target);
+
+        /**
         *   @brief Check if the camera was moved last frame
         *   @return If the camera was moved last frame
         */
