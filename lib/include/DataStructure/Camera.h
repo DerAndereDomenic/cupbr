@@ -4,7 +4,7 @@
 #include <Core/CUDA.h>
 #include <Math/Vector.h>
 
-#include <GLFW/glfw3.h>
+#include <GL/Window.h>
 
 namespace cupbr
 {
@@ -59,7 +59,13 @@ namespace cupbr
         *   @param[in] window The window
         *   @param[in] delta_time The time between two frames
         */
-        void processInput(GLFWwindow* window, const float& delta_time);
+        void processInput(Window* window, const float& delta_time);
+
+        /**
+        *   @brief Stop the camera from moving
+        *   @param[in] window The window
+        */
+        void stop(Window* window);
 
         /**
         *   @brief Check if the camera was moved last frame

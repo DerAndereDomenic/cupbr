@@ -10,6 +10,8 @@
 
 #include <filesystem>
 
+#include <GLFW/glfw3.h>
+
 namespace cupbr
 {
     class Interactor::Impl
@@ -146,10 +148,12 @@ namespace cupbr
                 if (impl->edit_mode)
                 {
                     glfwSetInputMode((GLFWwindow*)(impl->window->getInternalWindow()), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+                    impl->camera->stop(impl->window);
                 }
                 else
                 {
                     glfwSetInputMode((GLFWwindow*)(impl->window->getInternalWindow()), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+                    impl->camera->stop(impl->window);
                 }
 
                 return true;
@@ -196,7 +200,7 @@ namespace cupbr
         }
 
         if (!impl->edit_mode)
-            impl->camera->processInput((GLFWwindow*)(impl->window->getInternalWindow()), impl->window->delta_time());
+            impl->camera->processInput(impl->window, impl->window->delta_time());
 
         impl->material_update = false;
 
