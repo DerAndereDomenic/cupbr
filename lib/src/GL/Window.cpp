@@ -193,4 +193,12 @@ namespace cupbr
         glfwPollEvents();
     }
 
+    Vector2float 
+    Window::getMousePosition() const
+    {
+        double xpos, ypos;
+        glfwGetCursorPos(_internal_window, &xpos, &ypos);
+        return Vector2float(static_cast<float>(xpos), static_cast<float>(ypos));
+    }
+
 } //namespace cupbr

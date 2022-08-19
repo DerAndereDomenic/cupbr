@@ -4,6 +4,7 @@
 #include <cstdint>
 #include <functional>
 #include <Core/Event.h>
+#include <Math/Vector.h>
 
 struct GLFWwindow;
 
@@ -48,6 +49,12 @@ namespace cupbr
         *   @brief Polls events and swaps gl buffers
         */
         void spinOnce();
+
+        /**
+        *   @brief Get the position of the mouse
+        *   @return The mouse position
+        */
+        Vector2float getMousePosition() const;
 
         /**
         *   @brief Set the event callback
