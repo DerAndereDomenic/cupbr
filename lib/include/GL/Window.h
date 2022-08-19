@@ -5,6 +5,7 @@
 #include <functional>
 #include <Core/Event.h>
 #include <Math/Vector.h>
+#include <Core/KeyCodes.h>
 
 struct GLFWwindow;
 

@@ -17,30 +17,30 @@ namespace cupbr
         _moved = false;
         float speed = 4.0f;
         //Keyboard
-        if (glfwGetKey(static_cast<GLFWwindow*>(window->getInternalWindow()), GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+        if (glfwGetKey(static_cast<GLFWwindow*>(window->getInternalWindow()), Key::LeftShift) == GLFW_PRESS)
         {
             speed *= 4;
         }
-        if (glfwGetKey(static_cast<GLFWwindow*>(window->getInternalWindow()), GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
+        if (glfwGetKey(static_cast<GLFWwindow*>(window->getInternalWindow()), Key::LeftControl) == GLFW_PRESS)
         {
             speed /= 4;
         }
-        if (glfwGetKey(static_cast<GLFWwindow*>(window->getInternalWindow()), GLFW_KEY_D) == GLFW_PRESS)
+        if (glfwGetKey(static_cast<GLFWwindow*>(window->getInternalWindow()), Key::D) == GLFW_PRESS)
         {
             _position += speed * _xAxis * delta_time;
             _moved = true;
         }
-        if (glfwGetKey(static_cast<GLFWwindow*>(window->getInternalWindow()), GLFW_KEY_A) == GLFW_PRESS)
+        if (glfwGetKey(static_cast<GLFWwindow*>(window->getInternalWindow()), Key::A) == GLFW_PRESS)
         {
             _position -= speed * _xAxis * delta_time;
             _moved = true;
         }
-        if (glfwGetKey(static_cast<GLFWwindow*>(window->getInternalWindow()), GLFW_KEY_S) == GLFW_PRESS)
+        if (glfwGetKey(static_cast<GLFWwindow*>(window->getInternalWindow()), Key::S) == GLFW_PRESS)
         {
             _position -= speed * _zAxis * delta_time;
             _moved = true;
         }
-        if (glfwGetKey(static_cast<GLFWwindow*>(window->getInternalWindow()), GLFW_KEY_W) == GLFW_PRESS)
+        if (glfwGetKey(static_cast<GLFWwindow*>(window->getInternalWindow()), Key::W) == GLFW_PRESS)
         {
             _position += speed * _zAxis * delta_time;
             _moved = true;
@@ -48,27 +48,26 @@ namespace cupbr
 
 
         //Mouse
-        double xpos, ypos;
-        glfwGetCursorPos(static_cast<GLFWwindow*>(window->getInternalWindow()), &xpos, &ypos);
+        Vector2float mouse_pos = window->getMousePosition();
 
         if (_firstMouse)
         {
-            _lastX = static_cast<float>(xpos);
-            _lastY = static_cast<float>(ypos);
+            _lastX = static_cast<float>(mouse_pos.x);
+            _lastY = static_cast<float>(mouse_pos.y);
             _firstMouse = false;
         }
 
         float sensitivity = 0.002f;
-        float xoffset = _lastX - static_cast<float>(xpos);
-        float yoffset = _lastY - static_cast<float>(ypos);
+        float xoffset = _lastX - static_cast<float>(mouse_pos.x);
+        float yoffset = _lastY - static_cast<float>(mouse_pos.y);
 
         if (!(Math::safeFloatEqual(xoffset, 0.0f) && Math::safeFloatEqual(yoffset, 0.0f)))
         {
             _moved = true;
         }
 
-        _lastX = static_cast<float>(xpos);
-        _lastY = static_cast<float>(ypos);
+        _lastX = static_cast<float>(mouse_pos.x);
+        _lastY = static_cast<float>(mouse_pos.y);
 
         xoffset *= sensitivity;
         yoffset *= sensitivity;
@@ -93,10 +92,9 @@ namespace cupbr
     void
     Camera::stop(Window* window)
     {
-        double xpos, ypos;
-        glfwGetCursorPos(static_cast<GLFWwindow*>(window->getInternalWindow()), &xpos, &ypos);
-        _lastX = static_cast<float>(xpos);
-        _lastY = static_cast<float>(ypos);
+        Vector2float mouse_pos = window->getMousePosition();
+        _lastX = mouse_pos.x;
+        _lastY = mouse_pos.y;
         _moved = false;
     }
 } //namespace cupbr

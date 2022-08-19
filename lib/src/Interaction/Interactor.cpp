@@ -10,8 +10,6 @@
 
 #include <filesystem>
 
-#include <GLFW/glfw3.h>
-
 namespace cupbr
 {
     class Interactor::Impl
@@ -116,11 +114,10 @@ namespace cupbr
     {
         if (event.getEventType() == EventType::MouseButtonPressed)
         {
-            double xpos, ypos;
-            glfwGetCursorPos((GLFWwindow*)impl->window->getInternalWindow(), &xpos, &ypos);
+            Vector2float mouse_pos = impl->window->getMousePosition();
 
-            int32_t x = static_cast<int32_t>(xpos);
-            int32_t y = impl->width - static_cast<int32_t>(ypos);   //glfw coordinates are flipped
+            int32_t x = static_cast<int32_t>(mouse_pos.x);
+            int32_t y = impl->width - static_cast<int32_t>(mouse_pos.y);   //glfw coordinates are flipped
 
             if (x >= 0 && x < impl->width && y >= 0 && y < impl->height)
             {
@@ -142,24 +139,16 @@ namespace cupbr
         {
             KeyPressedEvent e = *(KeyPressedEvent*)&event;
 
-            if (e.getKeyCode() == GLFW_KEY_LEFT_ALT)
+            if (e.getKeyCode() == Key::LeftAlt)
             {
                 impl->edit_mode = !impl->edit_mode;
-                if (impl->edit_mode)
-                {
-                    glfwSetInputMode((GLFWwindow*)(impl->window->getInternalWindow()), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-                    impl->camera->stop(impl->window);
-                }
-                else
-                {
-                    glfwSetInputMode((GLFWwindow*)(impl->window->getInternalWindow()), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-                    impl->camera->stop(impl->window);
-                }
+                impl->window->setEditMode(impl->edit_mode);
+                impl->camera->stop(impl->window);
 
                 return true;
             }
 
-            if (e.getKeyCode() == GLFW_KEY_ESCAPE)
+            if (e.getKeyCode() == Key::Escape)
             {
                 impl->close = true;
                 return true;
