@@ -50,21 +50,14 @@ namespace cupbr
             }
         }
 
-        IMGUI_CHECKVERSION();
-        ImGui::CreateContext();
-        ImGuiIO& io = ImGui::GetIO(); (void)io;
-
-        ImGui::StyleColorsDark();
-
-        ImGui_ImplGlfw_InitForOpenGL(_internal_window, true);
-        ImGui_ImplOpenGL3_Init("#version 330");
-
-        s_imgui_initialized = true;
-
         glfwSetWindowUserPointer(_internal_window, &_event_callback);
 
         glfwSetMouseButtonCallback(_internal_window, [](GLFWwindow* window, int button, int action, int mode)
         {
+            ImGuiIO& io = ImGui::GetIO();
+            if(io.WantCaptureMouse || io.WantCaptureKeyboard)
+                return;
+
             EventCallbackFn fnc = *(EventCallbackFn*)glfwGetWindowUserPointer(window);
 
             switch (action)
@@ -86,6 +79,10 @@ namespace cupbr
 
         glfwSetCursorPosCallback(_internal_window, [](GLFWwindow* window, double x, double y)
         {
+            ImGuiIO& io = ImGui::GetIO();
+            if(io.WantCaptureMouse || io.WantCaptureKeyboard)
+                return;
+
             EventCallbackFn fnc = *(EventCallbackFn*)glfwGetWindowUserPointer(window);
 
             MouseMovedEvent event = MouseMovedEvent(float(x), float(y));
@@ -94,6 +91,10 @@ namespace cupbr
 
         glfwSetKeyCallback(_internal_window, [](GLFWwindow* window, int key, int scancode, int action, int mods)
         {
+            ImGuiIO& io = ImGui::GetIO();
+            if(io.WantCaptureMouse || io.WantCaptureKeyboard)
+                return;
+
             EventCallbackFn fnc = *(EventCallbackFn*)glfwGetWindowUserPointer(window);
 
             switch (action)
@@ -121,12 +122,27 @@ namespace cupbr
 
         glfwSetDropCallback(_internal_window, [](GLFWwindow* window, int num_paths, const char* paths[])
         {
+            ImGuiIO& io = ImGui::GetIO();
+            if(io.WantCaptureMouse || io.WantCaptureKeyboard)
+                return;
+
             EventCallbackFn fnc = *(EventCallbackFn*)glfwGetWindowUserPointer(window);
 
             FileDroppedEvent event = FileDroppedEvent(paths[0]);
 
             fnc(event);
         });
+
+        IMGUI_CHECKVERSION();
+        ImGui::CreateContext();
+        ImGuiIO& io = ImGui::GetIO(); (void)io;
+
+        ImGui::StyleColorsDark();
+
+        ImGui_ImplGlfw_InitForOpenGL(_internal_window, true);
+        ImGui_ImplOpenGL3_Init("#version 330");
+
+        s_imgui_initialized = true;
     }
 
     Window::~Window()
@@ -161,6 +177,10 @@ namespace cupbr
     {
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+        GLFWwindow* backup_current_context = glfwGetCurrentContext();
+        ImGui::UpdatePlatformWindows();
+        ImGui::RenderPlatformWindowsDefault();
+        glfwMakeContextCurrent(backup_current_context);
     }
 
     void
