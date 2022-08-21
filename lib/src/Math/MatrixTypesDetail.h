@@ -5,7 +5,7 @@
 namespace cupbr
 {
     template<typename T>
-    __host__ __device__
+    CUPBR_HOST_DEVICE
     Matrix2x2<T>::Matrix2x2(const Vector2<T>& col1, const Vector2<T>& col2)
     {
         data[0][0] = col1.x;
@@ -15,7 +15,7 @@ namespace cupbr
     }
 
     template<typename T>
-    __host__ __device__
+    CUPBR_HOST_DEVICE
     Matrix3x3<T>::Matrix3x3(const Vector3<T>& col1, const Vector3<T>& col2, const Vector3<T>& col3)
     {
         data[0][0] = col1.x;
@@ -30,7 +30,7 @@ namespace cupbr
     }
 
     template<typename T>
-    __host__ __device__
+    CUPBR_HOST_DEVICE
     Matrix4x4<T>::Matrix4x4(const Vector4<T>& col1, const Vector4<T>& col2, const Vector4<T>& col3, const Vector4<T>& col4)
     {
         data[0][0] = col1.x;

@@ -6,7 +6,7 @@
 
 namespace cupbr
 {
-    __host__ __device__
+    CUPBR_HOST_DEVICE
     inline
     Quad::Quad(const Vector3float& position, const Vector3float& normal, const Vector3float& extend1, const Vector3float& extend2)
         :Geometry(),
@@ -18,7 +18,7 @@ namespace cupbr
         type = GeometryType::QUAD;
     }
 
-    __host__ __device__
+    CUPBR_HOST_DEVICE
     inline LocalGeometry
     Quad::computeRayIntersection(const Ray& ray)
     {
@@ -56,7 +56,7 @@ namespace cupbr
         return geom;
     }
 
-    __host__ __device__
+    CUPBR_HOST_DEVICE
     inline Vector3float
     Quad::position()
     {

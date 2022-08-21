@@ -21,25 +21,25 @@ namespace cupbr
         *   @param[in] position The center position in world space
         *   @param[in] radius The radius
         */
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         Sphere(const Vector3float& position, const float& radius);
 
         /**
         *   @brief Get the sphere position in world space
         *   @return The 3D world position
         */
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         Vector3float position() const;
 
         /**
         *   @brief Get the sphere radius
         *   @return The radius
         */
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         float radius() const;
 
         //Override
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         LocalGeometry computeRayIntersection(const Ray& ray);
 
         private:

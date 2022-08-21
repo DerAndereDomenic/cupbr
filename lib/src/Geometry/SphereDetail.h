@@ -5,7 +5,7 @@
 
 namespace cupbr
 {
-    __host__ __device__
+    CUPBR_HOST_DEVICE
     inline
     Sphere::Sphere(const Vector3float& position, const float& radius)
         :Geometry(),
@@ -16,21 +16,21 @@ namespace cupbr
         _aabb = AABB(position - Vector3float(radius), position + Vector3float(radius));
     }
 
-    __host__ __device__
+    CUPBR_HOST_DEVICE
     inline Vector3float
     Sphere::position() const
     {
         return _position;
     }
 
-    __host__ __device__
+    CUPBR_HOST_DEVICE
     inline float
     Sphere::radius() const
     {
         return _radius;
     }
 
-    __host__ __device__
+    CUPBR_HOST_DEVICE
     inline LocalGeometry
     Sphere::computeRayIntersection(const Ray& ray)
     {

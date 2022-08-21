@@ -29,7 +29,7 @@ namespace cupbr
         *   @param[in] index The index
         *   @return The geometry
         */
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         Geometry* operator[](const uint32_t index) const;
 
         BoundingVolumeHierarchy* bvh;               /**< The Bounding volume hierarchy used for intersection testing */

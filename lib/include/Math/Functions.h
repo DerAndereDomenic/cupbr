@@ -16,7 +16,7 @@ namespace cupbr
         *   @param[in] eps The epsilon (defaul=1e-5)
         *   @return True if |lhs-rhs|<eps
         */
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         bool safeFloatEqual(const float& lhs, const float& rhs, const float& eps = EPSILON);
 
         /**
@@ -28,7 +28,7 @@ namespace cupbr
         *   @return The clamped value
         */
         template<typename T>
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         T clamp(const T& x, const T& mini, const T& maxi);
 
         /**
@@ -36,7 +36,7 @@ namespace cupbr
         *   @param[in] inp
         *   @return One if inp equals zero, zero else
         */
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         float delta(const float& inp);
 
         /**
@@ -47,7 +47,7 @@ namespace cupbr
         *   @pre dot(inc_dir,normal) > 0
         *   @post dot(out_dir,normal) > 0
         */
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         Vector3float reflect(const Vector3float& inc_dir, const Vector3float& normal);
 
         /**
@@ -57,7 +57,7 @@ namespace cupbr
         *   @param[in] normal The surface normal
         *   @return The refracted direction
         */
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         Vector3float refract(const float& eta, const Vector3float& inc_dir, const Vector3float& normal);
 
         /**
@@ -66,7 +66,7 @@ namespace cupbr
         *   @param[in] VdotH cos of the angle between incoming direction and normal
         *   @return The fresnel schlick term
         */
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         float fresnel_schlick(const float& F0, const float& VdotH);
 
         /**
@@ -75,7 +75,7 @@ namespace cupbr
         *   @param[in] VdotH cos of the angle between incoming direction and normal
         *   @return The fresnel schlick term
         */
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         Vector3float fresnel_schlick(const Vector3float& F0, const float& VdotH);
 
         /**
@@ -85,7 +85,7 @@ namespace cupbr
         *   @return The seed
         */
         template<uint32_t N>
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         uint32_t tea(uint32_t val0, uint32_t val1);
 
         /**
@@ -93,7 +93,7 @@ namespace cupbr
         *   @param[in] seed The seed
         *   @return The random number
         */
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         float rnd(uint32_t& prev);
 
         /**
@@ -102,7 +102,7 @@ namespace cupbr
         *   @param[in] direction The direction to convert
         *   @return The direction in local coordinates
         */
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         Vector3float toLocalFrame(const Vector3float& N, const Vector3float& direction);
 
     } //namespace Math

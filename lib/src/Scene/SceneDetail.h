@@ -3,7 +3,7 @@
 
 namespace cupbr
 {
-    __host__ __device__
+    CUPBR_HOST_DEVICE
     inline Geometry*
     Scene::operator[](const uint32_t index) const
     {

@@ -41,7 +41,7 @@ namespace cupbr
         *   @param[out] distance The distance to the sample point
         *   @return The radiance received by the given position
         */
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         Vector3float sample(uint32_t& seed, const Vector3float& position, Vector3float& lightDir, float& distance);
 
         private:
@@ -54,7 +54,7 @@ namespace cupbr
         *   @param[out] distance The distance to the sample point
         *   @return The radiance received by the given position
         */
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         Vector3float sample_point(uint32_t& seed, const Vector3float& position, Vector3float& lightDir, float& distance);
 
         /**
@@ -65,7 +65,7 @@ namespace cupbr
         *   @param[out] distance The distance to the sample point
         *   @return The radiance received by the given position
         */
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         Vector3float sample_area(uint32_t& seed, const Vector3float& position, Vector3float& lightDir, float& distance);
 
     };

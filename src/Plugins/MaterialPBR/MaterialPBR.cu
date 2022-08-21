@@ -5,7 +5,7 @@ namespace cupbr
 
     namespace detail
     {
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         inline float
         D_GGX(const float& NdotH, const float roughness)
         {
@@ -14,7 +14,7 @@ namespace cupbr
             return a2 / (static_cast<float>(M_PI) * d * d);
         }
 
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         inline float
         V_SmithJointGGX(const float& NdotL, const float& NdotV, const float& roughness)
         {
@@ -27,7 +27,7 @@ namespace cupbr
             return G / (4.0f * NdotV * NdotL + EPSILON);
         }
 
-        __host__ __device__ 
+        CUPBR_HOST_DEVICE
         inline Vector3float
         sampleHemisphereCosine( const Vector3float &normal, uint32_t &seed )
         {
@@ -42,7 +42,7 @@ namespace cupbr
             return Math::toLocalFrame(normal, Vector3float( x, y, z));
         }
 
-        __host__ __device__ 
+        CUPBR_HOST_DEVICE
         inline Vector3float 
         sampleHemisphereGGX( const Vector3float &inc_dir, const Vector3float &normal, float roughness, uint32_t &seed )
         {
@@ -90,7 +90,7 @@ namespace cupbr
             albedo_e = properties->getProperty("albedo_e", Vector3float(0));
         }
 
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         virtual Vector3float
         MaterialPBR::brdf(const Vector3float& position, const Vector3float& inc_dir, const Vector3float& out_dir, const Vector3float& normal)
         {
@@ -109,7 +109,7 @@ namespace cupbr
             return diffuse_brdf + specular_brdf;
         }
 
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         virtual Vector4float
         MaterialPBR::sampleDirection(uint32_t& seed, const Vector3float& inc_dir, const Vector3float& normal)
         {

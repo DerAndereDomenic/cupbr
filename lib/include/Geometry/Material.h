@@ -45,7 +45,7 @@ namespace cupbr
         *   @return The brdf
         *   @pre dot(inc_dir,out_dir) >= 0
         */
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         virtual Vector3float brdf(const Vector3float& position, const Vector3float& inc_dir, const Vector3float& out_dir, const Vector3float& normal) { return 0; }
 
         /**
@@ -56,7 +56,7 @@ namespace cupbr
         *   @return A 4D Vector. The first three components mark the new direction and the w component the sampling probability
         *   @note For glass the w component is 0 for reflection and 1 for refraction
         */
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         virtual Vector4float sampleDirection(uint32_t& seed, const Vector3float& inc_dir, const Vector3float& normal) { return 0; }
 
         /**
@@ -65,7 +65,7 @@ namespace cupbr
         *   @param[in] cos_theta The angle between incoming and outgoing direction
         *   @return The scattering probability
         */
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         static float henyeyGreensteinPhaseFunction(const float& g, const float& cos_theta);
 
         /**
@@ -75,7 +75,7 @@ namespace cupbr
         *   @param[in] seed The seed
         *   @return A 4D vector with the direction and pdf as 4th component
         */
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         static Vector4float sampleHenyeyGreensteinPhaseFunction(const float& g, const Vector3float& forward, uint32_t& seed);
     };
 

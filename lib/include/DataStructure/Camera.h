@@ -30,28 +30,28 @@ namespace cupbr
         *   @brief Get the world position of the camera
         *   @return The camera position in world space
         */
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         Vector3float position() const;
 
         /**
         *   @brief The x Axis of the camera plane
         *   @return The vector defining the Image plane into x direction in world space
         */
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         Vector3float xAxis() const;
 
         /**
         *   @brief The y Axis of the camera plane
         *   @return The vector defining the Image plane into y direction in world space
         */
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         Vector3float yAxis() const;
 
         /**
         *   @brief The z Axis to the camera plane
         *   @return The vector pointing from the camera position to the image plane in world space
         */
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         Vector3float zAxis() const;
 
         /**
@@ -77,7 +77,7 @@ namespace cupbr
         *   @brief Check if the camera was moved last frame
         *   @return If the camera was moved last frame
         */
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         bool moved() const;
 
         private:

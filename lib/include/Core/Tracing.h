@@ -24,7 +24,7 @@ namespace cupbr
         *   @param[in/out] seed If jitter = true, this is the seed used for the rng
         *   @return A ray from the eye position through the corresponding pixel
         */
-        __device__
+        CUPBR_DEVICE
         Ray launchRay(const uint32_t& tid, const uint32_t& width, const uint32_t& height, const Camera& camera, const bool& jitter = false, uint32_t* seed = nullptr);
 
         /**
@@ -37,7 +37,7 @@ namespace cupbr
         *   @param[in/out] seed If jitter = true, this is the seed used for the rng
         *   @return A ray from the eye position through the corresponding pixel
         */
-        __device__
+        CUPBR_DEVICE
         Ray launchRay(const Vector2uint32_t& pixel, const uint32_t& width, const uint32_t& height, const Camera& camera, const bool& jitter = false, uint32_t* seed = nullptr);
 
         /**
@@ -46,7 +46,7 @@ namespace cupbr
         *   @param[in] ray The ray
         *   @return The local geometry information of the intersection point
         */
-        __device__
+        CUPBR_DEVICE
         LocalGeometry traceRay(Scene& scene, const Ray& ray);
 
         /**
@@ -56,7 +56,7 @@ namespace cupbr
         *   @param[in] index The index of the geometry inside the scene
         *   @return The local geometry information of the intersection point
         */
-        __device__
+        CUPBR_DEVICE
         LocalGeometry traceRay(Scene& scene, const Ray& ray, const uint32_t& index);
 
         /**
@@ -66,7 +66,7 @@ namespace cupbr
         *   @param[in] ray The ray
         *   @return True if the light source is visible, false if it is occluded
         */
-        __device__
+        CUPBR_DEVICE
         bool traceVisibility(Scene& scene, const float& lightDist, const Ray& ray);
 
         /**
@@ -76,7 +76,7 @@ namespace cupbr
         *   @param[in] height The image height
         *   @return The pixel of the corresponding direction
         */
-        __device__
+        CUPBR_DEVICE
         Vector2uint32_t direction2UV(const Vector3float& direction, const uint32_t& width, const uint32_t& height);
     } //namespace Tracing
 } //namespace cupbr

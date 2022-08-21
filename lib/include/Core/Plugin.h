@@ -154,7 +154,7 @@ namespace cupbr
     *   Currently we only load device pointer that create consistent vtables for device inheritance
     */
     #define DEFINE_PLUGIN(classType, pluginName, pluginVersion, superClass)                                                         \
-    __global__ void fix_vtable(classType** plugin, classType* dummy_plugin)                                                         \
+    CUPBR_GLOBAL void fix_vtable(classType** plugin, classType* dummy_plugin)                                                         \
     {                                                                                                                               \
         *plugin = new classType(*dummy_plugin);                                                                                     \
     }                                                                                                                               \

@@ -24,7 +24,7 @@ namespace cupbr
         *	@param[in] col1 The first column
         *	@param[in] col2 The second column
         */
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         Matrix2x2(const Vector2<T>& col1, const Vector2<T>& col2);
 
         /**
@@ -32,7 +32,7 @@ namespace cupbr
         *   @param[in] row The row index
         *   @param[in] col The col index
         */
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         inline T&
         operator()(const uint32_t& row, const uint32_t& col)
         {
@@ -62,7 +62,7 @@ namespace cupbr
         *   @param[in] col3 The third column
         * 
         */
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         Matrix3x3(const Vector3<T>& col1, const Vector3<T>& col2, const Vector3<T>& col3);
 
         /**
@@ -70,7 +70,7 @@ namespace cupbr
         *   @param[in] row The row index
         *   @param[in] col The col index
         */
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         inline T&
         operator()(const uint32_t& row, const uint32_t& col)
         {
@@ -100,7 +100,7 @@ namespace cupbr
         *   @param[in] col3 The third column
         *   @param[in] col4 The fourth column
         */
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         Matrix4x4(const Vector4<T>& col1, const Vector4<T>& col2, const Vector4<T>& col3, const Vector4<T>& col4);
 
         /**
@@ -108,7 +108,7 @@ namespace cupbr
         *   @param[in] row The row index
         *   @param[in] col The col index
         */
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         inline T&
         operator()(const uint32_t& row, const uint32_t& col)
         {

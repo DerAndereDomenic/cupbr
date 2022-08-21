@@ -44,7 +44,7 @@ namespace cupbr
         /**
         *   @brief Default constructor
         */
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         Geometry::Geometry()
         :_aabb(AABB(-INFINITY, INFINITY)){}
 
@@ -54,21 +54,21 @@ namespace cupbr
         *   @return The local geometry information
         *   @note If no intersection was found the depth will be INFINITY
         */
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         LocalGeometry computeRayIntersection(const Ray& ray);
 
         /**
         *   @brief Get the unique geometry id
         *   @return The id 
         */ 
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         uint32_t id() const;
 
         /**
         *   @brief Get the aabb
         *   @return The aabb
         */
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         AABB aabb() const;
 
         /**

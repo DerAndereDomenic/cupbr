@@ -23,28 +23,28 @@ namespace cupbr
         *   @param[in] minimum The minimum point
         *   @param[in] maximum The maximum point
         */
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         AABB(const Vector3float& minimum, const Vector3float& maximum);
 
         /**
         *   @brief Check if a ray hits the bounding box
         *   @param[in] ray The ray
         */
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         bool hit(const Ray& ray) const;
 
         /**
         *   @brief Get the minimum point
         *   @return The minimum point
         */
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         Vector3float minimum() const;
 
         /**
         *   @brief Get the maximum point
         *   @return The maximum point
         */
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         Vector3float maximum() const;
 
         private:

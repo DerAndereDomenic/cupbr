@@ -8,7 +8,7 @@
 
 namespace cupbr
 {
-    __host__ __device__
+    CUPBR_HOST_DEVICE
     inline LocalGeometry 
     BoundingVolumeHierarchy::computeRayIntersection(const Ray& ray)
     {

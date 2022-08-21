@@ -22,14 +22,14 @@ namespace cupbr
         *   @param[in] direction The ray direction
         *   @note The direction will get normalized by the constructor
         */
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         Ray(const Vector3float& origin, const Vector3float direction);
 
         /**
         *   @brief Get a reference to the ray origin
         *   @return The ray origin
         */
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         Vector3float origin() const;
 
         /**
@@ -37,7 +37,7 @@ namespace cupbr
         *   @return The ray direction
         *   @note Normalized
         */
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         Vector3float direction() const;
 
         /**
@@ -46,7 +46,7 @@ namespace cupbr
         *   @param[in] direction The ray directions
         *   @note The direction will get normalized
         */
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         void traceNew(const Vector3float& origin, const Vector3float& direction);
 
         /**
@@ -55,7 +55,7 @@ namespace cupbr
         *   @param[in] payload The new payload
         */
         template<class PayloadType>
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         void setPayload(PayloadType* payload);
 
         /**
@@ -64,7 +64,7 @@ namespace cupbr
         *   @return Pointer to the payload
         */
         template<class PayloadType>
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         PayloadType* payload();
 
         private:

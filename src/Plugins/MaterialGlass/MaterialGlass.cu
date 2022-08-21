@@ -4,7 +4,7 @@ namespace cupbr
 {
     namespace detail
     {
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         inline Vector3float
         brdf_mirror(const Vector3float& position, const Vector3float& inc_dir, const Vector3float& out_dir, const Vector3float& normal, const Vector3float& albedo_s)
         {
@@ -26,7 +26,7 @@ namespace cupbr
             eta = properties->getProperty("eta", 1.5f);
         }
 
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         virtual Vector3float
         MaterialGlass::brdf(const Vector3float& position, const Vector3float& inc_dir, const Vector3float& out_dir, const Vector3float& normal)
         {
@@ -60,7 +60,7 @@ namespace cupbr
             }
         }
 
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         virtual Vector4float
         MaterialGlass::sampleDirection(uint32_t& seed, const Vector3float& inc_dir, const Vector3float& n)
         {

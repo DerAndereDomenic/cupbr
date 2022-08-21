@@ -26,7 +26,7 @@ namespace cupbr
         void destroy();
 
         //Override
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         LocalGeometry computeRayIntersection(const Ray& ray);
 
         //private:

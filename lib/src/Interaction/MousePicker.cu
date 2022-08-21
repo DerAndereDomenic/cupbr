@@ -5,7 +5,7 @@ namespace cupbr
 {
     namespace detail
     {
-        __global__ void
+        CUPBR_GLOBAL void
         pickMouse_kernel(const uint32_t x,
                          const uint32_t y,
                          const uint32_t width,

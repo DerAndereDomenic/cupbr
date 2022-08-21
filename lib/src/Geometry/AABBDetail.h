@@ -6,7 +6,7 @@
 
 namespace cupbr
 {
-    __host__ __device__
+    CUPBR_HOST_DEVICE
     inline
     AABB::AABB(const Vector3float& minimum, const Vector3float& maximum)
         :_minimum(minimum),
@@ -15,7 +15,7 @@ namespace cupbr
         
     }
     
-    __host__ __device__
+    CUPBR_HOST_DEVICE
     inline bool 
     AABB::hit(const Ray& ray) const
     {
@@ -49,14 +49,14 @@ namespace cupbr
         return hit;
     }
     
-    __host__ __device__
+    CUPBR_HOST_DEVICE
     inline Vector3float 
     AABB::minimum() const
     {
         return _minimum;
     }
     
-    __host__ __device__
+    CUPBR_HOST_DEVICE
     inline Vector3float 
     AABB::maximum() const
     {

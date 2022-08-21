@@ -13,14 +13,14 @@ namespace cupbr
             albedo_d = properties->getProperty("albedo_d", Vector3float(1));
         }
 
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         virtual Vector3float
         MaterialLambert::brdf(const Vector3float& position, const Vector3float& inc_dir, const Vector3float& out_dir, const Vector3float& normal)
         {
             return albedo_d / static_cast<float>(M_PI);
         }
 
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         virtual Vector4float
         MaterialLambert::sampleDirection(uint32_t& seed, const Vector3float& inc_dir, const Vector3float& normal)
         {

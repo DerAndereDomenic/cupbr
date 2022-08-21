@@ -3,21 +3,21 @@
 
 namespace cupbr
 {
-    __host__ __device__
+    CUPBR_HOST_DEVICE
     inline LocalGeometry
     Geometry::computeRayIntersection(const Ray& ray)
     {
         return LocalGeometry();
     }
 
-    __host__ __device__
+    CUPBR_HOST_DEVICE
     inline uint32_t
     Geometry::id() const
     {
         return _id;
     }
 
-    __host__ __device__
+    CUPBR_HOST_DEVICE
     inline AABB
     Geometry::aabb() const
     {

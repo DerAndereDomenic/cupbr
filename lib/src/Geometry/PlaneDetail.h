@@ -6,7 +6,7 @@
 
 namespace cupbr
 {
-    __host__ __device__
+    CUPBR_HOST_DEVICE
     inline
     Plane::Plane(const Vector3float& position, const Vector3float& normal)
         :Geometry(),
@@ -16,7 +16,7 @@ namespace cupbr
         type = GeometryType::PLANE;
     }
 
-    __host__ __device__
+    CUPBR_HOST_DEVICE
     inline LocalGeometry
     Plane::computeRayIntersection(const Ray& ray)
     {
@@ -45,7 +45,7 @@ namespace cupbr
         return geom;
     }
 
-    __host__ __device__
+    CUPBR_HOST_DEVICE
     inline Vector3float
     Plane::position()
     {

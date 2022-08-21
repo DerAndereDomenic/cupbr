@@ -91,7 +91,7 @@ namespace cupbr
         *   @param[in] index The index
         *   @return The pixel value
         */
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         T& operator[](unsigned int index);
 
         /**
@@ -99,35 +99,35 @@ namespace cupbr
         *   @param[in] pixel The pixel
         *   @return The pixel value
         */
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         T& operator()(Vector2uint32_t& pixel);
 
         /**
         *   @brief Get a raw pointer to the underlying data
         *   @return The data pointer
         */
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         T* data() const;
 
         /**
         *   @brief Get the width of the image
         *   @return The width
         */
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         uint32_t width() const;
 
         /**
         *   @brief Get the height of the image
         *   @return The height
         */
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         uint32_t height() const;
 
         /**
         *   @brief Get the size of the image
         *   @return The size
         */
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         uint32_t size() const;
 
         private:

@@ -5,7 +5,7 @@ namespace cupbr
 {
     namespace detail
     {
-        __global__ void
+        CUPBR_GLOBAL void
         clearBuffer(Image<Vector3float> img)
         {
             const uint32_t tid = ThreadHelper::globalThreadIndex();

@@ -24,18 +24,18 @@ namespace cupbr
         *   @param[in] extend2 The second extend
         *   @note The normal will get normalized
         */
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         Quad(const Vector3float& position, const Vector3float& normal, const Vector3float& extend1, const Vector3float& extend2);
 
         //Override
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         LocalGeometry computeRayIntersection(const Ray& ray);
 
         /**
         *   @brief Get the position of the Quad
         *   @return The position to define the quad
         */
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         Vector3float position();
 
         private:

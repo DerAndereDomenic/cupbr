@@ -22,18 +22,18 @@ namespace cupbr
         *   @param[in] normal The plane normal
         *   @note The normal will get normalized
         */
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         Plane(const Vector3float& position, const Vector3float& normal);
 
         //Override
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         LocalGeometry computeRayIntersection(const Ray& ray);
 
         /**
         *   @brief Get the position of the plane
         *   @return The position to define the plane
         */
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         Vector3float position();
 
         private:

@@ -3,7 +3,7 @@
 
 namespace cupbr
 {
-    __host__ __device__
+    CUPBR_HOST_DEVICE
     inline
     Ray::Ray(const Vector3float& origin, const Vector3float direction)
         :_origin(origin),
@@ -12,21 +12,21 @@ namespace cupbr
 
     }
 
-    __host__ __device__
+    CUPBR_HOST_DEVICE
     inline Vector3float
     Ray::origin() const
     {
         return _origin;
     }
 
-    __host__ __device__
+    CUPBR_HOST_DEVICE
     inline Vector3float
     Ray::direction() const
     {
         return _direction;
     }
 
-    __host__ __device__
+    CUPBR_HOST_DEVICE
     inline void
     Ray::traceNew(const Vector3float& origin, const Vector3float& direction)
     {
@@ -35,7 +35,7 @@ namespace cupbr
     }
 
     template<class PayloadType>
-    __host__ __device__
+    CUPBR_HOST_DEVICE
     void
     Ray::setPayload(PayloadType* payload)
     {
@@ -43,7 +43,7 @@ namespace cupbr
     }
 
     template<class PayloadType>
-    __host__ __device__
+    CUPBR_HOST_DEVICE
     PayloadType*
     Ray::payload()
     {

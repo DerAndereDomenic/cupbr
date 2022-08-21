@@ -6,7 +6,7 @@
 
 namespace cupbr
 {
-    __host__ __device__ 
+    CUPBR_HOST_DEVICE
     inline float 
     Material::henyeyGreensteinPhaseFunction(const float& g, const float& cos_theta)
     {
@@ -18,7 +18,7 @@ namespace cupbr
         return (1 - g2) / area * powf((1 + g2 - 2.0f * g * cos_theta), -1.5f);
     }
 
-    __host__ __device__ 
+    CUPBR_HOST_DEVICE
     inline Vector4float 
     Material::sampleHenyeyGreensteinPhaseFunction(const float& g_, const Vector3float& forward, uint32_t& seed)
     {

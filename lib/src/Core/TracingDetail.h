@@ -12,7 +12,7 @@
 
 namespace cupbr
 {
-    __device__
+    CUPBR_DEVICE
     inline Ray
     Tracing::launchRay(const uint32_t& tid, const uint32_t& width, const uint32_t& height, const Camera& camera, const bool& jitter, uint32_t* seed)
     {
@@ -29,7 +29,7 @@ namespace cupbr
         return Ray(camera.position(), world_pos - camera.position());
     }
 
-    __device__
+    CUPBR_DEVICE
     inline Ray
     Tracing::launchRay(const Vector2uint32_t& pixel, const uint32_t& width, const uint32_t& height, const Camera& camera, const bool& jitter, uint32_t* seed)
     {
@@ -44,7 +44,7 @@ namespace cupbr
         return Ray(camera.position(), world_pos - camera.position());
     }
 
-    __device__
+    CUPBR_DEVICE
     inline LocalGeometry
     Tracing::traceRay(Scene& scene, const Ray& ray)
     {
@@ -65,7 +65,7 @@ namespace cupbr
         return geom;
     }
 
-    __device__
+    CUPBR_DEVICE
     inline LocalGeometry
     Tracing::traceRay(Scene& scene, const Ray& ray, const uint32_t& index)
     {
@@ -115,7 +115,7 @@ namespace cupbr
         return geom;
     }
 
-    __device__
+    CUPBR_DEVICE
     inline bool
     Tracing::traceVisibility(Scene& scene, const float& lightDist, const Ray& ray)
     {
@@ -182,7 +182,7 @@ namespace cupbr
         return geom.depth > lightDist || geom.depth == INFINITY;
     }
 
-    __device__
+    CUPBR_DEVICE
     inline Vector2uint32_t
     Tracing::direction2UV(const Vector3float& direction, const uint32_t& width, const uint32_t& height)
     {

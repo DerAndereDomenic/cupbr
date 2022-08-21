@@ -15,7 +15,7 @@ namespace cupbr
         *	@return The L2 norm
         */
         template<typename T>
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         T norm(const Vector2<T>& v);
 
         /**
@@ -26,7 +26,7 @@ namespace cupbr
         *	@return The dot product
         */
         template<typename T>
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         T dot(const Vector2<T>& v, const Vector2<T>& w);
 
         /**
@@ -36,7 +36,7 @@ namespace cupbr
         *	@return The normalized vector
         */
         template<typename T>
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         Vector2<T> normalize(const Vector2<T>& v);
 
         /**
@@ -45,7 +45,7 @@ namespace cupbr
         *   @return exp(v) of the vector
         */
         template<typename T>
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         Vector2<T> exp(const Vector2<T>& v);
 
         /**
@@ -55,7 +55,7 @@ namespace cupbr
         *	@return The L2 norm
         */
         template<typename T>
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         T norm(const Vector3<T>& v);
 
         /**
@@ -66,7 +66,7 @@ namespace cupbr
         *	@return The dot product
         */
         template<typename T>
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         T dot(const Vector3<T>& v, const Vector3<T>& w);
 
         /**
@@ -76,7 +76,7 @@ namespace cupbr
         *	@return The normalized vector
         */
         template<typename T>
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         Vector3<T> normalize(const Vector3<T>& v);
 
         /**
@@ -85,7 +85,7 @@ namespace cupbr
         *   @return exp(v) of the vector
         */
         template<typename T>
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         Vector3<T> exp(const Vector3<T>& v);
 
         /**
@@ -96,7 +96,7 @@ namespace cupbr
         *	@return The cross product
         */
         template<typename T>
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         Vector3<T> cross(const Vector3<T>& v, const Vector3<T>& w);
 
         /**
@@ -106,7 +106,7 @@ namespace cupbr
         *	@return The L2 norm
         */
         template<typename T>
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         T norm(const Vector4<T>& v);
 
         /**
@@ -117,7 +117,7 @@ namespace cupbr
         *	@return The dot product
         */
         template<typename T>
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         T dot(const Vector4<T>& v, const Vector4<T>& w);
 
         /**
@@ -127,7 +127,7 @@ namespace cupbr
         *	@return The normalized vector
         */
         template<typename T>
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         Vector4<T> normalize(const Vector4<T>& v);
 
         /**
@@ -136,7 +136,7 @@ namespace cupbr
         *   @return exp(v) of the vector
         */
         template<typename T>
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         Vector4<T> exp(const Vector4<T>& v);
 
     } //namespace Math

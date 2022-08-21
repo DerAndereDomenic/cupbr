@@ -23,21 +23,21 @@ namespace cupbr
         *	@param[in] x The x coordinate
         *	@param[in] y The y coordinate
         */
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         Vector2(const T& x, const T& y);
 
         /**
         *	@brief Creats a constant 2D vector.
         *	@param[in] v The value
         */
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         Vector2(const T& v);
 
         /**
         *	@brief Cast between vector types.
         */
         template<typename S>
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         operator Vector2<S>() const
         {
             return Vector2<S>(static_cast<S>(x), static_cast<S>(y));
@@ -49,7 +49,7 @@ namespace cupbr
         *   @return The element at the position
         *   @note: No range checks are done
         */
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         inline T
         operator[](const uint32_t& index)
         {
@@ -88,14 +88,14 @@ namespace cupbr
         *	@param[in] y The y coordinate
         *	@param[in] z The z coordinate
         */
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         Vector3(const T& x, const T& y, const T& z);
 
         /**
         *	@brief Creats a constant 3D vector.
         *	@param[in] v The value
         */
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         Vector3(const T& v);
 
         /**
@@ -103,14 +103,14 @@ namespace cupbr
         *	@param[in] v The 4D vector
         *	@note The w component is discarded
         */
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         Vector3(const Vector4<T>& v);
 
         /**
         *	@brief Cast between vector types.
         */
         template<typename S>
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         operator Vector3<S>() const
         {
             return Vector3<S>(static_cast<S>(x), static_cast<S>(y), static_cast<S>(z));
@@ -122,7 +122,7 @@ namespace cupbr
         *   @return The element at the position
         *   @note: No range checks are done
         */
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         inline T
         operator[](const uint32_t& index)
         {
@@ -168,7 +168,7 @@ namespace cupbr
         *	@param[in] z The z coordinate
         *	@param[in] w The w coordinate
         */
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         Vector4(const T& x, const T& y, const T& z, const T& w);
 
         /**
@@ -176,21 +176,21 @@ namespace cupbr
         *	@param[in] v A 3D vector
         *	@param[in] w The w component
         */
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         Vector4(const Vector3<T>& v, const T& w);
 
         /**
         *	@brief Creats a constant 4D vector.
         *	@param[in] v The value
         */
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         Vector4(const T& v);
 
         /**
         *	@brief Cast between vector types.
         */
         template<typename S>
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         operator Vector4<S>() const
         {
             return Vector4<S>(static_cast<S>(x), static_cast<S>(y), static_cast<S>(z), static_cast<S>(w));
@@ -202,7 +202,7 @@ namespace cupbr
         *   @return The element at the position
         *   @note: No range checks are done
         */
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         inline T
         operator[](const uint32_t& index)
         {

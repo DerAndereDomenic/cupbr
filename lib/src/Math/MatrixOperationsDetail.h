@@ -5,7 +5,7 @@
 namespace cupbr
 {
     template<typename T>
-    __host__ __device__
+    CUPBR_HOST_DEVICE
     Matrix2x2<T> operator+(Matrix2x2<T>& lhs, Matrix2x2<T>& rhs)
     {
         Matrix2x2<T> result;
@@ -23,7 +23,7 @@ namespace cupbr
     }
 
     template<typename T>
-    __host__ __device__
+    CUPBR_HOST_DEVICE
     Matrix2x2<T> operator-(Matrix2x2<T>& lhs, Matrix2x2<T>& rhs)
     {
         Matrix2x2<T> result;
@@ -41,7 +41,7 @@ namespace cupbr
     }
 
     template<typename T>
-    __host__ __device__
+    CUPBR_HOST_DEVICE
     Matrix2x2<T> operator*(Matrix2x2<T>& lhs, const T& rhs)
     {
         Matrix2x2<T> result;
@@ -59,14 +59,14 @@ namespace cupbr
     }
 
     template<typename T>
-    __host__ __device__
+    CUPBR_HOST_DEVICE
     Matrix2x2<T> operator*(const T& lhs, Matrix2x2<T>& rhs)
     {
         return operator*(rhs, lhs);
     }
 
     template<typename T>
-    __host__ __device__
+    CUPBR_HOST_DEVICE
     Matrix2x2<T> operator*(Matrix2x2<T>& lhs, const Matrix2x2<T>& rhs)
     {
         Matrix2x2<T> result;
@@ -80,7 +80,7 @@ namespace cupbr
     }
 
     template<typename T>
-    __host__ __device__
+    CUPBR_HOST_DEVICE
     Vector2<T> operator*(Matrix2x2<T>& lhs, const Vector2<T>& rhs)
     {
         Vector2<T> result;
@@ -89,7 +89,7 @@ namespace cupbr
     }
 
     template<typename T>
-    __host__ __device__
+    CUPBR_HOST_DEVICE
     Matrix3x3<T> operator+(Matrix3x3<T>& lhs, Matrix3x3<T>& rhs)
     {
         Matrix3x3<T> result;
@@ -112,7 +112,7 @@ namespace cupbr
     }
 
     template<typename T>
-    __host__ __device__
+    CUPBR_HOST_DEVICE
     Matrix3x3<T> operator-(Matrix3x3<T>& lhs, Matrix3x3<T>& rhs)
     {
         Matrix3x3<T> result;
@@ -135,7 +135,7 @@ namespace cupbr
     }
 
     template<typename T>
-    __host__ __device__
+    CUPBR_HOST_DEVICE
     Matrix3x3<T> operator*(Matrix3x3<T>& lhs, const T& rhs)
     {
         Matrix3x3<T> result;
@@ -158,14 +158,14 @@ namespace cupbr
     }
 
     template<typename T>
-    __host__ __device__
+    CUPBR_HOST_DEVICE
     Matrix3x3<T> operator*(const T& lhs, Matrix3x3<T>& rhs)
     {
         return operator*(rhs, lhs);
     }
 
     template<typename T>
-    __host__ __device__
+    CUPBR_HOST_DEVICE
     Matrix3x3<T> operator*(Matrix3x3<T>& lhs, Matrix3x3<T>& rhs)
     {
         Matrix3x3<T> result;
@@ -184,7 +184,7 @@ namespace cupbr
     }
 
     template<typename T>
-    __host__ __device__
+    CUPBR_HOST_DEVICE
     Vector3<T> operator*(Matrix3x3<T>& lhs, const Vector3<T>& rhs)
     {
         Vector3<T> result;
@@ -197,7 +197,7 @@ namespace cupbr
     }
 
     template<typename T>
-    __host__ __device__
+    CUPBR_HOST_DEVICE
     Matrix4x4<T> operator+(Matrix4x4<T>& lhs, Matrix4x4<T>& rhs)
     {
         Matrix4x4<T> result;
@@ -227,7 +227,7 @@ namespace cupbr
     }
 
     template<typename T>
-    __host__ __device__
+    CUPBR_HOST_DEVICE
     Matrix2x2<T> operator-(Matrix4x4<T>& lhs, Matrix4x4<T>& rhs)
     {
         Matrix4x4<T> result;
@@ -257,7 +257,7 @@ namespace cupbr
     }
 
     template<typename T>
-    __host__ __device__
+    CUPBR_HOST_DEVICE
     Matrix4x4<T> operator*(Matrix4x4<T>& lhs, const T& rhs)
     {
         Matrix4x4<T> result;
@@ -286,14 +286,14 @@ namespace cupbr
     }
 
     template<typename T>
-    __host__ __device__
+    CUPBR_HOST_DEVICE
     Matrix4x4<T> operator*(const T& lhs, Matrix4x4<T>& rhs)
     {
         return operator*(rhs, lhs);
     }
 
     template<typename T>
-    __host__ __device__
+    CUPBR_HOST_DEVICE
     Matrix4x4<T> operator*(Matrix4x4<T>& lhs, Matrix4x4<T>& rhs)
     {
         Matrix4x4<T> result;
@@ -319,7 +319,7 @@ namespace cupbr
     }
 
     template<typename T>
-    __host__ __device__
+    CUPBR_HOST_DEVICE
     Vector4<T> operator*(Matrix4x4<T>& lhs, const Vector4<T>& rhs)
     {
         Vector4<T> result;

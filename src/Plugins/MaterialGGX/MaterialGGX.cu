@@ -5,7 +5,7 @@ namespace cupbr
 
     namespace detail
     {
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         inline float
         D_GGX(const float& NdotH, const float roughness)
         {
@@ -14,7 +14,7 @@ namespace cupbr
             return a2 / (static_cast<float>(M_PI) * d * d);
         }
 
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         inline float
         V_SmithJointGGX(const float& NdotL, const float& NdotV, const float& roughness)
         {
@@ -42,7 +42,7 @@ namespace cupbr
             roughness = properties->getProperty("roughness", 1.0f);
         }
 
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         virtual Vector3float
         MaterialGGX::brdf(const Vector3float& position, const Vector3float& inc_dir, const Vector3float& out_dir, const Vector3float& normal)
         {
@@ -59,7 +59,7 @@ namespace cupbr
             return ndf * vis * Math::fresnel_schlick(albedo_s, LdotH);
         }
 
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         virtual Vector4float
         MaterialGGX::sampleDirection(uint32_t& seed, const Vector3float& inc_dir, const Vector3float& normal)
         {

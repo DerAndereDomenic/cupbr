@@ -6,7 +6,7 @@
 
 namespace cupbr
 {
-    __host__ __device__
+    CUPBR_HOST_DEVICE
     inline
     Mesh::Mesh(Triangle* triangle_buffer, const uint32_t& num_triangles, const Vector3float& minimum, const Vector3float& maximum)
         :Geometry(),
@@ -17,7 +17,7 @@ namespace cupbr
         _aabb = AABB(minimum, maximum);
     }
 
-    __host__ __device__
+    CUPBR_HOST_DEVICE
     inline LocalGeometry
     Mesh::computeRayIntersection(const Ray& ray)
     {
@@ -37,14 +37,14 @@ namespace cupbr
         return geom;
     }
 
-    __host__ __device__
+    CUPBR_HOST_DEVICE
     inline uint32_t
     Mesh::num_triangles()
     {
         return _num_triangles;
     }
 
-    __host__ __device__
+    CUPBR_HOST_DEVICE
     inline Triangle*
     Mesh::triangles()
     {

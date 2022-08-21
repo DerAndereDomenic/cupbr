@@ -27,4 +27,9 @@ void check(cudaError_t error, char const* const func, const char* const file, in
 
 #define synchronizeDefaultStream() cudaSafeCall(cudaDeviceSynchronize())
 
+#define CUPBR_HOST __host__
+#define CUPBR_DEVICE __device__
+#define CUPBR_HOST_DEVICE __host__ __device__
+#define CUPBR_GLOBAL __global__
+
 #endif

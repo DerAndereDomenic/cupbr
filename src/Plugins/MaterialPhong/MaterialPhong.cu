@@ -16,7 +16,7 @@ namespace cupbr
             shininess = properties->getProperty("shininess", 128.0f * 0.4f);
         }
 
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         virtual Vector3float
         MaterialPhong::brdf(const Vector3float& position, const Vector3float& inc_dir, const Vector3float& out_dir, const Vector3float& normal)
         {
@@ -24,7 +24,7 @@ namespace cupbr
             return albedo_s * powf(fmaxf(0.0f, Math::dot(halfDir, normal)), shininess) + albedo_d/static_cast<float>(M_PI);
         }
 
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         virtual Vector4float
         MaterialPhong::sampleDirection(uint32_t& seed, const Vector3float& inc_dir, const Vector3float& normal)
         {

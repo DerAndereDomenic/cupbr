@@ -20,7 +20,7 @@ namespace cupbr
     namespace detail
     {
         template<typename T>
-        __global__ void fix_vtable(T* object)
+        CUPBR_GLOBAL void fix_vtable(T* object)
         {
             T temp(*object);
             //memcpy(object, &temp, sizeof(T));

@@ -3,14 +3,14 @@
 
 namespace cupbr
 {
-    __device__
+    CUPBR_DEVICE
     inline uint32_t
     ThreadHelper::globalThreadIndex()
     {
         return blockIdx.x * blockDim.x + threadIdx.x;
     }
 
-    __host__ __device__
+    CUPBR_HOST_DEVICE
     inline Vector2uint32_t
     ThreadHelper::index2pixel(const uint32_t& index, const uint32_t& width, const uint32_t& height)
     {
@@ -19,7 +19,7 @@ namespace cupbr
         return Vector2uint32_t(x, y);
     }
 
-    __host__ __device__
+    CUPBR_HOST_DEVICE
     inline uint32_t
     ThreadHelper::pixel2index(const Vector2uint32_t& pixel, const uint32_t& width)
     {
@@ -27,7 +27,7 @@ namespace cupbr
     }
 
 
-    __host__
+    CUPBR_HOST
     inline KernelSizeHelper::KernelSize
     KernelSizeHelper::configure(const uint32_t& size)
     {

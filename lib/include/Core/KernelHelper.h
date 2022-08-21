@@ -14,7 +14,7 @@ namespace cupbr
         *   @brief Get the thread index of a kernel thread
         *   @return The thread index
         */
-        __device__
+        CUPBR_DEVICE
         uint32_t globalThreadIndex();
 
         /**
@@ -24,7 +24,7 @@ namespace cupbr
         *   @param[in] height The height of the image
         *   @return The corresponding pixel
         */
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         Vector2uint32_t index2pixel(const uint32_t& index, const uint32_t& width, const uint32_t& height);
 
         /**
@@ -33,7 +33,7 @@ namespace cupbr
         *   @param[in] width The width of the image
         *   @return The corresponding index
         */
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         uint32_t pixel2index(const Vector2uint32_t& pixel, const uint32_t& width);
     } //namespace ThreadHelper
 

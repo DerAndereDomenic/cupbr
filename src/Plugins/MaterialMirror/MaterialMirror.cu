@@ -14,7 +14,7 @@ namespace cupbr
             albedo_s = properties->getProperty("albedo_s", Vector3float(0));
         }
 
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         virtual Vector3float
         MaterialMirror::brdf(const Vector3float& position, const Vector3float& inc_dir, const Vector3float& out_dir, const Vector3float& normal)
         {
@@ -22,7 +22,7 @@ namespace cupbr
             return albedo_s * Math::delta(1.0f - Math::dot(out_dir, reflected)) / Math::dot(out_dir, normal);
         }
 
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         virtual Vector4float
         MaterialMirror::sampleDirection(uint32_t& seed, const Vector3float& inc_dir, const Vector3float& normal)
         {

@@ -5,7 +5,7 @@
 
 namespace cupbr
 {
-    __host__ __device__
+    CUPBR_HOST_DEVICE
     inline Vector3float
     Light::sample(uint32_t& seed, const Vector3float& position, Vector3float& lightDir, float& distance)
     {
@@ -20,7 +20,7 @@ namespace cupbr
         return Vector3float(0);
     }
 
-    __host__ __device__
+    CUPBR_HOST_DEVICE
     inline Vector3float
     Light::sample_point(uint32_t& seed, const Vector3float& position, Vector3float& lightDir, float& distance)
     {
@@ -29,7 +29,7 @@ namespace cupbr
         return intensity / (distance * distance);
     }
 
-    __host__ __device__
+    CUPBR_HOST_DEVICE
     inline Vector3float
     Light::sample_area(uint32_t& seed, const Vector3float& position, Vector3float& lightDir, float& distance)
     {

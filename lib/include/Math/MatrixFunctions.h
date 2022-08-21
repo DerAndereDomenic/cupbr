@@ -13,7 +13,7 @@ namespace cupbr
         *   @return The transposed matrix
         */
         template<typename T>
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         Matrix2x2<T> transpose(Matrix2x2<T>& M);
 
         /**
@@ -21,7 +21,7 @@ namespace cupbr
         *   @return The inverted matrix
         */
         template<typename T>
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         Matrix2x2<T> inverse(Matrix2x2<T>& M);
 
         /**
@@ -29,7 +29,7 @@ namespace cupbr
         *   @return The determinant
         */
         template<typename T>
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         T det(Matrix2x2<T>& M);
 
         /**
@@ -37,7 +37,7 @@ namespace cupbr
         *   @return The transposed matrix
         */
         template<typename T>
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         Matrix3x3<T> transpose(Matrix3x3<T>& M);
 
         /**
@@ -45,7 +45,7 @@ namespace cupbr
         *   @return The inverted matrix
         */
         template<typename T>
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         Matrix3x3<T> inverse(Matrix3x3<T>& M);
 
         /**
@@ -53,7 +53,7 @@ namespace cupbr
         *   @return The determinant
         */
         template<typename T>
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         T det(Matrix3x3<T>& M);
 
         /**
@@ -61,7 +61,7 @@ namespace cupbr
         *   @return The transposed matrix
         */
         template<typename T>
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         Matrix4x4<T> transpose(Matrix4x4<T>& M);
 
         /**
@@ -69,7 +69,7 @@ namespace cupbr
         *   @return The inverted matrix
         */
         //template<typename T>
-        //__host__ __device__
+        //CUPBR_HOST_DEVCE
         //Matrix4x4<T> inverse(const Matrix4x4<T>& M);
 
         /**
@@ -77,7 +77,7 @@ namespace cupbr
         *   @return The determinant
         */
         template<typename T>
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         T det(Matrix4x4<T>& M);
 
     } //namespace Math

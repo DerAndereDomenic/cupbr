@@ -7,7 +7,7 @@ namespace cupbr
     {
 
         template<typename T>
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         Matrix2x2<T> transpose(Matrix2x2<T>& M)
         {
             Matrix2x2<T> result;
@@ -25,7 +25,7 @@ namespace cupbr
         }
 
         template<typename T>
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         Matrix2x2<T> inverse(Matrix2x2<T>& M)
         {
             Matrix2x2<T> result;
@@ -41,7 +41,7 @@ namespace cupbr
         }
 
         template<typename T>
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         T det(const Matrix2x2<T>& M)
         {
             T result = M(0,0) * M(1,1) - M(0,1) * M(1,0);
@@ -50,7 +50,7 @@ namespace cupbr
         }
 
         template<typename T>
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         Matrix3x3<T> transpose(Matrix3x3<T>& M)
         {
             Matrix3x3<T> result;
@@ -73,7 +73,7 @@ namespace cupbr
         }
 
         template<typename T>
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         Matrix3x3<T> inverse(Matrix3x3<T>& M)
         {
             Matrix3x3<T> result;
@@ -93,7 +93,7 @@ namespace cupbr
         }
 
         template<typename T>
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         T det(Matrix3x3<T>& M)
         {
             T result =    M(0, 0) * M(1, 1) * M(2, 2)
@@ -107,7 +107,7 @@ namespace cupbr
         }
 
         template<typename T>
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         Matrix4x4<T> transpose(Matrix4x4<T>& M)
         {
             Matrix4x4<T> result;
@@ -137,7 +137,7 @@ namespace cupbr
         }
 
         template<typename T>
-        __host__ __device__
+        CUPBR_HOST_DEVICE
         T det(Matrix4x4<T>& M)
         {
             float result = M(0, 3) * M(1, 2) * M(2, 1) * M(3, 0)

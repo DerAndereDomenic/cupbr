@@ -14,7 +14,7 @@ namespace cupbr
 {
     namespace detail
     {
-        __global__ void
+        CUPBR_GLOBAL void
         reinhard_kernel(Image<Vector3float> hdr_image, RenderBuffer output, const float exposure)
         {
             const uint32_t tid = ThreadHelper::globalThreadIndex();
@@ -40,14 +40,14 @@ namespace cupbr
             output[tid] = Vector4uint8_t(color, 255);
         }
 
-        __device__
+        CUPBR_DEVICE
         float
         apply_srgb_gamma(const float& c)
         {
             return c <= 0.0031308f ? 12.92f * c : 1.055f * powf(c, 1.0f / 2.4f) - 0.055f;
         }
 
-        __global__
+        CUPBR_GLOBAL
         void
         gamma_kernel(Image<Vector3float> hdr_image, RenderBuffer output)
         {

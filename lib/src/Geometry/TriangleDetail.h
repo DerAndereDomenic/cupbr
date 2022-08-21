@@ -6,7 +6,7 @@
 
 namespace cupbr
 {
-    __host__ __device__
+    CUPBR_HOST_DEVICE
     inline
     Triangle::Triangle(const Vector3float& vertex1,
                        const Vector3float& vertex2,
@@ -22,7 +22,7 @@ namespace cupbr
         type = GeometryType::TRIANGLE;
     }
 
-    __host__ __device__
+    CUPBR_HOST_DEVICE
     inline
     Triangle::Triangle(const Vector3float& vertex1,
                        const Vector3float& vertex2,
@@ -41,7 +41,7 @@ namespace cupbr
         type = GeometryType::TRIANGLE;
     }
 
-    __host__ __device__
+    CUPBR_HOST_DEVICE
     inline LocalGeometry
     Triangle::computeRayIntersection(const Ray& ray)
     {

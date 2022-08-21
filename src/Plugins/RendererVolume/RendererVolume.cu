@@ -18,7 +18,7 @@ namespace cupbr
             uint32_t object_index = 0;
         };
 
-        __device__ void directIlluminationVolumetric(Scene& scene, Ray& ray, LocalGeometry& geom, Vector3float& inc_dir)
+        CUPBR_DEVICE void directIlluminationVolumetric(Scene& scene, Ray& ray, LocalGeometry& geom, Vector3float& inc_dir)
         {
             //Direct illumination
             RadiancePayload* payload = ray.payload<RadiancePayload>();
@@ -66,7 +66,7 @@ namespace cupbr
             }
         }
 
-        __device__ void indirectIlluminationVolumetric(Ray& ray, LocalGeometry& geom, Vector3float& inc_dir)
+        CUPBR_DEVICE void indirectIlluminationVolumetric(Ray& ray, LocalGeometry& geom, Vector3float& inc_dir)
         {
             RadiancePayload* payload = ray.payload<RadiancePayload>();
 
@@ -92,7 +92,7 @@ namespace cupbr
             payload->next_ray_valid = true;
         }
 
-        __device__ bool handleMediumInteraction(Scene& scene, Ray& ray, LocalGeometry& geom, Vector3float& inc_dir)
+        CUPBR_DEVICE bool handleMediumInteraction(Scene& scene, Ray& ray, LocalGeometry& geom, Vector3float& inc_dir)
         {
             RadiancePayload* payload = ray.payload<RadiancePayload>();
 
@@ -217,7 +217,7 @@ namespace cupbr
             }
         }
 
-        __global__ void
+        CUPBR_GLOBAL void
         volume_kernel(Scene scene,
                       const Camera camera,
                       const uint32_t frameIndex,

@@ -7,7 +7,7 @@
 
 namespace cupbr
 {
-    __host__ __device__
+    CUPBR_HOST_DEVICE
     inline bool
     Math::safeFloatEqual(const float& lhs, const float& rhs, const float& eps)
     {
@@ -15,27 +15,28 @@ namespace cupbr
     }
 
     template<typename T>
+    CUPBR_HOST_DEVICE
     T
     Math::clamp(const T& x, const T& mini, const T& maxi)
     {
         return fminf(fmaxf(x, mini), maxi);
     }
 
-    __host__ __device__
+    CUPBR_HOST_DEVICE
     inline float
     Math::delta(const float& inp)
     {
         return safeFloatEqual(inp, 0.0f) ? 1.0f : 0.0f;
     }
 
-    __host__ __device__
+    CUPBR_HOST_DEVICE
     inline Vector3float
     Math::reflect(const Vector3float& inc_dir, const Vector3float& normal)
     {
         return normalize(2.0f * dot(inc_dir, normal) * normal - inc_dir);
     }
 
-    __host__ __device__
+    CUPBR_HOST_DEVICE
     inline Vector3float
     Math::refract(const float& eta, const Vector3float& inc_dir, const Vector3float& normal)
     {
@@ -51,7 +52,7 @@ namespace cupbr
         }
     }
 
-    __host__ __device__
+    CUPBR_HOST_DEVICE
     inline float
     Math::fresnel_schlick(const float& F0, const float& VdotH)
     {
@@ -59,7 +60,7 @@ namespace cupbr
         return F0 + (1.0f - F0) * p * p * p * p * p;
     }
 
-    __host__ __device__
+    CUPBR_HOST_DEVICE
     inline Vector3float
     Math::fresnel_schlick(const Vector3float& F0, const float& VdotH)
     {
@@ -68,7 +69,7 @@ namespace cupbr
     }
 
     template<uint32_t N>
-    __host__ __device__
+    CUPBR_HOST_DEVICE
     uint32_t
     Math::tea(uint32_t val0, uint32_t val1)
     {
@@ -86,7 +87,7 @@ namespace cupbr
         return v0;
     }
 
-    __host__ __device__
+    CUPBR_HOST_DEVICE
     inline float
     Math::rnd(uint32_t& prev)
     {
@@ -97,7 +98,7 @@ namespace cupbr
         return ((float)(prev & 0x00FFFFFF) / (float)0x01000000);
     }
 
-    __host__ __device__
+    CUPBR_HOST_DEVICE
     inline Vector3float
     Math::toLocalFrame(const Vector3float& N, const Vector3float& direction)
     {

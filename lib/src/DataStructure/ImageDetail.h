@@ -121,7 +121,7 @@ namespace cupbr
     }
 
     template<typename T>
-    __host__ __device__
+    CUPBR_HOST_DEVICE
     T&
     Image<T>::operator[](unsigned int index)
     {
@@ -129,7 +129,7 @@ namespace cupbr
     }
 
     template<typename T>
-    __host__ __device__
+    CUPBR_HOST_DEVICE
     T&
     Image<T>::operator()(Vector2uint32_t& pixel)
     {
@@ -138,7 +138,7 @@ namespace cupbr
     }
 
     template<typename T>
-    __host__ __device__
+    CUPBR_HOST_DEVICE
     T*
     Image<T>::data() const
     {
@@ -146,7 +146,7 @@ namespace cupbr
     }
 
     template<typename T>
-    __host__ __device__
+    CUPBR_HOST_DEVICE
     uint32_t
     Image<T>::width() const
     {
@@ -154,7 +154,7 @@ namespace cupbr
     }
 
     template<typename T>
-    __host__ __device__
+    CUPBR_HOST_DEVICE
     uint32_t
     Image<T>::height() const
     {
@@ -162,7 +162,7 @@ namespace cupbr
     }
 
     template<typename T>
-    __host__ __device__
+    CUPBR_HOST_DEVICE
     uint32_t
     Image<T>::size() const
     {

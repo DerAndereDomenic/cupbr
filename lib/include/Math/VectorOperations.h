@@ -13,7 +13,7 @@ namespace cupbr
     *   @return The elementwise sum of these two vectors
     */
     template<typename T>
-    __host__ __device__
+    CUPBR_HOST_DEVICE
     Vector2<T> operator+(const Vector2<T>& lhs, const Vector2<T>& rhs);
 
     /**
@@ -23,7 +23,7 @@ namespace cupbr
     *   @return The elementwise subtraction of these two vectors
     */
     template<typename T>
-    __host__ __device__
+    CUPBR_HOST_DEVICE
     Vector2<T> operator-(const Vector2<T>& lhs, const Vector2<T>& rhs);
 
     /**
@@ -33,7 +33,7 @@ namespace cupbr
     *   @return The elementwise product of the vector with the scalar
     */
     template<typename T>
-    __host__ __device__
+    CUPBR_HOST_DEVICE
     Vector2<T> operator*(const Vector2<T>& lhs, const T& rhs);
 
     /**
@@ -43,7 +43,7 @@ namespace cupbr
     *   @return The elementwise product of the vector with the scalar
     */
     template<typename T>
-    __host__ __device__
+    CUPBR_HOST_DEVICE
     Vector2<T> operator*(const T& lhs, const Vector2<T>& rhs);
 
     /**
@@ -53,7 +53,7 @@ namespace cupbr
     *   @return Elementwise product between these two vectors
     */
     template<typename T>
-    __host__ __device__
+    CUPBR_HOST_DEVICE
     Vector2<T> operator*(const Vector2<T>& lhs, const Vector2<T>& rhs);
 
     /**
@@ -63,7 +63,7 @@ namespace cupbr
     *   @return The vector where each component was divided by the scalar
     */
     template<typename T>
-    __host__ __device__
+    CUPBR_HOST_DEVICE
     Vector2<T> operator/(const Vector2<T>& lhs, const T& rhs);
 
     /**
@@ -73,7 +73,7 @@ namespace cupbr
     *   @return The vectors divided component wise
     */
     template<typename T>
-    __host__ __device__
+    CUPBR_HOST_DEVICE
     Vector2<T> operator/(const Vector2<T>& lhs, const Vector2<T>& rhs);
 
     /**
@@ -82,7 +82,7 @@ namespace cupbr
     *   @param[in] rhs The second vector
     */
     template<typename T>
-    __host__ __device__
+    CUPBR_HOST_DEVICE
     void operator+=(Vector2<T>& lhs, const Vector2<T>& rhs);
 
     /**
@@ -91,7 +91,7 @@ namespace cupbr
     *   @param[in] rhs The second vector
     */
     template<typename T>
-    __host__ __device__
+    CUPBR_HOST_DEVICE
     void operator-=(Vector2<T>& lhs, const Vector2<T>& rhs);
 
     /**
@@ -100,7 +100,7 @@ namespace cupbr
     *   @param[in] rhs The scalar
     */
     template<typename T>
-    __host__ __device__
+    CUPBR_HOST_DEVICE
     void operator*=(Vector2<T>& lhs, const T& rhs);
 
     /**
@@ -109,7 +109,7 @@ namespace cupbr
     *   @param[in] rhs The scalar
     */
     template<typename T>
-    __host__ __device__
+    CUPBR_HOST_DEVICE
     void operator/=(Vector2<T>& lhs, const T& rhs);
 
     /**
@@ -119,7 +119,7 @@ namespace cupbr
     *   @return The elementwise sum of these two vectors
     */
     template<typename T>
-    __host__ __device__
+    CUPBR_HOST_DEVICE
     Vector3<T> operator+(const Vector3<T>& lhs, const Vector3<T>& rhs);
 
     /**
@@ -129,7 +129,7 @@ namespace cupbr
     *   @return The elementwise subtraction of these two vectors
     */
     template<typename T>
-    __host__ __device__
+    CUPBR_HOST_DEVICE
     Vector3<T> operator-(const Vector3<T>& lhs, const Vector3<T>& rhs);
 
     /**
@@ -139,7 +139,7 @@ namespace cupbr
     *   @return The elementwise product of the vector with the scalar
     */
     template<typename T>
-    __host__ __device__
+    CUPBR_HOST_DEVICE
     Vector3<T> operator*(const Vector3<T>& lhs, const T& rhs);
 
     /**
@@ -149,7 +149,7 @@ namespace cupbr
     *   @return The elementwise product of the vector with the scalar
     */
     template<typename T>
-    __host__ __device__
+    CUPBR_HOST_DEVICE
     Vector3<T> operator*(const T& lhs, const Vector3<T>& rhs);
 
     /**
@@ -159,7 +159,7 @@ namespace cupbr
     *   @return Elementwise product between these two vectors
     */
     template<typename T>
-    __host__ __device__
+    CUPBR_HOST_DEVICE
     Vector3<T> operator*(const Vector3<T>& lhs, const Vector3<T>& rhs);
 
     /**
@@ -169,7 +169,7 @@ namespace cupbr
     *   @return The vector where each component was divided by the scalar
     */
     template<typename T>
-    __host__ __device__
+    CUPBR_HOST_DEVICE
     Vector3<T> operator/(const Vector3<T>& lhs, const T& rhs);
 
     /**
@@ -179,7 +179,7 @@ namespace cupbr
     *   @return The vectors divided component wise
     */
     template<typename T>
-    __host__ __device__
+    CUPBR_HOST_DEVICE
     Vector3<T> operator/(const Vector3<T>& lhs, const Vector3<T>& rhs);
 
     /**
@@ -188,7 +188,7 @@ namespace cupbr
     *   @param[in] rhs The second vector
     */
     template<typename T>
-    __host__ __device__
+    CUPBR_HOST_DEVICE
     void operator+=(Vector3<T>& lhs, const Vector3<T>& rhs);
 
     /**
@@ -197,7 +197,7 @@ namespace cupbr
     *   @param[in] rhs The second vector
     */
     template<typename T>
-    __host__ __device__
+    CUPBR_HOST_DEVICE
     void operator-=(Vector3<T>& lhs, const Vector3<T>& rhs);
 
     /**
@@ -206,7 +206,7 @@ namespace cupbr
     *   @param[in] rhs The scalar
     */
     template<typename T>
-    __host__ __device__
+    CUPBR_HOST_DEVICE
     void operator*=(Vector3<T>& lhs, const T& rhs);
 
     /**
@@ -215,7 +215,7 @@ namespace cupbr
     *   @param[in] rhs The scalar
     */
     template<typename T>
-    __host__ __device__
+    CUPBR_HOST_DEVICE
     void operator/=(Vector3<T>& lhs, const T& rhs);
 
     /**
@@ -225,7 +225,7 @@ namespace cupbr
     *   @return The elementwise sum of these two vectors
     */
     template<typename T>
-    __host__ __device__
+    CUPBR_HOST_DEVICE
     Vector4<T> operator+(const Vector4<T>& lhs, const Vector4<T>& rhs);
 
     /**
@@ -235,7 +235,7 @@ namespace cupbr
     *   @return The elementwise subtraction of these two vectors
     */
     template<typename T>
-    __host__ __device__
+    CUPBR_HOST_DEVICE
     Vector4<T> operator-(const Vector4<T>& lhs, const Vector4<T>& rhs);
 
     /**
@@ -245,7 +245,7 @@ namespace cupbr
     *   @return The elementwise product of the vector with the scalar
     */
     template<typename T>
-    __host__ __device__
+    CUPBR_HOST_DEVICE
     Vector4<T> operator*(const Vector4<T>& lhs, const T& rhs);
 
     /**
@@ -255,7 +255,7 @@ namespace cupbr
     *   @return The elementwise product of the vector with the scalar
     */
     template<typename T>
-    __host__ __device__
+    CUPBR_HOST_DEVICE
     Vector4<T> operator*(const T& lhs, const Vector4<T>& rhs);
 
     /**
@@ -265,7 +265,7 @@ namespace cupbr
     *   @return Elementwise product between these two vectors
     */
     template<typename T>
-    __host__ __device__
+    CUPBR_HOST_DEVICE
     Vector4<T> operator*(const Vector4<T>& lhs, const Vector4<T>& rhs);
 
     /**
@@ -275,7 +275,7 @@ namespace cupbr
     *   @return The vector where each component was divided by the scalar
     */
     template<typename T>
-    __host__ __device__
+    CUPBR_HOST_DEVICE
     Vector4<T> operator/(const Vector4<T>& lhs, const T& rhs);
 
     /**
@@ -285,7 +285,7 @@ namespace cupbr
     *   @return The vectors divided component wise
     */
     template<typename T>
-    __host__ __device__
+    CUPBR_HOST_DEVICE
     Vector4<T> operator/(const Vector4<T>& lhs, const Vector4<T>& rhs);
 
     /**
@@ -294,7 +294,7 @@ namespace cupbr
     *   @param[in] rhs The second vector
     */
     template<typename T>
-    __host__ __device__
+    CUPBR_HOST_DEVICE
     void operator+=(Vector4<T>& lhs, const Vector4<T>& rhs);
 
     /**
@@ -303,7 +303,7 @@ namespace cupbr
     *   @param[in] rhs The second vector
     */
     template<typename T>
-    __host__ __device__
+    CUPBR_HOST_DEVICE
     void operator-=(Vector4<T>& lhs, const Vector4<T>& rhs);
 
     /**
@@ -312,7 +312,7 @@ namespace cupbr
     *   @param[in] rhs The scalar
     */
     template<typename T>
-    __host__ __device__
+    CUPBR_HOST_DEVICE
     void operator*=(Vector4<T>& lhs, const T& rhs);
 
     /**
@@ -321,7 +321,7 @@ namespace cupbr
     *   @param[in] rhs The scalar
     */
     template<typename T>
-    __host__ __device__
+    CUPBR_HOST_DEVICE
     void operator/=(Vector4<T>& lhs, const T& rhs);
 
 } //namespace cupbr
