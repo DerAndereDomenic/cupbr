@@ -341,6 +341,17 @@ namespace cupbr
                 }
             }
 
+            ImGui::Separator();
+
+            if(ImGui::Button("Screenshot"))
+            {
+                auto t = std::time(nullptr);
+                auto tm = *std::localtime(&t);
+                std::ostringstream oss;
+                oss << std::put_time(&tm, "%Y-%m-%d_%H-%M-%S");
+                impl->mapper->saveToFile("bin/" + oss.str() + ".png");
+            }
+
             ImGui::End();
 
             if (impl->material_update)
