@@ -22,7 +22,6 @@ namespace cupbr
         Window* window = nullptr;
         int32_t width; // Width of the framebuffer without menu
         int32_t height;
-        int32_t menu_width;
 
         Scene* scene = nullptr;
         Camera* camera = nullptr;
@@ -79,12 +78,11 @@ namespace cupbr
     }
 
     void
-    Interactor::registerWindow(Window* window, const int32_t& menu_width)
+    Interactor::registerWindow(Window* window)
     {
         impl->window = window;
-        impl->width = window->width() - menu_width;
+        impl->width = window->width();
         impl->height = window->height();
-        impl->menu_width = menu_width;
     }
 
     void
@@ -199,8 +197,6 @@ namespace cupbr
         bool dummy = true;
         if (impl->edit_mode)
         {
-            ImGui::SetNextWindowPos(ImVec2(static_cast<float>(impl->width), 0.0f));
-            ImGui::SetNextWindowSize(ImVec2(static_cast<float>(impl->menu_width), static_cast<float>(impl->height)));
             ImGui::Begin("Render settings", &dummy, ImGuiWindowFlags_MenuBar);
 
             if (ImGui::BeginMenuBar())

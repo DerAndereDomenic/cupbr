@@ -137,7 +137,16 @@ namespace cupbr
         ImGui::CreateContext();
         ImGuiIO& io = ImGui::GetIO(); (void)io;
 
+        io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
+
         ImGui::StyleColorsDark();
+
+        ImGuiStyle& style = ImGui::GetStyle();
+        if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+        {
+            style.WindowRounding = 0.0f;
+            style.Colors[ImGuiCol_WindowBg].w = 1.0f;
+        }
 
         ImGui_ImplGlfw_InitForOpenGL(_internal_window, true);
         ImGui_ImplOpenGL3_Init("#version 330");

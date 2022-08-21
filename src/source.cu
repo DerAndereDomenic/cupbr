@@ -7,7 +7,7 @@ using namespace cupbr;
 
 int run(int argc, char* argv[])
 {
-    const uint32_t width = 1024, height = 1024, menu_width = 400;
+    const uint32_t width = 1024, height = 1024;
 
     Scene scene;
     
@@ -27,12 +27,12 @@ int run(int argc, char* argv[])
     ToneMapper mapper(ToneMappingType::REINHARD);
     mapper.registerImage(pbrenderer.getOutputImage());
 
-    Window window("CUPBR", width + menu_width, height);
+    Window window("CUPBR", width, height);
 
     GLRenderer renderer(width, height);
     Camera camera(width,height);
     Interactor interactor;
-    interactor.registerWindow(&window, menu_width);
+    interactor.registerWindow(&window);
     interactor.registerCamera(&camera);
     interactor.registerScene(&scene);
     interactor.registerRenderer(&pbrenderer);
