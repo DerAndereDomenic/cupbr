@@ -9,7 +9,6 @@
 #include <tinyxml2.h>
 #include <vector>
 #include <sstream>
-#include <thread>
 #include <filesystem>
 
 #include <Core/Plugin.h>
@@ -94,19 +93,20 @@ namespace cupbr
     {
         Scene scene = Scene();
 
+        tinyxml2::XMLDocument doc;
+        tinyxml2::XMLError error;
+
         do
         {
-            std::this_thread::sleep_for(std::chrono::milliseconds(1));
-        } while (!std::filesystem::exists(path));
+            error = doc.LoadFile(path.c_str());
 
-        tinyxml2::XMLDocument doc;
-        tinyxml2::XMLError error = doc.LoadFile(path.c_str());
-
-        if (error != tinyxml2::XML_SUCCESS)
-        {
-            std::cerr << "Failed to load XML file: " << path << ". Error code: " << error << "\n";
-            return scene;
-        }
+            if (error != tinyxml2::XML_SUCCESS && !std::filesystem::exists(path))
+            {
+                std::cerr << "Failed to load XML file: " << path << ". Error code: " << error << "\n";
+                return scene;
+            }
+        } while (error == tinyxml2::XML_ERROR_FILE_NOT_FOUND && std::filesystem::exists(path));
+        
 
         //Retrieve information about scene size
         const char* scene_size_string = doc.FirstChildElement("header")->FirstChildElement("scene_size")->GetText();
