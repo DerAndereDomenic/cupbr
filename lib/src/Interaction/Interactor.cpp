@@ -165,6 +165,13 @@ namespace cupbr
             return true;
         }
 
+        if(event.getEventType() == EventType::WindowResized)
+        {
+            WindowResizedEvent e = *(WindowResizedEvent*)&event;
+
+            std::cout << e << std::endl;
+        }
+
         return false;
     }
 

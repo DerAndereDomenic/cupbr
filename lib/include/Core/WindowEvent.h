@@ -5,6 +5,30 @@
 
 namespace cupbr
 {
+    class WindowResizedEvent : public Event
+    {
+        public:
+        WindowResizedEvent(const uint32_t& width, const uint32_t& height)
+            :m_width(width),
+             m_height(height)
+        {
+        }
+
+        std::string toString() const override
+        {
+            std::stringstream ss;
+            ss << "WindowResizedEvent: " << m_width << ", " << m_height;
+            return ss.str();
+        }
+
+        inline uint32_t width() const { return m_width; }
+        inline uint32_t height() const { return m_height; }
+
+        EVENT_CLASS_CATEGORY(EventCategoryWindow);
+        EVENT_CLASS_TYPE(WindowResized)
+        private:
+        uint32_t m_width, m_height;
+    };
 
     class FileDroppedEvent : public Event
     {
