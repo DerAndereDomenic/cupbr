@@ -11,14 +11,16 @@ int run(int argc, char* argv[])
 
     Scene scene;
     
+    std::string scene_path;
     if(argc == 1)
     {
-        scene = SceneLoader::loadFromFile("res/Scenes/CornellBoxSphereAreaLight.xml");
+        scene_path = "res/Scenes/CornellBoxSphereAreaLight.xml";
     }
     else if(argc == 2)
     {
-        scene = SceneLoader::loadFromFile(argv[1]);
+        scene_path = argv[1];
     }
+    scene = SceneLoader::loadFromFile(scene_path);
 
     PBRenderer pbrenderer;
     pbrenderer.setOutputSize(width, height);
@@ -43,7 +45,7 @@ int run(int argc, char* argv[])
 
     window.setViewport(0, 0, width, height);
 
-    std::string scene_path;
+    FileWatcher scene_path_watcher(scene_path);
 
     /* Loop until the user closes the window */
     while (!window.shouldClose())
@@ -52,10 +54,11 @@ int run(int argc, char* argv[])
 
         interactor.handleInteraction();
 
-        if(interactor.resetScene(scene_path))
+        if(interactor.resetScene(scene_path) || scene_path_watcher.fileUpdated())
         {
             SceneLoader::destroyScene(scene);
             scene = SceneLoader::loadFromFile(scene_path);
+            scene_path_watcher.setPath(scene_path);
             pbrenderer.reset();
         } 
         

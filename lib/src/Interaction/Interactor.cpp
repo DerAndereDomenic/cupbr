@@ -405,7 +405,8 @@ namespace cupbr
     {
         bool should_reset = impl->reset_scene;
         impl->reset_scene = false;
-        file_path = impl->scene_path;
+        if (should_reset)
+            file_path = impl->scene_path;
         return should_reset;
     }
 
