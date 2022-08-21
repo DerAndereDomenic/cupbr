@@ -108,7 +108,7 @@ namespace cupbr
     {
         _aspect_ratio = aspect_ratio;
 
-        _xAxis = Vector3float(_aspect_ratio, 0, 0);
+        _xAxis = _aspect_ratio * Math::normalize(_xAxis);
     }
 
 } //namespace cupbr

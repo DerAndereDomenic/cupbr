@@ -162,6 +162,8 @@ namespace cupbr
             FileDroppedEvent e = *(FileDroppedEvent*)&event;
 
             impl->reset_scene = true;
+            Vector2float viewport_size = impl->window->getViewportSize();
+            impl->camera->onResize(viewport_size.x / viewport_size.y);
             impl->scene_path = e.getFilePath();
             return true;
         }
@@ -231,6 +233,8 @@ namespace cupbr
                         impl->reset_scene = true;
                         impl->scene_path = s;
                         impl->scene_index = 0;
+                        Vector2float viewport_size = impl->window->getViewportSize();
+                        impl->camera->onResize(viewport_size.x / viewport_size.y);
                     }
                 }
 

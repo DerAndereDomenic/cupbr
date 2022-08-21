@@ -56,7 +56,6 @@ int run(int argc, char* argv[])
         {
             SceneLoader::destroyScene(scene);
             scene = SceneLoader::loadFromFile(scene_path);
-            camera = Camera(static_cast<float>(width) / static_cast<float>(height));
             pbrenderer.reset();
         } 
         
