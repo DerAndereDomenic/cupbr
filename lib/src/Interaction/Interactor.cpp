@@ -169,7 +169,13 @@ namespace cupbr
         {
             WindowResizedEvent e = *(WindowResizedEvent*)&event;
 
-            std::cout << e << std::endl;
+            uint32_t width = e.width();
+            uint32_t height = e.height();
+            impl->camera->onResize(static_cast<float>(width) / static_cast<float>(height));
+            impl->window->onResize(width, height);
+            impl->renderer->setOutputSize(width, height);
+            impl->mapper->registerImage(impl->renderer->getOutputImage());
+            impl->renderer->reset();
         }
 
         return false;
