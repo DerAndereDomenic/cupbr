@@ -121,16 +121,6 @@ namespace cupbr
             fnc(event);
         });
 
-        glfwSetWindowSizeCallback(_internal_window, [](GLFWwindow* window, int width, int height)
-        {
-
-            EventCallbackFn fnc = *(EventCallbackFn*)glfwGetWindowUserPointer(window);
-
-            WindowResizedEvent event = WindowResizedEvent(static_cast<uint32_t>(width), static_cast<uint32_t>(height));
-
-            fnc(event);
-        });
-
         IMGUI_CHECKVERSION();
         ImGui::CreateContext();
         ImGuiIO& io = ImGui::GetIO(); (void)io;
