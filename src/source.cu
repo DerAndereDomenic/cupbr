@@ -9,22 +9,6 @@ int run(int argc, char* argv[])
 {
     const uint32_t width = 1024, height = 1024, menu_width = 400;
 
-    setDefaultDevice();
-
-    std::vector<std::filesystem::path> paths;
-    for (auto entry : std::filesystem::directory_iterator(CUPBR_PLUGIN_PATH))
-    {
-        paths.push_back(entry.path());
-    }
-
-    for (auto s : paths)
-    {
-        if(s.filename().extension().string() == CUPBR_PLUGIN_FILE_ENDING)
-        {
-            PluginManager::loadPlugin(s.filename().stem().string());
-        }
-    }
-
     Scene scene;
     
     if(argc == 1)
