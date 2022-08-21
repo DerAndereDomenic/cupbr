@@ -1,8 +1,7 @@
 #include <iostream>
-
-#include <CUPBR.h>
-
 #include <filesystem>
+
+#include <Core/EntryPoint.h>
 
 using namespace cupbr;
 
@@ -112,11 +111,4 @@ int run(int argc, char* argv[])
 
     printf("Rendered Frames: %i\n", frame_counter);
     return 0;
-}
-
-int main(int argc, char* argv[])
-{
-    int exit =  run(argc, argv);
-    Memory::printStatistics();
-    return exit;
 }
