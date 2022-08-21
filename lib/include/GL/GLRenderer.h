@@ -67,6 +67,12 @@ namespace cupbr
         */
         Vector2float getViewportSize() const;
 
+        /**
+        *   @brief Get the position of the viewport
+        *   @return Vector containing (x, y)
+        */
+        Vector2float getViewportPosition() const;
+
         private:
         class Impl;
         std::unique_ptr<Impl> impl;     /**< Implementation pointer */

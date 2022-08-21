@@ -30,6 +30,9 @@ namespace cupbr
 
         float _viewport_width = 0;
         float _viewport_height = 0;
+
+        float _viewport_x = 0;
+        float _viewport_y = 0;
     };
 
     GLRenderer::Impl::Impl(const uint32_t& width, const uint32_t& height)
@@ -78,6 +81,10 @@ namespace cupbr
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
         ImGui::Begin("Viewport");
         ImVec2 viewport_panel_size = ImGui::GetContentRegionAvail();
+        ImVec2 viewport_position = ImGui::GetWindowPos();
+
+        impl->_viewport_x = viewport_position.x;
+        impl->_viewport_y = viewport_position.y;
 
         bool resized = false;
         if(viewport_panel_size.x != impl->_viewport_width || 
@@ -124,6 +131,12 @@ namespace cupbr
     GLRenderer::getViewportSize() const
     {
         return Vector2float(impl->_viewport_width, impl->_viewport_height);
+    }
+
+    Vector2float 
+    GLRenderer::getViewportPosition() const
+    {
+        return Vector2float(impl->_viewport_x, impl->_viewport_y);
     }
 
 } //namespace cupbr
