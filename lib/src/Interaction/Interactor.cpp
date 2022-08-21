@@ -301,9 +301,18 @@ namespace cupbr
             impl->mapper->setExposure(impl->exposure);
         }
 
-        ImGui::Separator();
+        if(ImGui::Button("Screenshot"))
+        {
+            auto t = std::time(nullptr);
+            auto tm = *std::localtime(&t);
+            std::ostringstream oss;
+            oss << std::put_time(&tm, "%Y-%m-%d_%H-%M-%S");
+            impl->mapper->saveToFile("bin/" + oss.str() + ".png");
+        }
 
-        ImGui::Text("Material:");
+        ImGui::End();
+
+        ImGui::Begin("Material Editor", nullptr, ImGuiWindowFlags_MenuBar);
 
         Properties& properties = impl->scene->properties[impl->scene_index];
 
@@ -349,17 +358,6 @@ namespace cupbr
                     properties.setProperty(it->first, Vector3float(val[0], val[1], val[2]));
                 }
             }
-        }
-
-        ImGui::Separator();
-
-        if(ImGui::Button("Screenshot"))
-        {
-            auto t = std::time(nullptr);
-            auto tm = *std::localtime(&t);
-            std::ostringstream oss;
-            oss << std::put_time(&tm, "%Y-%m-%d_%H-%M-%S");
-            impl->mapper->saveToFile("bin/" + oss.str() + ".png");
         }
 
         ImGui::End();
