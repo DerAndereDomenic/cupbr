@@ -29,7 +29,7 @@ namespace cupbr
     FileWatcher::fileUpdated()
     {
         auto current_time = std::filesystem::last_write_time(impl->path);
-        if(current_time != impl->last_write_time)
+        if(std::filesystem::exists(impl->path) && current_time != impl->last_write_time)
         {
             impl->last_write_time = current_time;
             return true;

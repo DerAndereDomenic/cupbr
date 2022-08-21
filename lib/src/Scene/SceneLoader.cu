@@ -9,6 +9,8 @@
 #include <tinyxml2.h>
 #include <vector>
 #include <sstream>
+#include <thread>
+#include <filesystem>
 
 #include <Core/Plugin.h>
 
@@ -91,6 +93,11 @@ namespace cupbr
     SceneLoader::loadFromFile(const std::string& path)
     {
         Scene scene = Scene();
+
+        do
+        {
+            std::this_thread::sleep_for(std::chrono::milliseconds(1));
+        } while (!std::filesystem::exists(path));
 
         tinyxml2::XMLDocument doc;
         tinyxml2::XMLError error = doc.LoadFile(path.c_str());
