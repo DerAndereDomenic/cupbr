@@ -37,7 +37,7 @@ namespace cupbr
         *   @brief Render a device image on a quad
         *   @param[in] img The device image
         */
-        void renderTexture(const RenderBuffer& img);
+        void displayImage(const RenderBuffer& img);
 
         private:
         class Impl;

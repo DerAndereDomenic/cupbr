@@ -207,7 +207,7 @@ namespace cupbr
     }
 
     void
-    GLRenderer::renderTexture(const RenderBuffer& img)
+    GLRenderer::displayImage(const RenderBuffer& img)
     {
         //Deprecated
         //cudaSafeCall(cudaMemcpyToArray(impl->_texture_ptr, 0, 0, img.data(), 4 * img.size(), cudaMemcpyDeviceToDevice));

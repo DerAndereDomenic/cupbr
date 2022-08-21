@@ -84,7 +84,7 @@ int run(int argc, char* argv[])
         pbrenderer.render(&camera);
 
         mapper.toneMap();
-        renderer.renderTexture(mapper.getRenderBuffer());
+        renderer.displayImage(mapper.getRenderBuffer());
         
         ++frame_counter;
 
