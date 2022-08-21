@@ -9,7 +9,7 @@ int run(int argc, char* argv[])
 {
     const uint32_t width = 1024, height = 1024, menu_width = 400;
 
-    cudaSafeCall(cudaSetDevice(0));
+    setDefaultDevice();
 
     std::vector<std::filesystem::path> paths;
     for (auto entry : std::filesystem::directory_iterator(CUPBR_PLUGIN_PATH))

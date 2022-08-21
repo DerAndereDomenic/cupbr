@@ -4,6 +4,7 @@
 #include <iostream>
 #include "cuda_runtime.h"
 #include "device_launch_parameters.h"
+#include <Core/CUPBRAPI.h>
 
 inline
 void check(cudaError_t error, char const* const func, const char* const file, int const line)
@@ -15,10 +16,13 @@ void check(cudaError_t error, char const* const func, const char* const file, in
     }
 }
 
-#ifdef _DEBUG
+#ifdef CUPBR_DEBUG
 #define cudaSafeCall(val) check((val), #val, __FILE__, __LINE__)
 #else
 #define cudaSafeCall(val) val
 #endif
+
+#define setDevice(dev) cudaSafeCall(cudaSetDevice(dev))
+#define setDefaultDevice() setDevice(0)
 
 #endif
