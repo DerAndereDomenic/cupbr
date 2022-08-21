@@ -22,9 +22,9 @@ namespace cupbr
 
         /**
         *   @brief Constructor
-        *   @note This camera can be used for different aspect ratios
+        *   @param[in] aspect_ratio The aspect ratio
         */
-        Camera(const uint32_t& width, const uint32_t& height);
+        Camera(const float& aspect_ratio);
 
         /**
         *   @brief Get the world position of the camera
@@ -72,6 +72,12 @@ namespace cupbr
         *   @param[in] target The target position
         */
         void lookAt(const Vector3float& target);
+
+        /**
+        *   @brief This function should be called if the viewport gets resized
+        *   @param[in] aspect_ratio The aspect ratio
+        */
+        void onResize(const float& aspect_ratio);
 
         /**
         *   @brief Check if the camera was moved last frame

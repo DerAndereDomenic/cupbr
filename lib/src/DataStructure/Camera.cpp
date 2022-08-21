@@ -4,11 +4,9 @@
 
 namespace cupbr
 {
-    Camera::Camera(const uint32_t& width, const uint32_t& height)
+    Camera::Camera(const float& aspect_ratio)
     {
-        _aspect_ratio = static_cast<float>(width) / static_cast<float>(height);
-
-        _xAxis = Vector3float(_aspect_ratio, 0, 0);
+        onResize(aspect_ratio);
     }
 
     void
@@ -103,6 +101,14 @@ namespace cupbr
         _zAxis = direction;
         _xAxis = _aspect_ratio * Math::normalize(Vector3float(_zAxis.z, 0, -_zAxis.x));
         _yAxis = Math::cross(_zAxis, _xAxis) / _aspect_ratio;
+    }
+
+    void
+    Camera::onResize(const float& aspect_ratio)
+    {
+        _aspect_ratio = aspect_ratio;
+
+        _xAxis = Vector3float(_aspect_ratio, 0, 0);
     }
 
 } //namespace cupbr

@@ -30,7 +30,7 @@ int run(int argc, char* argv[])
     Window window("CUPBR", width, height);
 
     GLRenderer renderer(width, height);
-    Camera camera(width,height);
+    Camera camera(static_cast<float>(width) / static_cast<float>(height));
     Interactor interactor;
     interactor.registerWindow(&window);
     interactor.registerCamera(&camera);
@@ -57,7 +57,7 @@ int run(int argc, char* argv[])
         {
             SceneLoader::destroyScene(scene);
             scene = SceneLoader::loadFromFile(scene_path);
-            camera = Camera(width, height);
+            camera = Camera(static_cast<float>(width) / static_cast<float>(height));
             pbrenderer.reset();
         } 
         
