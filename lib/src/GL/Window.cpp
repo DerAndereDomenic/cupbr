@@ -137,6 +137,7 @@ namespace cupbr
 
         io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
         io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+        ImGui::LoadIniSettingsFromDisk("Default.ini");
 
         ImGui::StyleColorsDark();
 
