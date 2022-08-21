@@ -231,7 +231,12 @@ namespace cupbr
     void 
     GLRenderer::onResize(const uint32_t& width, const uint32_t& height)
     {
-        
+        cudaSafeCall(cudaGraphicsUnmapResources(1, &(impl->_cuda_resource), 0));
+        cudaSafeCall(cudaGraphicsUnregisterResource(impl->_cuda_resource));
+
+        glDeleteTextures(1, &(impl->_screen_texture));
+
+        impl->createGLTexture(width, height);
     }
 
 } //namespace cupbr
