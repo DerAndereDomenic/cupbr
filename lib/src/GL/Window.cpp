@@ -231,4 +231,11 @@ namespace cupbr
         glfwDestroyWindow(_internal_window);
     }
 
+    void 
+    Window::onResize(const float& width, const float& height)
+    {
+        _width = width;
+        _height = height;
+    }
+
 } //namespace cupbr

@@ -75,6 +75,13 @@ namespace cupbr
         void close();
 
         /**
+        *   @brief Gets called if the window gets resized
+        *   @param[in] width The new width
+        *   @param[in] height The new height
+        */
+        void onResize(const float& width, const float& height);
+
+        /**
         *   @brief Set the event callback
         *   @param[in] callback The callback function called on events
         */
