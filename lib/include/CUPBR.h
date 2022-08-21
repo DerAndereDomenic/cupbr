@@ -26,6 +26,7 @@
 #include <DataStructure/Image.h>
 #include <DataStructure/Light.h>
 #include <DataStructure/RenderBuffer.h>
+#include <DataStructure/FileWatcher.h>
 
 /// ------- GEOMETRY ---------
 
