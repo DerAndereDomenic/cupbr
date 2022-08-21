@@ -207,10 +207,9 @@ namespace cupbr
 
         impl->material_update = false;
 
-        bool dummy = true;
         if (impl->edit_mode)
         {
-            ImGui::Begin("Render settings", &dummy, ImGuiWindowFlags_MenuBar);
+            ImGui::Begin("Render settings", nullptr, ImGuiWindowFlags_MenuBar);
 
             if (ImGui::BeginMenuBar())
             {
