@@ -120,12 +120,13 @@ namespace cupbr
             int32_t x = static_cast<int32_t>(mouse_pos.x);
             int32_t y = impl->width - static_cast<int32_t>(mouse_pos.y);   //glfw coordinates are flipped
 
-            if (x >= 0 && x < impl->width && y >= 0 && y < impl->height)
+            Vector2float view_port_size = impl->window->getViewportSize();
+            if (x >= 0 && x < view_port_size.x && y >= 0 && y < view_port_size.y)
             {
                 Interaction::pickMouse(x,
                                        y,
-                                       impl->width,
-                                       impl->height,
+                                       view_port_size.x,
+                                       view_port_size.y,
                                        *(impl->scene),
                                        *(impl->camera),
                                        impl->dev_scene_index);

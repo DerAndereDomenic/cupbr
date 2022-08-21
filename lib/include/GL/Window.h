@@ -83,6 +83,12 @@ namespace cupbr
         void onResize(const float& width, const float& height);
 
         /**
+        *   @brief Display an image
+        *   @param[in] img The image to display
+        */
+        void displayImage(const RenderBuffer& img);
+
+        /**
         *   @brief Set the viewport
         *   @param[in] x The x position
         *   @param[in] y The y position
@@ -97,10 +103,10 @@ namespace cupbr
         inline void clear() const { _renderer->clear(); }
 
         /**
-        *   @brief Display an image
-        *   @param[in] img The image to display
+        *   @brief Get the size of the current view port
+        *   @return Vector of (width, height)
         */
-        void displayImage(const RenderBuffer& img);
+        inline Vector2float getViewportSize() const { return _renderer->getViewportSize(); }
 
         /**
         *   @brief Set the event callback
