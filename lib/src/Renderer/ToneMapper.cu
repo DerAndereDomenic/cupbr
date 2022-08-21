@@ -169,7 +169,7 @@ namespace cupbr
     {
         KernelSizeHelper::KernelSize config = KernelSizeHelper::configure(hdr_image->size());
         detail::reinhard_kernel << <config.blocks, config.threads >> > (*hdr_image, render_buffer, exposure);
-        cudaSafeCall(cudaDeviceSynchronize());
+        synchronizeDefaultStream();
     }
 
     void
@@ -177,7 +177,7 @@ namespace cupbr
     {
         KernelSizeHelper::KernelSize config = KernelSizeHelper::configure(hdr_image->size());
         detail::gamma_kernel << <config.blocks, config.threads >> > (*hdr_image, render_buffer);
-        cudaSafeCall(cudaDeviceSynchronize());
+        synchronizeDefaultStream();
     }
 
     void

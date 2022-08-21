@@ -340,7 +340,7 @@ namespace cupbr
                                                                           maxTraceDepth,
                                                                           useRussianRoulette,
                                                                           *output_img);
-            cudaSafeCall(cudaDeviceSynchronize());
+            synchronizeDefaultStream();
         }
     };
 

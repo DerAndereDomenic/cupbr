@@ -25,4 +25,6 @@ void check(cudaError_t error, char const* const func, const char* const file, in
 #define setDevice(dev) cudaSafeCall(cudaSetDevice(dev))
 #define setDefaultDevice() setDevice(0)
 
+#define synchronizeDefaultStream() cudaSafeCall(cudaDeviceSynchronize())
+
 #endif

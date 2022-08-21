@@ -39,7 +39,7 @@ namespace cupbr
                                                 scene,
                                                 camera,
                                                 outSceneIndex);
-        cudaSafeCall(cudaDeviceSynchronize());
+        synchronizeDefaultStream();
     }
 
 } //namespace cupbr

@@ -172,7 +172,7 @@ namespace cupbr
             cudaMemcpy((void*)dummy_plugin, (void*)&host_object, sizeof(classType), cudaMemcpyHostToDevice);                        \
                                                                                                                                     \
             fix_vtable << <1, 1 >> > (plugin_holder, dummy_plugin);                                                                 \
-            cudaSafeCall(cudaDeviceSynchronize());                                                                                  \
+            synchronizeDefaultStream();                                                                                  \
                                                                                                                                     \
             classType** host_plugin_dummy = new classType*;                                                                         \
             cudaMemcpy((void*)host_plugin_dummy, (void*)plugin_holder, sizeof(classType**), cudaMemcpyDeviceToHost);                \
