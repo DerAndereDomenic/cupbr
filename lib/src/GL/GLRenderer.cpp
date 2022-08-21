@@ -216,4 +216,16 @@ namespace cupbr
         glDrawArrays(GL_TRIANGLES, 0, 6);
     }
 
+    void 
+    GLRenderer::clear() const
+    {
+        glClear(GL_COLOR_BUFFER_BIT);
+    }
+
+    void 
+    GLRenderer::setViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height) const
+    {
+        glViewport(x, y, width, height);
+    }
+
 } //namespace cupbr

@@ -39,6 +39,20 @@ namespace cupbr
         */
         void displayImage(const RenderBuffer& img);
 
+        /**
+        *   @brief Clear the window
+        */
+        void clear() const;
+
+        /**
+        *   @brief Resize the viewport
+        *   @param[in] x The x position
+        *   @param[in] y The y position
+        *   @param[in] width The width
+        *   @param[in] height The height
+        */
+        void setViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height) const;
+
         private:
         class Impl;
         std::unique_ptr<Impl> impl;     /**< Implementation pointer */

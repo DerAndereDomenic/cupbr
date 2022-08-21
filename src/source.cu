@@ -59,7 +59,7 @@ int run(int argc, char* argv[])
 
     uint32_t frame_counter = 0;
 
-    glViewport(0,0, width, height);
+    renderer.setViewport(0, 0, width, height);
 
     std::string scene_path;
 
@@ -79,7 +79,7 @@ int run(int argc, char* argv[])
         } 
         
         /* Render here */
-        glClear(GL_COLOR_BUFFER_BIT);
+        renderer.clear();
 
         pbrenderer.render(&camera);
 
