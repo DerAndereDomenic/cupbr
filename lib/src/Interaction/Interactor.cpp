@@ -207,167 +207,170 @@ namespace cupbr
 
         impl->material_update = false;
 
-        if (impl->edit_mode)
+        if (!impl->edit_mode)
+            ImGui::BeginDisabled();
+
+        ImGui::Begin("Render settings", nullptr, ImGuiWindowFlags_MenuBar);
+
+        if (ImGui::BeginMenuBar())
         {
-            ImGui::Begin("Render settings", nullptr, ImGuiWindowFlags_MenuBar);
-
-            if (ImGui::BeginMenuBar())
+            if (ImGui::BeginMenu("Scene"))
             {
-                if (ImGui::BeginMenu("Scene"))
+                std::string path = "res/Scenes";
+                std::vector<std::string> paths;
+                for (auto entry : std::filesystem::directory_iterator(path))
                 {
-                    std::string path = "res/Scenes";
-                    std::vector<std::string> paths;
-                    for (auto entry : std::filesystem::directory_iterator(path))
-                    {
-                        paths.push_back(entry.path().string());
-                    }
-
-                    for (std::string s : paths)
-                    {
-                        if (ImGui::MenuItem(s.c_str()))
-                        {
-                            impl->reset_scene = true;
-                            impl->scene_path = s;
-                            impl->scene_index = 0;
-                        }
-                    }
-
-                    ImGui::EndMenu();
+                    paths.push_back(entry.path().string());
                 }
-                ImGui::EndMenuBar();
-            }
 
-            if (impl->time >= 1000)
-            {
-                std::stringstream render_time_stream, fps_stream;
-                render_time_stream << std::fixed << std::setprecision(2) << impl->window->delta_time() * 1000.0f;
-                fps_stream << std::fixed << std::setprecision(2) << 1.0f / impl->window->delta_time();
-                impl->fps_string = ("Render time: " + render_time_stream.str() + "ms : " + fps_stream.str() + "fps");
-                impl->time = 0;
-            }
-
-            impl->time += impl->window->delta_time() * 1000.0f;
-
-            ImGui::Text(impl->fps_string.c_str());
-
-            ImGui::Text("Renderer");
-
-            if (ImGui::BeginMenuBar())
-            {
-                if (ImGui::BeginMenu("Renderer"))
+                for (std::string s : paths)
                 {
-                    for(auto it = PluginManager::begin(); it != PluginManager::end(); ++it)
+                    if (ImGui::MenuItem(s.c_str()))
                     {
-                        if (it->second->get_super_name() == "RenderMethod" && ImGui::MenuItem((it->first).c_str()))
-                        {
-                            impl->material_update = true;
-                            impl->renderer->changeRenderMethod(it->first);
-                        }
+                        impl->reset_scene = true;
+                        impl->scene_path = s;
+                        impl->scene_index = 0;
                     }
-                    ImGui::EndMenu();
                 }
-                ImGui::EndMenuBar();
+
+                ImGui::EndMenu();
             }
+            ImGui::EndMenuBar();
+        }
 
-            if(ImGui::SliderInt("Trace Depth", &(impl->trace_depth), 1, 50))
+        if (impl->time >= 1000)
+        {
+            std::stringstream render_time_stream, fps_stream;
+            render_time_stream << std::fixed << std::setprecision(2) << impl->window->delta_time() * 1000.0f;
+            fps_stream << std::fixed << std::setprecision(2) << 1.0f / impl->window->delta_time();
+            impl->fps_string = ("Render time: " + render_time_stream.str() + "ms : " + fps_stream.str() + "fps");
+            impl->time = 0;
+        }
+
+        impl->time += impl->window->delta_time() * 1000.0f;
+
+        ImGui::Text(impl->fps_string.c_str());
+
+        ImGui::Text("Renderer");
+
+        if (ImGui::BeginMenuBar())
+        {
+            if (ImGui::BeginMenu("Renderer"))
             {
-                impl->renderer->setMaxTraceDepth(impl->trace_depth);
-                impl->material_update = true;
-            }
-
-            if(ImGui::Checkbox("Russian Roulette", &(impl->use_russian_roulette)))
-            {
-                impl->renderer->setRussianRoulette(impl->use_russian_roulette);
-            }
-
-            ImGui::Text("Tone Mapping:");
-            ImGui::Separator();
-            if (ImGui::MenuItem("Reinhard"))
-            {
-                if (impl->mapper)
-                    impl->mapper->setType(ToneMappingType::REINHARD);
-            }
-            else if (ImGui::MenuItem("Gamma"))
-            {
-                if (impl->mapper)
-                    impl->mapper->setType(ToneMappingType::GAMMA);
-            }
-
-
-            if(ImGui::SliderFloat("Exposure", &(impl->exposure), 0.01f, 10.0f))
-            {
-                impl->mapper->setExposure(impl->exposure);
-            }
-
-            ImGui::Separator();
-
-            ImGui::Text("Material:");
-
-            Properties& properties = impl->scene->properties[impl->scene_index];
-
-            if (ImGui::BeginMenuBar())
-            {
-                if (ImGui::BeginMenu("Material Name"))
+                for(auto it = PluginManager::begin(); it != PluginManager::end(); ++it)
                 {
-                    for (auto it = PluginManager::begin(); it != PluginManager::end(); ++it)
-                    {
-                        if (it->second->get_super_name() == "Material" && ImGui::MenuItem((it->first).c_str()))
-                        {
-                            properties.reset();
-                            properties.setProperty("name", it->first);
-                            impl->material_update = true;
-                        }
-                    }
-                    ImGui::EndMenu();
-                }
-                ImGui::EndMenuBar();
-            }
-
-            for(auto it = properties.begin(); it != properties.end(); ++it)
-            {
-                if(std::holds_alternative<std::string>(it->second))
-                {
-                    ImGui::Text(std::get<std::string>(it->second).c_str());
-                }
-                else if(std::holds_alternative<float>(it->second))
-                {
-                    float val = std::get<float>(it->second);
-                    if(ImGui::InputFloat((it->first).c_str(), &val))
+                    if (it->second->get_super_name() == "RenderMethod" && ImGui::MenuItem((it->first).c_str()))
                     {
                         impl->material_update = true;
-                        properties.setProperty(it->first, val);
+                        impl->renderer->changeRenderMethod(it->first);
                     }
                 }
-                else if(std::holds_alternative<Vector3float>(it->second))
+                ImGui::EndMenu();
+            }
+            ImGui::EndMenuBar();
+        }
+
+        if(ImGui::SliderInt("Trace Depth", &(impl->trace_depth), 1, 50))
+        {
+            impl->renderer->setMaxTraceDepth(impl->trace_depth);
+            impl->material_update = true;
+        }
+
+        if(ImGui::Checkbox("Russian Roulette", &(impl->use_russian_roulette)))
+        {
+            impl->renderer->setRussianRoulette(impl->use_russian_roulette);
+        }
+
+        ImGui::Text("Tone Mapping:");
+        ImGui::Separator();
+        if (ImGui::MenuItem("Reinhard"))
+        {
+            if (impl->mapper)
+                impl->mapper->setType(ToneMappingType::REINHARD);
+        }
+        else if (ImGui::MenuItem("Gamma"))
+        {
+            if (impl->mapper)
+                impl->mapper->setType(ToneMappingType::GAMMA);
+        }
+
+
+        if(ImGui::SliderFloat("Exposure", &(impl->exposure), 0.01f, 10.0f))
+        {
+            impl->mapper->setExposure(impl->exposure);
+        }
+
+        ImGui::Separator();
+
+        ImGui::Text("Material:");
+
+        Properties& properties = impl->scene->properties[impl->scene_index];
+
+        if (ImGui::BeginMenuBar())
+        {
+            if (ImGui::BeginMenu("Material Name"))
+            {
+                for (auto it = PluginManager::begin(); it != PluginManager::end(); ++it)
                 {
-                    float* val = reinterpret_cast<float*>(&std::get<Vector3float>(it->second));
-                    if(ImGui::ColorEdit3((it->first).c_str(), val))
+                    if (it->second->get_super_name() == "Material" && ImGui::MenuItem((it->first).c_str()))
                     {
+                        properties.reset();
+                        properties.setProperty("name", it->first);
                         impl->material_update = true;
-                        properties.setProperty(it->first, Vector3float(val[0], val[1], val[2]));
                     }
                 }
+                ImGui::EndMenu();
             }
+            ImGui::EndMenuBar();
+        }
 
-            ImGui::Separator();
-
-            if(ImGui::Button("Screenshot"))
+        for(auto it = properties.begin(); it != properties.end(); ++it)
+        {
+            if(std::holds_alternative<std::string>(it->second))
             {
-                auto t = std::time(nullptr);
-                auto tm = *std::localtime(&t);
-                std::ostringstream oss;
-                oss << std::put_time(&tm, "%Y-%m-%d_%H-%M-%S");
-                impl->mapper->saveToFile("bin/" + oss.str() + ".png");
+                ImGui::Text(std::get<std::string>(it->second).c_str());
             }
-
-            ImGui::End();
-
-            if (impl->material_update)
+            else if(std::holds_alternative<float>(it->second))
             {
-                SceneLoader::reinitializeScene(impl->scene);
-                impl->renderer->reset();
+                float val = std::get<float>(it->second);
+                if(ImGui::InputFloat((it->first).c_str(), &val))
+                {
+                    impl->material_update = true;
+                    properties.setProperty(it->first, val);
+                }
+            }
+            else if(std::holds_alternative<Vector3float>(it->second))
+            {
+                float* val = reinterpret_cast<float*>(&std::get<Vector3float>(it->second));
+                if(ImGui::ColorEdit3((it->first).c_str(), val))
+                {
+                    impl->material_update = true;
+                    properties.setProperty(it->first, Vector3float(val[0], val[1], val[2]));
+                }
             }
         }
+
+        ImGui::Separator();
+
+        if(ImGui::Button("Screenshot"))
+        {
+            auto t = std::time(nullptr);
+            auto tm = *std::localtime(&t);
+            std::ostringstream oss;
+            oss << std::put_time(&tm, "%Y-%m-%d_%H-%M-%S");
+            impl->mapper->saveToFile("bin/" + oss.str() + ".png");
+        }
+
+        ImGui::End();
+
+        if (impl->material_update)
+        {
+            SceneLoader::reinitializeScene(impl->scene);
+            impl->renderer->reset();
+        }
+        
+        if (!impl->edit_mode)
+            ImGui::EndDisabled();
     }
 
     void
