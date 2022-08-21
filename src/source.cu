@@ -71,12 +71,6 @@ int run(int argc, char* argv[])
         
         ++frame_counter;
 
-        if(frame_counter%30 == 0)
-        {
-            printf("\rRender time: %fms : %ffps", window.delta_time()*1000.0f, 1.0f/window.delta_time());
-            fflush(stdout);
-        }
-
         window.imguiEnd();
 
         window.spinOnce();
@@ -87,7 +81,6 @@ int run(int argc, char* argv[])
             break;
         }
     }
-    printf("\n");
 
     SceneLoader::destroyScene(scene);
 

@@ -41,6 +41,9 @@ namespace cupbr
         bool use_russian_roulette = false;
 
         std::string scene_path;
+        std::string fps_string;
+
+        float time = 0;
 
         //Tone Mapping
         float exposure = 1.0f;
@@ -225,6 +228,19 @@ namespace cupbr
                 }
                 ImGui::EndMenuBar();
             }
+
+            if (impl->time >= 1000)
+            {
+                std::stringstream render_time_stream, fps_stream;
+                render_time_stream << std::fixed << std::setprecision(2) << impl->window->delta_time() * 1000.0f;
+                fps_stream << std::fixed << std::setprecision(2) << 1.0f / impl->window->delta_time();
+                impl->fps_string = ("Render time: " + render_time_stream.str() + "ms : " + fps_stream.str() + "fps");
+                impl->time = 0;
+            }
+
+            impl->time += impl->window->delta_time() * 1000.0f;
+
+            ImGui::Text(impl->fps_string.c_str());
 
             ImGui::Text("Renderer");
 
