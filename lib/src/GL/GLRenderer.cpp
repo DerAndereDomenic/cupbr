@@ -228,4 +228,10 @@ namespace cupbr
         glViewport(x, y, width, height);
     }
 
+    void 
+    GLRenderer::onResize(const uint32_t& width, const uint32_t& height)
+    {
+        
+    }
+
 } //namespace cupbr

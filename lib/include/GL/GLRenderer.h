@@ -53,6 +53,13 @@ namespace cupbr
         */
         void setViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height) const;
 
+        /**
+        *   @brief This gets called if the window gets resized
+        *   @param[in] width The new width
+        *   @param[in] height The new height
+        */
+        void onResize(const uint32_t& width, const uint32_t& height);
+
         private:
         class Impl;
         std::unique_ptr<Impl> impl;     /**< Implementation pointer */

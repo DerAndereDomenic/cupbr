@@ -29,7 +29,6 @@ int run(int argc, char* argv[])
 
     Window window("CUPBR", width, height);
 
-    GLRenderer renderer(width, height);
     Camera camera(static_cast<float>(width) / static_cast<float>(height));
     Interactor interactor;
     interactor.registerWindow(&window);
@@ -42,7 +41,7 @@ int run(int argc, char* argv[])
 
     uint32_t frame_counter = 0;
 
-    renderer.setViewport(0, 0, width, height);
+    window.setViewport(0, 0, width, height);
 
     std::string scene_path;
 
@@ -62,12 +61,12 @@ int run(int argc, char* argv[])
         } 
         
         /* Render here */
-        renderer.clear();
+        window.clear();
 
         pbrenderer.render(&camera);
 
         mapper.toneMap();
-        renderer.displayImage(mapper.getRenderBuffer());
+        window.displayImage(mapper.getRenderBuffer());
         
         ++frame_counter;
 

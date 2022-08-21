@@ -166,6 +166,8 @@ namespace cupbr
         ImGui_ImplOpenGL3_Init("#version 330");
 
         s_imgui_initialized = true;
+
+        _renderer = std::make_unique<GLRenderer>(width, height);
     }
 
     Window::~Window()
@@ -249,6 +251,8 @@ namespace cupbr
     {
         _width = width;
         _height = height;
+        _renderer->setViewport(0, 0, width, height);
+        _renderer->onResize(width, height);
     }
 
 } //namespace cupbr

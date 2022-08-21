@@ -6,6 +6,7 @@
 #include <Core/Event.h>
 #include <Math/Vector.h>
 #include <Core/KeyCodes.h>
+#include <GL/GLRenderer.h>
 
 struct GLFWwindow;
 
@@ -82,6 +83,26 @@ namespace cupbr
         void onResize(const float& width, const float& height);
 
         /**
+        *   @brief Set the viewport
+        *   @param[in] x The x position
+        *   @param[in] y The y position
+        *   @param[in] width The width
+        *   @param[in] height The height
+        */
+        inline void setViewport(const uint32_t& x, const uint32_t& y, const uint32_t& width, const uint32_t& height) { _renderer->setViewport(x, y, width, height); }
+
+        /**
+        *   @brief Clear the viewport
+        */
+        inline void clear() const { _renderer->clear(); }
+
+        /**
+        *   @brief Display an image
+        *   @param[in] img The image to display
+        */
+        inline void displayImage(const RenderBuffer& img) { _renderer->displayImage(img); }
+
+        /**
         *   @brief Set the event callback
         *   @param[in] callback The callback function called on events
         */
@@ -112,12 +133,13 @@ namespace cupbr
         inline float delta_time() const { return _delta_time; }
 
         private:
-        GLFWwindow* _internal_window;       /**< The internal window */
-        uint32_t _width;                    /**< The window width */
-        uint32_t _height;                   /**< The window height */
-        EventCallbackFn _event_callback;    /**< The event callback */
-        float _delta_time = 0;              /**< The delta time */
-        float _last_time = 0;               /**< The last time events were polled */
+        GLFWwindow* _internal_window;           /**< The internal window */
+        uint32_t _width;                        /**< The window width */
+        uint32_t _height;                       /**< The window height */
+        EventCallbackFn _event_callback;        /**< The event callback */
+        float _delta_time = 0;                  /**< The delta time */
+        float _last_time = 0;                   /**< The last time events were polled */
+        std::unique_ptr<GLRenderer> _renderer;  /**< The internal GL renderer class */
     };
 
 } //namespace cupbr
