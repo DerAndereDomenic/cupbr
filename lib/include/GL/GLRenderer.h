@@ -36,8 +36,9 @@ namespace cupbr
         /**
         *   @brief Render a device image on a quad
         *   @param[in] img The device image
+        *   @return True if the viewport was resized
         */
-        void displayImage(const RenderBuffer& img);
+        bool displayImage(const RenderBuffer& img);
 
         /**
         *   @brief Clear the window
@@ -59,6 +60,12 @@ namespace cupbr
         *   @param[in] height The new height
         */
         void onResize(const uint32_t& width, const uint32_t& height);
+
+        /**
+        *   @brief Get the size of the viewport
+        *   @return Vector containing (width, height)
+        */
+        Vector2float getViewportSize() const;
 
         private:
         class Impl;

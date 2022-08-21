@@ -195,6 +195,7 @@ namespace cupbr
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
+        ImGui::DockSpaceOverViewport();
     }
 
     void
@@ -253,6 +254,22 @@ namespace cupbr
         _height = height;
         _renderer->setViewport(0, 0, width, height);
         _renderer->onResize(width, height);
+    }
+
+    void 
+    Window::displayImage(const RenderBuffer& img)
+    {
+        bool resized = _renderer->displayImage(img);
+
+        if(resized)
+        {
+            EventCallbackFn fnc = *(EventCallbackFn*)glfwGetWindowUserPointer(_internal_window);
+
+            Vector2float viewport_size = _renderer->getViewportSize();
+            WindowResizedEvent event = WindowResizedEvent(static_cast<uint32_t>(viewport_size.x), static_cast<uint32_t>(viewport_size.y));
+
+            fnc(event);
+        }
     }
 
 } //namespace cupbr

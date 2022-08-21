@@ -100,7 +100,7 @@ namespace cupbr
         *   @brief Display an image
         *   @param[in] img The image to display
         */
-        inline void displayImage(const RenderBuffer& img) { _renderer->displayImage(img); }
+        void displayImage(const RenderBuffer& img);
 
         /**
         *   @brief Set the event callback
