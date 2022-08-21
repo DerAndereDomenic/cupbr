@@ -54,9 +54,6 @@ namespace cupbr
 
         glfwSetMouseButtonCallback(_internal_window, [](GLFWwindow* window, int button, int action, int mode)
         {
-            ImGuiIO& io = ImGui::GetIO();
-            if(io.WantCaptureMouse || io.WantCaptureKeyboard)
-                return;
 
             EventCallbackFn fnc = *(EventCallbackFn*)glfwGetWindowUserPointer(window);
 
@@ -79,9 +76,6 @@ namespace cupbr
 
         glfwSetCursorPosCallback(_internal_window, [](GLFWwindow* window, double x, double y)
         {
-            ImGuiIO& io = ImGui::GetIO();
-            if(io.WantCaptureMouse || io.WantCaptureKeyboard)
-                return;
 
             EventCallbackFn fnc = *(EventCallbackFn*)glfwGetWindowUserPointer(window);
 
@@ -91,9 +85,6 @@ namespace cupbr
 
         glfwSetKeyCallback(_internal_window, [](GLFWwindow* window, int key, int scancode, int action, int mods)
         {
-            ImGuiIO& io = ImGui::GetIO();
-            if(io.WantCaptureMouse || io.WantCaptureKeyboard)
-                return;
 
             EventCallbackFn fnc = *(EventCallbackFn*)glfwGetWindowUserPointer(window);
 
@@ -122,9 +113,6 @@ namespace cupbr
 
         glfwSetDropCallback(_internal_window, [](GLFWwindow* window, int num_paths, const char* paths[])
         {
-            ImGuiIO& io = ImGui::GetIO();
-            if(io.WantCaptureMouse || io.WantCaptureKeyboard)
-                return;
 
             EventCallbackFn fnc = *(EventCallbackFn*)glfwGetWindowUserPointer(window);
 
@@ -135,9 +123,6 @@ namespace cupbr
 
         glfwSetWindowSizeCallback(_internal_window, [](GLFWwindow* window, int width, int height)
         {
-            ImGuiIO& io = ImGui::GetIO();
-            if (io.WantCaptureMouse || io.WantCaptureKeyboard)
-                return;
 
             EventCallbackFn fnc = *(EventCallbackFn*)glfwGetWindowUserPointer(window);
 
