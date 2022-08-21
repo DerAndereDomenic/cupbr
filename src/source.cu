@@ -64,7 +64,7 @@ int run(int argc, char* argv[])
     std::string scene_path;
 
     /* Loop until the user closes the window */
-    while (!glfwWindowShouldClose((GLFWwindow*)window.getInternalWindow()))
+    while (!window.shouldClose())
     {
         window.imguiBegin();
 
@@ -100,7 +100,7 @@ int run(int argc, char* argv[])
 
         if(interactor.shouldClose())
         {
-            glfwDestroyWindow((GLFWwindow*)window.getInternalWindow());
+            window.close();
             break;
         }
     }

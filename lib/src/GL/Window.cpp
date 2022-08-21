@@ -209,4 +209,16 @@ namespace cupbr
             glfwSetInputMode(_internal_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     }
 
+    bool 
+    Window::shouldClose() const
+    {
+        return glfwWindowShouldClose(_internal_window);
+    }
+
+    void 
+    Window::close()
+    {
+        glfwDestroyWindow(_internal_window);
+    }
+
 } //namespace cupbr

@@ -64,6 +64,17 @@ namespace cupbr
         void setEditMode(const bool edit_mode);
 
         /**
+        *   @brief Check if the window should be closed by some external event
+        *   @return True if the window should be closed
+        */
+        bool shouldClose() const;
+
+        /**
+        *   @brief Close the window
+        */
+        void close();
+
+        /**
         *   @brief Set the event callback
         *   @param[in] callback The callback function called on events
         */
