@@ -12,8 +12,8 @@ namespace cupbr
 
         ToneMappingMethod(Properties* properties) {}
 
-        virtual void render(Image<Vector3float>& hdr_image,
-                            RenderBuffer& output_img) {}
+        virtual void toneMap(Image<Vector3float>& hdr_image,
+                             RenderBuffer& output_img) {}
     };
 
 } //namespace cupbr
