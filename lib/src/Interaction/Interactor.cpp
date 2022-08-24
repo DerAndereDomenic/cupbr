@@ -209,7 +209,25 @@ namespace cupbr
 
         for(auto it = properties.begin(); it != properties.end(); ++it)
         {
-            if(std::holds_alternative<std::string>(it->second))
+            if(std::holds_alternative<bool>(it->second))
+            {
+                bool val = std::get<bool>(it->second);
+                if(ImGui::Checkbox((it->first).c_str(), &val))
+                {
+                    material_update = true;
+                    properties.setProperty(it->first, val);
+                }
+            }
+            else if(std::holds_alternative<int>(it->second))
+            {
+                int val = std::get<int>(it->second);
+                if(ImGui::InputInt((it->first).c_str(), &val))
+                {
+                    material_update = true;
+                    properties.setProperty(it->first, val);
+                }
+            }
+            else if(std::holds_alternative<std::string>(it->second))
             {
                 ImGui::Text(std::get<std::string>(it->second).c_str());
             }
