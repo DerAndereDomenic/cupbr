@@ -61,10 +61,24 @@ namespace cupbr
                     {
                         properties.setProperty(current_element->Value(), std::stof(current_node->GetText()));
                     }
+                    else if(strcmp(attribute, "int") == 0)
+                    {
+                        properties.setProperty(current_element->Value(), std::stoi(current_node->GetText()));
+                    }
+                    else if(strcmp(attribute, "string") == 0)
+                    {
+                        properties.setProperty(current_element->Value(), std::string(current_node->GetText()));
+                    }
+                    else if(strcmp(attribute, "bool") == 0)
+                    {
+                        properties.setProperty(current_element->Value(), std::stoi(current_node->GetText()));
+                    }
                     else
                     {
                         //TODO:
                         std::cerr << "Datatype not implemented: " << attribute << std::endl;
+                        std::cerr << "Supported types: string, vec3, float, int, bool" << std::endl;
+                        std::cerr << "If you think your datatype should be supported as well open a pull request or github issue!" << std::endl;
                     }
                 }
 
