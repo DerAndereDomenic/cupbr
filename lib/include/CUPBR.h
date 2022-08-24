@@ -44,6 +44,7 @@
 
 #include <Interaction/Interactor.h>
 #include <Interaction/MousePicker.h>
+#include <imgui.h>
 
 /// ------- Math ---------
 

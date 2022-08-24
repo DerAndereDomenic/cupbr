@@ -19,8 +19,6 @@ namespace cupbr
                             const Camera& camera,
                             const uint32_t& frameIndex,
                             Image<Vector3float>* output_img) {}
-
-        virtual void onImguiRender() {}
     };
 } //namespace cupbr
 

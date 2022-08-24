@@ -351,8 +351,6 @@ namespace cupbr
 
         ImGui::End();
 
-        impl->renderer->onImguiRender();
-
         if (impl->material_update)
         {
             SceneLoader::reinitializeScene(impl->scene);

@@ -56,11 +56,6 @@ namespace cupbr
         void reset();
 
         /**
-         * @brief Calls the imgui render function of internal render method
-         */
-        void onImguiRender();
-
-        /**
         *   @brief Change the RenderMethod used
         *   @param[in] name The name of the method
         */

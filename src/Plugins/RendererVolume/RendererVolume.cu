@@ -341,13 +341,7 @@ namespace cupbr
                                                                           *output_img);
             synchronizeDefaultStream();
         }
-
-        virtual void 
-        onImguiRender()
-        {
-
-        }
-
+        
         private:
         uint32_t max_trace_depth;
         bool use_russian_roulette;

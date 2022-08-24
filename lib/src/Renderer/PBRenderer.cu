@@ -120,13 +120,7 @@ namespace cupbr
     {
         impl->frameIndex = 0;
     }
-
-    void 
-    PBRenderer::onImguiRender()
-    {
-        impl->renderer->onImguiRender();
-    }
-
+    
     void 
     PBRenderer::changeRenderMethod(const std::string& name)
     {
