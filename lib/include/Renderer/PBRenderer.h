@@ -56,18 +56,6 @@ namespace cupbr
         void reset();
 
         /**
-        *   @brief Set the maximum trace depth
-        *   @param[in] trace_depth The maximum trace depth
-        */
-        void setMaxTraceDepth(const uint32_t& trace_depth);
-
-        /**
-        *   @brief Get the maximum trace depth
-        *   @return The maximum trace depth
-        */
-        uint32_t getMaxTraceDepth();
-
-        /**
         *   @brief Change the RenderMethod used
         *   @param[in] name The name of the method
         */

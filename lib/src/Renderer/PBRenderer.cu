@@ -31,7 +31,6 @@ namespace cupbr
 
         Scene* scene;
         uint32_t frameIndex;
-        uint32_t maxTraceDepth;
 
         RenderMethod* renderer;
 
@@ -44,7 +43,6 @@ namespace cupbr
         outputSizeSet = false;
         sceneRegistered = false;
         frameIndex = 0;
-        maxTraceDepth = 5;
         renderer = reinterpret_cast<RenderMethod*>(PluginManager::getPlugin("VolumeRenderer")->createHostObject(nullptr));
     }
 
@@ -115,18 +113,6 @@ namespace cupbr
     PBRenderer::reset()
     {
         impl->frameIndex = 0;
-    }
-
-    void 
-    PBRenderer::setMaxTraceDepth(const uint32_t& trace_depth)
-    {
-        impl->maxTraceDepth = trace_depth;
-    }
-
-    uint32_t 
-    PBRenderer::getMaxTraceDepth()
-    {
-        return impl->maxTraceDepth;
     }
 
     void 

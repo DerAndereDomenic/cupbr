@@ -55,8 +55,6 @@ namespace cupbr
         float threshold = 1.0f;
 
         Vector4float threshold_curve;
-
-        int32_t trace_depth;
     };
 
     Interactor::Impl::Impl()
@@ -102,7 +100,6 @@ namespace cupbr
     Interactor::registerRenderer(PBRenderer* renderer)
     {
         impl->renderer = renderer;
-        impl->trace_depth = renderer->getMaxTraceDepth();
     }
 
     void 
