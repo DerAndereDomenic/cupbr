@@ -36,6 +36,8 @@ namespace cupbr
 
         bool outputSizeSet;
         bool sceneRegistered;
+
+        Properties* renderer_properties;
     };
 
     PBRenderer::Impl::Impl()
@@ -44,16 +46,17 @@ namespace cupbr
         sceneRegistered = false;
         frameIndex = 0;
 
-        Properties properties;
-        properties.setProperty("max_trace_depth", 5);
-        properties.setProperty("use_russian_roulette", true);
+        renderer_properties = Memory::createHostObject<Properties>();
+        renderer_properties->setProperty("max_trace_depth", 5);
+        renderer_properties->setProperty("use_russian_roulette", true);
 
-        renderer = reinterpret_cast<RenderMethod*>(PluginManager::getPlugin("VolumeRenderer")->createHostObject(&properties));
+        renderer = reinterpret_cast<RenderMethod*>(PluginManager::getPlugin("VolumeRenderer")->createHostObject(renderer_properties));
     }
 
     PBRenderer::Impl::~Impl()
     {
         Image<Vector3float>::destroyDeviceObject(hdr_image);
+        Memory::destroyHostObject<Properties>(renderer_properties);
         delete renderer;
     }
 
@@ -119,13 +122,14 @@ namespace cupbr
     PBRenderer::reset()
     {
         impl->frameIndex = 0;
+        changeRenderMethod("VolumeRenderer");
     }
-    
+
     void 
     PBRenderer::changeRenderMethod(const std::string& name)
     {
         delete impl->renderer;
-        impl->renderer = reinterpret_cast<RenderMethod*>(PluginManager::getPlugin(name)->createHostObject(nullptr));
+        impl->renderer = reinterpret_cast<RenderMethod*>(PluginManager::getPlugin(name)->createHostObject(impl->renderer_properties));
     }
 
 } //namespace cupbr
