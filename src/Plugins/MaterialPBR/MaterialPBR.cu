@@ -92,7 +92,7 @@ namespace cupbr
 
         CUPBR_HOST_DEVICE
         virtual Vector3float
-        MaterialPBR::brdf(const Vector3float& position, const Vector3float& inc_dir, const Vector3float& out_dir, const Vector3float& normal)
+        brdf(const Vector3float& position, const Vector3float& inc_dir, const Vector3float& out_dir, const Vector3float& normal)
         {
             Vector3float diffuse_brdf = albedo_d / static_cast<float>(M_PI);
 
@@ -111,7 +111,7 @@ namespace cupbr
 
         CUPBR_HOST_DEVICE
         virtual Vector4float
-        MaterialPBR::sampleDirection(uint32_t& seed, const Vector3float& inc_dir, const Vector3float& normal)
+        sampleDirection(uint32_t& seed, const Vector3float& inc_dir, const Vector3float& normal)
         {
             Vector3float direction;
             Vector3float luminance( 0.21263901f, 0.71516868f, 0.07219232f );

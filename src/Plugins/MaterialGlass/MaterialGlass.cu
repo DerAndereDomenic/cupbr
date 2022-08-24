@@ -28,7 +28,7 @@ namespace cupbr
 
         CUPBR_HOST_DEVICE
         virtual Vector3float
-        MaterialGlass::brdf(const Vector3float& position, const Vector3float& inc_dir, const Vector3float& out_dir, const Vector3float& normal)
+        brdf(const Vector3float& position, const Vector3float& inc_dir, const Vector3float& out_dir, const Vector3float& normal)
         {
             if (Math::dot(inc_dir, normal) * Math::dot(out_dir, normal) > 0) //Reflected
             {
@@ -62,7 +62,7 @@ namespace cupbr
 
         CUPBR_HOST_DEVICE
         virtual Vector4float
-        MaterialGlass::sampleDirection(uint32_t& seed, const Vector3float& inc_dir, const Vector3float& n)
+        sampleDirection(uint32_t& seed, const Vector3float& inc_dir, const Vector3float& n)
         {
             const float NdotV = Math::dot(inc_dir, n);
             bool outside = NdotV > 0.0f;

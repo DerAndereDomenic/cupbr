@@ -44,7 +44,7 @@ namespace cupbr
 
         CUPBR_HOST_DEVICE
         virtual Vector3float
-        MaterialGGX::brdf(const Vector3float& position, const Vector3float& inc_dir, const Vector3float& out_dir, const Vector3float& normal)
+        brdf(const Vector3float& position, const Vector3float& inc_dir, const Vector3float& out_dir, const Vector3float& normal)
         {
             Vector3float H = Math::normalize(inc_dir + out_dir);
             float NdotH = fmaxf(0.0f, Math::dot(normal, H));
@@ -61,7 +61,7 @@ namespace cupbr
 
         CUPBR_HOST_DEVICE
         virtual Vector4float
-        MaterialGGX::sampleDirection(uint32_t& seed, const Vector3float& inc_dir, const Vector3float& normal)
+        sampleDirection(uint32_t& seed, const Vector3float& inc_dir, const Vector3float& normal)
         {
             float u = Math::rnd(seed);
             float v = Math::rnd(seed);

@@ -18,7 +18,7 @@ namespace cupbr
 
         CUPBR_HOST_DEVICE
         virtual Vector3float
-        MaterialPhong::brdf(const Vector3float& position, const Vector3float& inc_dir, const Vector3float& out_dir, const Vector3float& normal)
+        brdf(const Vector3float& position, const Vector3float& inc_dir, const Vector3float& out_dir, const Vector3float& normal)
         {
             Vector3float halfDir = Math::normalize(inc_dir + out_dir);
             return albedo_s * powf(fmaxf(0.0f, Math::dot(halfDir, normal)), shininess) + albedo_d/static_cast<float>(M_PI);
@@ -26,7 +26,7 @@ namespace cupbr
 
         CUPBR_HOST_DEVICE
         virtual Vector4float
-        MaterialPhong::sampleDirection(uint32_t& seed, const Vector3float& inc_dir, const Vector3float& normal)
+        sampleDirection(uint32_t& seed, const Vector3float& inc_dir, const Vector3float& normal)
         {
             const float xi_1 = Math::rnd(seed);
             const float xi_2 = Math::rnd(seed);
