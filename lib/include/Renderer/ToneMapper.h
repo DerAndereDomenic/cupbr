@@ -53,6 +53,11 @@ namespace cupbr
          */
         Properties& getProperties();
 
+        /**
+         * @brief Reset the tone mapper and reload from properties
+         */
+        void reset();
+
         private:
         class Impl;
         std::unique_ptr<Impl> impl;     /**< The implementation pointer */

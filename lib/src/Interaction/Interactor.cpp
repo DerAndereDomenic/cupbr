@@ -358,6 +358,7 @@ namespace cupbr
         {
             SceneLoader::reinitializeScene(impl->scene);
             impl->renderer->reset();
+            impl->mapper->reset();
         }
         
         if (!impl->edit_mode)

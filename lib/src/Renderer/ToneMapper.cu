@@ -114,4 +114,11 @@ namespace cupbr
     {
         return *(impl->properties);
     }
+
+    void 
+    ToneMapper::reset()
+    {
+        delete impl->mapper;
+        impl->mapper = reinterpret_cast<ToneMappingMethod*>(PluginManager::getPlugin(impl->properties->getProperty<std::string>("name", "ReinhardMapping"))->createHostObject(impl->properties));
+    }
 } //namespace cupbr
