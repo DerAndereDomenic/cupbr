@@ -7,7 +7,7 @@ using namespace cupbr;
 
 int run(int argc, char* argv[])
 {
-    const uint32_t width = 1100, height = 800;
+    const uint32_t width = 1300, height = 800;
 
     Scene scene;
     

@@ -314,7 +314,7 @@ namespace cupbr
         impl->time += impl->window->delta_time() * 1000.0f;
 
         ImGui::Text(impl->fps_string.c_str());
-
+        ImGui::SameLine();
         if(ImGui::Button("Screenshot"))
         {
             auto t = std::time(nullptr);
