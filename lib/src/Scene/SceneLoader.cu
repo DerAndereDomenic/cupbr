@@ -20,14 +20,6 @@ namespace cupbr
 {
     namespace detail
     {
-        template<typename T>
-        CUPBR_GLOBAL void fix_vtable(T* object)
-        {
-            T temp(*object);
-            //memcpy(object, &temp, sizeof(T));
-            new (object) T(temp);
-        }
-
         Vector3float
         string2vector(const char* str)
         {
