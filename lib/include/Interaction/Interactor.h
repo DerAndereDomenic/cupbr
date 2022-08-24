@@ -72,18 +72,6 @@ namespace cupbr
         void handleInteraction();
 
         /**
-        *   @brief If post processing should be used
-        *   @return True if post processing is enabled
-        */
-        bool usePostProcessing();
-
-        /**
-        *   @brief Get the quadratic thresholding curve for bloom
-        *   @return The vector containing the curve (threshold, knee - threshold, 2*knee, 0.25/knee)
-        */
-        Vector4float getThreshold();
-
-        /**
         *   @brief If the application should be closed
         *   @return True if escape was pressed
         */

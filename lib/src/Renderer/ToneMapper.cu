@@ -10,65 +10,10 @@
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include <stb_image_write.h>
 
+#include <Renderer/ToneMappingMethod.h>
+
 namespace cupbr
 {
-    namespace detail
-    {
-        CUPBR_GLOBAL void
-        reinhard_kernel(Image<Vector3float> hdr_image, RenderBuffer output, const float exposure)
-        {
-            const uint32_t tid = ThreadHelper::globalThreadIndex();
-
-            if (tid >= hdr_image.size())
-            {
-                return;
-            }
-
-            Vector3float radiance = hdr_image[tid];
-            Vector3uint8_t color(0);
-
-            float mapped_red = powf(1.0 - expf(-radiance.x * exposure), 1.0f / 2.2f);
-            float mapped_green = powf(1.0 - expf(-radiance.y * exposure), 1.0f / 2.2f);
-            float mapped_blue = powf(1.0 - expf(-radiance.z * exposure), 1.0f / 2.2);
-
-            uint8_t red = static_cast<uint8_t>(Math::clamp(mapped_red, 0.0f, 1.0f) * 255.0f);
-            uint8_t green = static_cast<uint8_t>(Math::clamp(mapped_green, 0.0f, 1.0f) * 255.0f);
-            uint8_t blue = static_cast<uint8_t>(Math::clamp(mapped_blue, 0.0f, 1.0f) * 255.0f);
-
-            color = Vector3uint8_t(red, green, blue);
-
-            output[tid] = Vector4uint8_t(color, 255);
-        }
-
-        CUPBR_DEVICE
-        float
-        apply_srgb_gamma(const float& c)
-        {
-            return c <= 0.0031308f ? 12.92f * c : 1.055f * powf(c, 1.0f / 2.4f) - 0.055f;
-        }
-
-        CUPBR_GLOBAL
-        void
-        gamma_kernel(Image<Vector3float> hdr_image, RenderBuffer output)
-        {
-            const uint32_t tid = ThreadHelper::globalThreadIndex();
-
-            if (tid >= hdr_image.size())
-            {
-                return;
-            }
-
-            Vector3float radiance = hdr_image[tid];
-
-            output[tid] = Vector4uint8_t(
-                static_cast<uint8_t>(Math::clamp(apply_srgb_gamma(radiance.x), 0.0f, 1.0f) * 255.0f),
-                static_cast<uint8_t>(Math::clamp(apply_srgb_gamma(radiance.y), 0.0f, 1.0f) * 255.0f),
-                static_cast<uint8_t>(Math::clamp(apply_srgb_gamma(radiance.z), 0.0f, 1.0f) * 255.0f),
-                255u
-            );
-        }
-    } //namespace detail
-
     class ToneMapper::Impl
     {
         public:
@@ -76,27 +21,20 @@ namespace cupbr
 
         ~Impl();
 
-        /**
-        *   @brief The Reinhard tone mapping algorithm
-        */
-        void toneMappingReinhard();
-
-        /**
-        *   @brief The Gamme tone mapping algorihm
-        */
-        void toneMappingGamma();
-
         //Data
-        ToneMappingType type;               /**< The tone mapping algorithm */
         bool isRegistered;                  /**< If a HDR image has been registered */
         RenderBuffer render_buffer;         /**< The output render buffer */
         Image<Vector3float>* hdr_image;     /**< The registered HDR image */
-        float exposure = 1.0f;              /**< The camera exposure */
+
+        ToneMappingMethod* mapper;
+        
+        Properties* properties;
     };
 
     ToneMapper::Impl::Impl()
     {
         isRegistered = false;
+        properties = Memory::createHostObject<Properties>();
     }
 
     ToneMapper::Impl::~Impl()
@@ -106,12 +44,12 @@ namespace cupbr
             RenderBuffer::destroyDeviceObject(render_buffer);
         }
         isRegistered = false;
+        Memory::destroyHostObject<Properties>(properties);
     }
 
-    ToneMapper::ToneMapper(const ToneMappingType& type)
+    ToneMapper::ToneMapper()
     {
         impl = std::make_unique<Impl>();
-        impl->type = type;
     }
 
 
@@ -137,19 +75,7 @@ namespace cupbr
     {
         if (impl->isRegistered)
         {
-            switch (impl->type)
-            {
-                case ToneMappingType::REINHARD:
-                {
-                    impl->toneMappingReinhard();
-                }
-                break;
-                case ToneMappingType::GAMMA:
-                {
-                    impl->toneMappingGamma();
-                }
-                break;
-            }
+            //TODO
         }
         else
         {
@@ -162,22 +88,6 @@ namespace cupbr
     ToneMapper::getRenderBuffer()
     {
         return impl->render_buffer;
-    }
-
-    void
-    ToneMapper::Impl::toneMappingReinhard()
-    {
-        KernelSizeHelper::KernelSize config = KernelSizeHelper::configure(hdr_image->size());
-        detail::reinhard_kernel << <config.blocks, config.threads >> > (*hdr_image, render_buffer, exposure);
-        synchronizeDefaultStream();
-    }
-
-    void
-    ToneMapper::Impl::toneMappingGamma()
-    {
-        KernelSizeHelper::KernelSize config = KernelSizeHelper::configure(hdr_image->size());
-        detail::gamma_kernel << <config.blocks, config.threads >> > (*hdr_image, render_buffer);
-        synchronizeDefaultStream();
     }
 
     void
@@ -196,23 +106,4 @@ namespace cupbr
 
         RenderBuffer::destroyHostObject(host_buffer);
     }
-
-    ToneMappingType
-    ToneMapper::getType()
-    {
-        return impl->type;
-    }
-
-    void
-    ToneMapper::setType(const ToneMappingType& type)
-    {
-        impl->type = type;
-    }
-
-    void
-    ToneMapper::setExposure(const float& exposure)
-    {
-        impl->exposure = exposure;
-    }
-
 } //namespace cupbr

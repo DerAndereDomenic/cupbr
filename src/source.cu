@@ -26,7 +26,7 @@ int run(int argc, char* argv[])
     pbrenderer.setOutputSize(width, height);
     pbrenderer.registerScene(&scene);
 
-    ToneMapper mapper(ToneMappingType::REINHARD);
+    ToneMapper mapper;
     mapper.registerImage(pbrenderer.getOutputImage());
 
     Window window("CUPBR", width, height);

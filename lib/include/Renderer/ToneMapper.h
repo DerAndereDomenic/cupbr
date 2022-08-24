@@ -8,15 +8,6 @@
 namespace cupbr
 {
     /**
-    *   @brief A enum to switch between Tone mapping algorithms
-    */
-    enum class ToneMappingType
-    {
-        REINHARD,
-        GAMMA
-    };
-
-    /**
     *   @brief A class that handles tone mapping
     */
     class ToneMapper
@@ -24,9 +15,8 @@ namespace cupbr
         public:
         /**
         *   @brief Create a tone mapper
-        *   @param[in] type The tone mapping type
         */
-        ToneMapper(const ToneMappingType& type = ToneMappingType::REINHARD);
+        ToneMapper();
 
         /**
         *   @brief Destructor
@@ -49,24 +39,6 @@ namespace cupbr
         *   @note Holds the result from the last toneMap() call
         */
         RenderBuffer getRenderBuffer();
-
-        /**
-        *   @brief Get the currently selected tone mapping type
-        *   @return The tone mapping type
-        */
-        ToneMappingType getType();
-
-        /**
-        *   @brief Change the tone mapping
-        *   @param[in] type The new tone mapping type
-        */
-        void setType(const ToneMappingType& type);
-
-        /**
-        *   @brief Set exposure
-        *   @param[in] exposure The exposure time of the camera
-        */
-        void setExposure(const float& exposure);
 
         /**
         *   @brief Store the current render buffer to file

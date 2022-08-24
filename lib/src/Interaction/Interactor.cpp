@@ -34,27 +34,14 @@ namespace cupbr
 
         //Helper
         bool material_update = false;
-        bool post_processing = false;
         bool close = false;
         bool edit_mode = true;
         bool reset_scene = false;
-        bool use_russian_roulette = false;
 
         std::string scene_path;
         std::string fps_string;
 
         float time = 0;
-
-        //Tone Mapping
-        float exposure = 1.0f;
-
-        //Bloom
-        void compute_threshold();
-
-        float knee = 1.0f;
-        float threshold = 1.0f;
-
-        Vector4float threshold_curve;
 
         void createMenuFromProperties(const std::string& name, Properties& properties);
     };
@@ -62,8 +49,6 @@ namespace cupbr
     Interactor::Impl::Impl()
     {
         dev_scene_index = Memory::createDeviceObject<int32_t>();
-
-        compute_threshold();
     }
 
     Interactor::Impl::~Impl()
@@ -343,25 +328,6 @@ namespace cupbr
             ImGui::EndMenuBar();
         }
 
-        ImGui::Text("Tone Mapping:");
-        ImGui::Separator();
-        if (ImGui::MenuItem("Reinhard"))
-        {
-            if (impl->mapper)
-                impl->mapper->setType(ToneMappingType::REINHARD);
-        }
-        else if (ImGui::MenuItem("Gamma"))
-        {
-            if (impl->mapper)
-                impl->mapper->setType(ToneMappingType::GAMMA);
-        }
-
-
-        if(ImGui::SliderFloat("Exposure", &(impl->exposure), 0.01f, 10.0f))
-        {
-            impl->mapper->setExposure(impl->exposure);
-        }
-
         if(ImGui::Button("Screenshot"))
         {
             auto t = std::time(nullptr);
@@ -370,7 +336,17 @@ namespace cupbr
             oss << std::put_time(&tm, "%Y-%m-%d_%H-%M-%S");
             impl->mapper->saveToFile("bin/" + oss.str() + ".png");
         }
+        /**
+        *   @brief If post processing should be used
+        *   @return True if post processing is enabled
+        */
+        bool usePostProcessing();
 
+        /**
+        *   @brief Get the quadratic thresholding curve for bloom
+        *   @return The vector containing the curve (threshold, knee - threshold, 2*knee, 0.25/knee)
+        */
+        Vector4float getThreshold();
         ImGui::End();
         
         Properties& properties = impl->scene->properties[impl->scene_index];
@@ -387,28 +363,10 @@ namespace cupbr
             ImGui::EndDisabled();
     }
 
-    void
-    Interactor::Impl::compute_threshold()
-    {
-        threshold_curve = Vector4float(threshold, knee - threshold, 2.0f * knee, 0.25f / knee);
-    }
-
-    Vector4float
-    Interactor::getThreshold()
-    {
-        return impl->threshold_curve;
-    }
-
     bool
     Interactor::shouldClose()
     {
         return impl->close;
-    }
-
-    bool 
-    Interactor::usePostProcessing()
-    {
-        return impl->post_processing;
     }
 
     bool
