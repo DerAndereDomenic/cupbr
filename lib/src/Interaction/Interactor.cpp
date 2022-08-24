@@ -176,7 +176,7 @@ namespace cupbr
 
         if (ImGui::BeginMenuBar())
         {
-            if (ImGui::BeginMenu((name + " Name").c_str()))
+            if (ImGui::BeginMenu((name).c_str()))
             {
                 for (auto it = PluginManager::begin(); it != PluginManager::end(); ++it)
                 {
@@ -352,6 +352,7 @@ namespace cupbr
         Properties& properties = impl->scene->properties[impl->scene_index];
         impl->createMenuFromProperties("Material", properties);
         impl->createMenuFromProperties("RenderMethod", impl->renderer->getProperties());
+        impl->createMenuFromProperties("ToneMappingMethod", impl->mapper->getProperties());
 
         if (impl->material_update)
         {

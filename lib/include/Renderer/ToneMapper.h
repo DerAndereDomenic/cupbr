@@ -3,6 +3,7 @@
 
 #include <DataStructure/Image.h>
 #include <DataStructure/RenderBuffer.h>
+#include <Core/Properties.h>
 #include <memory>
 
 namespace cupbr
@@ -45,6 +46,12 @@ namespace cupbr
         *   @param[in] path The output path
         */
         void saveToFile(const std::string& path);
+
+        /**
+         * @brief Get the Properties of the Tone Mapper
+         * @return The properties
+         */
+        Properties& getProperties();
 
         private:
         class Impl;

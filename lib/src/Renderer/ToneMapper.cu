@@ -108,4 +108,10 @@ namespace cupbr
 
         RenderBuffer::destroyHostObject(host_buffer);
     }
+
+    Properties& 
+    ToneMapper::getProperties()
+    {
+        return *(impl->properties);
+    }
 } //namespace cupbr
