@@ -40,7 +40,7 @@ add_executable(Renderer "src/source.cu")
 if(MSVC)
 	target_link_libraries(Renderer glfw OpenGL::GL tinyxml2 glad imgui CUPBR)
 else()
-    target_link_libraries(CUPBR -lpthread -lm OpenGL::GL tinyxml2 glad imgui -lstdc++fs)
+    target_link_libraries(CUPBR -lpthread -lm OpenGL::GL tinyxml2 glad imgui -lstdc++fs glfw)
 	target_link_libraries(Renderer glfw CUPBR)
 endif()
 include_directories(lib/include 
