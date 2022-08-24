@@ -55,6 +55,8 @@ namespace cupbr
         float threshold = 1.0f;
 
         Vector4float threshold_curve;
+
+        void createMenuFromProperties(const std::string& name, Properties& properties);
     };
 
     Interactor::Impl::Impl()
@@ -182,6 +184,58 @@ namespace cupbr
         return false;
     }
 
+    void 
+    Interactor::Impl::createMenuFromProperties(const std::string& name, Properties& properties)
+    {
+        ImGui::Begin((name + " Editor").c_str(), nullptr, ImGuiWindowFlags_MenuBar);
+
+        if (ImGui::BeginMenuBar())
+        {
+            if (ImGui::BeginMenu((name + " Name").c_str()))
+            {
+                for (auto it = PluginManager::begin(); it != PluginManager::end(); ++it)
+                {
+                    if (it->second->get_super_name() == name && ImGui::MenuItem((it->first).c_str()))
+                    {
+                        properties.reset();
+                        properties.setProperty("name", it->first);
+                        material_update = true;
+                    }
+                }
+                ImGui::EndMenu();
+            }
+            ImGui::EndMenuBar();
+        }
+
+        for(auto it = properties.begin(); it != properties.end(); ++it)
+        {
+            if(std::holds_alternative<std::string>(it->second))
+            {
+                ImGui::Text(std::get<std::string>(it->second).c_str());
+            }
+            else if(std::holds_alternative<float>(it->second))
+            {
+                float val = std::get<float>(it->second);
+                if(ImGui::InputFloat((it->first).c_str(), &val))
+                {
+                    material_update = true;
+                    properties.setProperty(it->first, val);
+                }
+            }
+            else if(std::holds_alternative<Vector3float>(it->second))
+            {
+                float* val = reinterpret_cast<float*>(&std::get<Vector3float>(it->second));
+                if(ImGui::ColorEdit3((it->first).c_str(), val))
+                {
+                    material_update = true;
+                    properties.setProperty(it->first, Vector3float(val[0], val[1], val[2]));
+                }
+            }
+        }
+
+        ImGui::End();
+    }
+
     void
     Interactor::handleInteraction()
     {
@@ -300,56 +354,10 @@ namespace cupbr
         }
 
         ImGui::End();
-
-        ImGui::Begin("Material Editor", nullptr, ImGuiWindowFlags_MenuBar);
-
+        
         Properties& properties = impl->scene->properties[impl->scene_index];
 
-        if (ImGui::BeginMenuBar())
-        {
-            if (ImGui::BeginMenu("Material Name"))
-            {
-                for (auto it = PluginManager::begin(); it != PluginManager::end(); ++it)
-                {
-                    if (it->second->get_super_name() == "Material" && ImGui::MenuItem((it->first).c_str()))
-                    {
-                        properties.reset();
-                        properties.setProperty("name", it->first);
-                        impl->material_update = true;
-                    }
-                }
-                ImGui::EndMenu();
-            }
-            ImGui::EndMenuBar();
-        }
-
-        for(auto it = properties.begin(); it != properties.end(); ++it)
-        {
-            if(std::holds_alternative<std::string>(it->second))
-            {
-                ImGui::Text(std::get<std::string>(it->second).c_str());
-            }
-            else if(std::holds_alternative<float>(it->second))
-            {
-                float val = std::get<float>(it->second);
-                if(ImGui::InputFloat((it->first).c_str(), &val))
-                {
-                    impl->material_update = true;
-                    properties.setProperty(it->first, val);
-                }
-            }
-            else if(std::holds_alternative<Vector3float>(it->second))
-            {
-                float* val = reinterpret_cast<float*>(&std::get<Vector3float>(it->second));
-                if(ImGui::ColorEdit3((it->first).c_str(), val))
-                {
-                    impl->material_update = true;
-                    properties.setProperty(it->first, Vector3float(val[0], val[1], val[2]));
-                }
-            }
-        }
-
-        ImGui::End();
+        impl->createMenuFromProperties("Material", properties);
 
         if (impl->material_update)
         {
