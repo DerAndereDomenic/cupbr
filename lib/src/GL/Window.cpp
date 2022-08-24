@@ -15,6 +15,8 @@
 
 #include <iostream>
 
+#include <filesystem>
+
 namespace cupbr
 {
     static bool s_glfw_initialized = false;
@@ -130,7 +132,8 @@ namespace cupbr
 
         io.FontDefault = io.Fonts->AddFontFromFileTTF("res/Fonts/opensans/static/OpenSans/OpenSans-Regular.ttf", 18.0f);
 
-        //ImGui::LoadIniSettingsFromDisk("Default.ini");
+        if(!std::filesystem::exists("imgui.ini"))
+            ImGui::LoadIniSettingsFromDisk("Default.ini");
 
         ImGui::StyleColorsDark();
 
