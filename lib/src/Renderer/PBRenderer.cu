@@ -102,8 +102,6 @@ namespace cupbr
         impl->renderer->render(*(impl->scene),
                               *camera,
                               impl->frameIndex,
-                              impl->maxTraceDepth,
-                              impl->useRussianRoulette,
                               &impl->hdr_image);
         ++impl->frameIndex;
     }
