@@ -71,7 +71,7 @@ namespace cupbr
                     }
                     else if(strcmp(attribute, "bool") == 0)
                     {
-                        properties.setProperty(current_element->Value(), std::stoi(current_node->GetText()));
+                        properties.setProperty(current_element->Value(), static_cast<bool>(std::stoi(current_node->GetText())));
                     }
                     else
                     {
