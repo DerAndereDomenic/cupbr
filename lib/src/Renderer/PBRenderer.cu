@@ -122,6 +122,12 @@ namespace cupbr
     }
 
     void 
+    PBRenderer::onImguiRender()
+    {
+        impl->renderer->onImguiRender();
+    }
+
+    void 
     PBRenderer::changeRenderMethod(const std::string& name)
     {
         delete impl->renderer;

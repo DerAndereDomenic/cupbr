@@ -211,7 +211,7 @@ namespace cupbr
         if (!impl->edit_mode)
             ImGui::BeginDisabled();
 
-        ImGui::Begin("Render settings", nullptr, ImGuiWindowFlags_MenuBar);
+        ImGui::Begin("Statistics", nullptr, ImGuiWindowFlags_MenuBar);
 
         if (ImGui::BeginMenuBar())
         {
@@ -350,6 +350,8 @@ namespace cupbr
         }
 
         ImGui::End();
+
+        impl->renderer->onImguiRender();
 
         if (impl->material_update)
         {
