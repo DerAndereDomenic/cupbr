@@ -43,12 +43,18 @@ namespace cupbr
         outputSizeSet = false;
         sceneRegistered = false;
         frameIndex = 0;
-        renderer = reinterpret_cast<RenderMethod*>(PluginManager::getPlugin("VolumeRenderer")->createHostObject(nullptr));
+
+        Properties properties;
+        properties.setProperty("max_trace_depth", 5);
+        properties.setProperty("use_russian_roulette", true);
+
+        renderer = reinterpret_cast<RenderMethod*>(PluginManager::getPlugin("VolumeRenderer")->createHostObject(&properties));
     }
 
     PBRenderer::Impl::~Impl()
     {
         Image<Vector3float>::destroyDeviceObject(hdr_image);
+        delete renderer;
     }
 
     PBRenderer::PBRenderer()

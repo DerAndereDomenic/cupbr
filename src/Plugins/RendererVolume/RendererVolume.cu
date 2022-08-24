@@ -322,7 +322,8 @@ namespace cupbr
 
         RendererVolume(Properties* properties)
         {
-
+            max_trace_depth = properties->getProperty("max_trace_depth", 5);
+            use_russian_roulette = properties->getProperty("use_russian_roulette", true);
         }
 
         virtual void 
@@ -335,8 +336,8 @@ namespace cupbr
             detail::volume_kernel << <config.blocks, config.threads >> > (scene,
                                                                           camera,
                                                                           frameIndex,
-                                                                          5,
-                                                                          true,
+                                                                          max_trace_depth,
+                                                                          use_russian_roulette,
                                                                           *output_img);
             synchronizeDefaultStream();
         }
@@ -346,6 +347,10 @@ namespace cupbr
         {
 
         }
+
+        private:
+        uint32_t max_trace_depth;
+        bool use_russian_roulette;
     };
 
     DEFINE_PLUGIN(RendererVolume, "VolumeRenderer", "1.0", RenderMethod)
