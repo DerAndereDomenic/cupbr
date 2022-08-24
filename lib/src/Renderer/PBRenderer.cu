@@ -50,7 +50,11 @@ namespace cupbr
         renderer_properties->setProperty("max_trace_depth", 5);
         renderer_properties->setProperty("use_russian_roulette", true);
 
-        renderer = reinterpret_cast<RenderMethod*>(PluginManager::getPlugin("VolumeRenderer")->createHostObject(renderer_properties));
+        renderer = reinterpret_cast<RenderMethod*>(
+            PluginManager::getPlugin(
+                renderer_properties->getProperty<std::string>("name", "VolumeRenderer")
+            )->createHostObject(renderer_properties)
+        );
     }
 
     PBRenderer::Impl::~Impl()
@@ -122,7 +126,7 @@ namespace cupbr
     PBRenderer::reset()
     {
         impl->frameIndex = 0;
-        changeRenderMethod("VolumeRenderer");
+        changeRenderMethod(impl->renderer_properties->getProperty<std::string>("name", "VolumeRenderer"));
     }
 
     void 
