@@ -342,6 +342,12 @@ namespace cupbr
                                                                           *output_img);
             synchronizeDefaultStream();
         }
+
+        virtual void 
+        onImguiRender()
+        {
+            
+        }
     };
 
     DEFINE_PLUGIN(RendererVolume, "VolumeRenderer", "1.0", RenderMethod)

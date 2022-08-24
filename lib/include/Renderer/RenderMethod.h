@@ -21,6 +21,8 @@ namespace cupbr
                             const uint32_t& maxTraceDepth,
                             const bool& useRussianRoulette,
                             Image<Vector3float>* output_img) {}
+
+        virtual void onImguiRender() {}
     };
 } //namespace cupbr
 
