@@ -37,7 +37,6 @@ namespace cupbr
 
         bool outputSizeSet;
         bool sceneRegistered;
-        bool useRussianRoulette;
     };
 
     PBRenderer::Impl::Impl()
@@ -116,12 +115,6 @@ namespace cupbr
     PBRenderer::reset()
     {
         impl->frameIndex = 0;
-    }
-
-    void 
-    PBRenderer::setRussianRoulette(const bool& useRussianRoulette)
-    {
-        impl->useRussianRoulette = useRussianRoulette;
     }
 
     void 

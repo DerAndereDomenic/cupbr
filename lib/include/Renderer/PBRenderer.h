@@ -56,12 +56,6 @@ namespace cupbr
         void reset();
 
         /**
-        *   @brief If russian roulette should be used
-        *   @param[in] useRussianRoulette If russian roulette should be used
-        */
-        void setRussianRoulette(const bool& useRussianRoulette);
-
-        /**
         *   @brief Set the maximum trace depth
         *   @param[in] trace_depth The maximum trace depth
         */

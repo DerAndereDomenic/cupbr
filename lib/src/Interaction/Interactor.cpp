@@ -257,8 +257,6 @@ namespace cupbr
 
         ImGui::Text(impl->fps_string.c_str());
 
-        ImGui::Text("Renderer");
-
         if (ImGui::BeginMenuBar())
         {
             if (ImGui::BeginMenu("Renderer"))
@@ -274,17 +272,6 @@ namespace cupbr
                 ImGui::EndMenu();
             }
             ImGui::EndMenuBar();
-        }
-
-        if(ImGui::SliderInt("Trace Depth", &(impl->trace_depth), 1, 50))
-        {
-            impl->renderer->setMaxTraceDepth(impl->trace_depth);
-            impl->material_update = true;
-        }
-
-        if(ImGui::Checkbox("Russian Roulette", &(impl->use_russian_roulette)))
-        {
-            impl->renderer->setRussianRoulette(impl->use_russian_roulette);
         }
 
         ImGui::Text("Tone Mapping:");
