@@ -127,6 +127,9 @@ namespace cupbr
 
         io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
         io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+
+        io.FontDefault = io.Fonts->AddFontFromFileTTF("res/Fonts/opensans/static/OpenSans/OpenSans-Regular.ttf", 18.0f);
+
         ImGui::LoadIniSettingsFromDisk("Default.ini");
 
         ImGui::StyleColorsDark();
