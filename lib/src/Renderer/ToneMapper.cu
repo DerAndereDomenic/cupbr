@@ -35,6 +35,7 @@ namespace cupbr
     {
         isRegistered = false;
         properties = Memory::createHostObject<Properties>();
+        mapper = reinterpret_cast<ToneMappingMethod*>(PluginManager::getPlugin("ReinhardMapping")->createHostObject(properties));
     }
 
     ToneMapper::Impl::~Impl()
@@ -45,6 +46,7 @@ namespace cupbr
         }
         isRegistered = false;
         Memory::destroyHostObject<Properties>(properties);
+        delete mapper;
     }
 
     ToneMapper::ToneMapper()
@@ -75,7 +77,7 @@ namespace cupbr
     {
         if (impl->isRegistered)
         {
-            //TODO
+            impl->mapper->toneMap(*(impl->hdr_image), impl->render_buffer);
         }
         else
         {
