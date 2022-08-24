@@ -130,7 +130,7 @@ namespace cupbr
 
         io.FontDefault = io.Fonts->AddFontFromFileTTF("res/Fonts/opensans/static/OpenSans/OpenSans-Regular.ttf", 18.0f);
 
-        ImGui::LoadIniSettingsFromDisk("Default.ini");
+        //ImGui::LoadIniSettingsFromDisk("Default.ini");
 
         ImGui::StyleColorsDark();
 
@@ -174,12 +174,33 @@ namespace cupbr
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
-        ImGui::DockSpaceOverViewport();
+
+        //Create the Dock Space window
+        ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
+        ImGuiViewport* viewport = ImGui::GetMainViewport();
+		ImGui::SetNextWindowPos(viewport->Pos);
+		ImGui::SetNextWindowSize(viewport->Size);
+		ImGui::SetNextWindowViewport(viewport->ID);
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+        //Set the window over the whole viewport and make it non-editable
+		window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
+		window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
+
+        //Begin Dock Space window
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+        ImGui::Begin("DockSpace", nullptr, window_flags);
+        ImGui::PopStyleVar(3);
+
+        //Create Dock Space
+        ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
+        ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f));
     }
 
     void
     Window::imguiEnd()
     {
+        ImGui::End();   //End the window containing the dock space
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
         GLFWwindow* backup_current_context = glfwGetCurrentContext();

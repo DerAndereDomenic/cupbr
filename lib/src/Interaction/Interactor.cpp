@@ -272,7 +272,6 @@ namespace cupbr
         if (!impl->edit_mode)
             ImGui::BeginDisabled();
 
-        ImGui::Begin("Statistics", nullptr, ImGuiWindowFlags_MenuBar);
 
         if (ImGui::BeginMenuBar())
         {
@@ -313,6 +312,7 @@ namespace cupbr
 
         impl->time += impl->window->delta_time() * 1000.0f;
 
+        ImGui::Begin("Statistics");
         ImGui::Text(impl->fps_string.c_str());
         ImGui::SameLine();
         if(ImGui::Button("Screenshot"))
