@@ -45,7 +45,7 @@ namespace cupbr
         *   @brief Default constructor
         */
         CUPBR_HOST_DEVICE
-        Geometry::Geometry()
+        Geometry()
         :_aabb(AABB(-INFINITY, INFINITY)){}
 
         /**

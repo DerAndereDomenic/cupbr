@@ -13,12 +13,18 @@ struct HINSTANCE__;
 typedef HINSTANCE__* HINSTANCE;
 typedef HINSTANCE HMODULE;
 #define CUPBR_PLUGIN_FILE_ENDING ".dll"
+#elif defined(CUPBR_LINUX)
+#define CUPBR_PLUGIN_FILE_ENDING ".so"
 #endif
 
+#ifdef CUPBR_WINDOWS
 #ifdef CUPBR_DEBUG
 #define CUPBR_PLUGIN_PATH "bin/Debug"
 #else
 #define CUPBR_PLUGIN_PATH "bin/Release"
+#endif
+#elif defined(CUPBR_LINUX)
+#define CUPBR_PLUGIN_PATH "bin"
 #endif
 
 namespace cupbr
@@ -100,6 +106,8 @@ namespace cupbr
 
         #ifdef CUPBR_WINDOWS
         HMODULE* _handle;                                               /**< The library handle for windows */
+        #elif defined(CUPBR_LINUX)
+        void* _handle;
         #endif
     };
 

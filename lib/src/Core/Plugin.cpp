@@ -2,6 +2,8 @@
 
 #ifdef CUPBR_WINDOWS
 #include <Windows.h>
+#elif defined(CUPBR_LINUX)
+#include <dlfcn.h>
 #endif
 
 namespace cupbr
@@ -28,6 +30,22 @@ namespace cupbr
 
         std::cout << "Loaded plugin: " << get_name() << "; Version: " << get_version() << std::endl;
 
+        #elif defined(CUPBR_LINUX)
+        _handle = dlopen((std::string(CUPBR_PLUGIN_PATH) + "/" + name + ".so").c_str(), RTLD_NOW);
+        if(!_handle)
+        {
+            std::cerr << "Error, could not find plugin " << name << std::endl;
+            return;
+        }
+
+        _createDeviceObject = (Plugin * (*)(Properties* properties))dlsym(_handle, "createDeviceObject");
+        _createHostObject = (Plugin * (*)(Properties* properties))dlsym(_handle, "createHostObject");
+        _get_name = (char* (*)())dlsym(_handle, "name");
+        _get_version = (char* (*)())dlsym(_handle, "version");
+        _get_super_name = (char* (*)())dlsym(_handle, "superName");
+
+        std::cout << "Loaded plugin: " << get_name() << "; Version: " << get_version() << std::endl;
+
         #endif
     }
 
@@ -35,8 +53,10 @@ namespace cupbr
     {
         #ifdef CUPBR_WINDOWS
         FreeLibrary(*_handle);
-        #endif
         free(_handle);
+        #elif defined(CUPBR_LINUX)
+
+        #endif
     }
 
     Plugin* 

@@ -5,6 +5,7 @@
 #include <Core/KeyEvent.h>
 #include <Core/MouseEvent.h>
 #include <Core/WindowEvent.h>
+#include <iomanip>
 
 #include <Scene/SceneLoader.h>
 

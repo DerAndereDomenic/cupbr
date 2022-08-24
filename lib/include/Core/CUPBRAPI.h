@@ -9,9 +9,10 @@
 #ifndef NDEBUG
 #define CUPBR_DEBUG
 #endif
-#elif CUPBR_LINUX
-#error "Not implemented"
-#elif CUPBR_APPLE
+#elif defined(CUPBR_LINUX)
+#define CUPBR_EXPORT __attribute__((visibility("default")))
+#define CUPBR_IMPORT 
+#elif defined(CUPBR_APPLE)
 #error "Not implemented"
 #endif
 
