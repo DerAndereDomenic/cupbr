@@ -89,6 +89,12 @@ namespace cupbr
         void displayImage(const RenderBuffer& img);
 
         /**
+        * @brief Get the Window Position
+        * @return Vector (x,y)
+        */
+        Vector2float getWindowPosition() const;
+
+        /**
         *   @brief Set the viewport
         *   @param[in] x The x position
         *   @param[in] y The y position
@@ -107,6 +113,12 @@ namespace cupbr
         *   @return Vector of (width, height)
         */
         inline Vector2float getViewportSize() const { return _renderer->getViewportSize(); }
+
+        /**
+        * @brief Get the positition of the current view port
+        * @return Vector of (x,y)
+        */
+        inline Vector2float getViewportPosition() const { return _renderer->getViewportPosition(); }
 
         /**
         *   @brief Set the event callback

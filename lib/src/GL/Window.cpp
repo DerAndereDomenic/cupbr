@@ -272,4 +272,12 @@ namespace cupbr
         }
     }
 
+    Vector2float 
+    Window::getWindowPosition() const
+    {
+        int x,y;
+        glfwGetWindowPos(_internal_window, &x, &y);
+        return Vector2float(x,y);
+    }
+
 } //namespace cupbr

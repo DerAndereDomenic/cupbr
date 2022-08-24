@@ -82,9 +82,10 @@ namespace cupbr
         ImGui::Begin("Viewport");
         ImVec2 viewport_panel_size = ImGui::GetContentRegionAvail();
         ImVec2 viewport_position = ImGui::GetWindowPos();
+        ImVec2 vMin = ImGui::GetWindowContentRegionMin();
 
-        impl->_viewport_x = viewport_position.x;
-        impl->_viewport_y = viewport_position.y;
+        impl->_viewport_x = viewport_position.x + vMin.x;
+        impl->_viewport_y = viewport_position.y + vMin.y;
 
         bool resized = false;
         if(viewport_panel_size.x != impl->_viewport_width || 

@@ -100,6 +100,12 @@ namespace cupbr
         if (event.getEventType() == EventType::MouseButtonPressed)
         {
             Vector2float mouse_pos = impl->window->getMousePosition();
+            Vector2float window_pos = impl->window->getWindowPosition();
+            Vector2float viewport_pos = impl->window->getViewportPosition();
+
+            Vector2float viewport_window_pos = viewport_pos - window_pos;
+
+            mouse_pos -= viewport_window_pos;
 
             Vector2float view_port_size = impl->window->getViewportSize();
             int32_t x = static_cast<int32_t>(mouse_pos.x);
