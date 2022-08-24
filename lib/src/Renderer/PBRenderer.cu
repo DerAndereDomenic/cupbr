@@ -136,4 +136,10 @@ namespace cupbr
         impl->renderer = reinterpret_cast<RenderMethod*>(PluginManager::getPlugin(name)->createHostObject(impl->renderer_properties));
     }
 
+    Properties& 
+    PBRenderer::getProperties()
+    {
+        return *(impl->renderer_properties);
+    }
+
 } //namespace cupbr

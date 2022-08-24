@@ -61,6 +61,12 @@ namespace cupbr
         */
         void changeRenderMethod(const std::string& name);
 
+        /**
+         * @brief Get the Properties of the renderer
+         * @return The properties
+         */
+        Properties& getProperties();
+
         private:
         class Impl;
         std::unique_ptr<Impl> impl;     /**< The implementation pointer */

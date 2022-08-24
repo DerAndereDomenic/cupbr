@@ -374,8 +374,8 @@ namespace cupbr
         ImGui::End();
         
         Properties& properties = impl->scene->properties[impl->scene_index];
-
         impl->createMenuFromProperties("Material", properties);
+        impl->createMenuFromProperties("RenderMethod", impl->renderer->getProperties());
 
         if (impl->material_update)
         {
