@@ -55,7 +55,7 @@ namespace cupbr
         FreeLibrary(*_handle);
         free(_handle);
         #elif defined(CUPBR_LINUX)
-
+        dlclose(_handle);
         #endif
     }
 
