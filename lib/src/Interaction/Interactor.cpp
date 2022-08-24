@@ -33,7 +33,6 @@ namespace cupbr
         int32_t scene_index = 0;
 
         //Helper
-        bool material_update = false;
         bool close = false;
         bool edit_mode = true;
         bool reset_scene = false;
@@ -43,7 +42,7 @@ namespace cupbr
 
         float time = 0;
 
-        void createMenuFromProperties(const std::string& name, Properties& properties);
+        bool createMenuFromProperties(const std::string& name, Properties& properties);
     };
 
     Interactor::Impl::Impl()
@@ -169,9 +168,10 @@ namespace cupbr
         return false;
     }
 
-    void 
+    bool 
     Interactor::Impl::createMenuFromProperties(const std::string& name, Properties& properties)
     {
+        bool reset = false;
         ImGui::Begin((name + " Editor").c_str(), nullptr, ImGuiWindowFlags_MenuBar);
 
         if (ImGui::BeginMenuBar())
@@ -184,7 +184,7 @@ namespace cupbr
                     {
                         properties.reset();
                         properties.setProperty("name", it->first);
-                        material_update = true;
+                        reset = true;
                     }
                 }
                 ImGui::EndMenu();
@@ -199,7 +199,7 @@ namespace cupbr
                 bool val = std::get<bool>(it->second);
                 if(ImGui::Checkbox((it->first).c_str(), &val))
                 {
-                    material_update = true;
+                    reset = true;
                     properties.setProperty(it->first, val);
                 }
             }
@@ -208,7 +208,7 @@ namespace cupbr
                 int val = std::get<int>(it->second);
                 if(ImGui::InputInt((it->first).c_str(), &val))
                 {
-                    material_update = true;
+                    reset = true;
                     properties.setProperty(it->first, val);
                 }
             }
@@ -221,7 +221,7 @@ namespace cupbr
                 float val = std::get<float>(it->second);
                 if(ImGui::InputFloat((it->first).c_str(), &val))
                 {
-                    material_update = true;
+                    reset = true;
                     properties.setProperty(it->first, val);
                 }
             }
@@ -230,13 +230,15 @@ namespace cupbr
                 float* val = reinterpret_cast<float*>(&std::get<Vector3float>(it->second));
                 if(ImGui::ColorEdit3((it->first).c_str(), val))
                 {
-                    material_update = true;
+                    reset = true;
                     properties.setProperty(it->first, Vector3float(val[0], val[1], val[2]));
                 }
             }
         }
 
         ImGui::End();
+
+        return reset;
     }
 
     void
@@ -263,7 +265,9 @@ namespace cupbr
         if (!impl->edit_mode)
             impl->camera->processInput(impl->window, impl->window->delta_time());
 
-        impl->material_update = false;
+        bool reload_scene = false;
+        bool reload_renderer = false;
+        bool reload_mapper = false;
 
         if (!impl->edit_mode)
             ImGui::BeginDisabled();
@@ -311,23 +315,6 @@ namespace cupbr
 
         ImGui::Text(impl->fps_string.c_str());
 
-        if (ImGui::BeginMenuBar())
-        {
-            if (ImGui::BeginMenu("Renderer"))
-            {
-                for(auto it = PluginManager::begin(); it != PluginManager::end(); ++it)
-                {
-                    if (it->second->get_super_name() == "RenderMethod" && ImGui::MenuItem((it->first).c_str()))
-                    {
-                        impl->material_update = true;
-                        impl->renderer->changeRenderMethod(it->first);
-                    }
-                }
-                ImGui::EndMenu();
-            }
-            ImGui::EndMenuBar();
-        }
-
         if(ImGui::Button("Screenshot"))
         {
             auto t = std::time(nullptr);
@@ -336,28 +323,26 @@ namespace cupbr
             oss << std::put_time(&tm, "%Y-%m-%d_%H-%M-%S");
             impl->mapper->saveToFile("bin/" + oss.str() + ".png");
         }
-        /**
-        *   @brief If post processing should be used
-        *   @return True if post processing is enabled
-        */
-        bool usePostProcessing();
-
-        /**
-        *   @brief Get the quadratic thresholding curve for bloom
-        *   @return The vector containing the curve (threshold, knee - threshold, 2*knee, 0.25/knee)
-        */
-        Vector4float getThreshold();
         ImGui::End();
         
         Properties& properties = impl->scene->properties[impl->scene_index];
-        impl->createMenuFromProperties("Material", properties);
-        impl->createMenuFromProperties("RenderMethod", impl->renderer->getProperties());
-        impl->createMenuFromProperties("ToneMappingMethod", impl->mapper->getProperties());
+        reload_scene = impl->createMenuFromProperties("Material", properties);
+        reload_renderer = impl->createMenuFromProperties("RenderMethod", impl->renderer->getProperties());
+        reload_mapper = impl->createMenuFromProperties("ToneMappingMethod", impl->mapper->getProperties());
 
-        if (impl->material_update)
+        if (reload_scene)
         {
             SceneLoader::reinitializeScene(impl->scene);
             impl->renderer->reset();
+        }
+
+        if(reload_renderer)
+        {
+            impl->renderer->reset();
+        }
+
+        if(reload_mapper)
+        {
             impl->mapper->reset();
         }
         
