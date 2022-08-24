@@ -151,6 +151,7 @@ namespace cupbr
         inline float delta_time() const { return _delta_time; }
 
         private:
+        void setDarkThemeColors();
         GLFWwindow* _internal_window;           /**< The internal window */
         uint32_t _width;                        /**< The window width */
         uint32_t _height;                       /**< The window height */
