@@ -65,6 +65,7 @@
 #include <Renderer/PBRenderer.h>
 #include <Renderer/ToneMapper.h>
 #include <Renderer/RenderMethod.h>
+#include <Renderer/ToneMappingMethod.h>
 
 /// ------- Scene ---------
 
