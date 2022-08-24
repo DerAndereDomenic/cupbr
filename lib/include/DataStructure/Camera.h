@@ -54,6 +54,9 @@ namespace cupbr
         CUPBR_HOST_DEVICE
         Vector3float zAxis() const;
 
+        CUPBR_HOST_DEVICE
+        float aspect_ratio() const;
+
         /**
         *   @brief Process keyboard and mouse input
         *   @param[in] window The window

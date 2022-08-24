@@ -59,6 +59,7 @@ int run(int argc, char* argv[])
             SceneLoader::destroyScene(scene);
             scene = SceneLoader::loadFromFile(scene_path);
             scene_path_watcher.setPath(scene_path);
+            camera = Camera(camera.aspect_ratio());
             pbrenderer.reset();
         } 
         

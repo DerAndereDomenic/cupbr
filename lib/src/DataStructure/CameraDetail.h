@@ -37,6 +37,13 @@ namespace cupbr
     {
         return _moved;
     }
+
+    CUPBR_HOST_DEVICE
+    inline float 
+    Camera::aspect_ratio() const
+    {
+        return _aspect_ratio;
+    }
 } //namespace cupbr
 
 #endif
