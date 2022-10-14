@@ -9,7 +9,7 @@ int run(int argc, char* argv[])
 {
     const uint32_t width = 1300, height = 800;
 
-    Scene scene;
+    Scene* scene;
     
     std::string scene_path;
     if(argc == 1)
@@ -24,7 +24,7 @@ int run(int argc, char* argv[])
 
     PBRenderer pbrenderer;
     pbrenderer.setOutputSize(width, height);
-    pbrenderer.registerScene(&scene);
+    pbrenderer.registerScene(scene);
 
     ToneMapper mapper;
     mapper.registerImage(pbrenderer.getOutputImage());
@@ -35,7 +35,7 @@ int run(int argc, char* argv[])
     Interactor interactor;
     interactor.registerWindow(&window);
     interactor.registerCamera(&camera);
-    interactor.registerScene(&scene);
+    interactor.registerScene(scene);
     interactor.registerRenderer(&pbrenderer);
     interactor.registerToneMapper(&mapper);
 
@@ -58,6 +58,8 @@ int run(int argc, char* argv[])
         {
             SceneLoader::destroyScene(scene);
             scene = SceneLoader::loadFromFile(scene_path);
+            pbrenderer.registerScene(scene);
+            interactor.registerScene(scene);
             scene_path_watcher.setPath(scene_path);
             camera = Camera(camera.aspect_ratio());
             pbrenderer.reset();

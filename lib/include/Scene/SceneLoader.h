@@ -12,7 +12,7 @@ namespace cupbr
         *   @param[in] path The path to the scene file
         *   @return The scene
         */
-        Scene loadFromFile(const std::string& path);
+        Scene* loadFromFile(const std::string& path);
 
         /**
         *   @brief Reinitializes the scene.
@@ -26,7 +26,7 @@ namespace cupbr
         *   @brief Destroys a scene
         *   @param[in] scene The scene to be destroyed
         */
-        void destroyScene(Scene& scene);
+        void destroyScene(Scene* scene);
     } //namespace SceneLoader
 } //namespace cupbr
 

@@ -94,10 +94,10 @@ namespace cupbr
 
     } //namespace detail
 
-    Scene
+    Scene*
     SceneLoader::loadFromFile(const std::string& path)
     {
-        Scene scene = Scene();
+        Scene* scene = Memory::createHostObject<Scene>();
 
         tinyxml2::XMLDocument doc;
         tinyxml2::XMLError error;
@@ -121,14 +121,14 @@ namespace cupbr
         uint32_t scene_size = std::stoi(scene_size_string);
         uint32_t light_count = std::stoi(light_count_string);
 
-        scene.scene_size = scene_size;
-        scene.light_count = light_count;
+        scene->scene_size = scene_size;
+        scene->light_count = light_count;
 
         std::vector<Geometry*> host_geometry;
         std::vector<Light*> host_lights;
 
-        scene.geometry = Memory::createDeviceArray<Geometry*>(scene.scene_size);
-        scene.lights = Memory::createDeviceArray<Light*>(scene.light_count);
+        scene->geometry = Memory::createDeviceArray<Geometry*>(scene->scene_size);
+        scene->lights = Memory::createDeviceArray<Light*>(scene->light_count);
 
         //Load geometry
         tinyxml2::XMLElement* geometry_head = doc.FirstChildElement("geometry");
@@ -143,7 +143,7 @@ namespace cupbr
                 const char* normal_string = current_geometry->FirstChildElement("normal")->GetText();
                 Vector3float position = detail::string2vector(position_string);
                 Vector3float normal = detail::string2vector(normal_string);
-                Material* mat = detail::loadMaterial(current_geometry->FirstChildElement("material"), &scene);
+                Material* mat = detail::loadMaterial(current_geometry->FirstChildElement("material"), scene);
 
                 Plane* geom = new Plane(position, normal);
                 geom->material = mat;
@@ -156,7 +156,7 @@ namespace cupbr
                 const char* radius_string = current_geometry->FirstChildElement("radius")->GetText();
                 Vector3float position = detail::string2vector(position_string);
                 float radius = std::stof(radius_string);
-                Material* mat = detail::loadMaterial(current_geometry->FirstChildElement("material"), &scene);
+                Material* mat = detail::loadMaterial(current_geometry->FirstChildElement("material"), scene);
 
                 Sphere* geom = new Sphere(position, radius);
                 geom->material = mat;
@@ -174,7 +174,7 @@ namespace cupbr
                 Vector3float extend1 = detail::string2vector(extend1_string);
                 Vector3float extend2 = detail::string2vector(extend2_string);
 
-                Material* mat = detail::loadMaterial(current_geometry->FirstChildElement("material"), &scene);
+                Material* mat = detail::loadMaterial(current_geometry->FirstChildElement("material"), scene);
 
                 Quad* geom = new Quad(position, normal, extend1, extend2);
                 geom->material = mat;
@@ -191,7 +191,7 @@ namespace cupbr
                 Vector3float vertex2 = detail::string2vector(vertex2_string);
                 Vector3float vertex3 = detail::string2vector(vertex3_string);
 
-                Material* mat = detail::loadMaterial(current_geometry->FirstChildElement("material"), &scene);
+                Material* mat = detail::loadMaterial(current_geometry->FirstChildElement("material"), scene);
 
                 Triangle* geom = new Triangle(vertex1, vertex2, vertex3);
                 geom->material = mat;
@@ -218,7 +218,7 @@ namespace cupbr
 
                 Mesh* geom = ObjLoader::loadObj(path_string, position, scale);
 
-                Material* mat = detail::loadMaterial(current_geometry->FirstChildElement("material"), &scene);
+                Material* mat = detail::loadMaterial(current_geometry->FirstChildElement("material"), scene);
 
                 geom->material = mat;
 
@@ -303,7 +303,7 @@ namespace cupbr
             vol.sigma_a = detail::string2vector(sigma_a_string);
             vol.g = std::stof(g_string);
 
-            scene.volume = vol;
+            scene->volume = vol;
         }
 
         tinyxml2::XMLElement* environment_head = doc.FirstChildElement("environment");
@@ -322,8 +322,8 @@ namespace cupbr
             }
             buffer.copyHost2DeviceObject(dbuffer);
 
-            scene.useEnvironmentMap = true;
-            scene.environment = dbuffer;
+            scene->useEnvironmentMap = true;
+            scene->environment = dbuffer;
 
             stbi_image_free(data);
 
@@ -377,10 +377,10 @@ namespace cupbr
         }
 
         BoundingVolumeHierarchy bvh(host_geometry, dev_geometry);
-        scene.bvh = Memory::createDeviceObject<BoundingVolumeHierarchy>();
-        Memory::copyHost2DeviceObject<BoundingVolumeHierarchy>(&bvh, scene.bvh);
+        scene->bvh = Memory::createDeviceObject<BoundingVolumeHierarchy>();
+        Memory::copyHost2DeviceObject<BoundingVolumeHierarchy>(&bvh, scene->bvh);
 
-        Memory::copyHost2DeviceArray(host_geometry.size(), dev_geometry.data(), scene.geometry);
+        Memory::copyHost2DeviceArray(host_geometry.size(), dev_geometry.data(), scene->geometry);
 
         std::vector<Light*> dev_lights;
         for(uint32_t i = 0; i < host_lights.size(); ++i)
@@ -411,7 +411,7 @@ namespace cupbr
             }
         }
 
-        Memory::copyHost2DeviceArray(host_lights.size(), dev_lights.data(), scene.lights);
+        Memory::copyHost2DeviceArray(host_lights.size(), dev_lights.data(), scene->lights);
 
         return scene;
     }
@@ -442,14 +442,14 @@ namespace cupbr
     }
 
     void
-    SceneLoader::destroyScene(Scene& scene)
+    SceneLoader::destroyScene(Scene* scene)
     {
-        Geometry** host_scene = Memory::createHostArray<Geometry*>(scene.scene_size);
-        Light** host_lights = Memory::createHostArray<Light*>(scene.light_count);
-        Memory::copyDevice2HostArray(scene.scene_size, scene.geometry, host_scene);
-        Memory::copyDevice2HostArray(scene.light_count, scene.lights, host_lights);
+        Geometry** host_scene = Memory::createHostArray<Geometry*>(scene->scene_size);
+        Light** host_lights = Memory::createHostArray<Light*>(scene->light_count);
+        Memory::copyDevice2HostArray(scene->scene_size, scene->geometry, host_scene);
+        Memory::copyDevice2HostArray(scene->light_count, scene->lights, host_lights);
 
-        for (uint32_t i = 0; i < scene.scene_size; ++i)
+        for (uint32_t i = 0; i < scene->scene_size; ++i)
         {
             Geometry geom;
             Memory::copyDevice2HostObject(host_scene[i], &geom);
@@ -489,26 +489,28 @@ namespace cupbr
             }
         }
 
-        for (uint32_t i = 0; i < scene.light_count; ++i)
+        for (uint32_t i = 0; i < scene->light_count; ++i)
         {
             Memory::destroyDeviceObject<Light>(host_lights[i]);
         }
 
-        if (scene.useEnvironmentMap)
+        if (scene->useEnvironmentMap)
         {
-            Image<Vector3float>::destroyDeviceObject(scene.environment);
+            Image<Vector3float>::destroyDeviceObject(scene->environment);
         }
 
         BoundingVolumeHierarchy* host_bvh = Memory::createHostObject<BoundingVolumeHierarchy>();
-        Memory::copyDevice2HostObject<BoundingVolumeHierarchy>(scene.bvh, host_bvh);
+        Memory::copyDevice2HostObject<BoundingVolumeHierarchy>(scene->bvh, host_bvh);
         host_bvh->destroy();
-        Memory::destroyDeviceObject<BoundingVolumeHierarchy>(scene.bvh);
+        Memory::destroyDeviceObject<BoundingVolumeHierarchy>(scene->bvh);
 
-        Memory::destroyDeviceArray<Geometry*>(scene.geometry);
-        Memory::destroyDeviceArray<Light*>(scene.lights);
+        Memory::destroyDeviceArray<Geometry*>(scene->geometry);
+        Memory::destroyDeviceArray<Light*>(scene->lights);
         Memory::destroyHostArray<Geometry*>(host_scene);
         Memory::destroyHostArray<Light*>(host_lights);
         Memory::destroyHostObject<BoundingVolumeHierarchy>(host_bvh);
+
+        Memory::destroyHostObject<Scene>(scene);
     }
 
 } //namespace cupbr
