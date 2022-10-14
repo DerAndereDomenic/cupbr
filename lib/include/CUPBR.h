@@ -72,5 +72,6 @@
 #include <Scene/ObjLoader.h>
 #include <Scene/Scene.h>
 #include <Scene/SceneLoader.h>
+#include <Scene/SDF.h>
 
 #endif
