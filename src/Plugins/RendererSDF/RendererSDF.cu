@@ -92,13 +92,13 @@ namespace cupbr
         }
 
         virtual void 
-        render(Scene& scene,
+        render(Scene* scene,
                const Camera& camera,
                const uint32_t& frameIndex,
                Image<Vector3float>* output_img) 
         {
             const KernelSizeHelper::KernelSize config = KernelSizeHelper::configure(output_img->size());
-            detail::sdf_kernel << <config.blocks, config.threads >> > (scene,
+            detail::sdf_kernel << <config.blocks, config.threads >> > (*scene,
                                                                           camera,
                                                                           frameIndex,
                                                                           *output_img);

@@ -15,7 +15,7 @@ namespace cupbr
 
         RenderMethod(Properties* properties) {}
 
-        virtual void render(Scene& scene,
+        virtual void render(Scene* scene,
                             const Camera& camera,
                             const uint32_t& frameIndex,
                             Image<Vector3float>* output_img) {}

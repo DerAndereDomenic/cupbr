@@ -109,7 +109,7 @@ namespace cupbr
         {
             impl->frameIndex = 0;
         }
-        impl->renderer->render(*(impl->scene),
+        impl->renderer->render(impl->scene,
                               *camera,
                               impl->frameIndex,
                               &impl->hdr_image);
