@@ -8,7 +8,7 @@ namespace cupbr
         Vector3float pos;
     };
 
-    struct SDF
+    struct SDFSphere
     {
         CUPBR_DEVICE
         float operator()(const Vector3float& x)
@@ -40,7 +40,7 @@ namespace cupbr
             Ray ray = Tracing::launchRay(tid, img.width(), img.height(), camera, true, &seed);
             SDFPayload payload;
 
-            SDF sdf;
+            SDFSphere sdf;
 
             float total_distance = 0;
             float step_size = 0;
