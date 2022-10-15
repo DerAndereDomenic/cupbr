@@ -6,6 +6,7 @@
 #include <Geometry/Triangle.h>
 #include <Geometry/Mesh.h>
 #include <Scene/ObjLoader.h>
+#include <Scene/SDF.h>
 #include <tinyxml2.h>
 #include <vector>
 #include <sstream>
@@ -330,6 +331,57 @@ namespace cupbr
             Image<Vector3float>::destroyHostObject(buffer);
         }
 
+        tinyxml2::XMLElement* sdf_head = doc.FirstChildElement("sdf");
+        while (sdf_head != nullptr)
+        {
+            Properties properties;
+
+            auto current_element = sdf_head->FirstChild();
+            while (current_element != nullptr)
+            {
+                auto current_node = sdf_head->FirstChildElement(current_element->Value());
+                auto attribute = current_node->FirstAttribute()->Value();
+                if (strcmp(attribute, "vec3") == 0)
+                {
+                    properties.setProperty(current_element->Value(), detail::string2vector(current_node->GetText()));
+                }
+                else if (strcmp(attribute, "float") == 0)
+                {
+                    properties.setProperty(current_element->Value(), std::stof(current_node->GetText()));
+                }
+                else if (strcmp(attribute, "int") == 0)
+                {
+                    properties.setProperty(current_element->Value(), std::stoi(current_node->GetText()));
+                }
+                else if (strcmp(attribute, "string") == 0)
+                {
+                    properties.setProperty(current_element->Value(), std::string(current_node->GetText()));
+                }
+                else if (strcmp(attribute, "bool") == 0)
+                {
+                    properties.setProperty(current_element->Value(), static_cast<bool>(std::stoi(current_node->GetText())));
+                }
+                else
+                {
+                    //TODO:
+                    std::cerr << "Datatype not implemented: " << attribute << std::endl;
+                    std::cerr << "Supported types: string, vec3, float, int, bool" << std::endl;
+                    std::cerr << "If you think your datatype should be supported as well open a pull request or github issue!" << std::endl;
+                }
+
+                current_element = current_element->NextSibling();
+            }
+            
+            std::shared_ptr<PluginInstance> instance = PluginManager::getPlugin(properties.getProperty(std::string("name"), std::string("")));
+            SDF* sdf = reinterpret_cast<SDF*>(instance->createDeviceObject(&properties));
+
+            scene->sdf = sdf;
+            scene->properties.push_back(properties);
+
+            sdf_head = sdf_head->NextSiblingElement();
+
+        }
+
         //Transfer data to device
         //TODO: Backend
         std::vector<Geometry*> dev_geometry;
@@ -376,11 +428,14 @@ namespace cupbr
             }
         }
 
-        BoundingVolumeHierarchy bvh(host_geometry, dev_geometry);
-        scene->bvh = Memory::createDeviceObject<BoundingVolumeHierarchy>();
-        Memory::copyHost2DeviceObject<BoundingVolumeHierarchy>(&bvh, scene->bvh);
+        if (host_geometry.size() > 0)
+        {
+            BoundingVolumeHierarchy bvh(host_geometry, dev_geometry);
+            scene->bvh = Memory::createDeviceObject<BoundingVolumeHierarchy>();
+            Memory::copyHost2DeviceObject<BoundingVolumeHierarchy>(&bvh, scene->bvh);
 
-        Memory::copyHost2DeviceArray(host_geometry.size(), dev_geometry.data(), scene->geometry);
+            Memory::copyHost2DeviceArray(host_geometry.size(), dev_geometry.data(), scene->geometry);
+        }
 
         std::vector<Light*> dev_lights;
         for(uint32_t i = 0; i < host_lights.size(); ++i)

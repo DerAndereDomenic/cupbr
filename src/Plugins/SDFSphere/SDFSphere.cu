@@ -16,7 +16,7 @@ namespace cupbr
         CUPBR_HOST_DEVICE
         virtual float operator()(const Vector3float& x) 
         { 
-            return Math::dot(x, pos) - radius;
+            return Math::norm(x - pos) - radius;
         }
 
         private:

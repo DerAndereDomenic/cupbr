@@ -8,18 +8,6 @@ namespace cupbr
         Vector3float pos;
     };
 
-    struct SDFSphere
-    {
-        CUPBR_DEVICE
-        float operator()(const Vector3float& x)
-        {
-            return Math::norm(x - pos) - r;
-        }
-
-        Vector3float pos = Vector3float(0);
-        float r = 1.0f;
-    };
-
     namespace detail
     {
         CUPBR_GLOBAL void
@@ -40,13 +28,16 @@ namespace cupbr
             Ray ray = Tracing::launchRay(tid, img.width(), img.height(), camera, true, &seed);
             SDFPayload payload;
 
-            SDFSphere sdf;
+            if (scene.sdf == nullptr)
+                return;
+
+            SDF* sdf = scene.sdf;
 
             float total_distance = 0;
             float step_size = 0;
             do
             {
-                float step_size = sdf(ray.origin());
+                float step_size = (*sdf)(ray.origin());
                 total_distance += step_size;
 
                 if (step_size < 1e-5f)
@@ -65,9 +56,9 @@ namespace cupbr
             if(payload.hit)
             {
                 float eps = 1e-5f;
-                float diff_x = sdf(payload.pos + Vector3float(eps, 0, 0)) - sdf(payload.pos - Vector3float(eps, 0, 0));
-                float diff_y = sdf(payload.pos + Vector3float(0, eps, 0)) - sdf(payload.pos - Vector3float(0, eps, 0));
-                float diff_z = sdf(payload.pos + Vector3float(0, 0, eps)) - sdf(payload.pos - Vector3float(0, 0, eps));
+                float diff_x = (*sdf)(payload.pos + Vector3float(eps, 0, 0)) - (*sdf)(payload.pos - Vector3float(eps, 0, 0));
+                float diff_y = (*sdf)(payload.pos + Vector3float(0, eps, 0)) - (*sdf)(payload.pos - Vector3float(0, eps, 0));
+                float diff_z = (*sdf)(payload.pos + Vector3float(0, 0, eps)) - (*sdf)(payload.pos - Vector3float(0, 0, eps));
 
                 radiance = -Math::dot(Math::normalize(Vector3float(diff_x, diff_y, diff_z)), ray.direction());
             }

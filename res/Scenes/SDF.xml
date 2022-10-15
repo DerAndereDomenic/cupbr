@@ -1,0 +1,10 @@
+<header>
+  <scene_size>0</scene_size>
+  <light_count>0</light_count>
+</header>
+
+<sdf>
+  <name type="string">SDFSphere</name>
+  <position type="vec3">0,0,0</position>
+  <radius type="float">1</radius>
+</sdf>

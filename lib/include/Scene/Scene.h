@@ -1,6 +1,7 @@
 #ifndef __CUPBR_SCENE_SCENE_H
 #define __CUPBR_SCENE_SCENE_H
 
+#include <Scene/SDF.h>
 #include <Geometry/Geometry.h>
 #include <DataStructure/Light.h>
 #include <DataStructure/Image.h>
@@ -33,6 +34,8 @@ namespace cupbr
         Geometry* operator[](const uint32_t index) const;
 
         BoundingVolumeHierarchy* bvh;               /**< The Bounding volume hierarchy used for intersection testing */
+
+        SDF* sdf = nullptr;
     };
 } //namespace cupbr
 
