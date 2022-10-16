@@ -98,7 +98,6 @@ namespace cupbr
     Scene*
     SceneLoader::loadFromFile(const std::string& path)
     {
-        GeometryScene* scene = Memory::createHostObject<GeometryScene>();
 
         tinyxml2::XMLDocument doc;
         tinyxml2::XMLError error;
@@ -110,16 +109,14 @@ namespace cupbr
             if (error != tinyxml2::XML_SUCCESS && !std::filesystem::exists(path))
             {
                 std::cerr << "Failed to load XML file: " << path << ". Error code: " << error << "\n";
-                return scene;
+                return nullptr;
             }
         } while (error == tinyxml2::XML_ERROR_FILE_NOT_FOUND && std::filesystem::exists(path));
         
 
+        GeometryScene* scene = Memory::createHostObject<GeometryScene>();
         std::vector<Geometry*> host_geometry;
         std::vector<Light*> host_lights;
-
-        //scene->geometry = Memory::createDeviceArray<Geometry*>(scene->scene_size);
-        //scene->lights = Memory::createDeviceArray<Light*>(scene->light_count);
 
         //Load geometry
         tinyxml2::XMLElement* current_geometry = doc.FirstChildElement("geometry");

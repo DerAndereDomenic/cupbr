@@ -22,6 +22,11 @@ int run(int argc, char* argv[])
     }
     scene = SceneLoader::loadFromFile(scene_path);
 
+    if (scene == nullptr)
+    {
+        return -1;
+    }
+
     PBRenderer pbrenderer;
     pbrenderer.setOutputSize(width, height);
     pbrenderer.registerScene(scene);
@@ -58,6 +63,8 @@ int run(int argc, char* argv[])
         {
             SceneLoader::destroyScene(scene);
             scene = SceneLoader::loadFromFile(scene_path);
+            if (scene == nullptr)
+                return -1;
             pbrenderer.registerScene(scene);
             interactor.registerScene(scene);
             scene_path_watcher.setPath(scene_path);
