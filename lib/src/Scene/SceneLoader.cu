@@ -220,7 +220,7 @@ namespace cupbr
             else
             {
                 std::cerr << "Error while loading scene: " << type << " is not a valid geometry type!" << std::endl;
-                return scene;
+                return nullptr;
             }
             host_geometry.back()->setID(id++);
             current_geometry = current_geometry->NextSiblingElement();
@@ -251,7 +251,7 @@ namespace cupbr
             else
             {
                 std::cerr << "Error while loading scene: " << type << " is not a valid light type!" << std::endl;
-                return scene;
+                return nullptr;
             }
 
             tinyxml2::XMLElement* position_string = current_light->FirstChildElement("position");
