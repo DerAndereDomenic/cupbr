@@ -1,21 +1,15 @@
-<header>
-    <scene_size>1</scene_size>
-    <light_count>0</light_count>
-</header>
-
 <geometry>
-    <geometry1>
-        <type>MESH</type>
-        <position>0,0,0</position>
-        <scale>10,10,10</scale>
-        <path>res/Meshes/suzanne_blender.obj</path>
-        <material>
-            <name>GGX</name>
-            <albedo_s type="vec3">1,0.8,0.9</albedo_s>
-            <roughness type="float">0.1</roughness>
-        </material>
-    </geometry1>
+    <type>MESH</type>
+    <position>0,0,0</position>
+    <scale>10,10,10</scale>
+    <path>res/Meshes/suzanne_blender.obj</path>
+    <material>
+        <name>GGX</name>
+        <albedo_s type="vec3">1,0.8,0.9</albedo_s>
+        <roughness type="float">0.1</roughness>
+    </material>
 </geometry>
+
 
 <environment>
     <path>res/hdrtest.hdr</path>

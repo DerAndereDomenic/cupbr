@@ -1,59 +1,52 @@
-<header>
-    <scene_size>5</scene_size>
-    <light_count>0</light_count>
-</header>
-
 <geometry>
-    <geometry1>
-        <type>SPHERE</type>
-        <position>0,0,0</position>
-        <radius>0.9</radius>
-        <material>
-            <name>LAMBERT</name>
-            <albedo_d type="vec3">1,0,0</albedo_d>
-        </material>
-    </geometry1>
-    <geometry2>
-        <type>SPHERE</type>
-        <position>2,0,0</position>
-        <radius>0.9</radius>
-        <material>
-            <name>PHONG</name>
-            <albedo_d type="vec3">1,1,1</albedo_d>
-            <albedo_s type="vec3">1,1,1</albedo_s>
-            <shininess type="float">51</shininess>
-        </material>
-    </geometry2>
-    <geometry3>
-        <type>SPHERE</type>
-        <position>-2,0,0</position>
-        <radius>0.9</radius>
-        <material>
-            <name>MIRROR</name>
-            <albedo_s type="vec3">1,1,1</albedo_s>
-        </material>
-    </geometry3>
-    <geometry4>
-        <type>SPHERE</type>
-        <position>4,0,0</position>
-        <radius>0.9</radius>
-        <material>
-            <name>GLASS</name>
-            <albedo_s type="vec3">1,1,1</albedo_s>
-            <eta type="float">1.5</eta>
-        </material>
-    </geometry4>
-    <geometry5>
-        <type>QUAD</type>
-        <position>1.0,-0.9,0</position>
-        <normal>0,1,0</normal>
-        <extend1>4,0,0</extend1>
-        <extend2>0,0,2</extend2>
-        <material>
-            <name>LAMBERT</name>
-            <albedo_d type="vec3">0.2,0.8,1</albedo_d>
-        </material>
-    </geometry5>
+    <type>SPHERE</type>
+    <position>0,0,0</position>
+    <radius>0.9</radius>
+    <material>
+        <name>LAMBERT</name>
+        <albedo_d type="vec3">1,0,0</albedo_d>
+    </material>
+</geometry>
+<geometry>
+    <type>SPHERE</type>
+    <position>2,0,0</position>
+    <radius>0.9</radius>
+    <material>
+        <name>PHONG</name>
+        <albedo_d type="vec3">1,1,1</albedo_d>
+        <albedo_s type="vec3">1,1,1</albedo_s>
+        <shininess type="float">51</shininess>
+    </material>
+</geometry>
+<geometry>
+    <type>SPHERE</type>
+    <position>-2,0,0</position>
+    <radius>0.9</radius>
+    <material>
+        <name>MIRROR</name>
+        <albedo_s type="vec3">1,1,1</albedo_s>
+    </material>
+</geometry>
+<geometry>
+    <type>SPHERE</type>
+    <position>4,0,0</position>
+    <radius>0.9</radius>
+    <material>
+        <name>GLASS</name>
+        <albedo_s type="vec3">1,1,1</albedo_s>
+        <eta type="float">1.5</eta>
+    </material>
+</geometry>
+<geometry>
+    <type>QUAD</type>
+    <position>1.0,-0.9,0</position>
+    <normal>0,1,0</normal>
+    <extend1>4,0,0</extend1>
+    <extend2>0,0,2</extend2>
+    <material>
+        <name>LAMBERT</name>
+        <albedo_d type="vec3">0.2,0.8,1</albedo_d>
+    </material>
 </geometry>
 
 <environment>

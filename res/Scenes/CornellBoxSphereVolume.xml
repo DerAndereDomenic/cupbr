@@ -1,127 +1,118 @@
-<header>
-    <scene_size>11</scene_size>
-    <light_count>1</light_count>
-</header>
-
 <geometry>
-    <geometry1>
-        <type>QUAD</type>
-        <position>0,-1,2</position>
-        <normal>0,1,0</normal>
-        <extend1>1,0,0</extend1>
-        <extend2>0,0,1</extend2>
-        <material>
-            <name>LAMBERT</name>
-        </material>
-    </geometry1>
-    <geometry2>
-        <type>QUAD</type>
-        <position>-0.75,1,2</position>
-        <normal>0,-1,0</normal>
-        <extend1>0.25,0,0</extend1>
-        <extend2>0,0,1</extend2>
-        <material>
-            <name>LAMBERT</name>
-        </material>
-    </geometry2>
-    <geometry3>
-        <type>QUAD</type>
-        <position>-1,0,2</position>
-        <normal>1,0,0</normal>
-        <extend1>0,0,1</extend1>
-        <extend2>0,1,0</extend2>
-        <material>
-            <name>LAMBERT</name>
-            <albedo_d type="vec3">0,1,0</albedo_d>
-        </material>
-    </geometry3>
-    <geometry4>
-        <type>QUAD</type>
-        <position>1,0,2</position>
-        <normal>-1,0,0</normal>
-        <extend1>0,1,0</extend1>
-        <extend2>0,0,1</extend2>
-        <material>
-            <name>LAMBERT</name>
-            <albedo_d type="vec3">1,0,0</albedo_d>
-        </material>
-    </geometry4>
-    <geometry5>
-        <type>QUAD</type>
-        <position>0,0,3</position>
-        <normal>0,0,-1</normal>
-        <extend1>1,0,0</extend1>
-        <extend2>0,1,0</extend2>
-        <material>
-            <name>LAMBERT</name>
-        </material>
-    </geometry5>
-    <geometry6>
-        <type>SPHERE</type>
-        <position>-0.65,-0.75,2.65</position>
-        <radius>0.25</radius>
-        <material>
-            <name>PHONG</name>
-            <albedo_d type="vec3">0,0,1</albedo_d>
-            <albedo_s type="vec3">1,1,1</albedo_s>
-        </material>
-    </geometry6>
-    <geometry7>
-        <type>SPHERE</type>
-        <position>0.65,-0.75,2.65</position>
-        <radius>0.25</radius>
-        <material>
-            <name>MIRROR</name>
-            <albedo_s type="vec3">1,1,1</albedo_s>
-        </material>
-    </geometry7>
-    <geometry8>
-        <type>SPHERE</type>
-        <position>0,-0.75,1.25</position>
-        <radius>0.25</radius>
-        <material>
-            <name>GLASS</name>
-            <albedo_s type="vec3">1,1,1</albedo_s>
-        </material>
-    </geometry8>
-    <geometry9>
-        <type>SPHERE</type>
-        <position>0,0.0,2</position>
-        <radius>0.25</radius>
-        <material>
-            <name>LAMBERT</name>
-            <albedo_d type="vec3">1,1,1</albedo_d>
-        </material>
-    </geometry9>
-    <geometry10>
-        <type>QUAD</type>
-        <position>0.75,1,2</position>
-        <normal>0,-1,0</normal>
-        <extend1>0.25,0,0</extend1>
-        <extend2>0,0,1</extend2>
-        <material>
-            <name>LAMBERT</name>
-        </material>
-    </geometry10>
-    <geometry11>
-        <type>QUAD</type>
-        <position>0,1,2</position>
-        <normal>0,-1,0</normal>
-        <extend1>0.25,0,0</extend1>
-        <extend2>0,0,1</extend2>
-        <material>
-            <name>LAMBERT</name>
-        </material>
-    </geometry11>
+    <type>QUAD</type>
+    <position>0,-1,2</position>
+    <normal>0,1,0</normal>
+    <extend1>1,0,0</extend1>
+    <extend2>0,0,1</extend2>
+    <material>
+        <name>LAMBERT</name>
+    </material>
+</geometry>
+<geometry>
+    <type>QUAD</type>
+    <position>-0.75,1,2</position>
+    <normal>0,-1,0</normal>
+    <extend1>0.25,0,0</extend1>
+    <extend2>0,0,1</extend2>
+    <material>
+        <name>LAMBERT</name>
+    </material>
+</geometry>
+<geometry>
+    <type>QUAD</type>
+    <position>-1,0,2</position>
+    <normal>1,0,0</normal>
+    <extend1>0,0,1</extend1>
+    <extend2>0,1,0</extend2>
+    <material>
+        <name>LAMBERT</name>
+        <albedo_d type="vec3">0,1,0</albedo_d>
+    </material>
+</geometry>
+<geometry>
+    <type>QUAD</type>
+    <position>1,0,2</position>
+    <normal>-1,0,0</normal>
+    <extend1>0,1,0</extend1>
+    <extend2>0,0,1</extend2>
+    <material>
+        <name>LAMBERT</name>
+        <albedo_d type="vec3">1,0,0</albedo_d>
+    </material>
+</geometry>
+<geometry>
+    <type>QUAD</type>
+    <position>0,0,3</position>
+    <normal>0,0,-1</normal>
+    <extend1>1,0,0</extend1>
+    <extend2>0,1,0</extend2>
+    <material>
+        <name>LAMBERT</name>
+    </material>
+</geometry>
+<geometry>
+    <type>SPHERE</type>
+    <position>-0.65,-0.75,2.65</position>
+    <radius>0.25</radius>
+    <material>
+        <name>PHONG</name>
+        <albedo_d type="vec3">0,0,1</albedo_d>
+        <albedo_s type="vec3">1,1,1</albedo_s>
+    </material>
+</geometry>
+<geometry>
+    <type>SPHERE</type>
+    <position>0.65,-0.75,2.65</position>
+    <radius>0.25</radius>
+    <material>
+        <name>MIRROR</name>
+        <albedo_s type="vec3">1,1,1</albedo_s>
+    </material>
+</geometry>
+<geometry>
+    <type>SPHERE</type>
+    <position>0,-0.75,1.25</position>
+    <radius>0.25</radius>
+    <material>
+        <name>GLASS</name>
+        <albedo_s type="vec3">1,1,1</albedo_s>
+    </material>
+</geometry>
+<geometry>
+    <type>SPHERE</type>
+    <position>0,0.0,2</position>
+    <radius>0.25</radius>
+    <material>
+        <name>LAMBERT</name>
+        <albedo_d type="vec3">1,1,1</albedo_d>
+    </material>
+</geometry>
+<geometry>
+    <type>QUAD</type>
+    <position>0.75,1,2</position>
+    <normal>0,-1,0</normal>
+    <extend1>0.25,0,0</extend1>
+    <extend2>0,0,1</extend2>
+    <material>
+        <name>LAMBERT</name>
+    </material>
+</geometry>
+<geometry>
+    <type>QUAD</type>
+    <position>0,1,2</position>
+    <normal>0,-1,0</normal>
+    <extend1>0.25,0,0</extend1>
+    <extend2>0,0,1</extend2>
+    <material>
+        <name>LAMBERT</name>
+    </material>
 </geometry>
 
-<lights>
-    <light1>
-        <type>POINT</type>
-        <position>0,2,2</position>
-        <intensity>150,150,150</intensity>
-    </light1>
-</lights>
+<light>
+    <type>POINT</type>
+    <position>0,2,2</position>
+    <intensity>150,150,150</intensity>
+</light>
 
 <volume>
     <sigma_s>0.4,0.4,0.4</sigma_s>

@@ -1,21 +1,15 @@
-<header>
-    <scene_size>1</scene_size>
-    <light_count>0</light_count>
-</header>
-
 <geometry>
-    <geometry1>
-        <type>SPHERE</type>
-        <position>0,0,0</position>
-        <radius>1</radius>
-        <material>
-            <name>PBR</name>
-            <base_color type="vec3">0,0.561,1</base_color>
-            <metallic type="float">0.1</metallic>
-			<perceptual_roughness type="float">0.3</perceptual_roughness>
-        </material>
-    </geometry1>
+    <type>SPHERE</type>
+    <position>0,0,0</position>
+    <radius>1</radius>
+    <material>
+        <name>PBR</name>
+        <base_color type="vec3">0,0.561,1</base_color>
+        <metallic type="float">0.1</metallic>
+		<perceptual_roughness type="float">0.3</perceptual_roughness>
+    </material>
 </geometry>
+
 
 <environment>
     <path>res/hdrtest.hdr</path>

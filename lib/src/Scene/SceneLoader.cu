@@ -115,28 +115,23 @@ namespace cupbr
         } while (error == tinyxml2::XML_ERROR_FILE_NOT_FOUND && std::filesystem::exists(path));
         
 
-        //Retrieve information about scene size
-        const char* scene_size_string = doc.FirstChildElement("header")->FirstChildElement("scene_size")->GetText();
-        const char* light_count_string = doc.FirstChildElement("header")->FirstChildElement("light_count")->GetText();
-
-        uint32_t scene_size = std::stoi(scene_size_string);
-        uint32_t light_count = std::stoi(light_count_string);
-
-        scene->scene_size = scene_size;
-        scene->light_count = light_count;
-
         std::vector<Geometry*> host_geometry;
         std::vector<Light*> host_lights;
 
-        scene->geometry = Memory::createDeviceArray<Geometry*>(scene->scene_size);
-        scene->lights = Memory::createDeviceArray<Light*>(scene->light_count);
+        //scene->geometry = Memory::createDeviceArray<Geometry*>(scene->scene_size);
+        //scene->lights = Memory::createDeviceArray<Light*>(scene->light_count);
 
         //Load geometry
-        tinyxml2::XMLElement* geometry_head = doc.FirstChildElement("geometry");
+        tinyxml2::XMLElement* current_geometry = doc.FirstChildElement("geometry");
 
-        for (uint32_t i = 0; i < scene_size; ++i)
+        uint32_t id = 0;
+        while(current_geometry != nullptr)
         {
-            tinyxml2::XMLElement* current_geometry = geometry_head->FirstChildElement(("geometry" + std::to_string(i + 1)).c_str());
+            if (strcmp(current_geometry->Name(), "geometry") != 0)
+            {
+                current_geometry = current_geometry->NextSiblingElement();
+                continue;
+            }
             const char* type = current_geometry->FirstChildElement("type")->GetText();
             if (strcmp(type, "PLANE") == 0)
             {
@@ -230,13 +225,20 @@ namespace cupbr
                 std::cerr << "Error while loading scene: " << type << " is not a valid geometry type!" << std::endl;
                 return scene;
             }
-            host_geometry.back()->setID(i);
+            host_geometry.back()->setID(id++);
+            current_geometry = current_geometry->NextSiblingElement();
         }
+        scene->scene_size = host_geometry.size();
+        scene->geometry = Memory::createDeviceArray<Geometry*>(scene->scene_size);
 
-        tinyxml2::XMLElement* light_head = doc.FirstChildElement("lights");
-        for (uint32_t i = 0; i < light_count; ++i)
+        tinyxml2::XMLElement* current_light = doc.FirstChildElement("light");
+        while(current_light != nullptr)
         {
-            tinyxml2::XMLElement* current_light = light_head->FirstChildElement(("light" + std::to_string(i + 1)).c_str());
+            if (strcmp(current_light->Name(), "light") != 0)
+            {
+                current_light = current_light->NextSiblingElement();
+                continue;
+            }
             const char* type = current_light->FirstChildElement("type")->GetText();
 
             Light light;
@@ -289,7 +291,11 @@ namespace cupbr
             Light* light_ptr = new Light(light);
 
             host_lights.push_back(light_ptr);
+
+            current_light = current_light->NextSiblingElement();
         }
+        scene->light_count = host_lights.size();
+        scene->lights = Memory::createDeviceArray<Light*>(scene->light_count);
 
         tinyxml2::XMLElement* volume_head = doc.FirstChildElement("volume");
         if (volume_head != NULL)
