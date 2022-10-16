@@ -37,7 +37,7 @@ namespace cupbr
         }                                                                                                             
                                                                                                                         
         Material*
-        loadMaterial(tinyxml2::XMLElement* material_ptr, Scene* scene)
+        loadMaterial(const tinyxml2::XMLElement* material_ptr, Scene* scene)
         {
             const char* type = material_ptr->FirstChildElement("name")->GetText();
 
@@ -80,6 +80,7 @@ namespace cupbr
                         std::cerr << "Datatype not implemented: " << attribute << std::endl;
                         std::cerr << "Supported types: string, vec3, float, int, bool" << std::endl;
                         std::cerr << "If you think your datatype should be supported as well open a pull request or github issue!" << std::endl;
+                        return nullptr;
                     }
                 }
 
@@ -93,306 +94,236 @@ namespace cupbr
             return material;
         }
 
-    } //namespace detail
-
-    Scene*
-    SceneLoader::loadFromFile(const std::string& path)
-    {
-
-        tinyxml2::XMLDocument doc;
-        tinyxml2::XMLError error;
-
-        do
+        Scene* load_geometry_scene(const tinyxml2::XMLDocument& doc)
         {
-            error = doc.LoadFile(path.c_str());
+            GeometryScene* scene = Memory::createHostObject<GeometryScene>();
+            std::vector<Geometry*> host_geometry;
+            std::vector<Light*> host_lights;
 
-            if (error != tinyxml2::XML_SUCCESS && !std::filesystem::exists(path))
+            //Load geometry
+            const tinyxml2::XMLElement* current_geometry = doc.FirstChildElement("geometry");
+
+            uint32_t id = 0;
+            while (current_geometry != nullptr)
             {
-                std::cerr << "Failed to load XML file: " << path << ". Error code: " << error << "\n";
-                return nullptr;
-            }
-        } while (error == tinyxml2::XML_ERROR_FILE_NOT_FOUND && std::filesystem::exists(path));
-        
-
-        GeometryScene* scene = Memory::createHostObject<GeometryScene>();
-        std::vector<Geometry*> host_geometry;
-        std::vector<Light*> host_lights;
-
-        //Load geometry
-        tinyxml2::XMLElement* current_geometry = doc.FirstChildElement("geometry");
-
-        uint32_t id = 0;
-        while(current_geometry != nullptr)
-        {
-            if (strcmp(current_geometry->Name(), "geometry") != 0)
-            {
-                current_geometry = current_geometry->NextSiblingElement();
-                continue;
-            }
-            const char* type = current_geometry->FirstChildElement("type")->GetText();
-            if (strcmp(type, "PLANE") == 0)
-            {
-                const char* position_string = current_geometry->FirstChildElement("position")->GetText();
-                const char* normal_string = current_geometry->FirstChildElement("normal")->GetText();
-                Vector3float position = detail::string2vector(position_string);
-                Vector3float normal = detail::string2vector(normal_string);
-                Material* mat = detail::loadMaterial(current_geometry->FirstChildElement("material"), scene);
-
-                Plane* geom = new Plane(position, normal);
-                geom->material = mat;
-
-                host_geometry.push_back(geom);
-            }
-            else if (strcmp(type, "SPHERE") == 0)
-            {
-                const char* position_string = current_geometry->FirstChildElement("position")->GetText();
-                const char* radius_string = current_geometry->FirstChildElement("radius")->GetText();
-                Vector3float position = detail::string2vector(position_string);
-                float radius = std::stof(radius_string);
-                Material* mat = detail::loadMaterial(current_geometry->FirstChildElement("material"), scene);
-
-                Sphere* geom = new Sphere(position, radius);
-                geom->material = mat;
-                host_geometry.push_back(geom);
-            }
-            else if (strcmp(type, "QUAD") == 0)
-            {
-                const char* position_string = current_geometry->FirstChildElement("position")->GetText();
-                const char* normal_string = current_geometry->FirstChildElement("normal")->GetText();
-                const char* extend1_string = current_geometry->FirstChildElement("extend1")->GetText();
-                const char* extend2_string = current_geometry->FirstChildElement("extend2")->GetText();
-
-                Vector3float position = detail::string2vector(position_string);
-                Vector3float normal = detail::string2vector(normal_string);
-                Vector3float extend1 = detail::string2vector(extend1_string);
-                Vector3float extend2 = detail::string2vector(extend2_string);
-
-                Material* mat = detail::loadMaterial(current_geometry->FirstChildElement("material"), scene);
-
-                Quad* geom = new Quad(position, normal, extend1, extend2);
-                geom->material = mat;
-
-                host_geometry.push_back(geom);
-            }
-            else if (strcmp(type, "TRIANGLE") == 0)
-            {
-                const char* vertex1_string = current_geometry->FirstChildElement("vertex1")->GetText();
-                const char* vertex2_string = current_geometry->FirstChildElement("vertex2")->GetText();
-                const char* vertex3_string = current_geometry->FirstChildElement("vertex3")->GetText();
-
-                Vector3float vertex1 = detail::string2vector(vertex1_string);
-                Vector3float vertex2 = detail::string2vector(vertex2_string);
-                Vector3float vertex3 = detail::string2vector(vertex3_string);
-
-                Material* mat = detail::loadMaterial(current_geometry->FirstChildElement("material"), scene);
-
-                Triangle* geom = new Triangle(vertex1, vertex2, vertex3);
-                geom->material = mat;
-
-                host_geometry.push_back(geom);
-            }
-            else if (strcmp(type, "MESH") == 0)
-            {
-                const char* path_string = current_geometry->FirstChildElement("path")->GetText();
-                Vector3float position = 0;
-                Vector3float scale = 1;
-                tinyxml2::XMLElement* position_string = current_geometry->FirstChildElement("position");
-                tinyxml2::XMLElement* scale_string = current_geometry->FirstChildElement("scale");
-
-                if(position_string != NULL)
+                if (strcmp(current_geometry->Name(), "geometry") != 0)
                 {
-                    position = detail::string2vector(position_string->GetText());
+                    current_geometry = current_geometry->NextSiblingElement();
+                    continue;
                 }
-
-                if(scale_string != NULL)
+                const char* type = current_geometry->FirstChildElement("type")->GetText();
+                if (strcmp(type, "PLANE") == 0)
                 {
-                    scale = detail::string2vector(scale_string->GetText());
+                    const char* position_string = current_geometry->FirstChildElement("position")->GetText();
+                    const char* normal_string = current_geometry->FirstChildElement("normal")->GetText();
+                    Vector3float position = detail::string2vector(position_string);
+                    Vector3float normal = detail::string2vector(normal_string);
+                    Material* mat = detail::loadMaterial(current_geometry->FirstChildElement("material"), scene);
+
+                    Plane* geom = new Plane(position, normal);
+                    geom->material = mat;
+
+                    host_geometry.push_back(geom);
                 }
-
-                Mesh* geom = ObjLoader::loadObj(path_string, position, scale);
-
-                Material* mat = detail::loadMaterial(current_geometry->FirstChildElement("material"), scene);
-
-                geom->material = mat;
-
-                host_geometry.push_back(geom);
-            }
-            else
-            {
-                std::cerr << "Error while loading scene: " << type << " is not a valid geometry type!" << std::endl;
-                return nullptr;
-            }
-            host_geometry.back()->setID(id++);
-            current_geometry = current_geometry->NextSiblingElement();
-        }
-        scene->scene_size = host_geometry.size();
-        scene->geometry = Memory::createDeviceArray<Geometry*>(scene->scene_size);
-
-        tinyxml2::XMLElement* current_light = doc.FirstChildElement("light");
-        while(current_light != nullptr)
-        {
-            if (strcmp(current_light->Name(), "light") != 0)
-            {
-                current_light = current_light->NextSiblingElement();
-                continue;
-            }
-            const char* type = current_light->FirstChildElement("type")->GetText();
-
-            Light light;
-
-            if (strcmp(type, "POINT") == 0)
-            {
-                light.type = POINT;
-            }
-            else if (strcmp(type, "AREA") == 0)
-            {
-                light.type = AREA;
-            }
-            else
-            {
-                std::cerr << "Error while loading scene: " << type << " is not a valid light type!" << std::endl;
-                return nullptr;
-            }
-
-            tinyxml2::XMLElement* position_string = current_light->FirstChildElement("position");
-            tinyxml2::XMLElement* intensity_string = current_light->FirstChildElement("intensity");
-            tinyxml2::XMLElement* radiance_string = current_light->FirstChildElement("radiance");
-            tinyxml2::XMLElement* extend1_string = current_light->FirstChildElement("extend1");
-            tinyxml2::XMLElement* extend2_string = current_light->FirstChildElement("extend2");
-
-            if (position_string != NULL)
-            {
-                light.position = detail::string2vector(position_string->GetText());
-            }
-
-            if (intensity_string != NULL)
-            {
-                light.intensity = detail::string2vector(intensity_string->GetText());
-            }
-
-            if (radiance_string != NULL)
-            {
-                light.radiance = detail::string2vector(radiance_string->GetText());
-            }
-
-            if (extend1_string != NULL)
-            {
-                light.halfExtend1 = detail::string2vector(extend1_string->GetText());
-            }
-
-            if (extend2_string != NULL)
-            {
-                light.halfExtend2 = detail::string2vector(extend2_string->GetText());
-            }
-
-            Light* light_ptr = new Light(light);
-
-            host_lights.push_back(light_ptr);
-
-            current_light = current_light->NextSiblingElement();
-        }
-        scene->light_count = host_lights.size();
-        scene->lights = Memory::createDeviceArray<Light*>(scene->light_count);
-
-        tinyxml2::XMLElement* volume_head = doc.FirstChildElement("volume");
-        if (volume_head != NULL)
-        {
-            const char* sigma_s_string = volume_head->FirstChildElement("sigma_s")->GetText();
-            const char* sigma_a_string = volume_head->FirstChildElement("sigma_a")->GetText();
-            const char* g_string = volume_head->FirstChildElement("g")->GetText();
-
-            Volume vol;
-
-            vol.sigma_s = detail::string2vector(sigma_s_string);
-            vol.sigma_a = detail::string2vector(sigma_a_string);
-            vol.g = std::stof(g_string);
-
-            scene->volume = vol;
-        }
-
-        tinyxml2::XMLElement* environment_head = doc.FirstChildElement("environment");
-        if (environment_head != NULL)
-        {
-            const char* path = environment_head->FirstChildElement("path")->GetText();
-
-            int32_t x, y, n;
-            float* data = stbi_loadf(path, &x, &y, &n, 3);
-            Vector3float* img_data = (Vector3float*)data;
-            Image<Vector3float> buffer = Image<Vector3float>::createHostObject(x, y);
-            Image<Vector3float> dbuffer = Image<Vector3float>::createDeviceObject(x, y);
-            for (int i = 0; i < x * y; ++i)
-            {
-                buffer[i] = img_data[i];
-            }
-            buffer.copyHost2DeviceObject(dbuffer);
-
-            scene->useEnvironmentMap = true;
-            scene->environment = dbuffer;
-
-            stbi_image_free(data);
-
-            Image<Vector3float>::destroyHostObject(buffer);
-        }
-
-        /*tinyxml2::XMLElement* sdf_head = doc.FirstChildElement("sdf");
-        while (sdf_head != nullptr)
-        {
-            Properties properties;
-
-            auto current_element = sdf_head->FirstChild();
-            while (current_element != nullptr)
-            {
-                auto current_node = sdf_head->FirstChildElement(current_element->Value());
-                auto attribute = current_node->FirstAttribute()->Value();
-                if (strcmp(attribute, "vec3") == 0)
+                else if (strcmp(type, "SPHERE") == 0)
                 {
-                    properties.setProperty(current_element->Value(), detail::string2vector(current_node->GetText()));
+                    const char* position_string = current_geometry->FirstChildElement("position")->GetText();
+                    const char* radius_string = current_geometry->FirstChildElement("radius")->GetText();
+                    Vector3float position = detail::string2vector(position_string);
+                    float radius = std::stof(radius_string);
+                    Material* mat = detail::loadMaterial(current_geometry->FirstChildElement("material"), scene);
+
+                    Sphere* geom = new Sphere(position, radius);
+                    geom->material = mat;
+                    host_geometry.push_back(geom);
                 }
-                else if (strcmp(attribute, "float") == 0)
+                else if (strcmp(type, "QUAD") == 0)
                 {
-                    properties.setProperty(current_element->Value(), std::stof(current_node->GetText()));
+                    const char* position_string = current_geometry->FirstChildElement("position")->GetText();
+                    const char* normal_string = current_geometry->FirstChildElement("normal")->GetText();
+                    const char* extend1_string = current_geometry->FirstChildElement("extend1")->GetText();
+                    const char* extend2_string = current_geometry->FirstChildElement("extend2")->GetText();
+
+                    Vector3float position = detail::string2vector(position_string);
+                    Vector3float normal = detail::string2vector(normal_string);
+                    Vector3float extend1 = detail::string2vector(extend1_string);
+                    Vector3float extend2 = detail::string2vector(extend2_string);
+
+                    Material* mat = detail::loadMaterial(current_geometry->FirstChildElement("material"), scene);
+
+                    Quad* geom = new Quad(position, normal, extend1, extend2);
+                    geom->material = mat;
+
+                    host_geometry.push_back(geom);
                 }
-                else if (strcmp(attribute, "int") == 0)
+                else if (strcmp(type, "TRIANGLE") == 0)
                 {
-                    properties.setProperty(current_element->Value(), std::stoi(current_node->GetText()));
+                    const char* vertex1_string = current_geometry->FirstChildElement("vertex1")->GetText();
+                    const char* vertex2_string = current_geometry->FirstChildElement("vertex2")->GetText();
+                    const char* vertex3_string = current_geometry->FirstChildElement("vertex3")->GetText();
+
+                    Vector3float vertex1 = detail::string2vector(vertex1_string);
+                    Vector3float vertex2 = detail::string2vector(vertex2_string);
+                    Vector3float vertex3 = detail::string2vector(vertex3_string);
+
+                    Material* mat = detail::loadMaterial(current_geometry->FirstChildElement("material"), scene);
+
+                    Triangle* geom = new Triangle(vertex1, vertex2, vertex3);
+                    geom->material = mat;
+
+                    host_geometry.push_back(geom);
                 }
-                else if (strcmp(attribute, "string") == 0)
+                else if (strcmp(type, "MESH") == 0)
                 {
-                    properties.setProperty(current_element->Value(), std::string(current_node->GetText()));
-                }
-                else if (strcmp(attribute, "bool") == 0)
-                {
-                    properties.setProperty(current_element->Value(), static_cast<bool>(std::stoi(current_node->GetText())));
+                    const char* path_string = current_geometry->FirstChildElement("path")->GetText();
+                    Vector3float position = 0;
+                    Vector3float scale = 1;
+                    const tinyxml2::XMLElement* position_string = current_geometry->FirstChildElement("position");
+                    const tinyxml2::XMLElement* scale_string = current_geometry->FirstChildElement("scale");
+
+                    if (position_string != NULL)
+                    {
+                        position = detail::string2vector(position_string->GetText());
+                    }
+
+                    if (scale_string != NULL)
+                    {
+                        scale = detail::string2vector(scale_string->GetText());
+                    }
+
+                    Mesh* geom = ObjLoader::loadObj(path_string, position, scale);
+
+                    Material* mat = detail::loadMaterial(current_geometry->FirstChildElement("material"), scene);
+
+                    geom->material = mat;
+
+                    host_geometry.push_back(geom);
                 }
                 else
                 {
-                    //TODO:
-                    std::cerr << "Datatype not implemented: " << attribute << std::endl;
-                    std::cerr << "Supported types: string, vec3, float, int, bool" << std::endl;
-                    std::cerr << "If you think your datatype should be supported as well open a pull request or github issue!" << std::endl;
+                    std::cerr << "Error while loading scene: " << type << " is not a valid geometry type!" << std::endl;
+                    return nullptr;
+                }
+                host_geometry.back()->setID(id++);
+                current_geometry = current_geometry->NextSiblingElement();
+            }
+            scene->scene_size = host_geometry.size();
+            scene->geometry = Memory::createDeviceArray<Geometry*>(scene->scene_size);
+
+            const tinyxml2::XMLElement* current_light = doc.FirstChildElement("light");
+            while (current_light != nullptr)
+            {
+                if (strcmp(current_light->Name(), "light") != 0)
+                {
+                    current_light = current_light->NextSiblingElement();
+                    continue;
+                }
+                const char* type = current_light->FirstChildElement("type")->GetText();
+
+                Light light;
+
+                if (strcmp(type, "POINT") == 0)
+                {
+                    light.type = POINT;
+                }
+                else if (strcmp(type, "AREA") == 0)
+                {
+                    light.type = AREA;
+                }
+                else
+                {
+                    std::cerr << "Error while loading scene: " << type << " is not a valid light type!" << std::endl;
+                    return nullptr;
                 }
 
-                current_element = current_element->NextSibling();
+                const tinyxml2::XMLElement* position_string = current_light->FirstChildElement("position");
+                const tinyxml2::XMLElement* intensity_string = current_light->FirstChildElement("intensity");
+                const tinyxml2::XMLElement* radiance_string = current_light->FirstChildElement("radiance");
+                const tinyxml2::XMLElement* extend1_string = current_light->FirstChildElement("extend1");
+                const tinyxml2::XMLElement* extend2_string = current_light->FirstChildElement("extend2");
+
+                if (position_string != NULL)
+                {
+                    light.position = detail::string2vector(position_string->GetText());
+                }
+
+                if (intensity_string != NULL)
+                {
+                    light.intensity = detail::string2vector(intensity_string->GetText());
+                }
+
+                if (radiance_string != NULL)
+                {
+                    light.radiance = detail::string2vector(radiance_string->GetText());
+                }
+
+                if (extend1_string != NULL)
+                {
+                    light.halfExtend1 = detail::string2vector(extend1_string->GetText());
+                }
+
+                if (extend2_string != NULL)
+                {
+                    light.halfExtend2 = detail::string2vector(extend2_string->GetText());
+                }
+
+                Light* light_ptr = new Light(light);
+
+                host_lights.push_back(light_ptr);
+
+                current_light = current_light->NextSiblingElement();
             }
-            
-            std::shared_ptr<PluginInstance> instance = PluginManager::getPlugin(properties.getProperty(std::string("name"), std::string("")));
-            SDF* sdf = reinterpret_cast<SDF*>(instance->createDeviceObject(&properties));
+            scene->light_count = host_lights.size();
+            scene->lights = Memory::createDeviceArray<Light*>(scene->light_count);
 
-            scene->sdf = sdf;
-            scene->properties.push_back(properties);
-
-            sdf_head = sdf_head->NextSiblingElement();
-
-        }*/
-
-        //Transfer data to device
-        //TODO: Backend
-        std::vector<Geometry*> dev_geometry;
-        for(uint32_t i = 0; i < host_geometry.size(); ++i)
-        {
-            Geometry* geom = host_geometry[i];
-            switch(geom->type)
+            const tinyxml2::XMLElement* volume_head = doc.FirstChildElement("volume");
+            if (volume_head != NULL)
             {
+                const char* sigma_s_string = volume_head->FirstChildElement("sigma_s")->GetText();
+                const char* sigma_a_string = volume_head->FirstChildElement("sigma_a")->GetText();
+                const char* g_string = volume_head->FirstChildElement("g")->GetText();
+
+                Volume vol;
+
+                vol.sigma_s = detail::string2vector(sigma_s_string);
+                vol.sigma_a = detail::string2vector(sigma_a_string);
+                vol.g = std::stof(g_string);
+
+                scene->volume = vol;
+            }
+
+            const tinyxml2::XMLElement* environment_head = doc.FirstChildElement("environment");
+            if (environment_head != NULL)
+            {
+                const char* path = environment_head->FirstChildElement("path")->GetText();
+
+                int32_t x, y, n;
+                float* data = stbi_loadf(path, &x, &y, &n, 3);
+                Vector3float* img_data = (Vector3float*)data;
+                Image<Vector3float> buffer = Image<Vector3float>::createHostObject(x, y);
+                Image<Vector3float> dbuffer = Image<Vector3float>::createDeviceObject(x, y);
+                for (int i = 0; i < x * y; ++i)
+                {
+                    buffer[i] = img_data[i];
+                }
+                buffer.copyHost2DeviceObject(dbuffer);
+
+                scene->useEnvironmentMap = true;
+                scene->environment = dbuffer;
+
+                stbi_image_free(data);
+
+                Image<Vector3float>::destroyHostObject(buffer);
+            }
+
+            //Transfer data to device
+            //TODO: Backend
+            std::vector<Geometry*> dev_geometry;
+            for (uint32_t i = 0; i < host_geometry.size(); ++i)
+            {
+                Geometry* geom = host_geometry[i];
+                switch (geom->type)
+                {
                 case GeometryType::SPHERE:
                 {
                     Sphere* dev_geom = Memory::createDeviceObject<Sphere>();
@@ -428,34 +359,34 @@ namespace cupbr
                     dev_geometry.push_back(dev_geom);
                 }
                 break;
+                }
             }
-        }
 
-        if (host_geometry.size() > 0)
-        {
-            BoundingVolumeHierarchy bvh(host_geometry, dev_geometry);
-            scene->bvh = Memory::createDeviceObject<BoundingVolumeHierarchy>();
-            Memory::copyHost2DeviceObject<BoundingVolumeHierarchy>(&bvh, scene->bvh);
-
-            Memory::copyHost2DeviceArray(host_geometry.size(), dev_geometry.data(), scene->geometry);
-        }
-
-        std::vector<Light*> dev_lights;
-        for(uint32_t i = 0; i < host_lights.size(); ++i)
-        {
-            Light* light = host_lights[i];
-            Light* dev_light = Memory::createDeviceObject<Light>();
-            Memory::copyHost2DeviceObject<Light>(light, dev_light);
-            dev_lights.push_back(dev_light);
-            delete light;
-        }
-
-        //Delete temp host objects
-        for(uint32_t i = 0; i < host_geometry.size(); ++i)
-        {
-            Geometry* geom = host_geometry[i];
-            switch(geom->type)
+            if (host_geometry.size() > 0)
             {
+                BoundingVolumeHierarchy bvh(host_geometry, dev_geometry);
+                scene->bvh = Memory::createDeviceObject<BoundingVolumeHierarchy>();
+                Memory::copyHost2DeviceObject<BoundingVolumeHierarchy>(&bvh, scene->bvh);
+
+                Memory::copyHost2DeviceArray(host_geometry.size(), dev_geometry.data(), scene->geometry);
+            }
+
+            std::vector<Light*> dev_lights;
+            for (uint32_t i = 0; i < host_lights.size(); ++i)
+            {
+                Light* light = host_lights[i];
+                Light* dev_light = Memory::createDeviceObject<Light>();
+                Memory::copyHost2DeviceObject<Light>(light, dev_light);
+                dev_lights.push_back(dev_light);
+                delete light;
+            }
+
+            //Delete temp host objects
+            for (uint32_t i = 0; i < host_geometry.size(); ++i)
+            {
+                Geometry* geom = host_geometry[i];
+                switch (geom->type)
+                {
                 case GeometryType::MESH:
                 {
                     Memory::destroyHostObject<Mesh>(static_cast<Mesh*>(geom));
@@ -466,12 +397,110 @@ namespace cupbr
                     delete geom;
                 }
                 break;
+                }
             }
+
+            Memory::copyHost2DeviceArray(host_lights.size(), dev_lights.data(), scene->lights);
+
+            return scene;
         }
 
-        Memory::copyHost2DeviceArray(host_lights.size(), dev_lights.data(), scene->lights);
+        Scene* load_sdf_scene(const tinyxml2::XMLDocument& doc)
+        {
+            SDFScene* scene = Memory::createHostObject<SDFScene>();
 
-        return scene;
+            const tinyxml2::XMLElement* sdf_head = doc.FirstChildElement("sdf");
+            while (sdf_head != nullptr)
+            {
+                Properties properties;
+            
+                auto current_element = sdf_head->FirstChild();
+                while (current_element != nullptr)
+                {
+                    auto current_node = sdf_head->FirstChildElement(current_element->Value());
+                    auto attribute = current_node->FirstAttribute()->Value();
+                    if (strcmp(attribute, "vec3") == 0)
+                    {
+                        properties.setProperty(current_element->Value(), detail::string2vector(current_node->GetText()));
+                    }
+                    else if (strcmp(attribute, "float") == 0)
+                    {
+                        properties.setProperty(current_element->Value(), std::stof(current_node->GetText()));
+                    }
+                    else if (strcmp(attribute, "int") == 0)
+                    {
+                        properties.setProperty(current_element->Value(), std::stoi(current_node->GetText()));
+                    }
+                    else if (strcmp(attribute, "string") == 0)
+                    {
+                        properties.setProperty(current_element->Value(), std::string(current_node->GetText()));
+                    }
+                    else if (strcmp(attribute, "bool") == 0)
+                    {
+                        properties.setProperty(current_element->Value(), static_cast<bool>(std::stoi(current_node->GetText())));
+                    }
+                    else
+                    {
+                        //TODO:
+                        std::cerr << "Datatype not implemented: " << attribute << std::endl;
+                        std::cerr << "Supported types: string, vec3, float, int, bool" << std::endl;
+                        std::cerr << "If you think your datatype should be supported as well open a pull request or github issue!" << std::endl;
+                        return nullptr;
+                    }
+            
+                    current_element = current_element->NextSibling();
+                }
+            
+                std::shared_ptr<PluginInstance> instance = PluginManager::getPlugin(properties.getProperty(std::string("name"), std::string("")));
+                SDF* sdf = reinterpret_cast<SDF*>(instance->createDeviceObject(&properties));
+            
+                scene->sdf = sdf;
+                scene->properties.push_back(properties);
+            
+                sdf_head = sdf_head->NextSiblingElement();
+            
+            }
+
+            return scene;
+        }
+
+    } //namespace detail
+
+    Scene*
+    SceneLoader::loadFromFile(const std::string& path)
+    {
+        tinyxml2::XMLDocument doc;
+        tinyxml2::XMLError error;
+
+        do
+        {
+            error = doc.LoadFile(path.c_str());
+
+            if (error != tinyxml2::XML_SUCCESS && !std::filesystem::exists(path))
+            {
+                std::cerr << "Failed to load XML file: " << path << ". Error code: " << error << "\n";
+                return nullptr;
+            }
+        } while (error == tinyxml2::XML_ERROR_FILE_NOT_FOUND && std::filesystem::exists(path));
+
+        bool has_geometry = doc.FirstChildElement("geometry") != nullptr;
+        bool has_sdf = doc.FirstChildElement("sdf") != nullptr;
+
+        if (has_geometry && has_sdf)
+        {
+            std::cerr << "ERROR: Scene contains both geometry and sdf information!\n";
+            return nullptr;
+        }
+        else if (has_geometry)
+        {
+            return detail::load_geometry_scene(doc);
+        }
+        else if (has_sdf)
+        {
+            return detail::load_sdf_scene(doc);
+        }
+
+        return nullptr;
     }
 
     void 
