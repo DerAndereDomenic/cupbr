@@ -98,7 +98,7 @@ namespace cupbr
     Scene*
     SceneLoader::loadFromFile(const std::string& path)
     {
-        Scene* scene = Memory::createHostObject<Scene>();
+        GeometryScene* scene = Memory::createHostObject<GeometryScene>();
 
         tinyxml2::XMLDocument doc;
         tinyxml2::XMLError error;
@@ -478,8 +478,9 @@ namespace cupbr
     }
 
     void 
-    SceneLoader::reinitializeScene(Scene* scene)
+    SceneLoader::reinitializeScene(Scene* scene_)
     {
+        GeometryScene* scene = dynamic_cast<GeometryScene*>(scene_);
         Geometry** host_scene = Memory::createHostArray<Geometry*>(scene->scene_size);
         Memory::copyDevice2HostArray(scene->scene_size, scene->geometry, host_scene);
 
@@ -503,8 +504,9 @@ namespace cupbr
     }
 
     void
-    SceneLoader::destroyScene(Scene* scene)
+    SceneLoader::destroyScene(Scene* scene_)
     {
+        GeometryScene* scene = dynamic_cast<GeometryScene*>(scene_);
         Geometry** host_scene = Memory::createHostArray<Geometry*>(scene->scene_size);
         Light** host_lights = Memory::createHostArray<Light*>(scene->light_count);
         Memory::copyDevice2HostArray(scene->scene_size, scene->geometry, host_scene);

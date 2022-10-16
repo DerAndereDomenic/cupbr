@@ -46,7 +46,7 @@ namespace cupbr
 
     CUPBR_DEVICE
     inline LocalGeometry
-    Tracing::traceRay(Scene& scene, const Ray& ray)
+    Tracing::traceRay(GeometryScene& scene, const Ray& ray)
     {
         /*LocalGeometry geom;
 
@@ -67,7 +67,7 @@ namespace cupbr
 
     CUPBR_DEVICE
     inline LocalGeometry
-    Tracing::traceRay(Scene& scene, const Ray& ray, const uint32_t& index)
+    Tracing::traceRay(GeometryScene& scene, const Ray& ray, const uint32_t& index)
     {
         LocalGeometry geom;
 
@@ -117,7 +117,7 @@ namespace cupbr
 
     CUPBR_DEVICE
     inline bool
-    Tracing::traceVisibility(Scene& scene, const float& lightDist, const Ray& ray)
+    Tracing::traceVisibility(GeometryScene& scene, const float& lightDist, const Ray& ray)
     {
         /*for (uint32_t i = 0; i < scene.scene_size; ++i)
         {

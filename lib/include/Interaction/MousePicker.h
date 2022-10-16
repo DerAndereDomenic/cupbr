@@ -24,7 +24,7 @@ namespace cupbr
                        const uint32_t& y,
                        const uint32_t& width,
                        const uint32_t& height,
-                       Scene& scene,
+                       Scene* scene,
                        Camera& camera,
                        int32_t* sceneIndex);
     } //namespace Interaction

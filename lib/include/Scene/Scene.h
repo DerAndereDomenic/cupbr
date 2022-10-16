@@ -15,6 +15,13 @@ namespace cupbr
     */
     struct Scene
     {
+        virtual ~Scene() = default;
+
+        std::vector<Properties> properties;         /**< Host vector of properties for materials */
+    };
+
+    struct GeometryScene : public Scene
+    {
         Geometry** geometry = nullptr;              /**< The scene geometry */
         uint32_t scene_size = 0;                    /**< The number of objects in the scene */
         Light** lights = nullptr;                   /**< The light sources in the scene */
@@ -22,8 +29,6 @@ namespace cupbr
         bool useEnvironmentMap = false;             /**< Wether an environment map is loaded */
         Image<Vector3float> environment = {};       /**< The Environment map */
         Volume volume = {};                         /**< The volume inside the scene */
-
-        std::vector<Properties> properties;         /**< Host vector of properties for materials */
 
         /**
         *   @brief Get a scene element
@@ -33,7 +38,12 @@ namespace cupbr
         CUPBR_HOST_DEVICE
         Geometry* operator[](const uint32_t index) const;
 
-        BoundingVolumeHierarchy* bvh;               /**< The Bounding volume hierarchy used for intersection testing */
+        BoundingVolumeHierarchy* bvh = nullptr;    /**< The Bounding volume hierarchy used for intersection testing */
+    };
+
+    struct SDFScene : public Scene
+    {
+        SDF* sdf = nullptr;                         /**< Models the csg */
     };
 } //namespace cupbr
 

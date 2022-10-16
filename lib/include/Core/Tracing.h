@@ -47,7 +47,7 @@ namespace cupbr
         *   @return The local geometry information of the intersection point
         */
         CUPBR_DEVICE
-        LocalGeometry traceRay(Scene& scene, const Ray& ray);
+        LocalGeometry traceRay(GeometryScene& scene, const Ray& ray);
 
         /**
         *   @brief Trace ray but only check for intersections of the specified geometry
@@ -57,7 +57,7 @@ namespace cupbr
         *   @return The local geometry information of the intersection point
         */
         CUPBR_DEVICE
-        LocalGeometry traceRay(Scene& scene, const Ray& ray, const uint32_t& index);
+        LocalGeometry traceRay(GeometryScene& scene, const Ray& ray, const uint32_t& index);
 
         /**
         *   @brief Trace a shadow ray to a light source
@@ -67,7 +67,7 @@ namespace cupbr
         *   @return True if the light source is visible, false if it is occluded
         */
         CUPBR_DEVICE
-        bool traceVisibility(Scene& scene, const float& lightDist, const Ray& ray);
+        bool traceVisibility(GeometryScene& scene, const float& lightDist, const Ray& ray);
 
         /**
         *   @brief Convert a direction to UV coordinates of an environment map

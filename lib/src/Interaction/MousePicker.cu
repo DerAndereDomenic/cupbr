@@ -10,7 +10,7 @@ namespace cupbr
                          const uint32_t y,
                          const uint32_t width,
                          const uint32_t height,
-                         Scene scene,
+                         GeometryScene scene,
                          const Camera camera,
                          int32_t* scene_index)
         {
@@ -28,15 +28,22 @@ namespace cupbr
                            const uint32_t& y,
                            const uint32_t& width,
                            const uint32_t& height,
-                           Scene& scene,
+                           Scene* scene,
                            Camera& camera,
                            int32_t* outSceneIndex)
     {
+        GeometryScene* geom_scene = dynamic_cast<GeometryScene*>(scene);
+        if (geom_scene == nullptr)
+        {
+            std::cerr << "ERROR: MousePicker received scene that does not hold geometry information!\n";
+            return;
+        }
+
         detail::pickMouse_kernel << <1, 1 >> > (x,
                                                 y,
                                                 width,
                                                 height,
-                                                scene,
+                                                *geom_scene,
                                                 camera,
                                                 outSceneIndex);
         synchronizeDefaultStream();

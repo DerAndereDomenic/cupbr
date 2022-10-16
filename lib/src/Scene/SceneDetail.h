@@ -5,7 +5,7 @@ namespace cupbr
 {
     CUPBR_HOST_DEVICE
     inline Geometry*
-    Scene::operator[](const uint32_t index) const
+    GeometryScene::operator[](const uint32_t index) const
     {
         return geometry[index];
     }

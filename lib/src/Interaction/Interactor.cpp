@@ -117,7 +117,7 @@ namespace cupbr
                                        y,
                                        view_port_size.x,
                                        view_port_size.y,
-                                       *(impl->scene),
+                                       impl->scene,
                                        *(impl->camera),
                                        impl->dev_scene_index);
 
