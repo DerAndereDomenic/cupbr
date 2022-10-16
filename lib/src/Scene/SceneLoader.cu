@@ -464,6 +464,83 @@ namespace cupbr
             return scene;
         }
 
+        void destroy_geometry_scene(GeometryScene* scene)
+        {
+            Geometry** host_scene = Memory::createHostArray<Geometry*>(scene->scene_size);
+            Light** host_lights = Memory::createHostArray<Light*>(scene->light_count);
+            Memory::copyDevice2HostArray(scene->scene_size, scene->geometry, host_scene);
+            Memory::copyDevice2HostArray(scene->light_count, scene->lights, host_lights);
+
+            for (uint32_t i = 0; i < scene->scene_size; ++i)
+            {
+                Geometry geom;
+                Memory::copyDevice2HostObject(host_scene[i], &geom);
+                //Don't use memory API because materials are obtained by plugin
+                cudaFree(geom.material);
+                switch (geom.type)
+                {
+                case GeometryType::PLANE:
+                {
+                    Memory::destroyDeviceObject<Plane>(static_cast<Plane*>(host_scene[i]));
+                }
+                break;
+                case GeometryType::SPHERE:
+                {
+                    Memory::destroyDeviceObject<Sphere>(static_cast<Sphere*>(host_scene[i]));
+                }
+                break;
+                case GeometryType::QUAD:
+                {
+                    Memory::destroyDeviceObject<Quad>(static_cast<Quad*>(host_scene[i]));
+                }
+                break;
+                case GeometryType::TRIANGLE:
+                {
+                    Memory::destroyDeviceObject<Triangle>(static_cast<Triangle*>(host_scene[i]));
+                }
+                break;
+                case GeometryType::MESH:
+                {
+                    Mesh mesh;
+                    Memory::copyDevice2HostObject<Mesh>(static_cast<Mesh*>(host_scene[i]), &mesh);
+                    Memory::destroyDeviceObject<Mesh>(static_cast<Mesh*>(host_scene[i]));
+
+                    Memory::destroyDeviceArray<Triangle>(mesh.triangles());
+                }
+                break;
+                }
+            }
+
+            for (uint32_t i = 0; i < scene->light_count; ++i)
+            {
+                Memory::destroyDeviceObject<Light>(host_lights[i]);
+            }
+
+            if (scene->useEnvironmentMap)
+            {
+                Image<Vector3float>::destroyDeviceObject(scene->environment);
+            }
+
+            BoundingVolumeHierarchy* host_bvh = Memory::createHostObject<BoundingVolumeHierarchy>();
+            Memory::copyDevice2HostObject<BoundingVolumeHierarchy>(scene->bvh, host_bvh);
+            host_bvh->destroy();
+            Memory::destroyDeviceObject<BoundingVolumeHierarchy>(scene->bvh);
+
+            Memory::destroyDeviceArray<Geometry*>(scene->geometry);
+            Memory::destroyDeviceArray<Light*>(scene->lights);
+            Memory::destroyHostArray<Geometry*>(host_scene);
+            Memory::destroyHostArray<Light*>(host_lights);
+            Memory::destroyHostObject<BoundingVolumeHierarchy>(host_bvh);
+
+            Memory::destroyHostObject<GeometryScene>(scene);
+        }
+
+        void destroy_sdf_scene(SDFScene* scene)
+        {
+            cudaFree(scene->sdf);
+            Memory::destroyHostObject<SDFScene>(scene);
+        }
+
     } //namespace detail
 
     Scene*
@@ -532,74 +609,17 @@ namespace cupbr
     void
     SceneLoader::destroyScene(Scene* scene_)
     {
-        GeometryScene* scene = dynamic_cast<GeometryScene*>(scene_);
-        Geometry** host_scene = Memory::createHostArray<Geometry*>(scene->scene_size);
-        Light** host_lights = Memory::createHostArray<Light*>(scene->light_count);
-        Memory::copyDevice2HostArray(scene->scene_size, scene->geometry, host_scene);
-        Memory::copyDevice2HostArray(scene->light_count, scene->lights, host_lights);
+        GeometryScene* geom_scene = dynamic_cast<GeometryScene*>(scene_);
+        SDFScene* sdf_scene = dynamic_cast<SDFScene*>(scene_);
 
-        for (uint32_t i = 0; i < scene->scene_size; ++i)
+        if (geom_scene != nullptr)
         {
-            Geometry geom;
-            Memory::copyDevice2HostObject(host_scene[i], &geom);
-            //Don't use memory API because materials are obtained by plugin
-            cudaFree(geom.material);
-            switch (geom.type)
-            {
-                case GeometryType::PLANE:
-                {
-                    Memory::destroyDeviceObject<Plane>(static_cast<Plane*>(host_scene[i]));
-                }
-                break;
-                case GeometryType::SPHERE:
-                {
-                    Memory::destroyDeviceObject<Sphere>(static_cast<Sphere*>(host_scene[i]));
-                }
-                break;
-                case GeometryType::QUAD:
-                {
-                    Memory::destroyDeviceObject<Quad>(static_cast<Quad*>(host_scene[i]));
-                }
-                break;
-                case GeometryType::TRIANGLE:
-                {
-                    Memory::destroyDeviceObject<Triangle>(static_cast<Triangle*>(host_scene[i]));
-                }
-                break;
-                case GeometryType::MESH:
-                {
-                    Mesh mesh;
-                    Memory::copyDevice2HostObject<Mesh>(static_cast<Mesh*>(host_scene[i]), &mesh);
-                    Memory::destroyDeviceObject<Mesh>(static_cast<Mesh*>(host_scene[i]));
-
-                    Memory::destroyDeviceArray<Triangle>(mesh.triangles());
-                }
-                break;
-            }
+            detail::destroy_geometry_scene(geom_scene);
         }
-
-        for (uint32_t i = 0; i < scene->light_count; ++i)
+        else if (sdf_scene != nullptr)
         {
-            Memory::destroyDeviceObject<Light>(host_lights[i]);
+            detail::destroy_sdf_scene(sdf_scene);
         }
-
-        if (scene->useEnvironmentMap)
-        {
-            Image<Vector3float>::destroyDeviceObject(scene->environment);
-        }
-
-        BoundingVolumeHierarchy* host_bvh = Memory::createHostObject<BoundingVolumeHierarchy>();
-        Memory::copyDevice2HostObject<BoundingVolumeHierarchy>(scene->bvh, host_bvh);
-        host_bvh->destroy();
-        Memory::destroyDeviceObject<BoundingVolumeHierarchy>(scene->bvh);
-
-        Memory::destroyDeviceArray<Geometry*>(scene->geometry);
-        Memory::destroyDeviceArray<Light*>(scene->lights);
-        Memory::destroyHostArray<Geometry*>(host_scene);
-        Memory::destroyHostArray<Light*>(host_lights);
-        Memory::destroyHostObject<BoundingVolumeHierarchy>(host_bvh);
-
-        Memory::destroyHostObject<Scene>(scene);
     }
 
 } //namespace cupbr
