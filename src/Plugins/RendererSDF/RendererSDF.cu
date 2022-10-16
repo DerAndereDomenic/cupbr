@@ -11,7 +11,7 @@ namespace cupbr
     namespace detail
     {
         CUPBR_GLOBAL void
-        sdf_kernel(Scene scene,
+        sdf_kernel(SDFScene scene,
                       const Camera camera,
                       const uint32_t frameIndex,
                       Image<Vector3float> img)
@@ -88,8 +88,16 @@ namespace cupbr
                const uint32_t& frameIndex,
                Image<Vector3float>* output_img) 
         {
+            SDFScene* sdf_scene = dynamic_cast<SDFScene*>(scene);
+
+            if (sdf_scene == nullptr)
+            {
+                std::cerr << "ERROR: SDFRenderer received scene that does not hold sdf information!\n";
+                return;
+            }
+
             const KernelSizeHelper::KernelSize config = KernelSizeHelper::configure(output_img->size());
-            detail::sdf_kernel << <config.blocks, config.threads >> > (*scene,
+            detail::sdf_kernel << <config.blocks, config.threads >> > (*sdf_scene,
                                                                           camera,
                                                                           frameIndex,
                                                                           *output_img);
