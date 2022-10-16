@@ -34,8 +34,6 @@ namespace cupbr
         Geometry* operator[](const uint32_t index) const;
 
         BoundingVolumeHierarchy* bvh;               /**< The Bounding volume hierarchy used for intersection testing */
-
-        SDF* sdf = nullptr;
     };
 } //namespace cupbr
 

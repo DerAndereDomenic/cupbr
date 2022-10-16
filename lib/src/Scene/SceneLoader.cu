@@ -337,7 +337,7 @@ namespace cupbr
             Image<Vector3float>::destroyHostObject(buffer);
         }
 
-        tinyxml2::XMLElement* sdf_head = doc.FirstChildElement("sdf");
+        /*tinyxml2::XMLElement* sdf_head = doc.FirstChildElement("sdf");
         while (sdf_head != nullptr)
         {
             Properties properties;
@@ -386,7 +386,7 @@ namespace cupbr
 
             sdf_head = sdf_head->NextSiblingElement();
 
-        }
+        }*/
 
         //Transfer data to device
         //TODO: Backend
