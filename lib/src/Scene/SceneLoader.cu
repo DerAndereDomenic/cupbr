@@ -409,10 +409,18 @@ namespace cupbr
         {
             SDFScene* scene = Memory::createHostObject<SDFScene>();
 
-            const tinyxml2::XMLElement* sdf_head = doc.FirstChildElement("sdf");
+            std::unordered_map<std::string, SDF*> primitives;
+            const tinyxml2::XMLElement* sdf_head = doc.FirstChildElement("sdf-primitive");
+            std::cout << sdf_head << "\n";
             while (sdf_head != nullptr)
             {
                 Properties properties;
+
+                if (strcmp(sdf_head->Name(), "sdf-primitive") != 0)
+                {
+                    sdf_head = sdf_head->NextSiblingElement();
+                    continue;
+                }
             
                 auto current_element = sdf_head->FirstChild();
                 while (current_element != nullptr)
@@ -561,7 +569,7 @@ namespace cupbr
         } while (error == tinyxml2::XML_ERROR_FILE_NOT_FOUND && std::filesystem::exists(path));
 
         bool has_geometry = doc.FirstChildElement("geometry") != nullptr;
-        bool has_sdf = doc.FirstChildElement("sdf") != nullptr;
+        bool has_sdf = doc.FirstChildElement("sdf-primitive") != nullptr;
 
         if (has_geometry && has_sdf)
         {

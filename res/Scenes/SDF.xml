@@ -1,5 +1,27 @@
-<sdf>
+<sdf-primitive name="sphere0">
   <name type="string">SDFSphere</name>
   <position type="vec3">0,0,0</position>
   <radius type="float">1</radius>
-</sdf>
+</sdf-primitive>
+
+<sdf-primitive name="sphere1">
+  <name type="string">SDFSphere</name>
+  <position type="vec3">2,0,0</position>
+  <radius type="float">1</radius>
+</sdf-primitive>
+
+<sdf-primitive name="sphere2">
+  <name type="string">SDFSphere</name>
+  <position type="vec3">4,0,0</position>
+  <radius type="float">0.5</radius>
+</sdf-primitive>
+
+<csg>
+	<node type="SDFUnion">
+		<node type="SDFUnion">
+			<node type="reference">sphere0</node>
+			<node type="reference">sphere1</node>
+		</node>
+		<node type="reference">sphere2</node>
+	</node>
+</csg>
