@@ -16,3 +16,5 @@ set_target_properties(${target_name} PROPERTIES CUDA_ARCHITECTURES "72"
 						CUDA_STANDARD 17)
 
 string(APPEND CMAKE_CUDA_FLAGS " -use_fast_math")
+
+set_target_properties(${target_name} PROPERTIES FOLDER "Plugins/Materials")
