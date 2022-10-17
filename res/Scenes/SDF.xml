@@ -6,7 +6,7 @@
 
 <sdf-primitive name="sphere1">
   <name type="string">SDFSphere</name>
-  <position type="vec3">2,0,0</position>
+  <position type="vec3">1,0,0</position>
   <radius type="float">1</radius>
 </sdf-primitive>
 

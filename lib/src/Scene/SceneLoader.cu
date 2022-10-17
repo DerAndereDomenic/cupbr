@@ -405,6 +405,76 @@ namespace cupbr
             return scene;
         }
 
+        SDF* parse_node(const tinyxml2::XMLElement* node, std::unordered_map<std::string, SDF*>& primitives)
+        {
+            const char* node_type = node->FirstAttribute()->Value();
+            if(strcmp(node_type, "reference") == 0)
+            {
+                //Load the reference
+                std::string reference = node->GetText();
+                return primitives[reference];
+            }
+            else
+            {
+                //Load the appropriate plugin and parse other nodes
+                Properties properties;
+                //First load other nodes:
+                const tinyxml2::XMLElement* child = node->FirstChildElement("node");
+                SDF* lhs = parse_node(child, primitives);
+                child = child->NextSiblingElement("node");
+                SDF* rhs = parse_node(child, primitives);
+
+                properties.setProperty("lhs", static_cast<void*>(lhs));
+                properties.setProperty("rhs", static_cast<void*>(rhs));
+
+                //Load other (custom) properties
+
+                auto current_element = node->FirstChild();
+                while(current_element != nullptr)
+                {
+                    if(strcmp(current_element->Value(), "node") != 0)
+                    {
+                        auto current_node = node->FirstChildElement(current_element->Value());
+
+                        auto attribute = current_node->FirstAttribute()->Value();
+                        if(strcmp(attribute, "vec3") == 0)
+                        {
+                            properties.setProperty(current_element->Value(), string2vector(current_node->GetText()));
+                        }
+                        else if(strcmp(attribute, "float") == 0)
+                        {
+                            properties.setProperty(current_element->Value(), std::stof(current_node->GetText()));
+                        }
+                        else if(strcmp(attribute, "int") == 0)
+                        {
+                            properties.setProperty(current_element->Value(), std::stoi(current_node->GetText()));
+                        }
+                        else if(strcmp(attribute, "string") == 0)
+                        {
+                            properties.setProperty(current_element->Value(), std::string(current_node->GetText()));
+                        }
+                        else if(strcmp(attribute, "bool") == 0)
+                        {
+                            properties.setProperty(current_element->Value(), static_cast<bool>(std::stoi(current_node->GetText())));
+                        }
+                        else
+                        {
+                            //TODO:
+                            std::cerr << "Datatype not implemented: " << attribute << std::endl;
+                            std::cerr << "Supported types: string, vec3, float, int, bool" << std::endl;
+                            std::cerr << "If you think your datatype should be supported as well open a pull request or github issue!" << std::endl;
+                            return nullptr;
+                        }
+                    }
+
+                    current_element = current_element->NextSibling();
+                }
+
+                std::shared_ptr<PluginInstance> instance = PluginManager::getPlugin(std::string(node_type));
+                return reinterpret_cast<SDF*>(instance->createDeviceObject(&properties));
+            }
+        }
+
         Scene* load_sdf_scene(const tinyxml2::XMLDocument& doc)
         {
             SDFScene* scene = Memory::createHostObject<SDFScene>();
@@ -460,14 +530,30 @@ namespace cupbr
             
                 std::shared_ptr<PluginInstance> instance = PluginManager::getPlugin(properties.getProperty(std::string("name"), std::string("")));
                 SDF* sdf = reinterpret_cast<SDF*>(instance->createDeviceObject(&properties));
-            
-                scene->sdf = sdf;
-                scene->properties.push_back(properties);
 
                 primitives.insert(std::make_pair(sdf_head->FirstAttribute()->Value(), sdf));
             
                 sdf_head = sdf_head->NextSiblingElement();
             
+            }
+
+            //Parse csg
+            const tinyxml2::XMLElement* csg_head = doc.FirstChildElement("csg");
+            if(csg_head == nullptr)
+            {
+                std::cerr << "ERROR: csg missing\n";
+                return nullptr;
+            }
+
+            const tinyxml2::XMLElement* root_head = csg_head->FirstChildElement();
+
+            scene->sdf = parse_node(root_head, primitives);
+            scene->properties.push_back(Properties());
+
+            if(scene->sdf == nullptr)
+            {
+                std::cerr << "ERROR: Could not parse csg\n";
+                return nullptr;
             }
 
             return scene;
