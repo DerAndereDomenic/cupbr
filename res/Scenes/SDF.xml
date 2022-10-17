@@ -18,7 +18,7 @@
 
 <csg>
 	<node type="SDFUnion">
-		<node type="SDFUnion">
+		<node type="SDFDifference">
 			<node type="reference">sphere0</node>
 			<node type="reference">sphere1</node>
 		</node>
