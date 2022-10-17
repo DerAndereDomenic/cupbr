@@ -411,7 +411,6 @@ namespace cupbr
 
             std::unordered_map<std::string, SDF*> primitives;
             const tinyxml2::XMLElement* sdf_head = doc.FirstChildElement("sdf-primitive");
-            std::cout << sdf_head << "\n";
             while (sdf_head != nullptr)
             {
                 Properties properties;
@@ -464,6 +463,8 @@ namespace cupbr
             
                 scene->sdf = sdf;
                 scene->properties.push_back(properties);
+
+                primitives.insert(std::make_pair(sdf_head->FirstAttribute()->Value(), sdf));
             
                 sdf_head = sdf_head->NextSiblingElement();
             
