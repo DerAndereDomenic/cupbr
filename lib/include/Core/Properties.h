@@ -14,7 +14,7 @@ namespace cupbr
     */
     class Properties
     {
-        using Value = std::variant<bool, int, float, Vector3float, std::string>;
+        using Value = std::variant<bool, int, float, Vector3float, std::string, void*>;
         public:
 
         /**

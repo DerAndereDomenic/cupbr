@@ -28,14 +28,6 @@ namespace cupbr
         virtual float operator()(const Vector3float& x) { return 0; }
     };
 
-    //min(a,b)
-    class SDFUnion : public SDF
-    {
-        public:
-
-        private:
-    };
-
     //max(-a,b)
     class SDFDifference : public SDF
     {
