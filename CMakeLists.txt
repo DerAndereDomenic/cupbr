@@ -35,8 +35,16 @@ add_library(imgui STATIC "external/imgui/imgui.cpp"
 
 add_subdirectory(src/Plugins)
 
+file(GLOB_RECURSE subdirs RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}/src/Plugins" LIST_DIRECTORIES ON "${CMAKE_CURRENT_SOURCE_DIR}/src/Plugins/*")
+foreach(dir ${subdirs})
+	if(IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/src/Plugins/${dir}")
+		list(APPEND plugin_targets ${dir})
+	endif()
+endforeach()
 
 add_executable(Renderer "src/source.cu")
+
+add_dependencies(Renderer ${plugin_targets})
 
 if(MSVC)
 	target_link_libraries(Renderer glfw OpenGL::GL tinyxml2 glad imgui CUPBR)
