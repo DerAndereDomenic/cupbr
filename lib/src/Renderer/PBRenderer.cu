@@ -52,7 +52,7 @@ namespace cupbr
 
         renderer = reinterpret_cast<RenderMethod*>(
             PluginManager::getPlugin(
-                renderer_properties->getProperty<std::string>("name", "VolumeRenderer")
+                renderer_properties->getProperty<std::string>("name", "SDFRenderer")
             )->createHostObject(renderer_properties)
         );
     }

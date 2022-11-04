@@ -16,12 +16,19 @@
   <radius type="float">0.5</radius>
 </sdf-primitive>
 
+<sdf-primitive name="cube">
+  <name type="string">SDFCube</name>
+  <position type="vec3">4,0,0</position>
+  <size type="vec3">1,1,1</size>
+</sdf-primitive>
+
 <csg>
 	<node type="SDFUnion">
 		<node type="SDFDifference">
 			<node type="reference">sphere0</node>
 			<node type="reference">sphere1</node>
 		</node>
-		<node type="reference">sphere2</node>
+		<node type="reference">cube</node>
 	</node>
+	<node type="reference">cube</node>
 </csg>

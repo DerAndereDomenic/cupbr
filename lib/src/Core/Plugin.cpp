@@ -24,6 +24,7 @@ namespace cupbr
 
         _createDeviceObject = (Plugin * (*)(Properties* properties))GetProcAddress(*_handle, "createDeviceObject");
         _createHostObject = (Plugin * (*)(Properties* properties))GetProcAddress(*_handle, "createHostObject");
+        _destroyDeviceObject = (void (*)(Plugin * plugin))GetProcAddress(*_handle, "destroyDeviceObject");
         _get_name = (char* (*)())GetProcAddress(*_handle, "name");
         _get_version = (char* (*)())GetProcAddress(*_handle, "version");
         _get_super_name = (char* (*)())GetProcAddress(*_handle, "superName");
@@ -40,6 +41,7 @@ namespace cupbr
 
         _createDeviceObject = (Plugin * (*)(Properties* properties))dlsym(_handle, "createDeviceObject");
         _createHostObject = (Plugin * (*)(Properties* properties))dlsym(_handle, "createHostObject");
+        _destroyDeviceObject = (void (*)(Plugin* plugin))dlsym(_handle, "destroyDeviceObject");
         _get_name = (char* (*)())dlsym(_handle, "name");
         _get_version = (char* (*)())dlsym(_handle, "version");
         _get_super_name = (char* (*)())dlsym(_handle, "superName");
@@ -69,6 +71,12 @@ namespace cupbr
     PluginInstance::createHostObject(Properties* properties)
     {
         return _createHostObject(properties);
+    }
+
+    void
+    PluginInstance::destroyDeviceObject(Plugin* plugin)
+    {
+        _destroyDeviceObject(plugin);
     }
 
     std::string 

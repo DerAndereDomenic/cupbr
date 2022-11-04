@@ -80,6 +80,12 @@ namespace cupbr
         Plugin* createHostObject(Properties* properties);
 
         /**
+        *   @brief Destroy a device object
+        *   @param[in] destroy The object to be destroyed
+        */
+        void destroyDeviceObject(Plugin* destroy);
+
+        /**
         *   @brief Get the name of the plugin
         *   @return The name
         */
@@ -100,6 +106,7 @@ namespace cupbr
         private:
         Plugin* (*_createDeviceObject)(Properties* properties);         /**< Function pointer for loading an instance */
         Plugin* (*_createHostObject)(Properties* properties);           /**< Function pointer for loading an instance */
+        void (*_destroyDeviceObject)(Plugin* plugin);                   /**< Function pointer for destroying objects */
         char* (*_get_name)();                                           /**< Function pointer for the name */
         char* (*_get_version)();                                        /**< Function pointer for the version */
         char* (*_get_super_name)();                                     /**< Function pointer for name of super class */
@@ -166,29 +173,34 @@ namespace cupbr
     {                                                                                                                               \
         *plugin = new classType(*dummy_plugin);                                                                                     \
     }                                                                                                                               \
+    CUPBR_GLOBAL void destroyObject(Plugin* plugin)                                                                                 \
+    {                                                                                                                               \
+        delete plugin;                                                                                     \
+    }                                                                                                                               \
                                                                                                                                     \
     extern "C"                                                                                                                      \
     {                                                                                                                               \
         CUPBR_EXPORT Plugin* createDeviceObject(Properties* properties)                                                             \
         {                                                                                                                           \
+            std::cout << properties->getProperty<std::string>("name", "").c_str() << sizeof(classType) << "\n";\
             classType host_object(properties);                                                                                      \
             classType* dummy_plugin;                                                                                                \
             classType** plugin_holder;                                                                                              \
                                                                                                                                     \
-            cudaMalloc((void**)&plugin_holder, sizeof(classType**));                                                                \
-            cudaMalloc((void**)&dummy_plugin, sizeof(classType));                                                                   \
-            cudaMemcpy((void*)dummy_plugin, (void*)&host_object, sizeof(classType), cudaMemcpyHostToDevice);                        \
+            cudaSafeCall(cudaMalloc((void**)&plugin_holder, sizeof(classType*)));                                                                \
+            cudaSafeCall(cudaMalloc((void**)&dummy_plugin, sizeof(classType)));                                                                   \
+            cudaSafeCall(cudaMemcpy((void*)dummy_plugin, (void*)&host_object, sizeof(classType), cudaMemcpyHostToDevice));                        \
                                                                                                                                     \
             fix_vtable << <1, 1 >> > (plugin_holder, dummy_plugin);                                                                 \
             synchronizeDefaultStream();                                                                                  \
                                                                                                                                     \
             classType** host_plugin_dummy = new classType*;                                                                         \
-            cudaMemcpy((void*)host_plugin_dummy, (void*)plugin_holder, sizeof(classType**), cudaMemcpyDeviceToHost);                \
+            cudaSafeCall(cudaMemcpy((void*)host_plugin_dummy, (void*)plugin_holder, sizeof(classType**), cudaMemcpyDeviceToHost));                \
             classType* plugin = *host_plugin_dummy;                                                                                 \
                                                                                                                                     \
             delete host_plugin_dummy;                                                                                               \
-            cudaFree(plugin_holder);                                                                                                \
-            cudaFree(dummy_plugin);                                                                                                 \
+            cudaSafeCall(cudaFree(plugin_holder));                                                                                                \
+            cudaSafeCall(cudaFree(dummy_plugin));                                                                                                 \
             return plugin;                                                                                                          \
         }                                                                                                                           \
                                                                                                                                     \
@@ -197,9 +209,11 @@ namespace cupbr
             return new classType(properties);                                                                                       \
         }                                                                                                                           \
                                                                                                                                     \
-        CUPBR_EXPORT void destroy(Plugin* plugin)                                                                                   \
+        CUPBR_EXPORT void destroyDeviceObject(Plugin* plugin)                                                                                   \
         {                                                                                                                           \
-            cudaFree(plugin);                                                                                                       \
+            classType* plgn = (classType*)plugin;                                                                                   \
+            destroyObject<<<1,1>>>(plugin);                                                                                                       \
+            synchronizeDefaultStream();                                                                                             \
         }                                                                                                                           \
                                                                                                                                     \
         CUPBR_EXPORT const char* name()                                                                                             \

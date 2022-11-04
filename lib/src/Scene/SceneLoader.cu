@@ -571,7 +571,13 @@ namespace cupbr
                 Geometry geom;
                 Memory::copyDevice2HostObject(host_scene[i], &geom);
                 //Don't use memory API because materials are obtained by plugin
-                cudaFree(geom.material);
+                //cudaSafeCall(cudaFree(geom.material));
+                //TODO
+                Properties& properties = scene->properties[i];
+                std::string name = properties.getProperty<std::string>("name").value();
+                std::shared_ptr<PluginInstance> instance = PluginManager::getPlugin(name);
+                instance->destroyDeviceObject(geom.material);
+
                 switch (geom.type)
                 {
                 case GeometryType::PLANE:
@@ -632,7 +638,8 @@ namespace cupbr
 
         void destroy_sdf_scene(SDFScene* scene)
         {
-            cudaFree(scene->sdf);
+            //TODO: Recurse through tree
+            cudaSafeCall(cudaFree(scene->sdf));
             Memory::destroyHostObject<SDFScene>(scene);
         }
 
@@ -692,7 +699,9 @@ namespace cupbr
             Geometry geom;
             Memory::copyDevice2HostObject(host_scene[i], &geom);
 
-            cudaFree(geom.material);
+            //cudaSafeCall(cudaFree(geom.material));
+            //TODO: THIS MIGHT ACTUALLY BE ANOTHER INSTANCE IF THE MATERIAL WAS CHANGED
+            instance->destroyDeviceObject(geom.material);
             geom.material = reinterpret_cast<Material*>(instance->createDeviceObject(&properties));
 
             Memory::copyHost2DeviceObject(&geom, host_scene[i]);

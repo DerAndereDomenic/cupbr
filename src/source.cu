@@ -10,11 +10,11 @@ int run(int argc, char* argv[])
     const uint32_t width = 1300, height = 800;
 
     Scene* scene;
-    
+
     std::string scene_path;
     if(argc == 1)
     {
-        scene_path = "res/Scenes/CornellBoxSphereAreaLight.xml";
+        scene_path = "res/Scenes/SDF.xml";
     }
     else if(argc == 2)
     {
