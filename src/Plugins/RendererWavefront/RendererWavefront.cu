@@ -188,7 +188,8 @@ namespace cupbr
         extend_kernel(Scene scene,
                       const uint32_t numPaths,
                       Ray* ray_buffer,
-                      LocalGeometry* geom)
+                      LocalGeometry* geom,
+                      int* activePaths)
         {
             uint32_t tid = ThreadHelper::globalThreadIndex();
 
@@ -197,6 +198,8 @@ namespace cupbr
                 return;
             }
 
+            *activePaths = 0;
+
             geom[tid] = Tracing::traceRay(scene, ray_buffer[tid]);
         }
 
@@ -204,7 +207,10 @@ namespace cupbr
         shade_kernel(Scene scene,
                      const uint32_t numPaths,
                      Ray* ray_buffer,
-                     LocalGeometry* geom_buffer)
+                     Ray* double_buffer,
+                     int* activePaths,
+                     LocalGeometry* geom_buffer,
+                     bool useRussianRoulette)
         {
             uint32_t tid = ThreadHelper::globalThreadIndex();
 
@@ -227,8 +233,29 @@ namespace cupbr
                 return;
             }
 
+            RadiancePayload* payload = ray.payload<RadiancePayload>();
             directIllumination(scene, ray, geom, inc_dir);
-            //indirectIllumination(ray, geom, inc_dir);
+            indirectIllumination(ray, geom, inc_dir);
+            if(!payload->next_ray_valid) return;
+
+            if(useRussianRoulette)
+            {
+                float alpha = Math::clamp(fmaxf(payload->rayweight.x, fmaxf(payload->rayweight.y, payload->rayweight.z)), 0.0f, 1.0f);
+                if(Math::rnd(payload->seed) > alpha || Math::safeFloatEqual(alpha, 0))
+                {
+                    payload->next_ray_valid = false;
+                    payload->rayweight = 0;
+                    return;
+                }
+                payload->rayweight = payload->rayweight / alpha;
+            }
+
+
+            int work_idx = atomicAdd(activePaths, 1);
+
+            ray.traceNew(payload->ray_start + 0.001f * payload->out_dir, payload->out_dir);
+
+            double_buffer[work_idx] = ray;
         }
 
         CUPBR_GLOBAL void
@@ -269,15 +296,19 @@ namespace cupbr
             height = 1;
 
             cudaSafeCall(cudaMalloc((void**)&ray_buffer, sizeof(Ray) * width * height));
+            cudaSafeCall(cudaMalloc((void**)&double_buffer, sizeof(Ray) * width * height));
             cudaSafeCall(cudaMalloc((void**)&geom_buffer, sizeof(LocalGeometry) * width * height));
             cudaSafeCall(cudaMalloc((void**)&payload_buffer, sizeof(detail::RadiancePayload) * width * height));
+            cudaSafeCall(cudaMalloc((void**)&activePaths, sizeof(int)));
         }
 
         ~RendererWavefront()
         {
             cudaSafeCall(cudaFree(ray_buffer));
+            cudaSafeCall(cudaFree(double_buffer));
             cudaSafeCall(cudaFree(geom_buffer));
             cudaSafeCall(cudaFree(payload_buffer));
+            cudaSafeCall(cudaFree(activePaths));
         }
 
         virtual void 
@@ -303,17 +334,18 @@ namespace cupbr
                 cudaSafeCall(cudaFree(ray_buffer));
                 cudaSafeCall(cudaFree(geom_buffer));
                 cudaSafeCall(cudaFree(payload_buffer));
+                cudaSafeCall(cudaFree(double_buffer));
 
                 cudaSafeCall(cudaMalloc((void**)&ray_buffer, sizeof(Ray) * width * height));
+                cudaSafeCall(cudaMalloc((void**)&double_buffer, sizeof(Ray) * width * height));
                 cudaSafeCall(cudaMalloc((void**)&geom_buffer, sizeof(LocalGeometry) * width * height));
                 cudaSafeCall(cudaMalloc((void**)&payload_buffer, sizeof(detail::RadiancePayload) * width * height));
 
             }
 
-            uint32_t numPaths = width * height;
+            int numPaths = width * height;
 
             KernelSizeHelper::KernelSize config = KernelSizeHelper::configure(numPaths);
-
             detail::generate_kernel<<<config.blocks, config.threads>>>( camera,
                                                                         frameIndex,
                                                                         numPaths,
@@ -322,20 +354,36 @@ namespace cupbr
                                                                         payload_buffer);
             synchronizeDefaultStream();
 
-            detail::extend_kernel<<<config.blocks, config.threads>>>(   scene,
-                                                                        numPaths,
-                                                                        ray_buffer,
-                                                                        geom_buffer);
-            synchronizeDefaultStream();
+            for(int i = 0; i < max_trace_depth; ++i)
+            {
+                KernelSizeHelper::KernelSize config1 = KernelSizeHelper::configure(numPaths);
+                detail::extend_kernel<<<config1.blocks, config1.threads>>>(   scene,
+                    numPaths,
+                    ray_buffer,
+                    geom_buffer,
+                    activePaths);
+                synchronizeDefaultStream();
 
-            detail::shade_kernel<<<config.blocks, config.threads>>>(scene,
-                                                                    numPaths,
-                                                                    ray_buffer,
-                                                                    geom_buffer);
-            synchronizeDefaultStream();
+                detail::shade_kernel<<<config1.blocks, config1.threads>>>(scene,
+                                numPaths,
+                                ray_buffer,
+                                double_buffer,
+                                activePaths,
+                                geom_buffer,
+                                use_russian_roulette);
+                synchronizeDefaultStream();
 
-            detail::compose_kernel<<<config.blocks, config.threads>>>(  payload_buffer,
-                                                                        numPaths,
+                cudaSafeCall(cudaMemcpy((void*)&numPaths, (void*)activePaths, sizeof(int), cudaMemcpyDeviceToHost));
+
+                if(numPaths == 0)
+                    break;
+
+                std::swap(ray_buffer, double_buffer);
+            }
+
+            KernelSizeHelper::KernelSize config2 = KernelSizeHelper::configure(width * height);
+            detail::compose_kernel<<<config2.blocks, config2.threads>>>(payload_buffer,
+                                                                        width * height,
                                                                         frameIndex,
                                                                         *output_img);
             synchronizeDefaultStream();
@@ -345,9 +393,10 @@ namespace cupbr
         uint32_t max_trace_depth;
         bool use_russian_roulette;
         uint32_t width, height;
-        Ray* ray_buffer;
+        Ray* ray_buffer, *double_buffer;
         LocalGeometry* geom_buffer;
         detail::RadiancePayload* payload_buffer;
+        int* activePaths;
     };
 
     DEFINE_PLUGIN(RendererWavefront, "WavefrontRenderer", "1.0", RenderMethod)
