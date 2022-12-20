@@ -160,16 +160,124 @@ namespace cupbr
 
             img[tid] = ray.payload<RadiancePayload>()->radiance;
         }
+
+        CUPBR_GLOBAL void
+        generate_kernel(const Camera camera,
+                        const uint32_t frameIndex,
+                        const uint32_t numPaths,
+                        const Image<Vector3float> img,
+                        Ray* ray_buffer,
+                        RadiancePayload* payloads)
+        {
+            const uint32_t tid = ThreadHelper::globalThreadIndex();
+
+            if(tid >= numPaths)
+            {
+                return;
+            }
+
+            uint32_t seed = Math::tea<4>(tid, frameIndex);
+
+            ray_buffer[tid] = Tracing::launchRay(tid, img.width(), img.height(), camera, true, &seed);
+            payloads[tid] = RadiancePayload();
+            payloads[tid].seed = seed;
+            ray_buffer[tid].setPayload(payloads + tid);
+        }
+
+        CUPBR_GLOBAL void
+        extend_kernel(Scene scene,
+                      const uint32_t numPaths,
+                      Ray* ray_buffer,
+                      LocalGeometry* geom)
+        {
+            uint32_t tid = ThreadHelper::globalThreadIndex();
+
+            if(tid >= numPaths)
+            {
+                return;
+            }
+
+            geom[tid] = Tracing::traceRay(scene, ray_buffer[tid]);
+        }
+
+        CUPBR_GLOBAL void
+        shade_kernel(Scene scene,
+                     const uint32_t numPaths,
+                     Ray* ray_buffer,
+                     LocalGeometry* geom_buffer)
+        {
+            uint32_t tid = ThreadHelper::globalThreadIndex();
+
+            if(tid >= numPaths)
+            {
+                return;
+            }
+
+            Ray& ray = ray_buffer[tid];
+            LocalGeometry& geom = geom_buffer[tid];
+
+            Vector3float inc_dir = -1.0f * ray.direction(); //Points away from surface
+            if (geom.depth == INFINITY)
+            {
+                if (scene.useEnvironmentMap)
+                {
+                    Vector2uint32_t pixel = Tracing::direction2UV(ray.direction(), scene.environment.width(), scene.environment.height());
+                    ray.payload<RadiancePayload>()->radiance += ray.payload<RadiancePayload>()->rayweight * scene.environment(pixel);
+                }
+                return;
+            }
+
+            directIllumination(scene, ray, geom, inc_dir);
+            //indirectIllumination(ray, geom, inc_dir);
+        }
+
+        CUPBR_GLOBAL void
+        compose_kernel(RadiancePayload* payloads,
+                       const uint32_t numPaths,
+                       const uint32_t frameIndex,
+                       Image<Vector3float> img)
+        {
+            uint32_t tid = ThreadHelper::globalThreadIndex();
+
+            if(tid >= numPaths)
+            {
+                return;
+            }
+
+            RadiancePayload& payload = payloads[tid];
+
+            if (frameIndex > 0)
+            {
+                const float a = 1.0f / (static_cast<float>(frameIndex) + 1.0f);
+                payload.radiance = (1.0f - a) * img[tid] + a * payload.radiance;
+            }
+
+            img[tid] = payload.radiance;
+        }
+
     } //namespace detail
     
     class RendererWavefront : public RenderMethod
     {
         public:
 
-            RendererWavefront(Properties* properties)
+        RendererWavefront(Properties* properties)
         {
             max_trace_depth = properties->getProperty("max_trace_depth", 5);
             use_russian_roulette = properties->getProperty("use_russian_roulette", true);
+            width = 1;
+            height = 1;
+
+            cudaSafeCall(cudaMalloc((void**)&ray_buffer, sizeof(Ray) * width * height));
+            cudaSafeCall(cudaMalloc((void**)&geom_buffer, sizeof(LocalGeometry) * width * height));
+            cudaSafeCall(cudaMalloc((void**)&payload_buffer, sizeof(detail::RadiancePayload) * width * height));
+        }
+
+        ~RendererWavefront()
+        {
+            cudaSafeCall(cudaFree(ray_buffer));
+            cudaSafeCall(cudaFree(geom_buffer));
+            cudaSafeCall(cudaFree(payload_buffer));
         }
 
         virtual void 
@@ -178,19 +286,68 @@ namespace cupbr
                const uint32_t& frameIndex,
                Image<Vector3float>* output_img) 
         {
-            const KernelSizeHelper::KernelSize config = KernelSizeHelper::configure(output_img->size());
+            /*const KernelSizeHelper::KernelSize config = KernelSizeHelper::configure(output_img->size());
             detail::volume_kernel << <config.blocks, config.threads >> > (scene,
                                                                           camera,
                                                                           frameIndex,
                                                                           max_trace_depth,
                                                                           use_russian_roulette,
                                                                           *output_img);
+            synchronizeDefaultStream();*/
+
+            if(output_img->width() != width || output_img->height() != height)
+            {
+                width = output_img->width();
+                height = output_img->height();
+                
+                cudaSafeCall(cudaFree(ray_buffer));
+                cudaSafeCall(cudaFree(geom_buffer));
+                cudaSafeCall(cudaFree(payload_buffer));
+
+                cudaSafeCall(cudaMalloc((void**)&ray_buffer, sizeof(Ray) * width * height));
+                cudaSafeCall(cudaMalloc((void**)&geom_buffer, sizeof(LocalGeometry) * width * height));
+                cudaSafeCall(cudaMalloc((void**)&payload_buffer, sizeof(detail::RadiancePayload) * width * height));
+
+            }
+
+            uint32_t numPaths = width * height;
+
+            KernelSizeHelper::KernelSize config = KernelSizeHelper::configure(numPaths);
+
+            detail::generate_kernel<<<config.blocks, config.threads>>>( camera,
+                                                                        frameIndex,
+                                                                        numPaths,
+                                                                        *output_img,
+                                                                        ray_buffer,
+                                                                        payload_buffer);
+            synchronizeDefaultStream();
+
+            detail::extend_kernel<<<config.blocks, config.threads>>>(   scene,
+                                                                        numPaths,
+                                                                        ray_buffer,
+                                                                        geom_buffer);
+            synchronizeDefaultStream();
+
+            detail::shade_kernel<<<config.blocks, config.threads>>>(scene,
+                                                                    numPaths,
+                                                                    ray_buffer,
+                                                                    geom_buffer);
+            synchronizeDefaultStream();
+
+            detail::compose_kernel<<<config.blocks, config.threads>>>(  payload_buffer,
+                                                                        numPaths,
+                                                                        frameIndex,
+                                                                        *output_img);
             synchronizeDefaultStream();
         }
         
         private:
         uint32_t max_trace_depth;
         bool use_russian_roulette;
+        uint32_t width, height;
+        Ray* ray_buffer;
+        LocalGeometry* geom_buffer;
+        detail::RadiancePayload* payload_buffer;
     };
 
     DEFINE_PLUGIN(RendererWavefront, "WavefrontRenderer", "1.0", RenderMethod)
